@@ -7,7 +7,8 @@ const { extensions } = require('./.vscode/settings.json')['eslint.options']
 
 module.exports = {
   /**
-   * Linting command rules.
+   * Attempt to fix code style when JavaScript, Markdown, and TypeScript files
+   * are changed.
    */
   [`*.{${extensions.map(ext => ext.slice(1)).join()}}`]: [
     'yarn fix:style',
@@ -15,17 +16,19 @@ module.exports = {
   ],
 
   /**
-   * Formatting command rules.
+   * Attempt to fix formatting when **ANY** file is changed.
    */
   '*': ['yarn fix:format', 'git add -A'],
 
   /**
-   * Type check files when TypeScript files are changed.
+   * Run type check when TypeScript files are changed.
+   *
+   * @return {string} Type check command
    */
-  [`**/*.ts,tsconfig.*`]: ['yarn check:types'],
+  '{**/*.ts,**/tsconfig.*}': [() => 'yarn check:types'],
 
   /**
-   * Local integrity check.
+   * Run local integrity check when dependencies are updated.
    */
   'yarn.lock': ['yarn check:dedupe']
 }

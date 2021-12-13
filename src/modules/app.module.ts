@@ -1,25 +1,12 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import configuration, { envFilePath } from '@sneusers/config/configuration'
+import ConfigModule from './config.module'
 
 /**
  * @file Modules - AppModule
  * @module sneusers/modules/AppModule
  * @see https://docs.nestjs.com/modules
+ * @see https://docs.nestjs.com/techniques/database#sequelize-integration
  */
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      cache: configuration().PROD,
-      envFilePath,
-      expandVariables: true,
-      ignoreEnvFile: false,
-      ignoreEnvVars: false,
-      isGlobal: true,
-      load: [configuration]
-    })
-  ],
-  providers: []
-})
+@Module({ imports: [ConfigModule], providers: [] })
 export default class AppModule {}
