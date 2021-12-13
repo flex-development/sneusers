@@ -1,0 +1,61 @@
+# Continuous Integration
+#
+# References:
+#
+# - https://github.com/actions/checkout
+# - https://github.com/actions/setup-node
+# - https://docs.github.com/actions/guides/building-and-testing-nodejs
+
+---
+name: continuous-integration
+on:
+  pull_request:
+  push:
+    branches:
+      - next
+      - push-action/**
+  workflow_dispatch:
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN_ADMIN }}
+      PAT_GPR: ${{ secrets.PAT_GPR_ADMIN }}
+    strategy:
+      matrix:
+        node: [14.13.1, 16.0.0]
+    steps:
+      - id: checkout
+        name: Checkout branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - id: node
+        name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          scope: '@${{ github.repository_owner }}'
+      - id: install
+        name: Install dependencies
+        run: yarn --immutable
+        env:
+          NODE_AUTH_TOKEN: ${PAT_GPR}
+      - id: env
+        name: Set environment variables
+        run: |
+          echo "NODE_NO_WARNINGS=1" >> $GITHUB_ENV
+          echo "NODE_OPTIONS=--experimental-modules --experimental-json-modules
+          --loader=$GITHUB_WORKSPACE/tools/loaders/esm.mjs --es-module-specifier-resolution=node" >> $GITHUB_ENV
+      - id: format
+        name: Check code formatting
+        run: yarn check:format
+      - id: style
+        name: Check code style
+        run: yarn check:style
+      - id: test
+        name: Run test suites
+        run: yarn test
+      - id: build
+        name: Build project
+        run: NODE_ENV=test yarn build

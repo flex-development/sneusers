@@ -1,0 +1,28 @@
+{
+  "all": false,
+  "cache": false,
+  "exclude": [
+    "src/**/__doubles__/*",
+    "src/**/__tests__/*",
+    "src/**/index.ts",
+    "src/**/*.enum.ts",
+    "src/**/*.interface.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.type.ts",
+    "src/**/*.types.ts"
+  ],
+  "extension": [
+    ".ts"
+  ],
+  "include": [
+    "src"
+  ],
+  "reporter": [
+    "json-summary",
+    "lcov",
+    "text"
+  ],
+  "report-dir": "./coverage",
+  "skip-full": false,
+  "temp-dir": "./coverage/.nyc"
+}

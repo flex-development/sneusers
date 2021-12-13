@@ -1,0 +1,24 @@
+# Dependabot Auto
+#
+# Auto approve pull requests, then squash and merge after status checks pass.
+#
+# References:
+#
+# - https://github.com/ahmadnassri/action-dependabot-auto-merge
+# - https://github.com/ahmadnassri/action-dependabot-auto-merge/issues/60#issuecomment-806027389
+
+---
+name: dependabot-auto
+on: pull_request_target
+jobs:
+  dependabot:
+    name: Auto approve pull request, then squash and merge
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2.4.0
+        with:
+          approve: true
+          command: squash and merge
+          config: .github/auto-merge.yml
+          github-token: ${{ secrets.PAT_REPO_ADMIN }}

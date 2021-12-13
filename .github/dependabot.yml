@@ -1,0 +1,49 @@
+# Dependabot Configuration
+#
+# References:
+#
+# - https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates
+
+version: 2
+registries:
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    username: flexdevelopment
+    password: ${{ secrets.PAT_GPR_ADMIN }}
+updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    registries:
+      - npm-github
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: ci
+      include: scope
+    labels:
+      - scope:ci
+    open-pull-requests-limit: 10
+    pull-request-branch-name:
+      separator: /
+    rebase-strategy: auto
+    target-branch: next
+  # Maintain dependencies for Yarn
+  - package-ecosystem: npm
+    directory: /
+    registries:
+      - npm-github
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: build
+      include: scope
+    labels:
+      - scope:deps
+      - type:build
+    open-pull-requests-limit: 10
+    pull-request-branch-name:
+      separator: /
+    rebase-strategy: auto
+    target-branch: next

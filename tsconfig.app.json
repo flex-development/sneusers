@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "noEmit": false,
+    "noUncheckedIndexedAccess": true
+  },
+  "extends": "./tsconfig.json",
+  "include": ["./src"]
+}

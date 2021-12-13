@@ -1,0 +1,8 @@
+# Pre Commit Hook
+#
+# References:
+#
+# - https://typicode.github.io/husky
+
+yarn check:types
+yarn test

@@ -1,0 +1,103 @@
+{
+  "eslint.options": {
+    "extensions": [".cjs", ".js", ".md", ".mjs", ".ts"],
+    "overrideConfigFile": "./.eslintrc.cjs"
+  },
+  "eslint.packageManager": "yarn",
+  "eslint.validate": ["javascript", "markdown", "typescript"],
+  "files.associations": {
+    ".env*": "shellscript",
+    ".nycrc*": "json",
+    "commit-msg": "shellscript",
+    "pre-commit": "shellscript",
+    "pre-push": "shellscript"
+  },
+  "prettier.arrowParens": "avoid",
+  "prettier.bracketSpacing": true,
+  "prettier.configPath": "./.prettierrc.cjs",
+  "prettier.documentSelectors": [],
+  "prettier.enable": true,
+  "prettier.enableDebugLogs": true,
+  "prettier.endOfLine": "lf",
+  "prettier.htmlWhitespaceSensitivity": "css",
+  "prettier.ignorePath": "./.prettierignore",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.printWidth": 80,
+  "prettier.proseWrap": "always",
+  "prettier.quoteProps": "as-needed",
+  "prettier.requireConfig": true,
+  "prettier.requirePragma": false,
+  "prettier.resolveGlobalModules": true,
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "prettier.trailingComma": "none",
+  "prettier.useEditorConfig": false,
+  "prettier.useTabs": false,
+  "prettier.vueIndentScriptAndStyle": true,
+  "prettier.withNodeModules": false,
+  "search.exclude": {
+    ".nyc": true,
+    "coverage": true,
+    "dist": true,
+    "node_modules": true
+  },
+  "search.useGlobalIgnoreFiles": true,
+  "search.useIgnoreFiles": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "vsicons.associations.files": [
+    {
+      "extensions": [".commitlintrc.ts"],
+      "format": "svg",
+      "icon": "commitlint"
+    },
+    {
+      "extensions": [".eslintrc.base.cjs"],
+      "format": "svg",
+      "icon": "eslint"
+    },
+    {
+      "extensions": [".lintstagedrc.cjs"],
+      "format": "svg",
+      "icon": "lintstagedrc"
+    },
+    {
+      "extensions": [".mocharc.base.cjs", ".mocharc.cjs"],
+      "format": "svg",
+      "icon": "mocha"
+    },
+
+    {
+      "extensions": ["repository.ts"],
+      "format": "svg",
+      "icon": "nest_service_ts"
+    },
+    {
+      "extensions": ["yarnrc.yml"],
+      "format": "svg",
+      "icon": "yarn"
+    }
+  ],
+  "vsicons.associations.folders": [
+    {
+      "extensions": ["__doubles__"],
+      "format": "svg",
+      "icon": "mock"
+    },
+    {
+      "extensions": ["__fixtures__", "dtos"],
+      "format": "svg",
+      "icon": "db"
+    },
+    {
+      "extensions": ["subdomains"],
+      "format": "svg",
+      "icon": "module"
+    },
+    {
+      "extensions": ["types"],
+      "format": "svg",
+      "icon": "typings"
+    }
+  ]
+}

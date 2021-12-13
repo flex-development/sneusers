@@ -1,0 +1,12 @@
+# ESLint Ignore
+# https://eslint.org/docs/user-guide/configuring#ignoring-files-and-directories
+
+.yarn/*
+coverage/*
+dist/*
+node_modules/*
+
+!**/.*.*
+
+.pnp.cjs
+CHANGELOG.md

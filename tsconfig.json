@@ -1,0 +1,76 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "baseUrl": "./",
+    "checkJs": false,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": false,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noEmitOnError": true,
+    "noErrorTruncation": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "outDir": "./dist",
+    "paths": {
+      "@flex-development/exceptions/*": [
+        "node_modules/@flex-development/exceptions/cjs/*"
+      ],
+      "@flex-development/exceptions": [
+        "node_modules/@flex-development/exceptions/cjs/index"
+      ],
+      "@flex-development/grease/*": [
+        "node_modules/@flex-development/grease/cjs/*"
+      ],
+      "@flex-development/grease": [
+        "node_modules/@flex-development/grease/cjs/index"
+      ],
+      "@flex-development/log/*": ["node_modules/@flex-development/log/cjs/*"],
+      "@flex-development/log": ["node_modules/@flex-development/log/cjs/index"],
+      "@flex-development/tutils/*": [
+        "node_modules/@flex-development/tutils/cjs/*"
+      ],
+      "@flex-development/tutils": [
+        "node_modules/@flex-development/tutils/cjs/index"
+      ],
+      "@sneusers/*": ["src/*"],
+      "@tests/doubles/*": ["__doubles__/*"],
+      "@tests/fixtures/*": ["__tests__/__fixtures__/*"],
+      "@tests/*": ["__tests__/*"]
+    },
+    "preserveConstEnums": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "rootDir": "./",
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es2019",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "useDefineForClassFields": true
+  },
+  "files": ["typings/index.d.ts"],
+  "exclude": ["./coverage", "./dist", "./node_modules"],
+  "include": ["**/*.cjs", "**/*.mjs", "**/*.ts", "**/.*.cjs", "**/.*.ts"],
+  // See: https://typestrong.org/ts-node/docs/configuration
+  "ts-node": {
+    "compilerOptions": {},
+    "moduleTypes": {},
+    "transpileOnly": true
+  }
+}
