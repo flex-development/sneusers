@@ -1,6 +1,5 @@
 import type { MochaAssertionResult, MochaReport } from '@tests/utils/types'
 import fs from 'fs'
-import pick from 'lodash.pick'
 import Mocha from 'mocha'
 
 /**
@@ -79,40 +78,40 @@ class Reporter extends Mocha.reporters.Spec {
           const suite = suites[tests[0].titlePath()[0]]
 
           return {
-            __mocha_id__: (suite as any).__mocha_id__,
-            file,
-            title: suite.title,
-            isPending: suite.isPending(),
-            assertionResults: tests.map(test => ({
-              __mocha_id__: (test as any).__mocha_id__,
+            assertion_results: tests.map(test => ({
               body: test.body,
               // @ts-expect-error property 'currentRetry' is protected
-              currentRetry: test.currentRetry(),
+              current_retry: test.currentRetry(),
               duration: test.duration,
               err: test.err || null,
-              failureMessages: test.err ? [test.err.message] : [],
+              failure_messages: test.err ? [test.err.message] : [],
               file: test.file as string,
-              fullTitle: test.fullTitle(),
-              isPending: test.isPending() || false,
+              full_title: test.fullTitle(),
+              is_pending: test.isPending() || false,
+              mocha_id: test['__mocha_id__'],
               parent: (() => {
                 if (!test.parent) return
 
                 return {
-                  ...pick(test.parent, ['__mocha_id__']),
-                  fullTitle: test.parent.fullTitle()
+                  full_title: test.parent.fullTitle(),
+                  mocha_id: test.parent['__mocha_id__']
                 }
               })() as MochaAssertionResult['parent'],
               speed: test.speed,
               state: test.state,
               status: test.isPending() ? 'pending' : test.state || 'pending',
               title: test.title,
-              titlePath: test.titlePath()
-            }))
+              title_path: test.titlePath()
+            })),
+            file,
+            is_pending: suite.isPending(),
+            mocha_id: suite['__mocha_id__'],
+            title: suite.title
           }
         }),
         suites: Object.values(suites).map(suite => ({
-          __mocha_id__: (suite as any).__mocha_id__,
-          parent: pick(suite.parent, ['__mocha_id__']),
+          mocha_id: suite['__mocha_id__'],
+          parent: suite.parent && { mocha_id: suite.parent['__mocha_id__'] },
           root: suite.root || false,
           title: suite.title
         })) as unknown as MochaReport['suites']

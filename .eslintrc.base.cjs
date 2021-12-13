@@ -64,6 +64,37 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/no-namespace': 0,
+    '@typescript-eslint/naming-convention': [
+      2,
+      {
+        selector: 'default',
+        format: ['UPPER_CASE', 'snake_case'],
+        leadingUnderscore: 'allow',
+        trailingUnderscore: 'forbid'
+      },
+      {
+        selector: 'function',
+        format: ['camelCase']
+      },
+      {
+        selector: 'method',
+        format: ['camelCase']
+      },
+      {
+        selector: 'typeLike',
+        format: ['PascalCase']
+      },
+      {
+        selector: 'variable',
+        format: null,
+        modifiers: ['destructured']
+      },
+      {
+        selector: 'variable',
+        format: ['camelCase'],
+        types: ['function']
+      }
+    ],
     '@typescript-eslint/no-use-before-define': 0,
     '@typescript-eslint/no-useless-constructor': 1,
     '@typescript-eslint/no-var-requires': 1,
@@ -339,31 +370,45 @@ module.exports = {
       }
     },
     {
-      files: ['**/.eslintrc.*', '**/.prettierrc.cjs'],
+      files: [
+        '.commitlintrc.ts',
+        '.eslintrc.*',
+        '.mocharc.*',
+        '.prettierrc.cjs',
+        '__tests__/config/mocha-global-fixtures.ts',
+        '__tests__/config/mocha-root-hooks.ts',
+        'tools/cli/release.ts',
+        'tools/helpers/match-specifier.cjs',
+        'tools/helpers/tsconfig-paths.cjs',
+        'tools/loaders/esm.mjs',
+        'typings/index.d.ts',
+        'typings/mocha/global.d.ts',
+        'typings/tools/loaders/esm/global.d.ts',
+        'webpack.config.ts'
+      ],
+      rules: {
+        '@typescript-eslint/naming-convention': 0
+      }
+    },
+    {
+      files: ['.eslintrc.*', '.prettierrc.cjs'],
       rules: {
         'sort-keys': 0
       }
     },
     {
-      files: ['**/.eslintrc.*', '**/.mocharc.*'],
+      files: ['.eslintrc.*', '.mocharc.*'],
       rules: {
         'spellcheck/spell-checker': 0
       }
     },
     {
-      files: ['**/__doubles__/**', '**/__tests__/**', '**/tools/**'],
+      files: ['__doubles__/**', '__tests__/**', 'tools/**'],
       rules: {
         'tree-shaking/no-side-effects-in-initialization': 0
       }
     },
-    {
-      files: ['**/typings/**'],
-      rules: {
-        '@typescript-eslint/ban-types': 0,
-        '@typescript-eslint/triple-slash-reference': 0,
-        'unicorn/filename-case': 0
-      }
-    },
+
     {
       files: ['__tests__/reporters/jsonspec.ts'],
       rules: {
@@ -371,9 +416,23 @@ module.exports = {
       }
     },
     {
+      files: ['typings/**'],
+      rules: {
+        '@typescript-eslint/ban-types': 0,
+        '@typescript-eslint/triple-slash-reference': 0,
+        'unicorn/filename-case': 0
+      }
+    },
+    {
       files: ['typings/node/globals.global.d.ts'],
       rules: {
         'no-var': 0
+      }
+    },
+    {
+      files: ['webpack.config.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': 0
       }
     }
   ],

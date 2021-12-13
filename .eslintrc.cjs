@@ -5,6 +5,7 @@ const { overrides, rules } = require('./.eslintrc.base.cjs')
  * @see https://eslint.org/docs/user-guide/configuring
  */
 
+const RULES_NAMING_CONVENTIONS = rules['@typescript-eslint/naming-convention']
 const RULES_SPELLCHECKER = rules['spellcheck/spell-checker']
 
 module.exports = {
@@ -35,6 +36,25 @@ module.exports = {
   },
   overrides: [
     ...overrides,
+    {
+      files: ['src/**'],
+      rules: {
+        '@typescript-eslint/naming-convention': [
+          RULES_NAMING_CONVENTIONS[0],
+          ...RULES_NAMING_CONVENTIONS.slice(1, RULES_NAMING_CONVENTIONS.length),
+          {
+            selector: 'objectLiteralProperty',
+            format: ['UPPER_CASE', 'camelCase', 'snake_case']
+          }
+        ]
+      }
+    },
+    {
+      files: ['src/types/http-exception-json.type.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': 0
+      }
+    },
     {
       files: ['webpack.config.ts'],
       rules: {

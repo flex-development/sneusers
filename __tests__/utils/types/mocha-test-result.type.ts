@@ -9,10 +9,10 @@ import type MochaAssertionResult from './mocha-assertion-result.type'
  * Object representing a top level {@link Mocha.Suite} test result summary.
  */
 type MochaTestResult = {
-  __mocha_id__: string
-  assertionResults: MochaAssertionResult[]
+  assertion_results: MochaAssertionResult[]
   file: NonNullable<Mocha.Test['file']>
-  isPending: ReturnType<Mocha.Suite['isPending']>
+  is_pending: ReturnType<Mocha.Suite['isPending']>
+  mocha_id: string
   title: Mocha.Suite['title']
 }
 

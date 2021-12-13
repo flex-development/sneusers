@@ -50,8 +50,11 @@ const configuration = (env?: NodeEnv, port?: NumberString): EnvVars => {
   }
 }
 
-/** @property {string[]} envFilePath - Custom environment files */
-export const envFilePath = [configuration().NODE_ENV].flatMap((e: NodeEnv) => [
+/** @property {EnvVars} CONF - Validated environment variables */
+export const CONF: EnvVars = configuration()
+
+/** @property {string[]} ENV_FILE_PATH - Custom environment files */
+export const ENV_FILE_PATH = [CONF.NODE_ENV].flatMap((e: NodeEnv) => [
   `${process.cwd()}/.env.${e}.local`,
   `${process.cwd()}/.env.${e}`,
   `${process.cwd()}/.env.defaults`

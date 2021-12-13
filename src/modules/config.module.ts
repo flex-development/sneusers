@@ -1,7 +1,7 @@
 import { ConfigModule } from '@nestjs/config'
 import configuration, {
   CONF,
-  envFilePath
+  ENV_FILE_PATH as envFilePath
 } from '@sneusers/config/configuration'
 
 /**

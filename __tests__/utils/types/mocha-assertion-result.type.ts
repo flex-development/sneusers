@@ -1,3 +1,4 @@
+import type { OrUndefined } from '@flex-development/tutils'
 import type MochaTestResult from './mocha-test-result.type'
 
 /**
@@ -9,21 +10,21 @@ import type MochaTestResult from './mocha-test-result.type'
  * Object representing a {@link Mocha.Test} result summary.
  */
 type MochaAssertionResult = {
-  __mocha_id__: string
   body: Mocha.Test['body']
-  currentRetry: number
+  current_retry: number
   duration: Mocha.Test['duration']
   err: Mocha.Test['err'] | null
-  failureMessages: string[]
+  failure_messages: string[]
   file: MochaTestResult['file']
-  fullTitle: ReturnType<Mocha.Test['fullTitle']>
-  isPending: ReturnType<Mocha.Test['isPending']>
-  parent: { __mocha_id__: string; fullTitle: string } | undefined
+  full_title: ReturnType<Mocha.Test['fullTitle']>
+  is_pending: ReturnType<Mocha.Test['isPending']>
+  mocha_id: string
+  parent: OrUndefined<{ full_title: string; mocha_id: string }>
   speed: Mocha.Test['speed']
   state: Mocha.Test['state']
   status: Exclude<Mocha.Test['state'], undefined> | 'pending'
   title: Mocha.Test['title']
-  titlePath: ReturnType<Mocha.Test['titlePath']>
+  title_path: ReturnType<Mocha.Test['titlePath']>
 }
 
 export default MochaAssertionResult

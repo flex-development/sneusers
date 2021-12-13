@@ -11,7 +11,7 @@ import type { TestingModule } from '@nestjs/testing'
  */
 type NestTestApp = {
   app: INestApplication
-  moduleRef: TestingModule
+  module_ref: TestingModule
 }
 
 export default NestTestApp

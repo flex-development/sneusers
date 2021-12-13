@@ -24,10 +24,10 @@ const createApp = async (
   provider?: any,
   value?: any
 ): Promise<NestTestApp> => {
-  const moduleRef = await createTestingModule(metadata, provider, value)
-  const app = await useGlobal(moduleRef.createNestApplication())
+  const module_ref = await createTestingModule(metadata, provider, value)
+  const app = await useGlobal(module_ref.createNestApplication())
 
-  return { app, moduleRef }
+  return { app, module_ref }
 }
 
 export default createApp
