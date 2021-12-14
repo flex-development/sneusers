@@ -6,8 +6,9 @@
   "eslint.packageManager": "yarn",
   "eslint.validate": ["javascript", "markdown", "typescript"],
   "files.associations": {
-    ".env*": "shellscript",
-    ".nycrc*": "json",
+    "*.env*": "shellscript",
+    "*.markdownlintignore": "ignore",
+    "*.nycrc*": "json",
     "commit-msg": "shellscript",
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
