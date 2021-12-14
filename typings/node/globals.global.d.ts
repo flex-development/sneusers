@@ -8,6 +8,9 @@ declare global {
       sandbox: typeof sandbox
     }
   }
+
+  const PKG: string
+  type Package = typeof import('../../package.json')
 }
 
 export {}

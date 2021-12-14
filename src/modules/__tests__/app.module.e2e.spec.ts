@@ -1,7 +1,6 @@
-import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
-import configuration from '@sneusers/config/configuration'
+import { PACKAGE } from '@sneusers/config/constants.config'
 import createApp from '@tests/utils/create-app.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
 import type { Response, SuperTest, Test } from 'supertest'
@@ -29,7 +28,6 @@ describe('e2e:modules/AppModule', () => {
   })
 
   describe('/', () => {
-    const { DESCRIPTION, TITLE, VERSION } = configuration(NodeEnv.TEST)
     const URL = stubURLPath()
 
     describe('GET', () => {
@@ -49,15 +47,15 @@ describe('e2e:modules/AppModule', () => {
         })
 
         it('should return response with project description', () => {
-          assert.strictEqual(res.body.info.description, DESCRIPTION)
+          assert.strictEqual(res.body.info.description, PACKAGE.description)
         })
 
         it('should return response with project title', () => {
-          assert.strictEqual(res.body.info.title, TITLE)
+          assert.strictEqual(res.body.info.title, PACKAGE.name.split('/')[1])
         })
 
         it('should return response with project version', () => {
-          assert.strictEqual(res.body.info.version, VERSION)
+          assert.strictEqual(res.body.info.version, PACKAGE.version)
         })
       })
     })

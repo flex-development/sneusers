@@ -41,13 +41,10 @@ const validate = ({
   DB_PORT = '3306',
   DB_TIMEZONE = '-05:00',
   DB_USERNAME,
-  DESCRIPTION = '',
   HOST,
   HOSTNAME = 'localhost',
   NODE_ENV = NodeEnv.DEV,
-  PORT = '8080',
-  TITLE = 'sneusers',
-  VERSION
+  PORT = '8080'
 }: Record<string, any>): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
@@ -75,12 +72,9 @@ const validate = ({
   env.DB_PORT = Number.parseInt(DB_PORT.toString())
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
-  env.DESCRIPTION = DESCRIPTION
   env.DEV = NODE_ENV === NodeEnv.DEV
   env.HOST = HOST || `${env.PROTOCOL}://${env.HOSTNAME}:${env.PORT}`
   env.TEST = NODE_ENV === NodeEnv.TEST
-  env.TITLE = TITLE
-  env.VERSION = VERSION
 
   // Validate environment variables
   const errors = validateSync(env, {

@@ -2,6 +2,7 @@ import chai, { assert } from 'chai'
 import faker from 'faker'
 import { format } from 'pretty-format'
 import sinon from 'sinon'
+import PACKAGE from '../../package.json'
 
 /**
  * @file Global Test Configuration - Mocha Global Fixtures
@@ -11,9 +12,10 @@ import sinon from 'sinon'
  */
 
 /** Tell TypeScript to use {@link NodeJS.TestingGlobal} type */
-declare const global: NodeJS.TestingGlobal
+declare const global: NodeJS.TestingGlobal & { PKG: typeof PKG }
 
 // ! Update global namespace
+global.PKG = JSON.stringify(PACKAGE)
 global.assert = assert
 global.chai = chai
 global.faker = faker

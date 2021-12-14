@@ -9,7 +9,7 @@
 # - https://mochajs.org/#command-line-usage
 
 # 1. Load default environment variables
-. ./.env ./.env.defaults
+. ./.env.defaults
 
 # 2. Set test environment variables
 export DEBUG='superagent'

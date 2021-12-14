@@ -2,29 +2,28 @@
 Reflect.deleteProperty(process.env, 'NODE_OPTIONS')
 
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
-import configuration from '@sneusers/config/configuration'
-import EnvironmentVariables from '@sneusers/models/environment-variables.model'
 import tsTransformPaths from '@zerollup/ts-transform-paths'
 import path from 'path'
 import resolve from 'resolve-from'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import type { CustomTransformers, Program } from 'typescript'
-import { Configuration } from 'webpack'
+import { Configuration, DefinePlugin } from 'webpack'
 import { merge as mergeWebpack } from 'webpack-merge'
+import PACKAGE from './package.json'
 
 /**
  * @file NestJS Custom Webpack Configuration
  * @see https://docs.nestjs.com/cli/monorepo#webpack-options
  */
 
-/** @property {EnvironmentVariables} ENV - Validated environment variables */
-const ENV: EnvironmentVariables = configuration()
-
 /** @property {string[]} EXTENSIONS - Resolvable file extensions */
 const EXTENSIONS: string[] = ['.cjs', '.js', '.json', '.ts']
 
+/** @property {NodeEnv} NODE_ENV - Node environment */
+const NODE_ENV: NodeEnv = (process.env.NODE_ENV || NodeEnv.DEV) as NodeEnv
+
 /** @property {string} TS_NODE_PROJECT - Path to tsconfig file */
-const TS_NODE_PROJECT: string = './tsconfig.app.json'
+const TS_NODE_PROJECT: string = `${process.cwd()}/tsconfig.app.json`
 
 /**
  * Alters the native NestJS webpack configuration.
@@ -35,7 +34,7 @@ const TS_NODE_PROJECT: string = './tsconfig.app.json'
 const config = (config: Configuration): Configuration => {
   // Set context and mode
   config.context = process.cwd()
-  config.mode = ENV.NODE_ENV === NodeEnv.TEST ? 'none' : ENV.NODE_ENV
+  config.mode = NODE_ENV === NodeEnv.TEST ? 'none' : NODE_ENV
 
   // Override resolve options
   config.resolve = {
@@ -52,6 +51,12 @@ const config = (config: Configuration): Configuration => {
       })
     ]
   }
+
+  // Push additional plugins
+  config.plugins = [
+    new DefinePlugin({ PKG: JSON.stringify(JSON.stringify(PACKAGE)) }),
+    ...(config?.plugins ?? [])
+  ]
 
   // Remove TypeScript rule
   config.module && Reflect.deleteProperty(config.module, 'rules')
@@ -101,7 +106,7 @@ const config = (config: Configuration): Configuration => {
       mangleExports: true,
       mergeDuplicateChunks: true,
       minimize: config.mode === NodeEnv.PROD,
-      nodeEnv: ENV.NODE_ENV,
+      nodeEnv: NODE_ENV,
       removeAvailableModules: true,
       removeEmptyChunks: true,
       sideEffects: 'flag',

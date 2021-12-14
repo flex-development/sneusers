@@ -92,14 +92,6 @@ class EnvironmentVariables {
   DB_USERNAME: string
 
   /**
-   * Application description.
-   *
-   * @default ''
-   */
-  @IsString()
-  DESCRIPTION: string
-
-  /**
    * Indicates if application is running in `development` Node environment.
    *
    * **Note**: This value is computed by the application.
@@ -174,22 +166,6 @@ class EnvironmentVariables {
    */
   @IsBoolean()
   TEST: boolean
-
-  /**
-   * Application title.
-   *
-   * @default 'sneusers'
-   */
-  @IsString()
-  @IsNotEmpty()
-  TITLE: string
-
-  /**
-   * Application version.
-   */
-  @IsString()
-  @IsNotEmpty()
-  VERSION: string
 }
 
 export default EnvironmentVariables

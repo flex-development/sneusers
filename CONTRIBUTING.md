@@ -45,46 +45,44 @@ This project uses Yarn 2. The Yarn configuration for this project can be found
 in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 [Yarn 2 Migration docs][1].
 
-### Environment
+### Environment Variables
 
-#### Environment Variables
+#### Application
 
-Project environment variables are listed below.
+| name                  | required | development        | test               | production         | build, release, deploy (local & ci) |
+| --------------------- | -------- | ------------------ | ------------------ | ------------------ | ----------------------------------- |
+| `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_LOG_QUERY_PARAMS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_LOGGING`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_PASSWORD`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_TIMEZONE`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `DB_USERNAME`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
+| `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
+| `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
+
+Default values are located in `.env.defaults`. Consult a project maintainer for
+required environment variables not found in an environment file. Once located,
+add them to a `env.*.local` file.
+
+#### Global
 
 | name                     | required | development        | test               | production         | build, release, deploy (local & ci) |
 | ------------------------ | -------- | ------------------ | ------------------ | ------------------ | ----------------------------------- |
 | `DEBUG_COLORS`           | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
 | `DEBUG`                  | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DESCRIPTION`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_AUTO_LOAD_MODELS`    | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_HOST`                | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_LOG_QUERY_PARAMS`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_LOGGING`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_NAME`                | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_PASSWORD`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_PORT`                | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_TIMEZONE`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_USERNAME`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
 | `GITHUB_ACTIONS`         | `false`  | :x:                | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `HOST`                   | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `HOSTNAME`               | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
 | `INIT_CWD`**\***         | `true`   | :x:                | :x:                | :x:                | :white_check_mark:                  |
-| `NODE_ENV`               | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
 | `NODE_OPTIONS`           | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `NPM_TOKEN_FLDV`         | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
 | `NPM_TOKEN`              | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `PAT_GPR_FLDV`           | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
 | `PAT_GPR`                | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `PORT`                   | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `TITLE`                  | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `VERSION`                | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
 | `npm_package_name`**\*** | `true`   | :x:                | :x:                | :x:                | :white_check_mark:                  |
 
 **\*** Environment variable [specific to Yarn 2][2]
-
-Default values are located in `.env.defaults`. Consult a project maintainer for
-required environment variables not found in an environment file. Once located,
-add them to a `env.*.local` file.
 
 If you're using [ZSH][3], you can use the [`dotenv`][4] plugin to autosource the
 project [`.env`](.env) file. Otherwise, follow the instructions in

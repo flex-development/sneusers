@@ -114,7 +114,7 @@ module.exports = {
           'ExceptionJSON',
           'Mocha',
           'NodeJS',
-          'NodeModule',
+          'Package',
           'never',
           'unknown'
         ]

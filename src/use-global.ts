@@ -1,9 +1,8 @@
 import type { INestApplication } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import type { Request as Req, Response as Res } from 'express'
-import { EnvironmentVariables as EnvVars } from './models'
+import { PACKAGE } from './config/constants.config'
 
 /**
  * @file Server Configuration - useGlobal
@@ -27,21 +26,20 @@ import { EnvironmentVariables as EnvVars } from './models'
  * @return {Promise<INestApplication>} Promise containing enhanced `app`
  */
 const useGlobal = async (app: INestApplication): Promise<INestApplication> => {
-  // Get app configuration service
-  const config = app.get<ConfigService<EnvVars, true>>(ConfigService)
-
-  // Get environment variables
-  const DESCRIPTION = config.get<EnvVars['DESCRIPTION']>('DESCRIPTION')
-  const TITLE = config.get<EnvVars['TITLE']>('TITLE')
-  const VERSION = config.get<EnvVars['VERSION']>('VERSION')
-
   // Initialize documentation builder
   const builder = new DocumentBuilder()
 
-  // Set info.description, info.title, and info.version
-  builder.setDescription(DESCRIPTION)
-  builder.setTitle(TITLE)
-  builder.setVersion(VERSION)
+  // Get package data
+  const { bugs, description, homepage, license, name, version } = PACKAGE
+  const { 0: org = '', 1: name_no_org = '' } = name.split('/')
+
+  // Set basic info
+  builder.setContact(org, bugs, undefined as unknown as string)
+  builder.setDescription(description)
+  builder.setExternalDoc('GitHub Repository', homepage)
+  builder.setLicense(license, undefined as unknown as string)
+  builder.setTitle(name_no_org)
+  builder.setVersion(version)
 
   // Get documentation options
   const options: SwaggerDocumentOptions = {

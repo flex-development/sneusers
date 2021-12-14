@@ -45,7 +45,6 @@ describe('integration:modules/AppModule', () => {
         { expected: 'number', variable: 'DB_PORT' },
         { expected: 'string', variable: 'DB_TIMEZONE' },
         { expected: 'string', variable: 'DB_USERNAME' },
-        { expected: 'string', variable: 'DESCRIPTION' },
         { expected: 'boolean', variable: 'DEV' },
         { expected: 'string', variable: 'HOST' },
         { expected: 'string', variable: 'HOSTNAME' },
@@ -53,9 +52,7 @@ describe('integration:modules/AppModule', () => {
         { expected: 'number', variable: 'PORT' },
         { expected: 'boolean', variable: 'PROD' },
         { expected: 'string', type: 'Protocol', variable: 'PROTOCOL' },
-        { expected: 'boolean', variable: 'TEST' },
-        { expected: 'string', variable: 'TITLE' },
-        { expected: 'string', variable: 'VERSION' }
+        { expected: 'boolean', variable: 'TEST' }
       ]
 
       cases.forEach(({ expected, type = expected, variable }) => {
