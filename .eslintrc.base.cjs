@@ -432,7 +432,8 @@ module.exports = {
     {
       files: ['webpack.config.ts'],
       rules: {
-        '@typescript-eslint/naming-convention': 0
+        '@typescript-eslint/naming-convention': 0,
+        'sort-keys': 0
       }
     }
   ],

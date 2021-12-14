@@ -56,6 +56,8 @@ jobs:
       - id: test
         name: Run test suites
         run: yarn test
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       - id: build
         name: Build project
         run: NODE_ENV=test yarn build

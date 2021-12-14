@@ -21,6 +21,7 @@ module.exports = {
           'dtos',
           'enums',
           'localhost',
+          'mysql',
           'poq',
           'req',
           'sneusers',

@@ -1,7 +1,8 @@
 import { ConfigModule } from '@nestjs/config'
 import configuration, {
-  CONF,
-  ENV_FILE_PATH as envFilePath
+  ENV,
+  ENV_FILE_PATH as envFilePath,
+  validate
 } from '@sneusers/config/configuration'
 
 /**
@@ -11,11 +12,12 @@ import configuration, {
  */
 
 export default ConfigModule.forRoot({
-  cache: CONF.PROD,
+  cache: ENV.PROD,
   envFilePath,
   expandVariables: true,
   ignoreEnvFile: false,
   ignoreEnvVars: false,
   isGlobal: true,
-  load: [configuration]
+  load: [configuration],
+  validate
 })

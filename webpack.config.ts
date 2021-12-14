@@ -1,8 +1,9 @@
-// Remove NODE_OPTIONS
-delete process.env.NODE_OPTIONS
+// ! Remove NODE_OPTIONS (hangs on 'Webpack is building your sources' otherwise)
+Reflect.deleteProperty(process.env, 'NODE_OPTIONS')
 
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
-import isNodeEnv from '@flex-development/tutils/guards/is-node-env.guard'
+import configuration from '@sneusers/config/configuration'
+import EnvironmentVariables from '@sneusers/models/environment-variables.model'
 import tsTransformPaths from '@zerollup/ts-transform-paths'
 import path from 'path'
 import resolve from 'resolve-from'
@@ -16,6 +17,15 @@ import { merge as mergeWebpack } from 'webpack-merge'
  * @see https://docs.nestjs.com/cli/monorepo#webpack-options
  */
 
+/** @property {EnvironmentVariables} ENV - Validated environment variables */
+const ENV: EnvironmentVariables = configuration()
+
+/** @property {string[]} EXTENSIONS - Resolvable file extensions */
+const EXTENSIONS: string[] = ['.cjs', '.js', '.json', '.ts']
+
+/** @property {string} TS_NODE_PROJECT - Path to tsconfig file */
+const TS_NODE_PROJECT: string = './tsconfig.app.json'
+
 /**
  * Alters the native NestJS webpack configuration.
  *
@@ -23,29 +33,19 @@ import { merge as mergeWebpack } from 'webpack-merge'
  * @return {Configuration} Updated webpack configuration
  */
 const config = (config: Configuration): Configuration => {
-  // Get Node environment
-  let NODE_ENV = process.env.NODE_ENV as NodeEnv
-  NODE_ENV = (isNodeEnv(NODE_ENV) && NODE_ENV) || NodeEnv.DEV
-
   // Set context and mode
   config.context = process.cwd()
-  config.mode = NODE_ENV === NodeEnv.TEST ? 'none' : NODE_ENV
-
-  // Get path to tsconfig file
-  const TS_NODE_PROJECT = `${config.context}/tsconfig.app.json`
-
-  // Get resolvable extensions
-  const extensions = ['.cjs', '.js', '.json', '.ts']
+  config.mode = ENV.NODE_ENV === NodeEnv.TEST ? 'none' : ENV.NODE_ENV
 
   // Override resolve options
   config.resolve = {
-    extensions,
+    extensions: EXTENSIONS,
     plugins: [
       new TsconfigPathsPlugin({
         baseUrl: config.context,
         configFile: TS_NODE_PROJECT,
         context: config.context,
-        extensions,
+        extensions: EXTENSIONS,
         logInfoToStdOut: false,
         logLevel: 'WARN',
         silent: false
@@ -61,7 +61,6 @@ const config = (config: Configuration): Configuration => {
       rules: [
         {
           test: /.ts?$/,
-          // eslint-disable-next-line sort-keys
           exclude: /node_modules/,
           include: [
             path.join(config.context, '__tests__'),
@@ -77,8 +76,8 @@ const config = (config: Configuration): Configuration => {
             options: {
               colors: true,
               configFile: TS_NODE_PROJECT,
-              getCustomTransformers(prog: Program): CustomTransformers {
-                const transformer = tsTransformPaths(prog)
+              getCustomTransformers(program: Program): CustomTransformers {
+                const transformer = tsTransformPaths(program)
 
                 const afterDeclarations = [transformer.afterDeclarations]
                 const before = [transformer.before]
@@ -101,8 +100,8 @@ const config = (config: Configuration): Configuration => {
       emitOnErrors: false,
       mangleExports: true,
       mergeDuplicateChunks: true,
-      minimize: config.mode === 'production',
-      nodeEnv: NODE_ENV,
+      minimize: config.mode === NodeEnv.PROD,
+      nodeEnv: ENV.NODE_ENV,
       removeAvailableModules: true,
       removeEmptyChunks: true,
       sideEffects: 'flag',
