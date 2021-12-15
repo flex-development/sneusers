@@ -23,7 +23,7 @@ jobs:
       PAT_GPR: ${{ secrets.PAT_GPR_ADMIN }}
     strategy:
       matrix:
-        node: [14.13.1, 16.0.0]
+        node: [14.13.1]
     steps:
       - id: checkout
         name: Checkout branch

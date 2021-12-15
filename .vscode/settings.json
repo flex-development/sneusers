@@ -13,6 +13,11 @@
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
   },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": false,
+    "**/yarn-lock.json": true
+  },
   "prettier.arrowParens": "avoid",
   "prettier.bracketSpacing": true,
   "prettier.configPath": "./.prettierrc.cjs",

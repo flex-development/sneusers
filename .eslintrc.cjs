@@ -25,6 +25,7 @@ module.exports = {
           'poq',
           'req',
           'sneusers',
+          'sqlite',
           'stringified',
           'subdomain',
           'subdomains',

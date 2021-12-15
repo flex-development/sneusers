@@ -5,13 +5,18 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsString
+  IsString,
+  MinLength,
+  ValidateIf
 } from 'class-validator'
 
 /**
  * @file Models - EnvironmentVariables
  * @module sneusers/models/EnvironmentVariables
  */
+
+/** @property {boolean} PROD - Production environment check */
+const PROD = process.env.NODE_ENV === NodeEnv.PROD
 
 /**
  * Environment variables used by this application.
@@ -34,6 +39,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @ValidateIf(() => PROD)
   DB_HOST: string
 
   /**
@@ -64,6 +70,8 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @MinLength(4)
+  @ValidateIf(() => PROD)
   DB_PASSWORD: string
 
   /**
@@ -72,6 +80,7 @@ class EnvironmentVariables {
    * @default 3306
    */
   @IsNumber()
+  @ValidateIf(() => PROD)
   DB_PORT: number
 
   /**
@@ -82,6 +91,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @ValidateIf(() => PROD)
   DB_TIMEZONE: string
 
   /**
@@ -89,6 +99,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @ValidateIf(() => PROD)
   DB_USERNAME: string
 
   /**

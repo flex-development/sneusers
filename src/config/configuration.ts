@@ -1,12 +1,10 @@
-import { ExceptionCode } from '@flex-development/exceptions/enums'
-import { ValidationException } from '@flex-development/exceptions/exceptions'
 import type { NumberString } from '@flex-development/tutils'
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import isNIL from '@flex-development/tutils/guards/is-nil.guard'
 import Protocol from '@sneusers/enums/protocol.enum'
 import { EnvironmentVariables } from '@sneusers/models'
 import { classToPlain } from 'class-transformer'
-import { validateSync } from 'class-validator'
+import { validateSync, ValidationError } from 'class-validator'
 import { config } from 'dotenv-defaults'
 import expand from 'dotenv-expand'
 
@@ -29,7 +27,7 @@ const ENV_FILE_PATH = [process.env.NODE_ENV as string].flatMap((e: string) => [
  *
  * @param {Record<string, any>} config - Object containing environment variables
  * @return {EnvironmentVariables} **Validated** environment variables
- * @throws {ValidationException}
+ * @throws {ValidationError[]}
  */
 const validate = ({
   DB_AUTO_LOAD_MODELS = 'true',
@@ -77,7 +75,7 @@ const validate = ({
   env.TEST = NODE_ENV === NodeEnv.TEST
 
   // Validate environment variables
-  const errors = validateSync(env, {
+  const errors: ValidationError[] = validateSync(env, {
     enableDebugMessages: true,
     forbidUnknownValues: true,
     stopAtFirstError: false,
@@ -85,12 +83,7 @@ const validate = ({
   })
 
   // Throw errors if found
-  if (errors.length > 0) {
-    throw new ValidationException('EnvironmentVariables', {
-      code: ExceptionCode.INTERNAL_SERVER_ERROR,
-      errors
-    })
-  }
+  if (errors.length > 0) throw errors
 
   // Return validated environment variables as plain object
   return classToPlain(env) as EnvironmentVariables

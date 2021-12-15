@@ -86,3 +86,6 @@ __tests__/report.json
 # Builds & Distributions
 dist/*
 *.zip
+
+# Database
+src/db
