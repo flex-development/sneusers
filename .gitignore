@@ -88,4 +88,5 @@ dist/*
 *.zip
 
 # Database
+docs/*.sql
 src/db

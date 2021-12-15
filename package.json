@@ -18,12 +18,12 @@
     "url": "https://github.com/unicornware"
   },
   "files": [
-    "dist",
-    "docs",
     ".env",
     ".env.defaults",
     ".env.production",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "dist",
+    "docs"
   ],
   "main": "dist/main.js",
   "scripts": {
@@ -44,6 +44,7 @@
     "test": "bash ./tools/scripts/mocha.sh",
     "test:coverage": "yarn test; serve ./coverage/lcov-report",
     "build": "nest build",
+    "build:dbdocs": "dbdocs build ./docs/DATABASE.dbml",
     "prepack": "NODE_ENV=production yarn build",
     "start": "NODE_ENV=production nest start",
     "release": "NODE_ENV=production ts-node ./tools/cli/release"
@@ -109,6 +110,7 @@
     "chai": "4.3.4",
     "chalk": "4.1.2",
     "concurrently": "6.3.0",
+    "dbdocs": "0.6.1",
     "eslint": "8.2.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-import-resolver-node": "0.3.6",

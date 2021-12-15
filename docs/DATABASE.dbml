@@ -1,0 +1,46 @@
+// DATABASE ARCHITECTURE
+
+Project sneusers {
+  database_type: 'mysql'
+  note: 'demo users system'
+}
+
+Table users {
+  created_at timestamp [default: `now()`, note: 'when user was created']
+  email varchar(254) [unique, note: 'user email address']
+  first_name text [note: 'first name of user']
+  id tinyint [pk, increment, note: 'user id']
+  last_login tinyint [default: null, note: 'id of last login']
+  last_name text [note: 'last name of user']
+  password varchar [note: 'hashed password']
+  photo_url text(2000) [default: null, note: 'profile photo url']
+  updated_at timestamp [note: 'when user was last modified']
+
+  indexes {
+    (first_name, last_name) [name: 'full_name']
+    created_at [name: 'created_at']
+    first_name [name: 'first_name']
+    id [pk]
+    last_name [name: 'last_name']
+    updated_at [name: 'updated_at']
+  }
+
+  note: 'user info'
+}
+
+Table logins {
+  id tinyint [pk, increment, note: 'login id']
+  login timestamp [note: 'date and time user logged in']
+  user tinyint [note: 'id of user who logged in']
+
+  indexes {
+    id [pk]
+    login [name: 'login']
+    user [name: 'user']
+  }
+
+  note: 'user login info'
+}
+
+Ref: logins.id - users.last_login [delete: no action, update: no action]
+Ref: users.id < logins.user [delete: cascade, update: no action]
