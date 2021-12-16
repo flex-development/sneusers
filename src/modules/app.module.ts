@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common'
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod
+} from '@nestjs/common'
+import * as MIDDLEWARE from '@sneusers/middleware'
 import ConfigModule from './config.module'
 import DatabaseModule from './database.module'
 
@@ -9,4 +15,16 @@ import DatabaseModule from './database.module'
  */
 
 @Module({ imports: [ConfigModule, DatabaseModule], providers: [] })
-export default class AppModule {}
+export default class AppModule implements NestModule {
+  /**
+   * Configures global middleware.
+   *
+   * @param {MiddlewareConsumer} consumer - Applies middleware to routes
+   * @return {void} Nothing when complete
+   */
+  configure(consumer: MiddlewareConsumer): void {
+    for (const m of Object.values(MIDDLEWARE)) {
+      consumer.apply(m).forRoutes({ method: RequestMethod.ALL, path: '*' })
+    }
+  }
+}

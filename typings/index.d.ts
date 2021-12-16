@@ -5,6 +5,7 @@
 /// <reference path='node/globals.global.d.ts' />
 /// <reference path='pretty-format/index.d.ts' />
 /// <reference path='sinon/index.d.ts' />
+/// <reference path='volleyball/index.d.ts' />
 
 // @ts-expect-error Declaration name conflicts with built-in global identifier
 declare let globalThis: typeof global.globalThis

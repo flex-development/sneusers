@@ -10,8 +10,10 @@ import { PACKAGE } from './config/constants.config'
  */
 
 /**
- * Configures `app` to serve [API][1] documentation from the root endpoint, `/`,
- * as well as applies global filters, guards, interceptors, pipes, and prefixes.
+ * Configures `app` to:
+ *
+ * - Serve [API][1] documentation from the root endpoint, `/`
+ * - Apply global filters, guards, interceptors, pipes, and prefixes
  *
  * [1]: https://docs.nestjs.com/openapi/introduction
  *

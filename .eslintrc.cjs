@@ -52,6 +52,13 @@ module.exports = {
       }
     },
     {
+      files: ['src/middleware/http-logger.middleware.ts'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 0,
+        'unicorn/prefer-module': 0
+      }
+    },
+    {
       files: ['src/types/http-exception-json.type.ts'],
       rules: {
         '@typescript-eslint/naming-convention': 0

@@ -738,6 +738,7 @@ __metadata:
     "@nestjs/swagger": 5.1.4
     "@nestjs/testing": 8.2.0
     "@types/chai": 4.2.22
+    "@types/debug": 4.1.7
     "@types/dotenv-defaults": 2.0.1
     "@types/express": 4.17.13
     "@types/express-serve-static-core": 4.17.26
@@ -768,6 +769,7 @@ __metadata:
     class-validator: 0.13.1
     concurrently: 6.3.0
     dbdocs: 0.6.1
+    debug: 4.3.3
     dotenv-defaults: 3.0.0
     dotenv-expand: 5.1.0
     eslint: 8.2.0
@@ -823,6 +825,7 @@ __metadata:
     tsconfig-paths: 3.11.0
     tsconfig-paths-webpack-plugin: 3.5.1
     typescript: 4.5.3
+    volleyball: 1.5.1
     webpack: 5.65.0
     webpack-merge: 5.8.0
     yargs: 17.2.1
@@ -1527,7 +1530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debug@npm:^4.1.7":
+"@types/debug@npm:4.1.7, @types/debug@npm:^4.1.7":
   version: 4.1.7
   resolution: "@types/debug@npm:4.1.7"
   dependencies:
@@ -3205,7 +3208,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.0.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+"chalk@npm:^2.0.0, chalk@npm:^2.4.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -4182,7 +4185,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3":
+"debug@npm:4, debug@npm:4.3.3, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3":
   version: 4.3.3
   resolution: "debug@npm:4.3.3"
   dependencies:
@@ -5414,6 +5417,13 @@ __metadata:
   dependencies:
     flat-cache: ^3.0.4
   checksum: f49701feaa6314c8127c3c2f6173cfefff17612f5ed2daaafc6da13b5c91fd43e3b2a58fd0d63f9f94478a501b167615931e7200e31485e320f74a33885a9c74
+  languageName: node
+  linkType: hard
+
+"filesize@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "filesize@npm:3.6.1"
+  checksum: 9ba47e9df90cd6bb6c0434418123facf9dafbe92c850f29ed50bfa42d60d00f8501a8a9b962f77ec7d1ba30190d5dbda5f6f56c5e56bce9e09729988bf0613c4
   languageName: node
   linkType: hard
 
@@ -11699,6 +11709,17 @@ fsevents@~2.3.2:
     core-util-is: 1.0.2
     extsprintf: ^1.2.0
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
+  languageName: node
+  linkType: hard
+
+"volleyball@npm:1.5.1":
+  version: 1.5.1
+  resolution: "volleyball@npm:1.5.1"
+  dependencies:
+    chalk: ^2.4.0
+    debug: ^3.1.0
+    filesize: ^3.6.1
+  checksum: e3cb27cd5665a72bbc2282df2e4b2d601d61a235cb133915e2e39ae5f852e7af9bf2b83151e5d770ec5d174b1501cbe9bfc4fa449e3022f9e05e5943acde93e2
   languageName: node
   linkType: hard
 
