@@ -60,6 +60,7 @@ const config: UserConfig = {
         'guards',
         'interceptors',
         'interfaces',
+        'middleware',
         'models',
         'modules',
         'pipes',
