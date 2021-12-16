@@ -7,9 +7,8 @@ import path from 'path'
 import resolve from 'resolve-from'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import type { CustomTransformers, Program } from 'typescript'
-import { Configuration, DefinePlugin } from 'webpack'
+import { Configuration } from 'webpack'
 import { merge as mergeWebpack } from 'webpack-merge'
-import PACKAGE from './package.json'
 
 /**
  * @file NestJS Custom Webpack Configuration
@@ -51,12 +50,6 @@ const config = (config: Configuration): Configuration => {
       })
     ]
   }
-
-  // Push additional plugins
-  config.plugins = [
-    new DefinePlugin({ PKG: JSON.stringify(JSON.stringify(PACKAGE)) }),
-    ...(config?.plugins ?? [])
-  ]
 
   // Remove TypeScript rule
   config.module && Reflect.deleteProperty(config.module, 'rules')

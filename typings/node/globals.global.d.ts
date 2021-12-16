@@ -9,7 +9,6 @@ declare global {
     }
   }
 
-  const PKG: string
   type Package = typeof import('../../package.json')
 }
 
