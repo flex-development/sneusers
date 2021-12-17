@@ -5,8 +5,6 @@ import Protocol from '@sneusers/enums/protocol.enum'
 import { EnvironmentVariables } from '@sneusers/models'
 import { classToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
-import { config } from 'dotenv-defaults'
-import expand from 'dotenv-expand'
 
 /**
  * @file Configuration - Environment Variables
@@ -15,12 +13,10 @@ import expand from 'dotenv-expand'
  */
 
 /** @property {string[]} ENV_FILE_PATH - Custom environment files */
-const ENV_FILE_PATH = [process.env.NODE_ENV as string].flatMap((e: string) => [
-  `${process.cwd()}/.env.${e}.local`,
-  `${process.cwd()}/.env.${e}`,
+const ENV_FILE_PATH = [
   `${process.cwd()}/.env.local`,
   `${process.cwd()}/.env.defaults`
-])
+]
 
 /**
  * Validates environment variables.
@@ -100,19 +96,21 @@ const configuration = (
   NODE_ENV?: NodeEnv,
   PORT?: NumberString
 ): EnvironmentVariables => {
-  // Load environment variables
-  for (const path of ENV_FILE_PATH) expand(config({ path }))
-
-  // Get environment variables
-  const ENV = Object.assign({}, process.env)
-
-  // Override Node environment
-  if (!isNIL(NODE_ENV)) ENV.NODE_ENV = NODE_ENV
-
-  // Override port
-  if (!isNIL(PORT)) ENV.PORT = PORT.toString()
-
-  return validate(ENV)
+  return validate({
+    DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
+    DB_HOST: process.env.DB_HOST,
+    DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
+    DB_LOGGING: process.env.DB_LOGGING,
+    DB_NAME: process.env.DB_NAME,
+    DB_PASSWORD: process.env.DB_PASSWORD,
+    DB_PORT: process.env.DB_PORT,
+    DB_TIMEZONE: process.env.DB_TIMEZONE,
+    DB_USERNAME: process.env.DB_USERNAME,
+    HOST: process.env.HOST,
+    HOSTNAME: process.env.HOSTNAME,
+    NODE_ENV: NODE_ENV || process.env.NODE_ENV,
+    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
+  })
 }
 
 /** @property {EnvironmentVariables} ENV - Application environment variables */

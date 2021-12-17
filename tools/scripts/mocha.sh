@@ -4,23 +4,18 @@
 #
 # References:
 #
+# - https://docs.doppler.com/docs/install-cli#usage
 # - https://github.com/istanbuljs/nyc
 # - https://github.com/piotrwitek/ts-mocha
 # - https://mochajs.org/#command-line-usage
 
-# 1. Load default environment variables
-. ./.env.defaults
+# 1. Create ephemeral service token for Doppler
+if [[ $DOPPLER_TOKEN == "" ]]; then
+  export DOPPLER_TOKEN=$(doppler configs tokens create $(doppler configure get project --plain) --config=test --max-age=1m --plain --no-read-env)
+fi
 
-# 2. Set test environment variables
-export DEBUG='superagent'
-export DB_AUTO_LOAD_MODELS=false
-export DB_LOGGING=false
-export NODE_ENV=test
-export PORT=5000
-export TS_NODE_PROJECT=./tsconfig.test.json
-
-# 3. Remove coverage output
+# 2. Remove coverage output
 trash coverage/
 
-# 4. Run test suites
-nyc ts-mocha $@
+# 3. Run test suites
+doppler run -c=test --no-fallback -- nyc ts-mocha $@

@@ -10,7 +10,8 @@
 :construction: [Getting Started](#getting-started)  
 :construction: [Usage](#usage)  
 :construction: [Built With](#built-with)  
-[Contributing](CONTRIBUTING.md)
+[Contributing](CONTRIBUTING.md)  
+[Integrations](INTEGRATIONS.md)
 
 ## Getting Started
 

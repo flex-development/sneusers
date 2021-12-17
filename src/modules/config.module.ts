@@ -15,7 +15,7 @@ export default ConfigModule.forRoot({
   cache: ENV.PROD,
   envFilePath,
   expandVariables: true,
-  ignoreEnvFile: false,
+  ignoreEnvFile: ENV.PROD,
   ignoreEnvVars: false,
   isGlobal: true,
   load: [configuration],

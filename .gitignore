@@ -69,7 +69,9 @@ jspm_packages/
 
 ### Environment ###
 # Environment variables
-.env*.local
+.env*
+!.env.defaults
+!.env.esm
 
 ### Testing ###
 coverage/*

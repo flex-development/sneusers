@@ -2,9 +2,13 @@
  * @file Mocha Configuration - Base
  * @see https://mochajs.org/#command-line-usage
  * @see https://mochajs.org/#configuration-format
+ * @see https://typestrong.org/ts-node/docs/recipes/mocha
  */
 
+/** @property {string} PWD - Current working directory */
 const PWD = process.cwd()
+
+/** @property {string[]} TYPES - Test file prefixes (e.g: `*spec.ts`) */
 const TYPES = ['', 'e2e', 'functional', 'integration']
 
 /** @type {Mocha.MochaInstanceOptions} */
@@ -26,19 +30,14 @@ const config = {
   ignore: ['coverage/**', 'node_modules/**'],
   inlineDiffs: true,
   isWorker: true,
-  /** @see https://typestrong.org/ts-node/docs/recipes/mocha */
-  loader: `${PWD}/tools/loaders/esm.mjs`,
   noHighlighting: false,
-  nodeOption: [
-    'experimental-json-modules',
-    'es-module-specifier-resolution=node',
-    'no-warnings'
-  ],
+  nodeOption: [],
   parallel: true,
   recursive: true,
   reporter: `${PWD}/__tests__/reporters/jsonspec.ts`,
   reporterOptions: [],
   require: [
+    'ts-node/register',
     `${PWD}/tools/helpers/tsconfig-paths.cjs`,
     `${PWD}/__tests__/config/mocha-global-fixtures.ts`,
     `${PWD}/__tests__/config/mocha-root-hooks.ts`

@@ -18,6 +18,7 @@ module.exports = {
         ...RULES_SPELLCHECKER[1],
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
+          'doppler',
           'dtos',
           'enums',
           'localhost',

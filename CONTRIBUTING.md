@@ -4,8 +4,8 @@ This document aims to describe the workflows and rules used for developing this
 project. This includes, but is not limited to:
 
 - how to contribute code (coding standards, testing, documenting source code)
+- how to open new issues
 - how pull requests are handled
-- how to file bug reports
 
 ## Overview
 
@@ -19,26 +19,6 @@ project. This includes, but is not limited to:
 
 ## Getting Started
 
-### Terminology
-
-People interacting with the `sneusers` project are grouped into 4 categories:
-
-- **owner**: `flex-development` organization owners with full admin rights
-- **maintainer**: owners and people added to the organization who actively
-  contribute to projects and have direct push access
-- **contributor**: someone who has helped improve any projects, but does not
-  have direct push access
-- **user**: developers who use any `flex-development` projects and may or may
-  not participate in discussions regarding a given project
-
-A valuable **contribution** is more than implementing new features or fixing
-bugs. It includes:
-
-- fixing documentation
-- filing bug reports with reproducible steps
-- engaging in discussions for new feature requests
-- answering questions
-
 ### Yarn
 
 This project uses Yarn 2. The Yarn configuration for this project can be found
@@ -49,78 +29,103 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 
 #### Application
 
-| name                  | required | development        | test               | production         | build, release, deploy (local & ci) |
-| --------------------- | -------- | ------------------ | ------------------ | ------------------ | ----------------------------------- |
-| `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_LOG_QUERY_PARAMS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_LOGGING`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_PASSWORD`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_TIMEZONE`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DB_USERNAME`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
+| name                  | required | development        | test               | production         | release            |
+| --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
+| `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_DOCS_TOKEN`       | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
+| `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_LOGGING`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_LOG_QUERY_PARAMS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_PASSWORD`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_TIMEZONE`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_USERNAME`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DEBUG_COLORS`        | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DEBUG`               | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `NPM_TOKEN`           | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| `PAT_GPR`             | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
-Default values are located in `.env.defaults`. Consult a project maintainer for
-required environment variables not found in an environment file. Once located,
-add them to a `env.*.local` file.
+Default values are located in `.env.defaults`.
+
+#### GitHub Actions
+
+| name               | required | development | test               | production | release            |
+| ------------------ | -------- | ----------- | ------------------ | ---------- | ------------------ |
+| `GITHUB_ACTIONS`   | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
+| `GITHUB_ENV`       | `false`  | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GITHUB_WORKSPACE` | `false`  | :x:         | :x:                | :x:        | :white_check_mark: |
 
 #### Global
 
-| name                     | required | development        | test               | production         | build, release, deploy (local & ci) |
-| ------------------------ | -------- | ------------------ | ------------------ | ------------------ | ----------------------------------- |
-| `DEBUG_COLORS`           | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `DEBUG`                  | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:                  |
-| `GITHUB_ACTIONS`         | `false`  | :x:                | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `INIT_CWD`**\***         | `true`   | :x:                | :x:                | :x:                | :white_check_mark:                  |
-| `NODE_OPTIONS`           | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `NPM_TOKEN`              | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `PAT_GPR`                | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark:                  |
-| `npm_package_name`**\*** | `true`   | :x:                | :x:                | :x:                | :white_check_mark:                  |
+| name                  | required | development        | test               | production | release            |
+| --------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
+| `NODE_OPTIONS`        | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :x:                |
+| `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:        | :white_check_mark: |
 
-**\*** Environment variable [specific to Yarn 2][2]
+#### Yarn 2
 
-If you're using [ZSH][3], you can use the [`dotenv`][4] plugin to autosource the
-project [`.env`](.env) file. Otherwise, follow the instructions in
-[Clone & Install](#clone--install) to setup your environment.
+| name               | required | development | test | production | release            |
+| ------------------ | -------- | ----------- | ---- | ---------- | ------------------ |
+| `INIT_CWD`         | `true`   | :x:         | :x:  | :x:        | :white_check_mark: |
+| `npm_package_name` | `true`   | :x:         | :x:  | :x:        | :white_check_mark: |
+
+#### Sourcing Environment Variables
+
+Follow the steps below to autosource environment variables:
+
+1. [Configure Doppler CLI][2]
+
+   - [Doppler](docs/INTEGRATIONS.md#doppler) is used to manage and inject
+     application-level environment variables
+
+2. Open a shell startup file
+
+   - e.g: `~/.bash_profile` `~/.bashrc`, `~/.profile`, `~/.zprofile`,
+     `~/.zshenv`, `~/.zshrc`
+
+3. Add the following to your chosen shell startup file:
+
+   ```shell
+   [[ -f "$PWD/.env.defaults" ]] && . $PWD/.env.defaults
+   [[ -f "$PWD/.env.esm" ]] && . $PWD/.env.esm
+   [[ -f "$PWD/.env" ]] && . $PWD/.env
+   [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
+   ```
+
+4. Add the following to `$PWD/.env.defaults`:
+
+   ```shell
+   export DOPPLER_TOKEN=$(doppler configs tokens create ephemeral-$(git config user.username) --max-age 1h --plain --no-read-env)
+   ```
+
+5. Save file and re-launch shell
 
 ### Git Configuration
 
 The examples in this guide contain references to custom Git aliases.
 
-Copy the [starter Git global configuration](.github/.gitconfig) to follow along
-fully, as well as begin extending your own workflow.
-
-### GitHub Packages
-
-Some workspaces depend on scoped packages (e.g: `@flex-development`). Some of
-those packages are published to the [GitHub Package Registry][5], but **_not to
-NPM_**. A [Personal Access Token with at least the `read:packages` scope][6]
-attached is required for installation.
-
-Scopes, their registry servers, and required environment variables are defined
-in [`.yarnrc.yml`](.yarnrc.yml) under the `npmScopes` field.
+See our [`.gitconfig`](.git/config) for an exhausive list of aliases.
 
 ### Clone & Install
 
 ```zsh
 git clone https://github.com/flex-development/sneusers
 cd sneusers
-yarn && yarn bootstrap
+yarn bootstrap
 ```
 
 Note that if you have a global Yarn configuration (or any `YARN_*` environment
 variables set), an error will be displayed in the terminal if any settings
-conflict with the project's Yarn configuration, or the Yarn 2 API. An error will
-also be displayed if you're missing any environment variables.
+conflict with the project's Yarn configuration, or the Yarn 2 API.
 
 ## Contributing Code
 
-[Husky][7] is used to run Git hooks that locally enforce coding and commit
+[Husky][3] is used to run Git hooks that locally enforce coding and commit
 message standards, as well run tests associated with any files changed since the
 last commit.
 
@@ -146,7 +151,7 @@ When creating a new branch, the name should match the following format:
  │           │      │
  │           │      └─⫸ a short, memorable name (possibly the future PR title)
  │           │
- │           └─⫸ check jira issue
+ │           └─⫸ check github issue
  │
  └─⫸ bugfix|feat|hotfix|release
 ```
@@ -154,14 +159,14 @@ When creating a new branch, the name should match the following format:
 For example:
 
 ```zsh
-git chbf PROJ-4-authentication
+git chbf 4-authentication
 ```
 
-will create a new branch titled `feat/PROJ-4-authentication`.
+will create a new branch titled `feat/4-authentication`.
 
 ### Commit Messages
 
-This project follows [Conventional Commit][8] standards and uses [commitlint][9]
+This project follows [Conventional Commit][4] standards and uses [commitlint][5]
 to enforce those standards.
 
 This means every commit must conform to the following format:
@@ -171,7 +176,7 @@ This means every commit must conform to the following format:
  │     │                │
  │     │                └─⫸ summary in present tense; lowercase without period at the end
  │     │
- │     └─⫸ see commitlint.config.js
+ │     └─⫸ see .commitlintrc.ts
  │
  └─⫸ build|ci|chore|docs|feat|fix|perf|refactor|revert|style|test|wip
 
@@ -205,14 +210,14 @@ commit scopes and types.
 
 ### Code Style
 
-[Prettier][10] is used to format code, and [ESLint][11] to lint files.
+[Prettier][6] is used to format code, and [ESLint][7] to lint files.
 
-**Prettier Configuration**
+#### Prettier Configuration
 
 - [`.prettierrc.cjs`](.prettierrc.cjs)
 - [`.prettierignore`](.prettierignore)
 
-**ESLint Configuration**
+#### ESLint Configuration
 
 - [`.eslintrc.cjs`](.eslintrc.cjs)
 - [`.eslintignore`](.eslintignore)
@@ -224,42 +229,24 @@ Source code is located in [`src`](src) directory.
 The purpose of each file should be documented using the `@file` annotation,
 along with an accompanying `@module` annotation.
 
-#### Config
-
-Directory: [`config`](src/config/)
-
-Server application configuration files.
-
-#### Library
-
-Directory: [`lib`](src/lib/)
-
-Global modules and type defintions.
-
-#### Subdomains
-
-Directory: [`subdomains`](src/subdomains/index.ts)
-
-[Domain driven][12] modules.
-
 ### Documentation
 
-- JavaScript & TypeScript: [JSDoc][13], linted with [`eslint-plugin-jsdoc`][14]
+- JavaScript & TypeScript: [JSDoc][8], linted with [`eslint-plugin-jsdoc`][9]
 
 Before making a pull request, be sure your code is well documented, as it will
 be part of your code review.
 
 ### Testing
 
-This project uses a [Mocha][15] x [Chai][16] testing workflow.
+This project uses a [Mocha][10] x [Chai][11] testing workflow.
 
 - run all test suites: `yarn test`
 
 Husky is configured to run tests before every push. If you need to create a new
 issue regarding a test, or need to make a `wip` commit, use Mocha's [inclusive
-tests feature][17] to mark your tests or suites as pending.
+tests feature][12] to mark your tests or suites as pending.
 
-For more details on testing NestJS applications, see [Testing docs][18].
+For more details on testing NestJS applications, see [Testing docs][13].
 
 ### Getting Help
 
@@ -338,7 +325,7 @@ When merging, please make sure to use the following commit message format:
  │     │                │
  │     │                └─⫸ check your pull request
  │     │
- │     └─⫸ see commitlint.config.js
+ │     └─⫸ see .commitlintrc.ts
  │
  └─⫸ build|ci|chore|docs|feat|fix|merge|perf|refactor|release|revert|style|test
 ```
@@ -370,7 +357,7 @@ Before releasing, the following steps must be completed:
      generate the correct build and publish commands
 3. Decide what version bump the release needs (major, minor, patch)
    - versioning
-     - `yarn release` (determines [bumps based on commits][19])
+     - `yarn release` (determines [bumps based on commits][14])
      - `yarn release --first-release`
      - `yarn release --release-as major`
      - `yarn release --release-as minor`
@@ -386,10 +373,11 @@ Before releasing, the following steps must be completed:
    - once the PR is merged, the deployment workflow will be triggered
    - the maintainer who approved the PR should check to make sure the workflow
      completes all jobs as expected. if successful, the workflow will:
-     - **TODO** push container image to the [GitHub Container Registry][20]
+     - **TODO** push container image to the [GitHub Container Registry][15]
      - **TODO** tag latest container image
      - **TODO** deploy api
-     - update the production branch (merge branch `next` into `main`)
+     - **TODO** deploy database design doc to [dbdocs][16]
+     - update production branch (merge branch `next` into `main`)
      - publish previously drafted release
      - delete release branch
    - the maintainer who approved the PR should go through linked issues and:
@@ -397,24 +385,19 @@ Before releasing, the following steps must be completed:
      - add the `status:released` label to all issues (and PRs)
 
 [1]: https://yarnpkg.com/getting-started/migration
-[2]: https://yarnpkg.com/advanced/lifecycle-scripts#environment-variables
-[3]: https://github.com/ohmyzsh/ohmyzsh
-[4]: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv
-[5]: https://github.com/features/packages
-[6]:
-  https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages#about-scopes-and-permissions-for-package-registries
-[7]: https://github.com/typicode/husky
-[8]: https://www.conventionalcommits.org
-[9]: https://github.com/conventional-changelog/commitlint
-[10]: https://prettier.io
-[11]: https://eslint.org
-[12]: https://jsdoc.app
-[13]: https://github.com/gajus/eslint-plugin-jsdoc
-[14]: https://mochajs.org
-[15]: https://www.chaijs.com
-[16]: https://mochajs.org/#inclusive-tests
-[17]: https://khalilstemmler.com/articles/domain-driven-design-intro
-[18]: https://docs.nestjs.com/fundamentals/testing
-[19]: https://www.conventionalcommits.org/en/v1.0.0
-[20]:
+[2]: https://docs.doppler.com/docs/install-cli
+[3]: https://github.com/typicode/husky
+[4]: https://www.conventionalcommits.org
+[5]: https://github.com/conventional-changelog/commitlint
+[6]: https://prettier.io
+[7]: https://eslint.org
+[8]: https://jsdoc.app
+[9]: https://github.com/gajus/eslint-plugin-jsdoc
+[10]: https://mochajs.org
+[11]: https://www.chaijs.com
+[12]: https://mochajs.org/#inclusive-tests
+[13]: https://docs.nestjs.com/fundamentals/testing
+[14]: https://www.conventionalcommits.org/en/v1.0.0
+[15]:
   https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+[16]: https://dbdocs.io/docs

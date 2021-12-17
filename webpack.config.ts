@@ -7,8 +7,10 @@ import path from 'path'
 import resolve from 'resolve-from'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import type { CustomTransformers, Program } from 'typescript'
-import { Configuration } from 'webpack'
+import type { ModuleOptions } from 'webpack'
+import { Configuration, DefinePlugin } from 'webpack'
 import { merge as mergeWebpack } from 'webpack-merge'
+import secrets from './tools/helpers/secrets'
 
 /**
  * @file NestJS Custom Webpack Configuration
@@ -28,31 +30,35 @@ const TS_NODE_PROJECT: string = `${process.cwd()}/tsconfig.app.json`
  * Alters the native NestJS webpack configuration.
  *
  * @param {Configuration} config - Default NestJS webpack configuration
- * @return {Configuration} Updated webpack configuration
+ * @return {Configuration} Enhanced webpack configuration
  */
 const config = (config: Configuration): Configuration => {
+  // Remove NestJS defaults
+  Reflect.deleteProperty(config, 'resolve')
+  Reflect.deleteProperty(config.module as ModuleOptions, 'rules')
+
   // Set context and mode
   config.context = process.cwd()
   config.mode = NODE_ENV === NodeEnv.TEST ? 'none' : NODE_ENV
 
-  // Override resolve options
-  config.resolve = {
-    extensions: EXTENSIONS,
-    plugins: [
-      new TsconfigPathsPlugin({
-        baseUrl: config.context,
-        configFile: TS_NODE_PROJECT,
-        context: config.context,
-        extensions: EXTENSIONS,
-        logInfoToStdOut: false,
-        logLevel: 'WARN',
-        silent: false
-      })
-    ]
-  }
-
-  // Remove TypeScript rule
-  config.module && Reflect.deleteProperty(config.module, 'rules')
+  // Get application environment variables
+  const {
+    DB_AUTO_LOAD_MODELS,
+    DB_HOST,
+    DB_LOG_QUERY_PARAMS,
+    DB_LOGGING,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_TIMEZONE,
+    DB_USERNAME,
+    HOST,
+    HOSTNAME,
+    PORT
+  } = secrets({
+    config: NODE_ENV,
+    log_secrets: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false')
+  })
 
   return mergeWebpack(config, {
     module: {
@@ -65,10 +71,7 @@ const config = (config: Configuration): Configuration => {
             path.join(config.context, 'src'),
             path.join(config.context, 'webpack.config.ts')
           ],
-          resolve: {
-            extensions: config.resolve.extensions,
-            fullySpecified: false
-          },
+          resolve: { extensions: EXTENSIONS, fullySpecified: false },
           use: {
             loader: resolve(config.context, 'ts-loader'),
             options: {
@@ -108,6 +111,37 @@ const config = (config: Configuration): Configuration => {
     output: { clean: true },
     performance: {
       hints: 'warning'
+    },
+    plugins: [
+      new DefinePlugin({
+        'process.env.DB_AUTO_LOAD_MODELS': JSON.stringify(DB_AUTO_LOAD_MODELS),
+        'process.env.DB_HOST': JSON.stringify(DB_HOST),
+        'process.env.DB_LOG_QUERY_PARAMS': JSON.stringify(DB_LOG_QUERY_PARAMS),
+        'process.env.DB_LOGGING': JSON.stringify(DB_LOGGING),
+        'process.env.DB_NAME': JSON.stringify(DB_NAME),
+        'process.env.DB_PASSWORD': JSON.stringify(DB_PASSWORD),
+        'process.env.DB_PORT': JSON.stringify(DB_PORT),
+        'process.env.DB_TIMEZONE': JSON.stringify(DB_TIMEZONE),
+        'process.env.DB_USERNAME': JSON.stringify(DB_USERNAME),
+        'process.env.HOST': JSON.stringify(HOST),
+        'process.env.HOSTNAME': JSON.stringify(HOSTNAME),
+        'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+        'process.env.PORT': JSON.stringify(PORT)
+      })
+    ],
+    resolve: {
+      extensions: EXTENSIONS,
+      plugins: [
+        new TsconfigPathsPlugin({
+          baseUrl: config.context,
+          configFile: TS_NODE_PROJECT,
+          context: config.context,
+          extensions: EXTENSIONS,
+          logInfoToStdOut: false,
+          logLevel: 'WARN',
+          silent: false
+        })
+      ]
     }
   })
 }
