@@ -47,6 +47,7 @@ services:
     volumes:
       - .:/usr/app:cached
       - node_modules:/usr/app/node_modules:delegated
+      - yarn_cache:/usr/app/.yarn/cache:delegated
     working_dir: /usr/app
   app:
     extends:
@@ -62,3 +63,4 @@ networks:
 
 volumes:
   node_modules:
+  yarn_cache:
