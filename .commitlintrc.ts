@@ -67,6 +67,7 @@ const config: UserConfig = {
         'pipes',
         'release',
         'scripts',
+        'server',
         'subdomains',
         'tests',
         'tools',

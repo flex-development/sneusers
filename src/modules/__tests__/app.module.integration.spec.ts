@@ -51,7 +51,6 @@ describe('integration:modules/AppModule', () => {
         { expected: 'string', type: 'NodeEnv', variable: 'NODE_ENV' },
         { expected: 'number', variable: 'PORT' },
         { expected: 'boolean', variable: 'PROD' },
-        { expected: 'string', type: 'Protocol', variable: 'PROTOCOL' },
         { expected: 'boolean', variable: 'TEST' }
       ]
 

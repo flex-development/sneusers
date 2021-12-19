@@ -29,9 +29,15 @@ services:
       HOST:
       HOSTNAME: ${HOSTNAME}
       NODE_ENV: ${NODE_ENV}
+      # Causes container to stop running; throws "Unexpected end of JSON input"
+      # Unable to leverage DefinePlugin in webpack config
+      # NODE_OPTIONS: -r ts-node/register
       NPM_TOKEN: ${NPM_TOKEN}
       PAT_GPR: ${PAT_GPR}
       PORT: ${PORT}
+      SSL_CERT: ${SSL_CERT}
+      SSL_KEY: ${SSL_KEY}
+      SSL_PASSPHRASE: ${SSL_PASSPHRASE}
     networks:
       - nestjs
     ports:

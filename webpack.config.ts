@@ -1,6 +1,3 @@
-// ! Fixes @nestjs/cli not auto-detecting webpack config
-process.env.NODE_OPTIONS = '-r ts-node/register'
-
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import tsTransformPaths from '@zerollup/ts-transform-paths'
 import path from 'path'
@@ -54,7 +51,10 @@ const config = (config: Configuration): Configuration => {
     DB_USERNAME,
     HOST,
     HOSTNAME,
-    PORT
+    PORT,
+    SSL_CERT,
+    SSL_KEY,
+    SSL_PASSPHRASE
   } = secrets({
     config: NODE_ENV,
     log_secrets: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false')
@@ -126,7 +126,10 @@ const config = (config: Configuration): Configuration => {
         'process.env.HOST': JSON.stringify(HOST),
         'process.env.HOSTNAME': JSON.stringify(HOSTNAME),
         'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-        'process.env.PORT': JSON.stringify(PORT)
+        'process.env.PORT': JSON.stringify(PORT),
+        'process.env.SSL_CERT': JSON.stringify(SSL_CERT),
+        'process.env.SSL_KEY': JSON.stringify(SSL_KEY),
+        'process.env.SSL_PASSPHRASE': JSON.stringify(SSL_PASSPHRASE)
       })
     ],
     resolve: {

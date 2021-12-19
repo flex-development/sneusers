@@ -1,7 +1,6 @@
 import type { NumberString } from '@flex-development/tutils'
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import isNIL from '@flex-development/tutils/guards/is-nil.guard'
-import Protocol from '@sneusers/enums/protocol.enum'
 import { EnvironmentVariables } from '@sneusers/models'
 import { classToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
@@ -35,7 +34,10 @@ const validate = ({
   HOST,
   HOSTNAME = 'localhost',
   NODE_ENV = NodeEnv.DEV,
-  PORT = '8080'
+  PORT = '8080',
+  SSL_CERT,
+  SSL_KEY,
+  SSL_PASSPHRASE
 }: Record<string, any>): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
@@ -50,9 +52,6 @@ const validate = ({
   env.HOSTNAME = HOSTNAME
   env.PORT = Number.parseInt(PORT.toString())
 
-  // Set network protocol
-  env.PROTOCOL = Protocol[`HTTP${env.PROD ? 'S' : ''}`]
-
   // Assign remaining environment variables
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
@@ -64,7 +63,10 @@ const validate = ({
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
-  env.HOST = HOST || `${env.PROTOCOL}://${env.HOSTNAME}:${env.PORT}`
+  env.HOST = HOST || `https://${env.HOSTNAME}:${env.PORT}`
+  env.SSL_CERT = SSL_CERT
+  env.SSL_KEY = SSL_KEY
+  env.SSL_PASSPHRASE = SSL_PASSPHRASE
   env.TEST = NODE_ENV === NodeEnv.TEST
 
   // Validate environment variables
@@ -106,7 +108,10 @@ const configuration = (
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
     NODE_ENV: NODE_ENV || process.env.NODE_ENV,
-    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
+    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString(),
+    SSL_CERT: process.env.SSL_CERT,
+    SSL_KEY: process.env.SSL_KEY,
+    SSL_PASSPHRASE: process.env.SSL_PASSPHRASE
   })
 }
 

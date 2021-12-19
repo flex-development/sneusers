@@ -1,6 +1,6 @@
-import { ConfigService } from '@nestjs/config'
+import { HttpStatus, NestApplicationOptions } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import { EnvironmentVariables } from './models'
+import { ENV } from './config/configuration'
 import AppModule from './modules/app.module'
 import useGlobal from './use-global'
 
@@ -10,7 +10,7 @@ import useGlobal from './use-global'
  */
 
 /**
- * Initializes globals and starts the application.
+ * Applies global configurations and starts the application.
  *
  * @see {@link useGlobal}
  *
@@ -18,20 +18,28 @@ import useGlobal from './use-global'
  * @return {Promise<void>} Empty promise when complete
  */
 async function bootstrap(): Promise<void> {
-  // Create Nest application
-  const app = await useGlobal(await NestFactory.create(AppModule))
+  // Get Nest application options
+  const options: NestApplicationOptions = {
+    cors: {
+      allowedHeaders: '*',
+      methods: ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST'],
+      optionsSuccessStatus: HttpStatus.ACCEPTED,
+      origin: '*',
+      preflightContinue: true
+    },
+    httpsOptions: {
+      cert: ENV.SSL_CERT,
+      key: ENV.SSL_KEY,
+      passphrase: ENV.SSL_PASSPHRASE
+    }
+  }
 
-  // Get app configuration service
-  const conf = app.get<ConfigService<EnvironmentVariables, true>>(ConfigService)
-
-  // Get environment variables
-  const HOST = conf.get<EnvironmentVariables['HOST']>('HOST')
-  const NODE_ENV = conf.get<EnvironmentVariables['NODE_ENV']>('NODE_ENV')
-  const PORT = conf.get<EnvironmentVariables['PORT']>('PORT')
+  // Create Nest application and apply global configurations
+  const app = await useGlobal(await NestFactory.create(AppModule, options))
 
   // Start application
-  await app.listen(PORT, () => {
-    return console.log(`[${NODE_ENV}] listening on ${HOST}`)
+  await app.listen(ENV.PORT, () => {
+    return console.log(`[${ENV.NODE_ENV}] listening on ${ENV.HOST}`)
   })
 }
 

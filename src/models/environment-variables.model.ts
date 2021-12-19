@@ -1,5 +1,4 @@
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
-import Protocol from '@sneusers/enums/protocol.enum'
 import {
   IsBoolean,
   IsEnum,
@@ -164,14 +163,25 @@ class EnvironmentVariables {
   PROD_LOCAL: boolean
 
   /**
-   * Network protocol to used when constructing application URL.
-   *
-   * **Note**: This value is computed by the application.
-   *
-   * @default Protocol.HTTP
+   * SSL cert chain in PEM format.
    */
-  @IsEnum(Protocol)
-  PROTOCOL: 'http' | 'https'
+  @IsString()
+  @IsNotEmpty()
+  SSL_CERT: string
+
+  /**
+   * SSL private key in PEM format.
+   */
+  @IsString()
+  @IsNotEmpty()
+  SSL_KEY: string
+
+  /**
+   * Password for {@link SSL_KEY}.
+   */
+  @IsString()
+  @IsNotEmpty()
+  SSL_PASSPHRASE: string
 
   /**
    * Indicates if application is running in `test` Node environment.

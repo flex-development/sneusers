@@ -70,6 +70,7 @@ jspm_packages/
 ### Environment ###
 # Environment variables
 .env.*
+!.env.esm
 
 ### Testing ###
 coverage/*
@@ -83,10 +84,13 @@ __tests__/report.json
 # Optional eslint cache
 .eslintcache
 
-# Builds & Distributions
+### Builds & Distributions ###
 dist/*
 *.zip
 
-# Database
+### Database ###
 db/*
 docs/*.sql
+
+### SSL ###
+*.pem
