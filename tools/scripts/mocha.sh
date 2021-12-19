@@ -10,7 +10,7 @@
 # - https://mochajs.org/#command-line-usage
 
 # 1. Create ephemeral service token for Doppler
-if [[ $DOPPLER_TOKEN == "" ]]; then
+if [[ $DOPPLER_TOKEN == "" || $DOPPLER_TOKEN = secret-* ]]; then
   export DOPPLER_TOKEN=$(doppler configs tokens create $(doppler configure get project --plain) --config=test --max-age=1m --plain --no-read-env)
 fi
 

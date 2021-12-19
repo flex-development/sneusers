@@ -56,7 +56,7 @@ const secrets = ({
   const secrets_raw = sh.exec(secrets_get, { silent: true }).stdout
 
   /** @property {SecretsJson} secrets_json - Parsed {@link secrets_raw} */
-  const secrets_json: SecretsJson = JSON.parse(secrets_raw as string)
+  const secrets_json: SecretsJson = JSON.parse(secrets_raw)
 
   /** @property {string} variables - Names of secrets */
   const variables: string[] = Object.keys(secrets_json)

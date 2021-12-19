@@ -50,7 +50,7 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `PAT_GPR`             | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
-Default values are located in `.env.defaults`.
+Default values are located in `.env`.
 
 #### GitHub Actions
 
@@ -64,7 +64,8 @@ Default values are located in `.env.defaults`.
 
 | name                  | required | development        | test               | production | release            |
 | --------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
-| `NODE_OPTIONS`        | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :x:                |
+| `DOPPLER_PROJECT`     | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`       | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 | `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:        | :white_check_mark: |
 
 #### Yarn 2
@@ -78,32 +79,53 @@ Default values are located in `.env.defaults`.
 
 Follow the steps below to autosource environment variables:
 
-1. [Configure Doppler CLI][2]
+1. Configure the [Doppler CLI][2]
 
    - [Doppler](docs/INTEGRATIONS.md#doppler) is used to manage and inject
      application-level environment variables
 
-2. Open a shell startup file
+2. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
+
+   ```yaml
+   scoped:
+     /:
+       api-host: https://api.doppler.com
+       dashboard-host: https://dashboard.doppler.com
+       token: secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   ```
+
+3. Create an `.env.doppler` file in the project root. Add the following:
+
+   ```shell
+   DOPPLER_PROJECT=sneusers
+   DOPPLER_TOKEN=
+   ```
+
+4. Store the value of `token` in `DOPPLER_TOKEN`:
+
+   ```shell
+   DOPPLER_PROJECT=sneusers
+   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   ```
+
+5. Open a shell startup file
 
    - e.g: `~/.bash_profile` `~/.bashrc`, `~/.profile`, `~/.zprofile`,
      `~/.zshenv`, `~/.zshrc`
 
-3. Add the following to your chosen shell startup file:
+6. Add the following to your chosen shell startup file:
 
    ```shell
    [[ -f "$PWD/.env.defaults" ]] && . $PWD/.env.defaults
-   [[ -f "$PWD/.env.esm" ]] && . $PWD/.env.esm
+   [[ -f "$PWD/.env.doppler" ]] && . $PWD/.env.doppler
    [[ -f "$PWD/.env" ]] && . $PWD/.env
    [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
+   
+   export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # npm auth token
+   export PAT_GPR=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx   # github personal access token with read:packages scope
    ```
 
-4. Add the following to `$PWD/.env.defaults`:
-
-   ```shell
-   export DOPPLER_TOKEN=$(doppler configs tokens create ephemeral-$(git config user.username) --max-age 1h --plain --no-read-env)
-   ```
-
-5. Save file and re-launch shell
+7. Save shell startup file and re-launch shell
 
 ### Git Configuration
 
@@ -116,7 +138,7 @@ See our [`.gitconfig`](.git/config) for an exhausive list of aliases.
 ```zsh
 git clone https://github.com/flex-development/sneusers
 cd sneusers
-yarn bootstrap
+yarn
 ```
 
 Note that if you have a global Yarn configuration (or any `YARN_*` environment

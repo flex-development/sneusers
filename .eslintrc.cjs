@@ -23,6 +23,7 @@ module.exports = {
           'enums',
           'localhost',
           'mysql',
+          'nestjs',
           'poq',
           'req',
           'sneusers',

@@ -5,9 +5,15 @@ used in this project.
 
 ## Overview
 
+[Docker](#docker)  
 [Doppler](#doppler)  
 [NestJS](#nestjs)  
-[TypeScript](#sql)
+[SQL](#sql)  
+[TypeScript](#typescript)
+
+## Docker
+
+**TODO**: Update documentation.
 
 ## Doppler
 
@@ -25,6 +31,10 @@ See the [installation docs][3] to begin managing project secrets.
 > (Functional Programming), and FRP (Functional Reactive Programming).
 >
 > _From_ <https://docs.nestjs.com>
+
+## SQL
+
+**TODO**: Update documentation.
 
 ## TypeScript
 

@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  app.dev:
+    container_name: sneusers
+    image: sneusers
+    command: yarn run:dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: builder
+    env_file:
+      - ./.env.doppler
+    environment:
+      DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
+      DB_HOST: ${DB_HOST}
+      DB_LOGGING: ${DB_LOGGING}
+      DB_LOG_QUERY_PARAMS: ${DB_LOG_QUERY_PARAMS}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+      DB_TIMEZONE: ${DB_TIMEZONE}
+      DB_USERNAME: ${DB_USERNAME}
+      DEBUG: ${DEBUG}
+      DEBUG_COLORS: ${DEBUG_COLORS}
+      DOPPLER_CONFIG: ${DOPPLER_CONFIG}
+      DOPPLER_PROJECT: ${DOPPLER_PROJECT}
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN}
+      HOST:
+      HOSTNAME: ${HOSTNAME}
+      NODE_ENV: ${NODE_ENV}
+      NPM_TOKEN: ${NPM_TOKEN}
+      PAT_GPR: ${PAT_GPR}
+      PORT: ${PORT}
+    networks:
+      - nestjs
+    ports:
+      - ${PORT}:${PORT}
+      - 9229:9229
+    restart: unless-stopped
+    volumes:
+      - .:/usr/app:cached
+      - node_modules:/usr/app/node_modules:delegated
+    working_dir: /usr/app
+  app:
+    extends:
+      service: app.dev
+    command: yarn run:prod
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runner
+
+networks:
+  nestjs:
+
+volumes:
+  node_modules:

@@ -33,7 +33,7 @@ const options: SequelizeModuleOptions = {
   repositoryMode: true,
   retryAttempts: 3,
   retryDelay: 0,
-  storage: `./src/db/${ENV.DB_NAME}_${ENV.NODE_ENV}.db`,
+  storage: `./db/${ENV.DB_NAME}_${ENV.NODE_ENV}.db`,
   synchronize: ENV.DB_AUTO_LOAD_MODELS,
   typeValidation: true,
   username: ENV.PROD ? ENV.DB_USERNAME : undefined

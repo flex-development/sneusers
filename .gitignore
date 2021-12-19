@@ -69,9 +69,7 @@ jspm_packages/
 
 ### Environment ###
 # Environment variables
-.env*
-!.env.defaults
-!.env.esm
+.env.*
 
 ### Testing ###
 coverage/*
@@ -90,5 +88,5 @@ dist/*
 *.zip
 
 # Database
+db/*
 docs/*.sql
-src/db

@@ -13,10 +13,7 @@ import { validateSync, ValidationError } from 'class-validator'
  */
 
 /** @property {string[]} ENV_FILE_PATH - Custom environment files */
-const ENV_FILE_PATH = [
-  `${process.cwd()}/.env.local`,
-  `${process.cwd()}/.env.defaults`
-]
+const ENV_FILE_PATH = [`${process.cwd()}/.env.local`, `${process.cwd()}/.env`]
 
 /**
  * Validates environment variables.

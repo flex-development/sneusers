@@ -1,5 +1,5 @@
-// ! Remove NODE_OPTIONS (hangs on 'Webpack is building your sources' otherwise)
-Reflect.deleteProperty(process.env, 'NODE_OPTIONS')
+// ! Fixes @nestjs/cli not auto-detecting webpack config
+process.env.NODE_OPTIONS = '-r ts-node/register'
 
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import tsTransformPaths from '@zerollup/ts-transform-paths'

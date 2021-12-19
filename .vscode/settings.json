@@ -72,7 +72,6 @@
       "format": "svg",
       "icon": "mocha"
     },
-
     {
       "extensions": ["repository.ts"],
       "format": "svg",

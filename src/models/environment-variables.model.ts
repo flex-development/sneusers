@@ -16,7 +16,10 @@ import {
  */
 
 /** @property {boolean} PROD - Production environment check */
-const PROD = process.env.NODE_ENV === NodeEnv.PROD
+const PROD = (() => {
+  const LOCALHOST = process.env.HOSTNAME?.includes('localhost') ?? true
+  return process.env.NODE_ENV === NodeEnv.PROD && !LOCALHOST
+})()
 
 /**
  * Environment variables used by this application.
@@ -43,20 +46,20 @@ class EnvironmentVariables {
   DB_HOST: string
 
   /**
-   * Show query binding parameters in log.
-   *
-   * @default true
-   */
-  @IsBoolean()
-  DB_LOG_QUERY_PARAMS: boolean
-
-  /**
    * Log SQL queries.
    *
    * @default true
    */
   @IsBoolean()
   DB_LOGGING: boolean
+
+  /**
+   * Show query binding parameters in log.
+   *
+   * @default true
+   */
+  @IsBoolean()
+  DB_LOG_QUERY_PARAMS: boolean
 
   /**
    * Name of database to connect to.
