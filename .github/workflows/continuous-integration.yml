@@ -5,7 +5,9 @@
 # - https://github.com/actions/checkout
 # - https://github.com/actions/setup-node
 # - https://github.com/DopplerHQ/cli-action
-# - https://docs.github.com/actions/guides/building-and-testing-nodejs
+# - https://github.com/docker/login-action/tree/v1.10.0
+# - https://github.com/docker/metadata-action/tree/v3.6.2
+# - https://github.com/docker/build-push-action/tree/v2.7.0
 
 ---
 name: continuous-integration
@@ -17,7 +19,7 @@ on:
       - push-action/**
   workflow_dispatch:
 jobs:
-  continuous-integration:
+  ci:
     runs-on: ubuntu-latest
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN_ADMIN }}
@@ -42,9 +44,16 @@ jobs:
         run: yarn --immutable
         env:
           NODE_AUTH_TOKEN: ${PAT_GPR}
-      - id: install-doppler-cli
+      - id: doppler-cli
         name: Install Doppler CLI
         uses: dopplerhq/cli-action@v1
+      - id: ghcr-login
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1.10.0
+        with:
+          password: ${{ secrets.PAT_CPR_ADMIN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
       - id: check-format
         name: Check code formatting
         run: yarn check:format
@@ -58,13 +67,43 @@ jobs:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_TEST }}
       - id: build
         name: Build project
-        run: |
-          echo "NODE_NO_WARNINGS=1" >> $GITHUB_ENV
-          echo "NODE_OPTIONS=--experimental-modules --experimental-json-modules
-          --loader=$GITHUB_WORKSPACE/tools/loaders/esm.mjs
-          --es-module-specifier-resolution=node" >> $GITHUB_ENV
-
-          doppler run --command="NODE_ENV=test yarn build"
+        run: doppler run --command="NODE_ENV=test yarn build"
         env:
+          DOPPLER_CONFIG: ${{ secrets.DOPPLER_CONFIG }}
           DOPPLER_ENVIRONMENT: ${{ secrets.DOPPLER_ENVIRONMENT }}
+          DOPPLER_PROJECT: ${{ secrets.DOPPLER_PROJECT }}
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+      - id: ghcr-meta
+        name: Extract container image metadata
+        uses: docker/metadata-action@v3.6.2
+        with:
+          flavor: latest=false
+          images: ghcr.io/${{ github.repository }}
+          labels: |
+            maintainer=unicornware
+            org.opencontainers.image.title=sneusers
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          tags: |
+            edge
+            type=edge,branch=${{ github.ref_name }}
+            type=sha,prefix=,format=long
+            type=sha,prefix=edge-
+      - id: ghcr-build-push
+        name: Build and push container image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          build-args: |
+            NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
+            PAT_GPR=${{ secrets.PAT_GPR_ADMIN }}
+          context: .
+          file: ./Dockerfile
+          labels: ${{ steps.ghcr-meta.outputs.labels }}
+          push: true
+          secrets: |
+            DOPPLER_CONFIG=production
+            DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}
+            NODE_ENV=production
+            NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
+            PAT_GPR=${{ secrets.PAT_GPR_ADMIN }}
+            PORT=8080
+          tags: ${{ steps.ghcr-meta.outputs.tags }}
