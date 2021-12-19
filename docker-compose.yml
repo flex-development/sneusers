@@ -3,7 +3,7 @@ version: '3.9'
 services:
   app.dev:
     container_name: sneusers
-    image: sneusers
+    image: ghcr.io/flex-development/sneusers
     command: yarn run:dev
     build:
       context: .
