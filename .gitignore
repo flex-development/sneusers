@@ -73,7 +73,7 @@ jspm_packages/
 !.env.typescript
 
 ### Testing ###
-coverage/*
+coverage/
 __tests__/report.json
 
 ### TypeScript ###
@@ -85,11 +85,11 @@ __tests__/report.json
 .eslintcache
 
 ### Builds & Distributions ###
-dist/*
+dist/
 *.zip
 
 ### Database ###
-db/*
+db/
 docs/*.sql
 
 ### SSL ###
