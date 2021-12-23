@@ -116,8 +116,9 @@ Follow the steps below to autosource environment variables:
 6. Add the following to your chosen shell startup file:
 
    ```shell
-   [[ -f "$PWD/.env.defaults" ]] && . $PWD/.env.defaults
+   [[ -f "$PWD/.env.typescript" ]] && . $PWD/.env.typescript
    [[ -f "$PWD/.env.doppler" ]] && . $PWD/.env.doppler
+   [[ -f "$PWD/.env.defaults" ]] && . $PWD/.env.defaults
    [[ -f "$PWD/.env" ]] && . $PWD/.env
    [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
    

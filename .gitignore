@@ -70,7 +70,7 @@ jspm_packages/
 ### Environment ###
 # Environment variables
 .env.*
-!.env.esm
+!.env.typescript
 
 ### Testing ###
 coverage/*
