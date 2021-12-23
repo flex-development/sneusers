@@ -22,8 +22,8 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     env:
+      GH_PAT: ${{ secrets.PAT_GPR_ADMIN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN_ADMIN }}
-      PAT_GPR: ${{ secrets.PAT_GPR_ADMIN }}
     strategy:
       matrix:
         node: [14.13.1]
@@ -43,7 +43,7 @@ jobs:
         name: Install dependencies
         run: yarn --immutable
         env:
-          NODE_AUTH_TOKEN: ${PAT_GPR}
+          NODE_AUTH_TOKEN: ${GH_PAT}
       - id: doppler-cli
         name: Install Doppler CLI
         uses: dopplerhq/cli-action@v1
@@ -93,8 +93,8 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with:
           build-args: |
+            GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
             NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
-            PAT_GPR=${{ secrets.PAT_GPR_ADMIN }}
           context: .
           file: ./Dockerfile
           labels: ${{ steps.ghcr-meta.outputs.labels }}
@@ -102,8 +102,8 @@ jobs:
           secrets: |
             DOPPLER_CONFIG=production
             DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}
+            GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
             NODE_ENV=production
             NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
-            PAT_GPR=${{ secrets.PAT_GPR_ADMIN }}
             PORT=8080
           tags: ${{ steps.ghcr-meta.outputs.tags }}

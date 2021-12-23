@@ -26,6 +26,7 @@ services:
       DOPPLER_CONFIG: ${DOPPLER_CONFIG}
       DOPPLER_PROJECT: ${DOPPLER_PROJECT}
       DOPPLER_TOKEN: ${DOPPLER_TOKEN}
+      GH_PAT: ${GH_PAT}
       HOST:
       HOSTNAME: ${HOSTNAME}
       NODE_ENV: ${NODE_ENV}
@@ -33,7 +34,6 @@ services:
       # Unable to leverage DefinePlugin in webpack config
       # NODE_OPTIONS: -r ts-node/register
       NPM_TOKEN: ${NPM_TOKEN}
-      PAT_GPR: ${PAT_GPR}
       PORT: ${PORT}
       SSL_CERT: ${SSL_CERT}
       SSL_KEY: ${SSL_KEY}

@@ -27,7 +27,7 @@
   "scripts": {
     "build": "nest build",
     "build:dbdocs": "dbdocs build ./docs/DATABASE.dbml",
-    "build:docker": "doppler run -- docker compose build --build-arg PAT_GPR=$PAT_GPR --build-arg NPM_TOKEN=$NPM_TOKEN",
+    "build:docker": "doppler run -- docker compose build --build-arg GH_PAT=$GH_PAT --build-arg NPM_TOKEN=$NPM_TOKEN",
     "check:dedupe": "yarn dedupe --check",
     "check:format": "prettier --check .",
     "check:install": "yarn dlx @yarnpkg/doctor .",

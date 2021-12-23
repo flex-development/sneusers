@@ -46,8 +46,6 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `NPM_TOKEN`           | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `PAT_GPR`             | `true`   | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
 Default values are located in `.env`.
@@ -70,10 +68,12 @@ Default values are located in `.env`.
 
 #### Yarn 2
 
-| name               | required | development | test | production | release            |
-| ------------------ | -------- | ----------- | ---- | ---------- | ------------------ |
-| `INIT_CWD`         | `true`   | :x:         | :x:  | :x:        | :white_check_mark: |
-| `npm_package_name` | `true`   | :x:         | :x:  | :x:        | :white_check_mark: |
+| name               | required | development        | test               | production | release            |
+| ------------------ | -------- | ------------------ | ------------------ | ---------- | ------------------ |
+| `GH_PAT`           | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `INIT_CWD`         | `true`   | :x:                | :x:                | :x:        | :white_check_mark: |
+| `NPM_TOKEN`        | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `npm_package_name` | `true`   | :x:                | :x:                | :x:        | :white_check_mark: |
 
 #### Sourcing Environment Variables
 
@@ -121,8 +121,8 @@ Follow the steps below to autosource environment variables:
    [[ -f "$PWD/.env" ]] && . $PWD/.env
    [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
    
+   export GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    # github personal access token with at least read:packages scope
    export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # npm auth token
-   export PAT_GPR=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx   # github personal access token with read:packages scope
    ```
 
 7. Save shell startup file and re-launch shell

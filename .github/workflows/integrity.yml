@@ -19,8 +19,8 @@ jobs:
   integrity-check:
     runs-on: ubuntu-latest
     env:
+      GH_PAT: ${{ secrets.PAT_GPR_ADMIN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN_ADMIN }}
-      PAT_GPR: ${{ secrets.PAT_GPR_ADMIN }}
     strategy:
       matrix:
         node: [14.13.1]
@@ -55,7 +55,7 @@ jobs:
         name: Install dependencies
         run: yarn install --immutable
         env:
-          NODE_AUTH_TOKEN: ${PAT_GPR}
+          NODE_AUTH_TOKEN: ${GH_PAT}
       - id: dedupe-check
         name: Check for duplicate dependencies in lock file
         run: yarn check:dedupe
