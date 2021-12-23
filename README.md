@@ -11,7 +11,7 @@
 :construction: [Usage](#usage)  
 :construction: [Built With](#built-with)  
 [Contributing](CONTRIBUTING.md)  
-[Integrations](INTEGRATIONS.md)
+[Integrations](docs/INTEGRATIONS.md)
 
 ## Getting Started
 
