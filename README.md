@@ -11,6 +11,7 @@
 :construction: [Usage](#usage)  
 :construction: [Built With](#built-with)  
 [Contributing](CONTRIBUTING.md)  
+[Database Design](docs/DATABASE.dbml)  
 [Integrations](docs/INTEGRATIONS.md)
 
 ## Getting Started
