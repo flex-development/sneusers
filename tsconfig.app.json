@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
+    "incremental": true,
     "noEmit": false,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "outDir": "./dist",
+    "removeComments": true,
+    "sourceMap": true,
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "extends": "./tsconfig.json",
-  "include": ["./src"]
+  "include": ["src", "typings"]
 }
