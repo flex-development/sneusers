@@ -4,13 +4,18 @@ services:
   app.dev:
     container_name: sneusers
     image: ghcr.io/flex-development/sneusers
-    command: yarn run:dev
     build:
+      args:
+        DOPPLER_CONFIG: ${DOPPLER_CONFIG}
+        DOPPLER_PROJECT: ${DOPPLER_PROJECT}
+        DOPPLER_TOKEN: ${DOPPLER_TOKEN}
+        GH_PAT: ${GH_PAT}
+        NODE_ENV: ${NODE_ENV}
+        NPM_TOKEN: ${NPM_TOKEN}
+        PORT: ${PORT}
       context: .
       dockerfile: ./Dockerfile
       target: builder
-    env_file:
-      - ./.env.doppler
     environment:
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
       DB_HOST: ${DB_HOST}
@@ -45,14 +50,32 @@ services:
       - 9229:9229
     restart: unless-stopped
     volumes:
-      - .:/usr/app:cached
+      - ./__doubles__:/usr/app/__doubles__:cached
+      - ./__tests__:/usr/app/__tests__:cached
+      - ./.yarn:/usr/app/.yarn:cached
+      - ./src:/usr/app/src:cached
+      - ./tools/helpers:/usr/app/tools/helpers:cached
+      - ./tools/scripts/mocha.sh:/usr/app/tools/scripts/mocha.sh:cached
+      - ./typings:/usr/app/typings:cached
+      - ./.env:/usr/app/.env:cached
+      - ./.env.doppler:/usr/app/.env.doppler:cached
+      - ./.mocharc.base.cjs:/usr/app/.mocharc.base.cjs:cached
+      - ./.mocharc.cjs:/usr/app/.mocharc.cjs:cached
+      - ./.nycrc:/usr/app/.nycrc:cached
+      - ./.yarnrc.yml:/usr/app/.yarnrc.yml:cached
+      - ./doppler.yaml:/usr/app/doppler.yaml:cached
+      - ./nest-cli.json:/usr/app/nest-cli.json:cached
+      - ./package.json:/usr/app/package.json:cached
+      - ./tsconfig.app.json:/usr/app/tsconfig.app.json:cached
+      - ./tsconfig.json:/usr/app/tsconfig.json:cached
+      - ./webpack.config.ts:/usr/app/webpack.config.ts:cached
+      - ./yarn.lock:/usr/app/yarn.lock:cached
       - node_modules:/usr/app/node_modules:delegated
       - yarn_cache:/usr/app/.yarn/cache:delegated
     working_dir: /usr/app
   app:
     extends:
       service: app.dev
-    command: yarn run:prod
     build:
       context: .
       dockerfile: ./Dockerfile

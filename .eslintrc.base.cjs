@@ -380,10 +380,8 @@ module.exports = {
         'tools/cli/release.ts',
         'tools/helpers/match-specifier.cjs',
         'tools/helpers/tsconfig-paths.cjs',
-        'tools/loaders/esm.mjs',
         'typings/index.d.ts',
         'typings/mocha/global.d.ts',
-        'typings/tools/loaders/esm/global.d.ts',
         'webpack.config.ts'
       ],
       rules: {

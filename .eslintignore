@@ -6,7 +6,7 @@ coverage/*
 dist/*
 node_modules/*
 
-!**/.*.*
+!.*.*
 
 .pnp.cjs
 CHANGELOG.md
