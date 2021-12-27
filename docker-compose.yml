@@ -43,6 +43,7 @@ services:
       SSL_CERT: ${SSL_CERT}
       SSL_KEY: ${SSL_KEY}
       SSL_PASSPHRASE: ${SSL_PASSPHRASE}
+      YARN_VERSION: 3.2.0-rc.8
     networks:
       - nestjs
     ports:

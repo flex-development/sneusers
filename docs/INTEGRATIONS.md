@@ -9,7 +9,8 @@ used in this project.
 [Doppler](#doppler)  
 [NestJS](#nestjs)  
 [SQL](#sql)  
-[TypeScript](#typescript)
+[TypeScript](#typescript)  
+[Yarn](#yarn)
 
 ## Docker
 
@@ -45,8 +46,15 @@ See the [installation docs][3] to begin managing project secrets.
 >
 > _From_ <https://typescriptlang.org>
 
+## Yarn
+
+This project uses Yarn 2. The Yarn configuration for this project can be found
+in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
+[Yarn 2 Migration docs][6].
+
 [1]: https://doppler.com
 [2]: https://docs.doppler.com/docs/install-cli#usage
 [3]: https://docs.doppler.com/docs/install-cli
 [4]: https://nodejs.org
 [5]: https://typescriptlang.org
+[6]: https://yarnpkg.com/getting-started/migration

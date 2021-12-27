@@ -43,6 +43,7 @@
   "prettier.vueIndentScriptAndStyle": true,
   "prettier.withNodeModules": false,
   "search.exclude": {
+    "**/.yarn": true,
     ".nyc": true,
     "coverage": true,
     "dist": true,
@@ -50,7 +51,7 @@
   },
   "search.useGlobalIgnoreFiles": true,
   "search.useIgnoreFiles": true,
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "vsicons.associations.files": [
     {
       "extensions": [".commitlintrc.ts"],

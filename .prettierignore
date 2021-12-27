@@ -14,7 +14,7 @@ node_modules/*
 .gitignore
 .gitkeep
 .markdownlintignore
-.pnp.cjs
+.pnp.*
 .prettierignore
 CHANGELOG.md
 yarn.lock
