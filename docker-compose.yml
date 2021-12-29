@@ -1,21 +1,48 @@
+# USED FOR LOCAL DEVELOPMENT ONLY.
+# SEE: https://github.com/BretFisher/node-docker-good-defaults
+# SEE: https://github.com/kyhsa93/nestjs-rest-cqrs-example
+# SEE: https://github.com/ArturKisov/nestjs-mysql-starter
+
 version: '3.9'
 
 services:
-  app.dev:
-    container_name: sneusers
-    image: ghcr.io/flex-development/sneusers
+  adminer:
+    container_name: adminer
+    image: adminer
+    depends_on:
+      - mysql
+    environment:
+      ADMINER_DEFAULT_SERVER: ${DB_HOST}
+      ADMINER_DESIGN: dracula
+      PMA_HOST: ${DB_HOST}
+      PMA_PORT: ${DB_PORT}
+    links:
+      - mysql:${DB_HOST}
+    ports:
+      - ${ADMINER_PORT}:8080
+    restart: always
+
+  app:
+    container_name: app
+    # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
+    image: flex-development/sneusers
     build:
       args:
-        DOPPLER_CONFIG: ${DOPPLER_CONFIG}
-        DOPPLER_PROJECT: ${DOPPLER_PROJECT}
-        DOPPLER_TOKEN: ${DOPPLER_TOKEN}
         GH_PAT: ${GH_PAT}
         NODE_ENV: ${NODE_ENV}
         NPM_TOKEN: ${NPM_TOKEN}
         PORT: ${PORT}
+        WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       context: .
       dockerfile: ./Dockerfile
-      target: builder
+      target: runner
+    command: ['yarn', 'run:app', '-wd']
+    depends_on:
+      - adminer
+      - mysql
+    # NOTE: With the exception of build arguments (see list above) doubling as
+    # environment variables, the variables below do NOT need to be exposed.
+    # Exposing them enhances DX when inspecting the container in Docker Hub.
     environment:
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
       DB_HOST: ${DB_HOST}
@@ -28,63 +55,73 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
-      DOPPLER_CONFIG: ${DOPPLER_CONFIG}
-      DOPPLER_PROJECT: ${DOPPLER_PROJECT}
-      DOPPLER_TOKEN: ${DOPPLER_TOKEN}
       GH_PAT: ${GH_PAT}
-      HOST:
+      HOST: ${HOST}
       HOSTNAME: ${HOSTNAME}
       NODE_ENV: ${NODE_ENV}
-      # Causes container to stop running; throws "Unexpected end of JSON input"
-      # Unable to leverage DefinePlugin in webpack config
-      # NODE_OPTIONS: -r ts-node/register
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
-      SSL_CERT: ${SSL_CERT}
-      SSL_KEY: ${SSL_KEY}
-      SSL_PASSPHRASE: ${SSL_PASSPHRASE}
+      WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       YARN_VERSION: 3.2.0-rc.8
-    networks:
-      - nestjs
+    links:
+      - mysql:${DB_HOST}
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
     restart: unless-stopped
     volumes:
-      - ./__doubles__:/usr/app/__doubles__:cached
-      - ./__tests__:/usr/app/__tests__:cached
-      - ./.yarn:/usr/app/.yarn:cached
-      - ./src:/usr/app/src:cached
-      - ./tools/helpers:/usr/app/tools/helpers:cached
-      - ./tools/scripts/mocha.sh:/usr/app/tools/scripts/mocha.sh:cached
-      - ./typings:/usr/app/typings:cached
-      - ./.env:/usr/app/.env:cached
-      - ./.env.doppler:/usr/app/.env.doppler:cached
-      - ./.mocharc.base.cjs:/usr/app/.mocharc.base.cjs:cached
-      - ./.mocharc.cjs:/usr/app/.mocharc.cjs:cached
-      - ./.nycrc:/usr/app/.nycrc:cached
-      - ./.yarnrc.yml:/usr/app/.yarnrc.yml:cached
-      - ./doppler.yaml:/usr/app/doppler.yaml:cached
-      - ./nest-cli.json:/usr/app/nest-cli.json:cached
-      - ./package.json:/usr/app/package.json:cached
-      - ./tsconfig.app.json:/usr/app/tsconfig.app.json:cached
-      - ./tsconfig.json:/usr/app/tsconfig.json:cached
-      - ./webpack.config.ts:/usr/app/webpack.config.ts:cached
-      - ./yarn.lock:/usr/app/yarn.lock:cached
-      - node_modules:/usr/app/node_modules:delegated
-      - yarn_cache:/usr/app/.yarn/cache:delegated
-    working_dir: /usr/app
-  app:
-    extends:
-      service: app.dev
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      target: runner
+      - ./__tests__:/opt/sneusers/__tests__
+      - ./.yarn:/opt/sneusers/.yarn
+      - ./db:/opt/sneusers/db
+      - ./src:/opt/sneusers/src
+      - ./tools/helpers:/opt/sneusers/tools/helpers
+      - ./typings:/opt/sneusers/typings
+      - ./.env:/opt/sneusers/.env
+      - ./.env.doppler:/opt/sneusers/.env.doppler
+      - ./.yarnrc.yml:/opt/sneusers/.yarnrc.yml
+      - ./doppler.yaml:/opt/sneusers/doppler.yaml
+      - ./nest-cli.json:/opt/sneusers/nest-cli.json
+      - ./package.json:/opt/sneusers/package.json
+      - ./tsconfig.app.json:/opt/sneusers/tsconfig.app.json
+      - ./tsconfig.json:/opt/sneusers/tsconfig.json
+      - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
+      - ./yarn.lock:/opt/sneusers/yarn.lock
+    working_dir: /opt/sneusers
+  mysql:
+    container_name: ${DB_HOST}
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TCP_PORT: ${DB_PORT}
+      MYSQL_USER: ${DB_USERNAME}
 
-networks:
-  nestjs:
-
-volumes:
-  node_modules:
-  yarn_cache:
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
+  server:
+    container_name: server
+    image: nginx:alpine-perl
+    command: ['nginx-debug', '-g', 'daemon off;']
+    environment:
+      ADMINER_PORT: 8080
+      ADMINER_SERVER_NAME: ${ADMINER_SERVER_NAME}
+      PORT: ${PORT}
+      SERVER_NAME: ${SERVER_NAME}
+    depends_on:
+      - adminer
+      - app
+    links:
+      - adminer:adminer
+      - app:app
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+    volumes:
+      - ./nginx:/etc/nginx:rw
+      - ./public:/usr/share/nginx/html:ro

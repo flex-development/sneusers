@@ -1,3 +1,4 @@
+const path = require('path')
 const { ExplicitParams } = require('tsconfig-paths/lib/config-loader')
 const matchSpecifier = require('./match-specifier.cjs')
 const { loadSync: tsconfig } = require('tsconfig/dist/tsconfig')
@@ -102,7 +103,7 @@ register.coreModules = builtins => {
   return core
 }
 
-const baseUrl = process.cwd()
+const baseUrl = path.resolve(__dirname, '..', '..')
 
 register({
   addMatchAll: true,

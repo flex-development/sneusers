@@ -163,27 +163,6 @@ class EnvironmentVariables {
   PROD_LOCAL: boolean
 
   /**
-   * SSL cert chain in PEM format.
-   */
-  @IsString()
-  @IsNotEmpty()
-  SSL_CERT: string
-
-  /**
-   * SSL private key in PEM format.
-   */
-  @IsString()
-  @IsNotEmpty()
-  SSL_KEY: string
-
-  /**
-   * Password for {@link SSL_KEY}.
-   */
-  @IsString()
-  @IsNotEmpty()
-  SSL_PASSPHRASE: string
-
-  /**
    * Indicates if application is running in `test` Node environment.
    *
    * **Note**: This value is computed by the application.

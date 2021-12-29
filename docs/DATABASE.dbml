@@ -17,10 +17,8 @@ Table users {
   updated_at timestamp [note: 'when user was last modified']
 
   indexes {
-    (first_name, last_name) [name: 'full_name']
     created_at [name: 'created_at']
     first_name [name: 'first_name']
-    id [pk]
     last_name [name: 'last_name']
     updated_at [name: 'updated_at']
   }
@@ -34,7 +32,6 @@ Table logins {
   user tinyint [note: 'id of user who logged in']
 
   indexes {
-    id [pk]
     login [name: 'login']
     user [name: 'user']
   }

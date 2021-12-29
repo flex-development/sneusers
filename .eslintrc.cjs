@@ -41,6 +41,12 @@ module.exports = {
   overrides: [
     ...overrides,
     {
+      files: ['ecosystem.config.cjs'],
+      rules: {
+        'sort-keys': 0
+      }
+    },
+    {
       files: ['src/**'],
       rules: {
         '@typescript-eslint/naming-convention': [
@@ -54,23 +60,23 @@ module.exports = {
       }
     },
     {
-      files: ['src/middleware/http-logger.middleware.ts'],
+      files: [
+        'src/middleware/http-logger.middleware.ts',
+        'tools/helpers/secrets.ts',
+        'webpack.config.ts'
+      ],
       rules: {
         '@typescript-eslint/no-var-requires': 0,
         'unicorn/prefer-module': 0
       }
     },
     {
-      files: ['src/types/http-exception-json.type.ts'],
+      files: [
+        'src/types/http-exception-json.type.ts',
+        'tools/helpers/secrets.ts'
+      ],
       rules: {
         '@typescript-eslint/naming-convention': 0
-      }
-    },
-    {
-      files: ['webpack.config.ts'],
-      rules: {
-        '@typescript-eslint/no-var-requires': 0,
-        'unicorn/prefer-module': 0
       }
     }
   ]

@@ -26,6 +26,9 @@ project. This includes, but is not limited to:
 
 | name                  | required | development        | test               | production         | release            |
 | --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
+| `ADMINER_HOSTNAME`    | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `ADMINER_PORT`        | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `ADMINER_SERVER_NAME` | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
 | `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_DOCS_TOKEN`       | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
 | `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
@@ -42,8 +45,22 @@ project. This includes, but is not limited to:
 | `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| `SERVER_NAME`         | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
+| `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 
 Default values are located in `.env`.
+
+#### Doppler
+
+| name                 | required | development        | test               | production | release            |
+| -------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
+| `DOPPLER_PROJECT`    | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`      | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_DEV`  | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_TEST` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_PROD` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+
+Values should be stored in `.env.doppler`.
 
 #### GitHub Actions
 
@@ -52,14 +69,6 @@ Default values are located in `.env`.
 | `GITHUB_ACTIONS`   | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
 | `GITHUB_ENV`       | `false`  | :x:         | :x:                | :x:        | :white_check_mark: |
 | `GITHUB_WORKSPACE` | `false`  | :x:         | :x:                | :x:        | :white_check_mark: |
-
-#### Global
-
-| name                  | required | development        | test               | production | release            |
-| --------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
-| `DOPPLER_PROJECT`     | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`       | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:        | :white_check_mark: |
 
 #### Yarn 2
 
@@ -79,7 +88,17 @@ Follow the steps below to autosource environment variables:
    - [Doppler](docs/INTEGRATIONS.md#doppler) is used to manage and inject
      application-level environment variables
 
-2. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
+2. Create an `.env.doppler` file in the project root. Add the following:
+
+   ```shell
+   DOPPLER_PROJECT=sneusers
+   DOPPLER_TOKEN=
+   DOPPLER_TOKEN_DEV=
+   DOPPLER_TOKEN_TEST=
+   DOPPLER_TOKEN_PROD=
+   ```
+
+3. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
 
    ```yaml
    scoped:
@@ -89,31 +108,35 @@ Follow the steps below to autosource environment variables:
        token: secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    ```
 
-3. Create an `.env.doppler` file in the project root. Add the following:
-
-   ```shell
-   DOPPLER_PROJECT=sneusers
-   DOPPLER_TOKEN=
-   ```
-
 4. Store the value of `token` in `DOPPLER_TOKEN`:
 
    ```shell
    DOPPLER_PROJECT=sneusers
    DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   DOPPLER_TOKEN_DEV=
+   DOPPLER_TOKEN_TEST=
+   DOPPLER_TOKEN_PROD=
    ```
 
-5. Open a shell startup file
+5. Retrieve the value of `DOPPLER_TOKEN` for each `sneusers` environment:
+
+   ```shell
+   DOPPLER_PROJECT=sneusers
+   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   DOPPLER_TOKEN_DEV=dp.st.development.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   DOPPLER_TOKEN_TEST=dp.st.test.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   DOPPLER_TOKEN_PROD=dp.st.production.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+6. Open a shell startup file
 
    - e.g: `~/.bash_profile` `~/.bashrc`, `~/.profile`, `~/.zprofile`,
      `~/.zshenv`, `~/.zshrc`
 
-6. Add the following to your chosen shell startup file:
+7. Add the following to your chosen shell startup file:
 
    ```shell
-   [[ -f "$PWD/.env.typescript" ]] && . $PWD/.env.typescript
    [[ -f "$PWD/.env.doppler" ]] && . $PWD/.env.doppler
-   [[ -f "$PWD/.env.defaults" ]] && . $PWD/.env.defaults
    [[ -f "$PWD/.env" ]] && . $PWD/.env
    [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
    
@@ -121,7 +144,7 @@ Follow the steps below to autosource environment variables:
    export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # npm auth token
    ```
 
-7. Save shell startup file and re-launch shell
+8. Save shell startup file and re-launch shell
 
 ### Git Configuration
 

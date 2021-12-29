@@ -34,10 +34,7 @@ const validate = ({
   HOST,
   HOSTNAME = 'localhost',
   NODE_ENV = NodeEnv.DEV,
-  PORT = '8080',
-  SSL_CERT,
-  SSL_KEY,
-  SSL_PASSPHRASE
+  PORT = '8080'
 }: Record<string, any>): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
@@ -59,14 +56,11 @@ const validate = ({
   env.DB_LOGGING = JSON.parse(DB_LOGGING)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
-  env.DB_PORT = Number.parseInt(DB_PORT.toString())
+  env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
-  env.HOST = HOST || `https://${env.HOSTNAME}:${env.PORT}`
-  env.SSL_CERT = SSL_CERT
-  env.SSL_KEY = SSL_KEY
-  env.SSL_PASSPHRASE = SSL_PASSPHRASE
+  env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
   env.TEST = NODE_ENV === NodeEnv.TEST
 
   // Validate environment variables
@@ -108,10 +102,7 @@ const configuration = (
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
     NODE_ENV: NODE_ENV || process.env.NODE_ENV,
-    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString(),
-    SSL_CERT: process.env.SSL_CERT,
-    SSL_KEY: process.env.SSL_KEY,
-    SSL_PASSPHRASE: process.env.SSL_PASSPHRASE
+    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
   })
 }
 

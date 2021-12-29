@@ -1,15 +1,18 @@
 {
   "eslint.options": {
-    "extensions": [".cjs", ".js", ".md", ".mjs", ".ts"],
+    "extensions": [".cjs", ".js", ".md", ".ts"],
     "overrideConfigFile": "./.eslintrc.cjs"
   },
   "eslint.packageManager": "yarn",
   "eslint.validate": ["javascript", "markdown", "typescript"],
   "files.associations": {
+    "*.conf": "nginx",
+    "*.conf.template": "nginx",
     "*.env*": "shellscript",
-    "*.markdownlintignore": "ignore",
     "*.nycrc*": "json",
+    ".markdownlintignore": "ignore",
     "commit-msg": "shellscript",
+    "mime.types": "nginx",
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
   },
@@ -59,6 +62,11 @@
       "icon": "commitlint"
     },
     {
+      "extensions": [".conf", ".conf.template"],
+      "format": "svg",
+      "icon": "nginx"
+    },
+    {
       "extensions": [".eslintrc.base.cjs"],
       "format": "svg",
       "icon": "eslint"
@@ -72,6 +80,16 @@
       "extensions": [".mocharc.base.cjs", ".mocharc.cjs"],
       "format": "svg",
       "icon": "mocha"
+    },
+    {
+      "extensions": [".types"],
+      "format": "svg",
+      "icon": "nginx"
+    },
+    {
+      "extensions": ["key", "keytmp", "pass"],
+      "format": "svg",
+      "icon": "key"
     },
     {
       "extensions": ["repository.ts"],

@@ -20,25 +20,23 @@ const options: SequelizeModuleOptions = {
     underscored: true,
     updatedAt: 'updated_at'
   },
-  dialect: ENV.PROD ? 'mysql' : 'sqlite',
+  dialect: 'mysql',
   dialectOptions: { dateStrings: true },
-  host: ENV.PROD ? ENV.DB_HOST : undefined,
+  host: ENV.DB_HOST,
   logQueryParameters: ENV.DB_LOG_QUERY_PARAMS,
   logging: ENV.DB_LOGGING,
   name: ENV.NODE_ENV,
   omitNull: false,
-  password: ENV.PROD ? ENV.DB_PASSWORD : undefined,
-  port: ENV.PROD ? ENV.DB_PORT : undefined,
+  password: ENV.DB_PASSWORD,
+  port: ENV.DB_PORT,
   query: { nest: true, raw: false },
   repositoryMode: true,
   retryAttempts: 3,
   retryDelay: 0,
-  storage: `./db/${ENV.DB_NAME}_${ENV.NODE_ENV}.db`,
   synchronize: ENV.DB_AUTO_LOAD_MODELS,
+  timezone: ENV.DB_TIMEZONE,
   typeValidation: true,
-  username: ENV.PROD ? ENV.DB_USERNAME : undefined
+  username: ENV.DB_USERNAME
 }
-
-if (ENV.PROD) options.timezone = ENV.DB_TIMEZONE
 
 export default SequelizeModule.forRoot(options)

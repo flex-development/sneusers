@@ -3,6 +3,6 @@
 
 setup:
   api-host: https://api.doppler.com
-  config: development
+  config: dev
   dashboard-host: https://dashboard.doppler.com
   project: sneusers

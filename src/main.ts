@@ -1,7 +1,7 @@
-import { HttpStatus, NestApplicationOptions } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { ENV } from './config/configuration'
 import AppModule from './modules/app.module'
+import AppService from './providers/app.service'
 import useGlobal from './use-global'
 
 /**
@@ -12,30 +12,18 @@ import useGlobal from './use-global'
 /**
  * Applies global configurations and starts the application.
  *
+ * @see {@link NestFactory.create}
  * @see {@link useGlobal}
  *
  * @async
  * @return {Promise<void>} Empty promise when complete
  */
 async function bootstrap(): Promise<void> {
-  // Get Nest application options
-  const options: NestApplicationOptions = {
-    cors: {
-      allowedHeaders: '*',
-      methods: ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST'],
-      optionsSuccessStatus: HttpStatus.ACCEPTED,
-      origin: '*',
-      preflightContinue: true
-    },
-    httpsOptions: {
-      cert: ENV.SSL_CERT,
-      key: ENV.SSL_KEY,
-      passphrase: ENV.SSL_PASSPHRASE
-    }
-  }
+  // Create Nest application
+  let app = await NestFactory.create(AppModule, AppService.options)
 
-  // Create Nest application and apply global configurations
-  const app = await useGlobal(await NestFactory.create(AppModule, options))
+  // Apply global configurations
+  app = await useGlobal(app)
 
   // Start application
   await app.listen(ENV.PORT, () => {

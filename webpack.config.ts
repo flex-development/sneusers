@@ -55,10 +55,7 @@ const config = (config: Configuration): Configuration => {
     SSL_CERT,
     SSL_KEY,
     SSL_PASSPHRASE
-  } = secrets({
-    config: NODE_ENV,
-    log_secrets: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false')
-  })
+  } = secrets({ log: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false') })
 
   return mergeWebpack(config, {
     module: {
@@ -67,8 +64,10 @@ const config = (config: Configuration): Configuration => {
           test: /.ts?$/,
           exclude: /node_modules/,
           include: [
+            path.join(config.context, '__doubles__'),
             path.join(config.context, '__tests__'),
             path.join(config.context, 'src'),
+            path.join(config.context, 'tools', 'helpers', 'secrets.ts'),
             path.join(config.context, 'webpack.config.ts')
           ],
           resolve: { extensions: EXTENSIONS, fullySpecified: false },

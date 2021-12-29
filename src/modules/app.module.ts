@@ -5,6 +5,7 @@ import {
   RequestMethod
 } from '@nestjs/common'
 import * as MIDDLEWARE from '@sneusers/middleware'
+import { AppService } from '@sneusers/providers'
 import ConfigModule from './config.module'
 import DatabaseModule from './database.module'
 
@@ -14,7 +15,7 @@ import DatabaseModule from './database.module'
  * @see https://docs.nestjs.com/modules
  */
 
-@Module({ imports: [ConfigModule, DatabaseModule], providers: [] })
+@Module({ imports: [ConfigModule, DatabaseModule], providers: [AppService] })
 export default class AppModule implements NestModule {
   /**
    * Configures global middleware.

@@ -25,7 +25,7 @@ module.exports = {
       impliedStrict: true,
       jsx: true
     },
-    extraFileExtensions: ['.cjs', '.mjs'],
+    extraFileExtensions: ['.cjs'],
     project: ['./tsconfig.json'],
     sourceType: 'module',
     tsconfigRootDir: __dirname,
@@ -201,6 +201,7 @@ module.exports = {
           'vscode',
           'wasm',
           'wip',
+          'yaml',
           'yargs',
           'zlib'
         ],

@@ -61,4 +61,4 @@ jobs:
         run: yarn check:dedupe
       # - id: dependency-graph
       #   name: Check dependency graph
-      #   run: yarn check:install
+      #   run: yarn check:deps

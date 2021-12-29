@@ -1,4 +1,7 @@
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
+import isNodeEnv from '@flex-development/tutils/guards/is-node-env.guard'
+import { config as dotenv } from 'dotenv'
+import expand from 'dotenv-expand'
 import sh from 'shelljs'
 
 /**
@@ -6,84 +9,99 @@ import sh from 'shelljs'
  * @module helpers/secrets
  */
 
-export type SecretsJson = Record<string, { computed: string }>
-
-export type SecretsOptions = {
-  config?: NodeEnv
-  log_raw?: boolean
-  log_secrets?: boolean
-  log_token?: boolean
+export enum SecretsFormat {
+  DOCKER = 'docker',
+  ENV = 'env',
+  ENV_NO_QUOTES = 'env-no-quotes',
+  JSON = 'json',
+  YAML = 'yaml'
 }
 
-export type Secrets = Record<string, string>
+export type SecretsJson = Record<string, string>
+
+export type SecretsOptions = {
+  /**
+   * Secrets formatting.
+   *
+   * @default SecretsFormat.JSON
+   */
+  format?: SecretsFormat
+
+  /**
+   * Log secrets after retrieval.
+   *
+   * @default false
+   */
+  log?: boolean
+}
 
 /**
- * Retrieves environment variables from [Doppler][1].
+ * Downloads environment variables from [Doppler][1].
  *
  * [1]: https://docs.doppler.com/docs
  *
+ * @see https://docs.doppler.com/reference/download
+ *
+ * @requires .env.doppler [file]
+ * @requires process.env.DOPPLER_TOKEN_DEV
+ * @requires process.env.DOPPLER_TOKEN_TEST
+ * @requires process.env.DOPPLER_TOKEN_PROD
+ *
+ * @template R - Function return type
+ *
  * @param {SecretsOptions} options - Retrieval options
- * @param {NodeEnv} [options.config=process.env.NODE_ENV] - Secrets config name
- * @param {boolean} [options.log_raw=false] - Log raw secrets data
- * @param {boolean} [options.log_secrets=false] - Log parsed secrets
- * @param {boolean} [options.log_token=false] - Log new token when created
- * @return {Secrets} Object containing environment variables
+ * @param {boolean} [options.format=SecretsFormat.JSON] - Secrets formatting
+ * @param {boolean} [options.log=false] - Log secrets after retrieval
+ * @return {SecretsJson | string} Secrets
  */
-const secrets = ({
-  config = process.env.NODE_ENV as NodeEnv,
-  log_secrets = false,
-  log_raw = false,
-  log_token = false
-}: SecretsOptions): Secrets => {
-  /** @property {string} token_create - `doppler configs tokens` arguments */
-  const token_create: string = [
-    `doppler configs tokens create secrets-${config}`,
-    `--config=${config}`,
-    `--max-age=1h`,
-    `--plain`,
-    `--no-read-env`
-  ].join(' ')
+function secrets<R extends SecretsJson | string = SecretsJson>({
+  format = SecretsFormat.JSON,
+  log = false
+}: SecretsOptions): R {
+  // Load environment variables
+  expand(dotenv({ path: `${process.cwd()}/.env.doppler` }))
 
-  /** @property {string} secrets_get - `doppler secrets` arguments */
-  const secrets_get: string = [
-    'doppler secrets',
-    `--json`,
-    `--config=${config}`,
-    `--token=${sh.exec(token_create, { silent: !log_token }).stdout}`
-  ].join(' ')
+  /** @property {boolean} json - Check if formatting secrets as json */
+  const json: boolean = format === SecretsFormat.JSON
 
-  /** @property {string} secrets- Stringified doppler secrets */
-  const secrets_raw = sh.exec(secrets_get, { silent: true }).stdout
+  /** @property {string} DOPPLER_TOKEN - Doppler API token */
+  const DOPPLER_TOKEN: string = ((): string => {
+    let NODE_ENV = process.env.NODE_ENV as NodeEnv
+    NODE_ENV = isNodeEnv(NODE_ENV) ? NODE_ENV : NodeEnv.DEV
 
-  /** @property {SecretsJson} secrets_json - Parsed {@link secrets_raw} */
-  const secrets_json: SecretsJson = JSON.parse(secrets_raw)
+    let type: keyof typeof NodeEnv = 'DEV'
 
-  /** @property {string} variables - Names of secrets */
-  const variables: string[] = Object.keys(secrets_json)
+    if (NODE_ENV === NodeEnv.TEST) type = 'TEST'
+    if (NODE_ENV === NodeEnv.PROD) type = 'PROD'
 
-  /** @property {Secrets} secrets - Environment variable object */
-  const secrets: Secrets = {}
+    return process.env[`DOPPLER_TOKEN_${type}`] || ''
+  })()
 
-  // Log raw secrets
-  log_raw && console.log(secrets_json)
+  /** @property {string} CURL_COMMAND - curl command to retrieve secrets */
+  const CURL_COMMAND = ((): string => {
+    const accept = json ? 'application/json' : 'text/plain'
+    const credentials = Buffer.from(`${DOPPLER_TOKEN}:`).toString('base64')
 
-  // Get environment variables
-  for (const variable of variables) {
-    let value = secrets_json[variable].computed
+    return `curl --request GET --url 'https://api.doppler.com/v3/configs/config/secrets/download?format=${format}' --header 'Accept: ${accept}' --header 'Authorization: Basic ${credentials}'`
+  })()
 
-    if (value.startsWith('$')) {
-      const other = value.slice(1, value.length)
-      if (variables.includes(other)) value = secrets_json[other].computed
-    }
+  /** @property {string} raw - Raw secrets */
+  const raw: string = sh.exec(CURL_COMMAND, { silent: !log }).stdout
 
-    secrets[variable] = value
-    process.env[variable] = secrets[variable]
+  // Parse if json format was requested
+  if (json) {
+    /** @property {SecretsJson} secrets - Parsed version of {@link raw} */
+    const secrets: SecretsJson = JSON.parse(raw || '')
+
+    // Override environment variables
+    for (const v of Object.keys(secrets)) process.env[v] = secrets[v]
+
+    log && console.log(secrets)
+    return secrets as R
   }
 
-  // Log secrets
-  log_secrets && console.log(secrets)
-
-  return secrets
+  log && console.log(raw)
+  return raw as R
 }
 
 export default secrets

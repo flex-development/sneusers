@@ -61,7 +61,7 @@
   },
   "files": ["typings/index.d.ts"],
   "exclude": ["./coverage", "./dist", "./node_modules"],
-  "include": ["**/*.cjs", "**/*.mjs", "**/*.ts", "**/.*.cjs", "**/.*.ts"],
+  "include": ["**/*.cjs", "**/*.ts", "**/.*.cjs", "**/.*.ts"],
   // See: https://typestrong.org/ts-node/docs/configuration
   "ts-node": {
     "compilerOptions": {},

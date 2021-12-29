@@ -67,7 +67,7 @@ jobs:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_TEST }}
       - id: build
         name: Build project
-        run: doppler run --command="NODE_ENV=test yarn build"
+        run: doppler run --command="NODE_ENV=test yarn build:app"
         env:
           DOPPLER_CONFIG: ${{ secrets.DOPPLER_CONFIG }}
           DOPPLER_ENVIRONMENT: ${{ secrets.DOPPLER_ENVIRONMENT }}
@@ -94,16 +94,12 @@ jobs:
         with:
           build-args: |
             GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
+            NODE_ENV=production
             NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
+            PORT=8080
+            WEBPACK_LOG_SECRETS=false
           context: .
           file: ./Dockerfile
           labels: ${{ steps.ghcr-meta.outputs.labels }}
           push: true
-          secrets: |
-            DOPPLER_CONFIG=production
-            DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN }}
-            GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
-            NODE_ENV=production
-            NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
-            PORT=8080
           tags: ${{ steps.ghcr-meta.outputs.tags }}

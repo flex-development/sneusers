@@ -100,6 +100,9 @@ db/
 # Exported database design
 docs/*.sql
 
-### Secrets & Sensitive Data ###
-# Local SSL
-*.pem
+### Nginx ###
+# Generated configs
+nginx/conf.d/
+
+# Directories
+nginx/run/
