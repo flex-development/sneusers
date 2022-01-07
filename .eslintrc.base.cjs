@@ -332,6 +332,7 @@ module.exports = {
         ],
         'mocha/valid-test-description': [2, { pattern: '^should.[a-z0-9]+.*' }],
         'prefer-arrow-callback': 0,
+        'promise/valid-params': 0,
         'tree-shaking/no-side-effects-in-initialization': 0,
         'unicorn/consistent-function-scoping': 0,
         'unicorn/explicit-length-check': 0,

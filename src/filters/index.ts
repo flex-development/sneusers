@@ -4,4 +4,4 @@
  * @see https://docs.nestjs.com/exception-filters
  */
 
-export {}
+export { default as ExceptionClassFilter } from './exception-class.filter'

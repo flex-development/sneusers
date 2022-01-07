@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common'
+import { ExceptionClassFilter } from '@sneusers/filters'
 
 /**
  * @file Hooks - useExceptionFilters
@@ -17,6 +18,7 @@ import type { INestApplication } from '@nestjs/common'
 const useExceptionFilters = async (
   app: INestApplication
 ): Promise<INestApplication> => {
+  app = app.useGlobalFilters(new ExceptionClassFilter())
   return app
 }
 
