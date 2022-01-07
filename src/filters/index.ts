@@ -5,3 +5,4 @@
  */
 
 export { default as ExceptionClassFilter } from './exception-class.filter'
+export { default as HttpExceptionFilter } from './http-exception.filter'

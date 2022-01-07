@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common'
-import { ExceptionClassFilter } from '@sneusers/filters'
+import { ExceptionClassFilter, HttpExceptionFilter } from '@sneusers/filters'
 
 /**
  * @file Hooks - useExceptionFilters
@@ -19,6 +19,8 @@ const useExceptionFilters = async (
   app: INestApplication
 ): Promise<INestApplication> => {
   app = app.useGlobalFilters(new ExceptionClassFilter())
+  app = app.useGlobalFilters(new HttpExceptionFilter())
+
   return app
 }
 
