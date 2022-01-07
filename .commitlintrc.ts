@@ -57,6 +57,7 @@ const config: UserConfig = {
         'entities',
         'enums',
         'env',
+        'exceptions',
         'filters',
         'github',
         'guards',
