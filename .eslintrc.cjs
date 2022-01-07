@@ -33,6 +33,7 @@ module.exports = {
           'req',
           'sequelize',
           'sneusers',
+          'sql',
           'sqlite',
           'stringified',
           'subdomain',

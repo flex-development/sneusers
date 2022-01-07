@@ -5,3 +5,4 @@
  */
 
 export { default as EnvironmentVariables } from './environment-variables.model'
+export { default as SearchOptions } from './search-options.model'

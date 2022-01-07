@@ -2,6 +2,7 @@ import type { INestApplication } from '@nestjs/common'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { PACKAGE } from '@sneusers/config/constants.config'
+import { SearchOptions } from '@sneusers/models'
 import type { Request as Req, Response as Res } from 'express'
 
 /**
@@ -39,7 +40,9 @@ const useSwagger = async (
   builder.setVersion(version)
 
   // Get documentation options
-  const options: SwaggerDocumentOptions = { extraModels: [] }
+  const options: SwaggerDocumentOptions = {
+    extraModels: [SearchOptions]
+  }
 
   // Get documentation in OpenAPI format
   const docs = SwaggerModule.createDocument(app, builder.build(), options)
