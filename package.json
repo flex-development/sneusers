@@ -24,7 +24,8 @@
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "Dockerfile",
-    "docker-compose.yml"
+    "docker-compose.yml",
+    "TODO.md"
   ],
   "main": "dist/main.js",
   "scripts": {

@@ -6,7 +6,8 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 **[Contributing Guide](CONTRIBUTING.md)**  
-**[Database Design](docs/DATABASE.dbml)**
+**[Database Design](docs/DATABASE.dbml)**  
+**[Todo List](TODO.md)**
 
 ## Getting Started
 
