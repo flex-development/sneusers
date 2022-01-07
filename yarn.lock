@@ -715,6 +715,7 @@ __metadata:
     "@flex-development/tutils": 4.4.0
     "@istanbuljs/esm-loader-hook": 0.1.2
     "@jest-mock/express": 1.4.5
+    "@nestjs/axios": 0.0.4
     "@nestjs/cli": 8.1.6
     "@nestjs/common": 8.2.4
     "@nestjs/config": 1.1.5
@@ -723,6 +724,7 @@ __metadata:
     "@nestjs/schematics": 8.0.5
     "@nestjs/sequelize": 8.0.0
     "@nestjs/swagger": 5.1.5
+    "@nestjs/terminus": 8.0.3
     "@nestjs/testing": 8.2.4
     "@sneusers/config": "link:src/config"
     "@sneusers/dtos": "link:src/dtos"
@@ -963,6 +965,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/axios@npm:0.0.4":
+  version: 0.0.4
+  resolution: "@nestjs/axios@npm:0.0.4"
+  dependencies:
+    axios: 0.24.0
+  peerDependencies:
+    "@nestjs/common": ^7.0.0 || ^8.0.0
+    reflect-metadata: ^0.1.12
+    rxjs: ^6.0.0 || ^7.0.0
+  checksum: 4004f11e25dc1ea8d2792c0842048db7983e21db553c25ffcd62cd74d33e3a162cd99ac74b48f5c2a948318d6825bedbcf564f41c77b1a4dfd39ecea82881aa6
+  languageName: node
+  linkType: hard
+
 "@nestjs/cli@npm:8.1.6":
   version: 8.1.6
   resolution: "@nestjs/cli@npm:8.1.6"
@@ -1145,6 +1160,20 @@ __metadata:
     swagger-ui-express:
       optional: true
   checksum: 76a92bd411904464ff34fc5b95357e56e4b3464af628a283562b2b21f134d6586386edc31623759b15a687740778659bdea11efde24c6b687ba17e81368db3e6
+  languageName: node
+  linkType: hard
+
+"@nestjs/terminus@npm:8.0.3":
+  version: 8.0.3
+  resolution: "@nestjs/terminus@npm:8.0.3"
+  dependencies:
+    check-disk-space: 3.0.1
+  peerDependencies:
+    "@nestjs/common": 8.x
+    "@nestjs/core": 8.x
+    reflect-metadata: 0.1.x
+    rxjs: 7.x
+  checksum: 3a6cfa49df22ed03cb9c2e26cac73d427b53101a29e66a4a660ed3d69e9d2a9498ee84e82ecbae0451cf5746eed02b8bfa820d6c668111c3b6947812a763022e
   languageName: node
   linkType: hard
 
@@ -3339,6 +3368,13 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 6fd5da1f5d18ff5712c1e0aed41da200d7c51c28f11b36ee3c7b483f3696dabc08927fc6b227735eb8f0e1215c9a8abd8154637f3eff8cada5959df7f58b024d
+  languageName: node
+  linkType: hard
+
+"check-disk-space@npm:3.0.1":
+  version: 3.0.1
+  resolution: "check-disk-space@npm:3.0.1"
+  checksum: 213e5efd0e80ab737409556154513d665f9d6aba2358a3280aff2b51f4b8289cbb1f6a727e9e82bb391db476247266eb34899f1cf8ea48203d3413d557b3f901
   languageName: node
   linkType: hard
 

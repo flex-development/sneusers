@@ -26,6 +26,8 @@ module.exports = {
           'localhost',
           'mysql',
           'nestjs',
+          'nginx',
+          'openapi',
           'poq',
           'readonly',
           'req',
@@ -46,7 +48,7 @@ module.exports = {
   overrides: [
     ...overrides,
     {
-      files: ['ecosystem.config.cjs'],
+      files: ['*.openapi.ts'],
       rules: {
         'sort-keys': 0
       }

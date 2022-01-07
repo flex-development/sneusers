@@ -18,6 +18,7 @@ export {
   ValidationErrorItemOrigin,
   ValidationErrorItemType
 } from 'sequelize'
+export { default as ApiEndpoint } from './api-endpoint.enum'
 export { default as DatabaseTable } from './database-table.enum'
 export { default as OrderDirection } from './order-direction.enum'
 export { default as SequelizeErrorCode } from './sequelize-error-code.enum'
