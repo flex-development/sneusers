@@ -1,6 +1,6 @@
 import type { NumberString } from '@flex-development/tutils'
-import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
 import isNIL from '@flex-development/tutils/guards/is-nil.guard'
+import { NodeEnv } from '@sneusers/enums'
 import { EnvironmentVariables } from '@sneusers/models'
 import { classToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
@@ -24,8 +24,6 @@ const ENV_FILE_PATH = [`${process.cwd()}/.env.local`, `${process.cwd()}/.env`]
 const validate = ({
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'localhost',
-  DB_LOG_QUERY_PARAMS = 'true',
-  DB_LOGGING = 'true',
   DB_NAME,
   DB_PASSWORD,
   DB_PORT = '3306',
@@ -52,8 +50,6 @@ const validate = ({
   // Assign remaining environment variables
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
-  env.DB_LOG_QUERY_PARAMS = JSON.parse(DB_LOG_QUERY_PARAMS)
-  env.DB_LOGGING = JSON.parse(DB_LOGGING)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
@@ -92,8 +88,6 @@ const configuration = (
   return validate({
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
-    DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
-    DB_LOGGING: process.env.DB_LOGGING,
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,

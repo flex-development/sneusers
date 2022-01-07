@@ -4,10 +4,11 @@ import {
   NestModule,
   RequestMethod
 } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { SequelizeModule } from '@nestjs/sequelize'
 import * as MIDDLEWARE from '@sneusers/middleware'
 import { AppService } from '@sneusers/providers'
-import ConfigModule from './config.module'
-import DatabaseModule from './database.module'
+import { UsersModule } from '@sneusers/subdomains'
 
 /**
  * @file Modules - AppModule
@@ -15,7 +16,14 @@ import DatabaseModule from './database.module'
  * @see https://docs.nestjs.com/modules
  */
 
-@Module({ imports: [ConfigModule, DatabaseModule], providers: [AppService] })
+@Module({
+  imports: [
+    ConfigModule.forRoot(AppService.configModuleOptions),
+    SequelizeModule.forRootAsync(AppService.sequelizeModuleOptions),
+    UsersModule
+  ],
+  providers: [AppService]
+})
 export default class AppModule implements NestModule {
   /**
    * Configures global middleware.

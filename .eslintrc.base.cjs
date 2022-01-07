@@ -64,37 +64,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/no-namespace': 0,
-    '@typescript-eslint/naming-convention': [
-      2,
-      {
-        selector: 'default',
-        format: ['UPPER_CASE', 'snake_case'],
-        leadingUnderscore: 'allow',
-        trailingUnderscore: 'forbid'
-      },
-      {
-        selector: 'function',
-        format: ['camelCase']
-      },
-      {
-        selector: 'method',
-        format: ['camelCase']
-      },
-      {
-        selector: 'typeLike',
-        format: ['PascalCase']
-      },
-      {
-        selector: 'variable',
-        format: null,
-        modifiers: ['destructured']
-      },
-      {
-        selector: 'variable',
-        format: ['camelCase'],
-        types: ['function']
-      }
-    ],
     '@typescript-eslint/no-use-before-define': 0,
     '@typescript-eslint/no-useless-constructor': 1,
     '@typescript-eslint/no-var-requires': 1,
@@ -322,11 +291,11 @@ module.exports = {
       globals: {
         after: true,
         afterEach: true,
-        assert: true,
         before: true,
         beforeEach: true,
         chai: true,
         describe: true,
+        expect: true,
         it: true,
         pf: true,
         sandbox: true

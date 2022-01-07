@@ -1,5 +1,13 @@
 import { HttpStatus, Injectable, NestApplicationOptions } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { ConfigModuleOptions, ConfigService } from '@nestjs/config'
+import { SequelizeModuleAsyncOptions } from '@nestjs/sequelize'
+import configuration, {
+  ENV,
+  ENV_FILE_PATH as envFilePath,
+  validate
+} from '@sneusers/config/configuration'
+import { EnvironmentVariables } from '@sneusers/models'
+import { SequelizeConfigService } from '@sneusers/providers'
 
 /**
  * @file Providers - AppService
@@ -8,7 +16,27 @@ import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export default class AppService {
-  constructor(protected readonly config: ConfigService) {}
+  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+
+  /**
+   * Returns the application {@link ConfigModuleOptions}.
+   *
+   * @see https://docs.nestjs.com/techniques/configuration
+   *
+   * @return {ConfigModuleOptions} Application `ConfigModuleOptions`
+   */
+  static get configModuleOptions(): ConfigModuleOptions {
+    return {
+      cache: ENV.PROD,
+      envFilePath,
+      expandVariables: true,
+      ignoreEnvFile: ENV.PROD,
+      ignoreEnvVars: false,
+      isGlobal: true,
+      load: [configuration],
+      validate
+    }
+  }
 
   /**
    * Returns the options used to create the NestJS application.
@@ -26,5 +54,16 @@ export default class AppService {
         preflightContinue: true
       }
     }
+  }
+
+  /**
+   * Returns the application {@link SequelizeModuleAsyncOptions}.
+   *
+   * @see https://docs.nestjs.com/techniques/database#async-configuration-1
+   *
+   * @return {SequelizeModuleAsyncOptions} Application `SequelizeModule` options
+   */
+  static get sequelizeModuleOptions(): SequelizeModuleAsyncOptions {
+    return { useClass: SequelizeConfigService }
   }
 }

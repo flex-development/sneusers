@@ -4,4 +4,4 @@
  * @see https://khalilstemmler.com/articles/domain-driven-design-intro
  */
 
-export {}
+export { default as UsersModule } from './users/users.module'

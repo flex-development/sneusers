@@ -1,7 +1,11 @@
-import type { ModuleMetadata } from '@nestjs/common'
-import useGlobal from '@sneusers/use-global'
+import { ModuleMetadata } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { SequelizeModule } from '@nestjs/sequelize'
+import useGlobal from '@sneusers/hooks/use-global.hook'
+import { AppService } from '@sneusers/providers'
+import sequelize_config from '@tests/fixtures/sequelize-config-service.fixture'
 import createTestingModule from './creating-testing-module.util'
-import type { NestTestApp } from './types'
+import { NestTestApp } from './types'
 
 /**
  * @file Global Test Utilities - createApp
@@ -24,6 +28,14 @@ const createApp = async (
   provider?: any,
   value?: any
 ): Promise<NestTestApp> => {
+  const imports = [
+    ConfigModule.forRoot(AppService.configModuleOptions),
+    SequelizeModule.forRoot(sequelize_config.createSequelizeOptions())
+  ]
+
+  if (metadata.imports) metadata.imports = [...imports, ...metadata.imports]
+  if (!metadata.imports) metadata.imports = imports
+
   const module_ref = await createTestingModule(metadata, provider, value)
   const app = await useGlobal(module_ref.createNestApplication())
 

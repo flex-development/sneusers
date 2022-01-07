@@ -55,10 +55,10 @@ node_modules/
 Dockerfile*
 docker-compose*.yml
 
-# MySQL configuration
+# Database configuration
 db/
 
-# Server configuration
+# Proxy server configuration
 nginx/
 
 ### Builds & Distributions ###

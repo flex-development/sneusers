@@ -8,6 +8,7 @@
     "sourceMap": true,
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
+  "exclude": ["coverage", "dist", "node_modules", "src/**/*.spec.ts"],
   "extends": "./tsconfig.json",
   "include": ["src", "typings"]
 }

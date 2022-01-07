@@ -1,24 +1,17 @@
-import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
+import { NodeEnv } from '@sneusers/enums'
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
-  MinLength,
-  ValidateIf
+  MinLength
 } from 'class-validator'
 
 /**
  * @file Models - EnvironmentVariables
  * @module sneusers/models/EnvironmentVariables
  */
-
-/** @property {boolean} PROD - Production environment check */
-const PROD = (() => {
-  const LOCALHOST = process.env.HOSTNAME?.includes('localhost') ?? true
-  return process.env.NODE_ENV === NodeEnv.PROD && !LOCALHOST
-})()
 
 /**
  * Environment variables used by this application.
@@ -41,24 +34,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @ValidateIf(() => PROD)
   DB_HOST: string
-
-  /**
-   * Log SQL queries.
-   *
-   * @default true
-   */
-  @IsBoolean()
-  DB_LOGGING: boolean
-
-  /**
-   * Show query binding parameters in log.
-   *
-   * @default true
-   */
-  @IsBoolean()
-  DB_LOG_QUERY_PARAMS: boolean
 
   /**
    * Name of database to connect to.
@@ -73,7 +49,6 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   @MinLength(4)
-  @ValidateIf(() => PROD)
   DB_PASSWORD: string
 
   /**
@@ -82,7 +57,6 @@ class EnvironmentVariables {
    * @default 3306
    */
   @IsNumber()
-  @ValidateIf(() => PROD)
   DB_PORT: number
 
   /**
@@ -93,7 +67,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @ValidateIf(() => PROD)
   DB_TIMEZONE: string
 
   /**
@@ -101,7 +74,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @ValidateIf(() => PROD)
   DB_USERNAME: string
 
   /**

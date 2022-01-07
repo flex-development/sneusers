@@ -26,14 +26,11 @@ project. This includes, but is not limited to:
 
 | name                  | required | development        | test               | production         | release            |
 | --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
-| `ADMINER_HOSTNAME`    | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 | `ADMINER_PORT`        | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 | `ADMINER_SERVER_NAME` | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
 | `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_DOCS_TOKEN`       | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
 | `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_LOGGING`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_LOG_QUERY_PARAMS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_PASSWORD`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
@@ -43,6 +40,7 @@ project. This includes, but is not limited to:
 | `DEBUG`               | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `MYSQL_ROOT_PASSWORD` | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 | `SERVER_NAME`         | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |

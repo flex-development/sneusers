@@ -1,8 +1,11 @@
+import type NodeEnv from '@flex-development/tutils/enums/node-env.enum'
+import { NestApplicationOptions } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import { ENV } from './config/configuration'
+import useGlobal from './hooks/use-global.hook'
+import type EnvironmentVariables from './models/environment-variables.model'
 import AppModule from './modules/app.module'
 import AppService from './providers/app.service'
-import useGlobal from './use-global'
 
 /**
  * @file Server Entry Point
@@ -16,20 +19,24 @@ import useGlobal from './use-global'
  * @see {@link useGlobal}
  *
  * @async
+ * @param {NestApplicationOptions} options - Application options
  * @return {Promise<void>} Empty promise when complete
  */
-async function bootstrap(): Promise<void> {
-  // Create Nest application
-  let app = await NestFactory.create(AppModule, AppService.options)
+async function bootstrap(options?: NestApplicationOptions): Promise<void> {
+  // Create Nest application and apply global configurations
+  const app = await useGlobal(await NestFactory.create(AppModule, options))
 
-  // Apply global configurations
-  app = await useGlobal(app)
+  // Get configuration service
+  const conf: ConfigService<EnvironmentVariables, true> = app.get(ConfigService)
 
   // Start application
-  await app.listen(ENV.PORT, () => {
-    return console.log(`[${ENV.NODE_ENV}] listening on ${ENV.HOST}`)
+  await app.listen(conf.get<number>('PORT'), () => {
+    const HOST = conf.get<string>('HOST')
+    const NODE_ENV = conf.get<NodeEnv>('NODE_ENV')
+
+    return console.log(`[${NODE_ENV}] listening on ${HOST}`)
   })
 }
 
 // ! Run application
-bootstrap()
+bootstrap(AppService.options)

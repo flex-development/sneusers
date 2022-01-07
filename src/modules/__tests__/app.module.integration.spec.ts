@@ -31,15 +31,13 @@ describe('integration:modules/AppModule', () => {
 
     describe('app.get(ConfigService).get', () => {
       type Case = Testcase<'boolean' | 'number' | 'string'> & {
-        type?: 'NodeEnv' | 'Protocol'
+        type?: 'NodeEnv'
         variable: keyof EnvironmentVariables
       }
 
       const cases: Case[] = [
         { expected: 'boolean', variable: 'DB_AUTO_LOAD_MODELS' },
         { expected: 'string', variable: 'DB_HOST' },
-        { expected: 'boolean', variable: 'DB_LOG_QUERY_PARAMS' },
-        { expected: 'boolean', variable: 'DB_LOGGING' },
         { expected: 'string', variable: 'DB_NAME' },
         { expected: 'string', variable: 'DB_PASSWORD' },
         { expected: 'number', variable: 'DB_PORT' },
@@ -56,7 +54,7 @@ describe('integration:modules/AppModule', () => {
 
       cases.forEach(({ expected, type = expected, variable }) => {
         it(`should return a ${type} given ['${variable}']`, () => {
-          assert.isTrue(typeof config.get(variable) === expected)
+          expect(config.get(variable)).to.be.a(expected)
         })
       })
     })

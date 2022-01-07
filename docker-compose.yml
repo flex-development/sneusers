@@ -14,14 +14,21 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: ${DB_HOST}
       ADMINER_DESIGN: dracula
+      ADMINER_PLUGINS:
+        dump-alter dump-date dump-json edit-foreign email-table enum-option
+        enum-types file-upload foreign-system table-indexes-structure
+        table-structure tables-filter tinymce
       PMA_HOST: ${DB_HOST}
       PMA_PORT: ${DB_PORT}
     links:
       - mysql:${DB_HOST}
     ports:
       - ${ADMINER_PORT}:8080
+    privileged: true
     restart: always
-
+    volumes:
+      - ./db/data:/db/data
+      - ./db/public/plugins-enabled/login-password-less.php:/var/www/html/plugins-enabled/login-password-less.php
   app:
     container_name: app
     # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
@@ -35,7 +42,7 @@ services:
         WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       context: .
       dockerfile: ./Dockerfile
-      target: runner
+      target: builder
     command: ['yarn', 'run:app', '-wd']
     depends_on:
       - adminer
@@ -46,8 +53,6 @@ services:
     environment:
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
       DB_HOST: ${DB_HOST}
-      DB_LOGGING: ${DB_LOGGING}
-      DB_LOG_QUERY_PARAMS: ${DB_LOG_QUERY_PARAMS}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
@@ -72,7 +77,10 @@ services:
     volumes:
       - ./__tests__:/opt/sneusers/__tests__
       - ./.yarn:/opt/sneusers/.yarn
-      - ./db:/opt/sneusers/db
+      - ./db/config:/opt/sneusers/db/config
+      - ./db/data:/opt/sneusers/db/data
+      - ./db/seeds:/opt/sneusers/db/seeds
+      - ./db/migrations:/opt/sneusers/db/migrations
       - ./src:/opt/sneusers/src
       - ./tools/helpers:/opt/sneusers/tools/helpers
       - ./typings:/opt/sneusers/typings
@@ -93,16 +101,18 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_HOST: ${DB_HOST}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_TCP_PORT: ${DB_PORT}
       MYSQL_USER: ${DB_USERNAME}
+      TZ: ${DB_TIMEZONE}
 
     ports:
       - ${DB_PORT}:${DB_PORT}
     restart: always
     volumes:
-      - ./db:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
   server:
     container_name: server
     image: nginx:alpine-perl

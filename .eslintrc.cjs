@@ -5,7 +5,6 @@ const { overrides, rules } = require('./.eslintrc.base.cjs')
  * @see https://eslint.org/docs/user-guide/configuring
  */
 
-const RULES_NAMING_CONVENTIONS = rules['@typescript-eslint/naming-convention']
 const RULES_SPELLCHECKER = rules['spellcheck/spell-checker']
 
 module.exports = {
@@ -18,20 +17,26 @@ module.exports = {
         ...RULES_SPELLCHECKER[1],
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
+          'dao',
           'doppler',
+          'dto',
           'dtos',
           'enums',
+          'keyof',
           'localhost',
           'mysql',
           'nestjs',
           'poq',
+          'readonly',
           'req',
+          'sequelize',
           'sneusers',
           'sqlite',
           'stringified',
           'subdomain',
           'subdomains',
           'tutils',
+          'uid',
           'webpack',
           'zerollup'
         ]
@@ -47,16 +52,9 @@ module.exports = {
       }
     },
     {
-      files: ['src/**'],
+      files: ['ecosystem.config.cjs'],
       rules: {
-        '@typescript-eslint/naming-convention': [
-          RULES_NAMING_CONVENTIONS[0],
-          ...RULES_NAMING_CONVENTIONS.slice(1, RULES_NAMING_CONVENTIONS.length),
-          {
-            selector: 'objectLiteralProperty',
-            format: ['UPPER_CASE', 'camelCase', 'snake_case']
-          }
-        ]
+        'sort-keys': 0
       }
     },
     {
@@ -68,6 +66,12 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-var-requires': 0,
         'unicorn/prefer-module': 0
+      }
+    },
+    {
+      files: ['src/subdomains/users/dtos/create-user.dto.ts'],
+      rules: {
+        '@typescript-eslint/no-empty-interface': 0
       }
     },
     {

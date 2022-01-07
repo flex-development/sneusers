@@ -42,8 +42,6 @@ const config = (config: Configuration): Configuration => {
   const {
     DB_AUTO_LOAD_MODELS,
     DB_HOST,
-    DB_LOG_QUERY_PARAMS,
-    DB_LOGGING,
     DB_NAME,
     DB_PASSWORD,
     DB_PORT,
@@ -51,10 +49,7 @@ const config = (config: Configuration): Configuration => {
     DB_USERNAME,
     HOST,
     HOSTNAME,
-    PORT,
-    SSL_CERT,
-    SSL_KEY,
-    SSL_PASSPHRASE
+    PORT
   } = secrets({ log: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false') })
 
   return mergeWebpack(config, {
@@ -115,8 +110,6 @@ const config = (config: Configuration): Configuration => {
       new DefinePlugin({
         'process.env.DB_AUTO_LOAD_MODELS': JSON.stringify(DB_AUTO_LOAD_MODELS),
         'process.env.DB_HOST': JSON.stringify(DB_HOST),
-        'process.env.DB_LOG_QUERY_PARAMS': JSON.stringify(DB_LOG_QUERY_PARAMS),
-        'process.env.DB_LOGGING': JSON.stringify(DB_LOGGING),
         'process.env.DB_NAME': JSON.stringify(DB_NAME),
         'process.env.DB_PASSWORD': JSON.stringify(DB_PASSWORD),
         'process.env.DB_PORT': JSON.stringify(DB_PORT),
@@ -125,10 +118,7 @@ const config = (config: Configuration): Configuration => {
         'process.env.HOST': JSON.stringify(HOST),
         'process.env.HOSTNAME': JSON.stringify(HOSTNAME),
         'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-        'process.env.PORT': JSON.stringify(PORT),
-        'process.env.SSL_CERT': JSON.stringify(SSL_CERT),
-        'process.env.SSL_KEY': JSON.stringify(SSL_KEY),
-        'process.env.SSL_PASSPHRASE': JSON.stringify(SSL_PASSPHRASE)
+        'process.env.PORT': JSON.stringify(PORT)
       })
     ],
     resolve: {

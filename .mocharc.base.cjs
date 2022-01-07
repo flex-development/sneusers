@@ -25,7 +25,7 @@ const config = {
   forbidOnly: true,
   forbidPending: false,
   fullTrace: true,
-  globals: ['assert', 'chai', 'pf', 'sandbox'],
+  globals: ['chai', 'expect', 'pf', 'sandbox'],
   growl: !(require('is-ci') || process.env.GITHUB_ACTIONS === true),
   ignore: ['coverage/**', 'node_modules/**'],
   inlineDiffs: true,
@@ -45,7 +45,7 @@ const config = {
   retries: 0,
   sort: false,
   spec: 'src/{,!(coverage|node_modules)/**}/__tests__/*.spec.ts',
-  timeout: 2000,
+  timeout: 10 * 1000,
   ui: 'bdd',
   watch: false
 }

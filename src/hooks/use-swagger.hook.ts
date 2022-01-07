@@ -1,33 +1,28 @@
 import type { INestApplication } from '@nestjs/common'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { PACKAGE } from '@sneusers/config/constants.config'
 import type { Request as Req, Response as Res } from 'express'
-import { PACKAGE } from './config/constants.config'
 
 /**
- * @file Server Configuration - useGlobal
- * @module sneusers/useGlobal
+ * @file Hooks - useSwagger
+ * @module sneusers/hooks/useSwagger
  */
 
 /**
- * Configures `app` to:
- *
- * - Serve [API][1] documentation from the root endpoint, `/`
- * - Apply global filters, guards, interceptors, pipes, and prefixes
+ * Configures `app` to serve [API][1] documentation from `path`.
  *
  * [1]: https://docs.nestjs.com/openapi/introduction
  *
- * @see https://docs.nestjs.com/exception-filters
- * @see https://docs.nestjs.com/guards
- * @see https://docs.nestjs.com/interceptors
- * @see https://docs.nestjs.com/pipes
- * @see https://docs.nestjs.com/faq/global-prefix
- *
  * @async
  * @param {INestApplication} app - NestJS application
+ * @param {string} [path=''] - Path to serve documentation from
  * @return {Promise<INestApplication>} Promise containing enhanced `app`
  */
-const useGlobal = async (app: INestApplication): Promise<INestApplication> => {
+const useSwagger = async (
+  app: INestApplication,
+  path: string = ''
+): Promise<INestApplication> => {
   // Initialize documentation builder
   const builder = new DocumentBuilder()
 
@@ -44,17 +39,15 @@ const useGlobal = async (app: INestApplication): Promise<INestApplication> => {
   builder.setVersion(version)
 
   // Get documentation options
-  const options: SwaggerDocumentOptions = {
-    extraModels: []
-  }
+  const options: SwaggerDocumentOptions = { extraModels: [] }
 
   // Get documentation in OpenAPI format
   const docs = SwaggerModule.createDocument(app, builder.build(), options)
 
-  // Add handler to view docs from root endpoint
-  app.getHttpAdapter().get('', (req: Req, res: Res) => res.json(docs))
+  // Add handler to view docs from path
+  app.getHttpAdapter().get(path, (req: Req, res: Res) => res.json(docs))
 
   return app
 }
 
-export default useGlobal
+export default useSwagger

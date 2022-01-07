@@ -39,23 +39,23 @@ describe('e2e:modules/AppModule', () => {
         })
 
         it('should return api documentation', () => {
-          assert.match(res.headers['content-type'], /application\/json/)
+          expect(res.headers['content-type']).to.match(/application\/json/)
         })
 
         it(`should return response with status ${HttpStatus.OK}`, () => {
-          assert.strictEqual(res.status, HttpStatus.OK)
+          expect(res.status).to.equal(HttpStatus.OK)
         })
 
         it('should return response with project description', () => {
-          assert.strictEqual(res.body.info.description, PACKAGE.description)
+          expect(res.body.info.description).to.equal(PACKAGE.description)
         })
 
         it('should return response with project title', () => {
-          assert.strictEqual(res.body.info.title, PACKAGE.name.split('/')[1])
+          expect(res.body.info.title).to.equal(PACKAGE.name.split('/')[1])
         })
 
         it('should return response with project version', () => {
-          assert.strictEqual(res.body.info.version, PACKAGE.version)
+          expect(res.body.info.version).to.equal(PACKAGE.version)
         })
       })
     })

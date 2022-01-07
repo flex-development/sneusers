@@ -1,4 +1,4 @@
-import chai, { assert } from 'chai'
+import chai, { expect } from 'chai'
 import faker from 'faker'
 import { format } from 'pretty-format'
 import sinon from 'sinon'
@@ -14,7 +14,7 @@ import sinon from 'sinon'
 declare const global: NodeJS.TestingGlobal
 
 // ! Update global namespace
-global.assert = assert
+global.expect = expect
 global.chai = chai
 global.faker = faker
 global.pf = format

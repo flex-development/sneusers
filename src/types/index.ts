@@ -3,5 +3,9 @@
  * @module sneusers/types
  */
 
-export type { default as HttpExceptionJSON } from './http-exception-json.type'
-export type { default as InterceptorResponse } from './interceptor-response.type'
+export type {
+  ExceptionData,
+  ExceptionErrors
+} from '@flex-development/exceptions/types'
+export type { default as AllSearchOptions } from './all-search-options.type'
+export type { default as SequelizeError } from './sequelize-error.type'

@@ -54,6 +54,7 @@ const config: UserConfig = {
         'deps-peer',
         'docker',
         'dtos',
+        'entities',
         'enums',
         'env',
         'filters',

@@ -5,3 +5,4 @@
  */
 
 export { default as AppService } from './app.service'
+export { default as SequelizeConfigService } from './sequelize-config.service'
