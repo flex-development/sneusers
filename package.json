@@ -19,11 +19,12 @@
     "url": "https://github.com/unicornware"
   },
   "files": [
-    "CHANGELOG.md",
-    "Dockerfile",
     "dist",
-    "docker-compose.yml",
-    "docs"
+    "docs",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "Dockerfile",
+    "docker-compose.yml"
   ],
   "main": "dist/main.js",
   "scripts": {

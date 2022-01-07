@@ -20,6 +20,50 @@ project. This includes, but is not limited to:
 
 ## Getting Started
 
+### Integrations
+
+Frameworks, libraries, tools, and other integrations used in this project.
+
+#### Docker
+
+**TODO**: Update documentation.
+
+#### Doppler
+
+[Doppler][1] is a tool used for managing environment variables. The [CLI][2] is
+used to inject variables into `process.env`.
+
+See the [installation docs][3] to begin managing project secrets.
+
+#### NestJS
+
+> Nest (NestJS) is a framework for building efficient, scalable [Node.js][4]
+> server-side applications. It uses progressive JavaScript, is built with and
+> fully supports [TypeScript][5] (yet still enables developers to code in pure
+> JavaScript) and combines elements of OOP (Object Oriented Programming), FP
+> (Functional Programming), and FRP (Functional Reactive Programming).
+>
+> _From_ <https://docs.nestjs.com>
+
+#### SQL
+
+**TODO**: Update documentation.
+
+#### TypeScript
+
+> TypeScript is **JavaScript with syntax for types.**
+>
+> TypeScript is a strongly typed programming language that builds on JavaScript,
+> giving you better tooling at any scale.
+>
+> _From_ <https://typescriptlang.org>
+
+#### Yarn
+
+This project uses Yarn 2. The Yarn configuration for this project can be found
+in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
+[Yarn 2 Migration docs][6].
+
 ### Environment Variables
 
 #### Application
@@ -48,7 +92,7 @@ project. This includes, but is not limited to:
 
 Default values are located in `.env`.
 
-#### Doppler
+#### Doppler CLI
 
 | name                 | required | development        | test               | production | release            |
 | -------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
@@ -81,10 +125,10 @@ Values should be stored in `.env.doppler`.
 
 Follow the steps below to autosource environment variables:
 
-1. Configure the [Doppler CLI][1]
+1. Configure the [Doppler CLI][2]
 
-   - [Doppler](docs/INTEGRATIONS.md#doppler) is used to manage and inject
-     application-level environment variables
+   - [Doppler](#doppler) is used to manage and inject application-level
+     environment variables
 
 2. Create an `.env.doppler` file in the project root. Add the following:
 
@@ -164,7 +208,7 @@ conflict with the project's Yarn configuration, or the Yarn 2 API.
 
 ## Contributing Code
 
-[Husky][2] is used to run Git hooks that locally enforce coding and commit
+[Husky][7] is used to run Git hooks that locally enforce coding and commit
 message standards, as well run tests associated with any files changed since the
 last commit.
 
@@ -205,7 +249,7 @@ will create a new branch titled `feat/4-authentication`.
 
 ### Commit Messages
 
-This project follows [Conventional Commit][3] standards and uses [commitlint][4]
+This project follows [Conventional Commit][8] standards and uses [commitlint][9]
 to enforce those standards.
 
 This means every commit must conform to the following format:
@@ -249,7 +293,7 @@ commit scopes and types.
 
 ### Code Style
 
-[Prettier][5] is used to format code, and [ESLint][6] to lint files.
+[Prettier][10] is used to format code, and [ESLint][11] to lint files.
 
 #### Prettier Configuration
 
@@ -270,22 +314,22 @@ along with an accompanying `@module` annotation.
 
 ### Documentation
 
-- JavaScript & TypeScript: [JSDoc][7], linted with [`eslint-plugin-jsdoc`][8]
+- JavaScript & TypeScript: [JSDoc][12], linted with [`eslint-plugin-jsdoc`][13]
 
 Before making a pull request, be sure your code is well documented, as it will
 be part of your code review.
 
 ### Testing
 
-This project uses a [Mocha][9] x [Chai][10] testing workflow.
+This project uses a [Mocha][14] x [Chai][15] testing workflow.
 
 - run all test suites: `yarn test`
 
 Husky is configured to run tests before every push. If you need to create a new
 issue regarding a test, or need to make a `wip` commit, use Mocha's [inclusive
-tests feature][11] to mark your tests or suites as pending.
+tests feature][16] to mark your tests or suites as pending.
 
-For more details on testing NestJS applications, see [Testing docs][12].
+For more details on testing NestJS applications, see [Testing docs][17].
 
 ### Getting Help
 
@@ -396,7 +440,7 @@ Before releasing, the following steps must be completed:
      generate the correct build and publish commands
 3. Decide what version bump the release needs (major, minor, patch)
    - versioning
-     - `yarn release` (determines [bumps based on commits][13])
+     - `yarn release` (determines [bumps based on commits][18])
      - `yarn release --first-release`
      - `yarn release --release-as major`
      - `yarn release --release-as minor`
@@ -412,10 +456,10 @@ Before releasing, the following steps must be completed:
    - once the PR is merged, the deployment workflow will be triggered
    - the maintainer who approved the PR should check to make sure the workflow
      completes all jobs as expected. if successful, the workflow will:
-     - **TODO** push container image to the [GitHub Container Registry][14]
+     - **TODO** push container image to the [GitHub Container Registry][19]
      - **TODO** tag latest container image
      - **TODO** deploy api
-     - **TODO** deploy database design doc to [dbdocs][15]
+     - **TODO** deploy database design doc to [dbdocs][20]
      - update production branch (merge branch `next` into `main`)
      - publish previously drafted release
      - delete release branch
@@ -423,19 +467,24 @@ Before releasing, the following steps must be completed:
      - make sure all issues are closed and have the label `status:merged`
      - add the `status:released` label to all issues (and PRs)
 
-[1]: https://docs.doppler.com/docs/install-cli
-[2]: https://github.com/typicode/husky
-[3]: https://www.conventionalcommits.org
-[4]: https://github.com/conventional-changelog/commitlint
-[5]: https://prettier.io
-[6]: https://eslint.org
-[7]: https://jsdoc.app
-[8]: https://github.com/gajus/eslint-plugin-jsdoc
-[9]: https://mochajs.org
-[10]: https://www.chaijs.com
-[11]: https://mochajs.org/#inclusive-tests
-[12]: https://docs.nestjs.com/fundamentals/testing
-[13]: https://www.conventionalcommits.org/en/v1.0.0
-[14]:
+[1]: https://doppler.com
+[2]: https://docs.doppler.com/docs/install-cli#usage
+[3]: https://docs.doppler.com/docs/install-cli
+[4]: https://nodejs.org
+[5]: https://typescriptlang.org
+[6]: https://yarnpkg.com/getting-started/migration
+[7]: https://github.com/typicode/husky
+[8]: https://www.conventionalcommits.org
+[9]: https://github.com/conventional-changelog/commitlint
+[10]: https://prettier.io
+[11]: https://eslint.org
+[12]: https://jsdoc.app
+[13]: https://github.com/gajus/eslint-plugin-jsdoc
+[14]: https://mochajs.org
+[15]: https://www.chaijs.com
+[16]: https://mochajs.org/#inclusive-tests
+[17]: https://docs.nestjs.com/fundamentals/testing
+[18]: https://www.conventionalcommits.org/en/v1.0.0
+[19]:
   https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-[15]: https://dbdocs.io/docs
+[20]: https://dbdocs.io/docs

@@ -5,14 +5,8 @@
 [![tested with mocha](https://img.shields.io/badge/tested%20with-mocha-brown?color=8d684b)](https://mochajs.org)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-## Overview
-
-:construction: [Getting Started](#getting-started)  
-:construction: [Usage](#usage)  
-:construction: [Built With](#built-with)  
-[Contributing](CONTRIBUTING.md)  
-[Database Design](docs/DATABASE.dbml)  
-[Integrations](docs/INTEGRATIONS.md)
+**[Contributing Guide](CONTRIBUTING.md)**  
+**[Database Design](docs/DATABASE.dbml)**
 
 ## Getting Started
 
