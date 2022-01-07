@@ -5,3 +5,5 @@
  */
 
 export { default as CreateUserDTO } from './create-user.dto'
+export { default as PatchUserDTO } from './patch-user.dto'
+export { default as UserDTO } from './user.dto'

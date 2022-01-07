@@ -67,6 +67,7 @@ const config: UserConfig = {
         'models',
         'modules',
         'pipes',
+        'providers',
         'release',
         'scripts',
         'server',

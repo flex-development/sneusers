@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import useGlobal from '@sneusers/hooks/use-global.hook'
 import { AppService } from '@sneusers/providers'
 import sequelize_config from '@tests/fixtures/sequelize-config-service.fixture'
+import { Sequelize } from 'sequelize-typescript'
 import createTestingModule from './creating-testing-module.util'
 import { NestTestApp } from './types'
 
@@ -38,6 +39,8 @@ const createApp = async (
 
   const module_ref = await createTestingModule(metadata, provider, value)
   const app = await useGlobal(module_ref.createNestApplication())
+
+  await module_ref.get(Sequelize).sync({ force: true })
 
   return { app, module_ref }
 }

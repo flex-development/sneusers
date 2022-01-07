@@ -59,6 +59,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       repositoryMode: true,
       retryAttempts: 3,
       retryDelay: 0,
+      sync: { force: true },
       synchronize: autoLoadModels,
       timezone,
       typeValidation: true,
@@ -74,6 +75,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
     }
 
     if (this.config.get<boolean>('PROD')) {
+      delete options.sync
       options.synchronize = false
     }
 
