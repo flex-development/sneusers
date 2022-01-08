@@ -41,7 +41,6 @@ describe('integration:modules/AppModule', () => {
         { expected: 'string', variable: 'DB_NAME' },
         { expected: 'string', variable: 'DB_PASSWORD' },
         { expected: 'number', variable: 'DB_PORT' },
-        { expected: 'string', variable: 'DB_TIMEZONE' },
         { expected: 'string', variable: 'DB_USERNAME' },
         { expected: 'boolean', variable: 'DEV' },
         { expected: 'string', variable: 'HOST' },

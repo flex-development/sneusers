@@ -27,7 +27,6 @@ const validate = ({
   DB_NAME,
   DB_PASSWORD,
   DB_PORT = '3306',
-  DB_TIMEZONE = '-05:00',
   DB_USERNAME,
   HOST,
   HOSTNAME = 'localhost',
@@ -53,7 +52,6 @@ const validate = ({
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
-  env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
@@ -91,7 +89,6 @@ const configuration = (
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,
-    DB_TIMEZONE: process.env.DB_TIMEZONE,
     DB_USERNAME: process.env.DB_USERNAME,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,

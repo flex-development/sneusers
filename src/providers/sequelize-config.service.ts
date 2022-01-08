@@ -5,7 +5,9 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize'
 import { OrderDirection } from '@sneusers/enums'
 import type { EnvironmentVariables } from '@sneusers/models'
 import noop from '@stdlib/utils-noop'
+import { Transaction } from 'sequelize'
 import sequelizeLogger from 'sequelize-log-syntax-colors'
+import sqlite3 from 'sqlite3'
 
 /**
  * @file Providers - SequelizeConfigService
@@ -32,7 +34,6 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
     const host = this.config.get<string>('DB_HOST')
     const password = this.config.get<string>('DB_PASSWORD')
     const port = this.config.get<number>('DB_PORT')
-    const timezone = this.config.get<string>('DB_TIMEZONE')
     const username = this.config.get<string>('DB_USERNAME')
 
     const options: SequelizeModuleOptions = {
@@ -41,14 +42,14 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       define: {
         createdAt: 'created_at',
         defaultScope: { order: [['id', OrderDirection.ASC]] },
-        deletedAt: 'deleted_at',
         omitNull: false,
+        paranoid: false,
         timestamps: true,
         underscored: true,
         updatedAt: 'updated_at'
       },
-      dialect: 'mysql',
-      dialectOptions: { dateStrings: false },
+      dialect: 'sqlite',
+      dialectOptions: { mode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE },
       host,
       logQueryParameters: true,
       logging: sql => console.log(sequelizeLogger(sql)),
@@ -59,19 +60,18 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       repositoryMode: true,
       retryAttempts: 3,
       retryDelay: 0,
+      storage: `./db/data/${database}.db`,
       sync: { force: true },
       synchronize: autoLoadModels,
-      timezone,
+      timezone: '+00:00',
+      transactionType: Transaction.TYPES.DEFERRED,
       typeValidation: true,
       username
     }
 
     if (this.config.get<boolean>('TEST')) {
       delete options.timezone
-
-      options.dialect = 'sqlite'
       options.logging = noop
-      options.storage = `./db/data/${database}.db`
     }
 
     if (this.config.get<boolean>('PROD')) {

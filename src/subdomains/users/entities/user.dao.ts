@@ -15,7 +15,6 @@ import {
   DataType,
   Default,
   Index,
-  Sequelize,
   Table,
   Unique,
   Validate
@@ -42,10 +41,9 @@ export default class User
 {
   @ApiProperty({ description: 'When user was created', type: Number })
   @Comment('when user was created')
-  @Index
-  @AllowNull(false)
   @Validate({ isDate: true, isNumeric: true, notNull: true })
-  @Default(Sequelize.literal('CURRENT_TIMESTAMP'))
+  @AllowNull(false)
+  @Index('created_at')
   @Column('TIMESTAMP')
   declare created_at: IUser['created_at']
 
@@ -56,26 +54,26 @@ export default class User
     type: String
   })
   @Comment('unique email address')
-  @Unique
-  @Index
-  @AllowNull(false)
   @Validate({ isEmail: true, len: [3, 254], notNull: true })
+  @AllowNull(false)
+  @Unique
+  @Index('email')
   @Column(DataType.STRING(254))
   declare email: IUser['email']
 
   @ApiProperty({ description: 'First name', minLength: 1, type: String })
   @Comment('first name of user')
-  @Index
-  @AllowNull(false)
   @Validate({ len: [1, Number.MAX_SAFE_INTEGER], notNull: true })
+  @AllowNull(false)
+  @Index('first_name')
   @Column(DataType.STRING)
   declare first_name: IUser['first_name']
 
   @ApiProperty({ description: 'Last name', minLength: 1, type: String })
   @Comment('last name of user')
-  @Index
-  @AllowNull(false)
   @Validate({ len: [1, Number.MAX_SAFE_INTEGER], notNull: true })
+  @AllowNull(false)
+  @Index('last_name')
   @Column(DataType.STRING)
   declare last_name: IUser['last_name']
 
@@ -86,8 +84,8 @@ export default class User
     type: Number
   })
   @Comment('when user was last modified')
-  @Index
   @Validate({ isDate: true })
+  @Index('updated_at')
   @Default(null)
   @Column('TIMESTAMP')
   declare updated_at: IUser['updated_at']

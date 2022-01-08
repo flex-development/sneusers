@@ -9,19 +9,12 @@ services:
   adminer:
     container_name: adminer
     image: adminer
-    depends_on:
-      - mysql
     environment:
-      ADMINER_DEFAULT_SERVER: ${DB_HOST}
       ADMINER_DESIGN: dracula
       ADMINER_PLUGINS:
         dump-alter dump-date dump-json edit-foreign email-table enum-option
         enum-types file-upload foreign-system table-indexes-structure
         table-structure tables-filter tinymce
-      PMA_HOST: ${DB_HOST}
-      PMA_PORT: ${DB_PORT}
-    links:
-      - mysql:${DB_HOST}
     ports:
       - ${ADMINER_PORT}:8080
     privileged: true
@@ -46,7 +39,6 @@ services:
     command: ['yarn', 'run:app', '-wd']
     depends_on:
       - adminer
-      - mysql
     # NOTE: With the exception of build arguments (see list above) doubling as
     # environment variables, the variables below do NOT need to be exposed.
     # Exposing them enhances DX when inspecting the container in Docker Hub.
@@ -56,7 +48,6 @@ services:
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
-      DB_TIMEZONE: ${DB_TIMEZONE}
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
@@ -68,8 +59,6 @@ services:
       PORT: ${PORT}
       WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       YARN_VERSION: 3.2.0-rc.8
-    links:
-      - mysql:${DB_HOST}
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
@@ -95,24 +84,6 @@ services:
       - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
       - ./yarn.lock:/opt/sneusers/yarn.lock
     working_dir: /opt/sneusers
-  mysql:
-    container_name: ${DB_HOST}
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_HOST: ${DB_HOST}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_TCP_PORT: ${DB_PORT}
-      MYSQL_USER: ${DB_USERNAME}
-      TZ: ${DB_TIMEZONE}
-
-    ports:
-      - ${DB_PORT}:${DB_PORT}
-    restart: always
-    volumes:
-      - ./mysql:/var/lib/mysql
   server:
     container_name: server
     image: nginx:alpine-perl

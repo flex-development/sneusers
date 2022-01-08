@@ -102,7 +102,7 @@ docs/*.sql
 mysql/
 
 # SQLite
-db/data/sneusers_test.db
+db/data/
 
 ### Nginx ###
 # Generated configs

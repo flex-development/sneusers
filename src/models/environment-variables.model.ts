@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   MinLength
 } from 'class-validator'
@@ -49,7 +50,8 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   @MinLength(4)
-  DB_PASSWORD: string
+  @IsOptional()
+  DB_PASSWORD?: string
 
   /**
    * Port of database to connect to.
@@ -58,16 +60,6 @@ class EnvironmentVariables {
    */
   @IsNumber()
   DB_PORT: number
-
-  /**
-   * Timezone used when converting a date from the database into a JavaScript
-   * {@link Date} object.
-   *
-   * @default '-05:00'
-   */
-  @IsString()
-  @IsNotEmpty()
-  DB_TIMEZONE: string
 
   /**
    * Username used to authenticate against the database to connect to.
