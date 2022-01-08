@@ -7,6 +7,12 @@ import pkg from 'read-pkg'
  */
 
 /**
+ * @property {string} CURRENT_TIMESTAMP - Stringified `strftime` call
+ * @see https://www.w3resource.com/sqlite/sqlite-strftime.php
+ */
+export const CURRENT_TIMESTAMP: string = "strftime('%s','now')"
+
+/**
  * @property {string} DEBUG_NAMESPACE - Name of `debug` namespace
  * @see https://github.com/visionmedia/debug
  */

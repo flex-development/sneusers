@@ -1,6 +1,7 @@
 import type { ObjectPlain } from '@flex-development/tutils'
 import { OrNull } from '@flex-development/tutils'
 import { ApiProperty } from '@nestjs/swagger'
+import { CURRENT_TIMESTAMP } from '@sneusers/config/constants.config'
 import { BaseEntity } from '@sneusers/entities'
 import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
@@ -19,6 +20,7 @@ import {
   Unique,
   Validate
 } from 'sequelize-typescript'
+import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
 
 /**
@@ -34,16 +36,42 @@ import isEmail from 'validator/lib/isEmail'
  * @extends {BaseEntity<IUserRaw, CreateUserDTO>}
  * @implements {IUser}
  */
-@Table<User>({ omitNull: false, tableName: DatabaseTable.USERS })
-export default class User
-  extends BaseEntity<IUserRaw, CreateUserDTO>
-  implements IUser
-{
+@Table<User>({
+  hooks: {
+    /**
+     * Forces the fields `created_at` and `updated_at` to be unix timestamps.
+     *
+     * If `instance` is a new record, `updated_at` will be set to `null`.
+     *
+     * @param {User} instance - Current user instance
+     * @return {void} Nothing when complete
+     */
+    beforeValidate(instance: User): void {
+      if (instance.isNewRecord) {
+        let created_at = instance.dataValues.created_at
+
+        if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
+        if (created_at.toString() === CURRENT_TIMESTAMP) created_at = Date.now()
+
+        instance.dataValues.created_at = created_at || Date.now()
+        instance.dataValues.updated_at = null
+
+        return
+      }
+
+      instance.dataValues.updated_at = Date.now()
+    }
+  },
+  omitNull: false,
+  tableName: DatabaseTable.USERS
+})
+class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   @ApiProperty({ description: 'When user was created', type: Number })
   @Comment('when user was created')
-  @Validate({ isDate: true, isNumeric: true, notNull: true })
+  @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @AllowNull(false)
   @Index('created_at')
+  @Default(CURRENT_TIMESTAMP)
   @Column('TIMESTAMP')
   declare created_at: IUser['created_at']
 
@@ -84,7 +112,7 @@ export default class User
     type: Number
   })
   @Comment('when user was last modified')
-  @Validate({ isDate: true })
+  @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @Index('updated_at')
   @Default(null)
   @Column('TIMESTAMP')
@@ -189,3 +217,5 @@ export default class User
     }
   }
 }
+
+export default User

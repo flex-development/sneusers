@@ -18,6 +18,7 @@ module.exports = {
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
           'dao',
+          'datetime',
           'doppler',
           'dto',
           'dtos',
@@ -35,11 +36,14 @@ module.exports = {
           'sneusers',
           'sql',
           'sqlite',
+          'strftime',
           'stringified',
           'subdomain',
           'subdomains',
+          'timestamps',
           'tutils',
           'uid',
+          'unix',
           'webpack',
           'zerollup'
         ]

@@ -1,5 +1,5 @@
 import { ObjectPlain } from '@flex-development/tutils'
-import { ENV } from '@sneusers/config/configuration'
+import { isUnixTimestamp } from '@sneusers/utils'
 import {
   AllowNull,
   AutoIncrement,
@@ -26,17 +26,20 @@ import {
  * @template TModelAttributes - Entity attributes
  * @template TCreationAttributes - Data to create new {@link BaseEntity}
  */
-export default class BaseEntity<
+class BaseEntity<
   TModelAttributes extends ObjectPlain = any,
   TCreationAttributes extends ObjectPlain = TModelAttributes
 > extends Model<TModelAttributes, TCreationAttributes> {
+  /** @property {TModelAttributes} dataValues - Instance attributes */
+  declare dataValues: TModelAttributes
+
   @Comment('unique identifier for entity')
+  @Validate({ notNull: true })
+  @AllowNull(false)
   @Unique
   @PrimaryKey
   @AutoIncrement
-  @AllowNull(false)
-  @Validate({ notNull: true })
-  @Column(ENV.TEST ? DataType.INTEGER : DataType.INTEGER.UNSIGNED)
+  @Column(DataType.INTEGER)
   declare id: number
 
   /**
@@ -45,4 +48,20 @@ export default class BaseEntity<
    * @property {Sequelize} sequelize - Sequelize instance
    */
   static readonly sequelize: Sequelize
+
+  /**
+   * Checks if `timestamp` is a valid [unix timestamp][1].
+   *
+   * [1]: https://unixtimestamp.com
+   *
+   * @param {any} timestamp - Value to check
+   * @return {true} `true` if unix timestamp
+   * @throws {Error}
+   */
+  static checkUnixTimestamp(timestamp: any): true {
+    if (isUnixTimestamp(timestamp)) return true
+    throw new Error('Must be a unix timestamp')
+  }
 }
+
+export default BaseEntity

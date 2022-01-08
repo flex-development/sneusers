@@ -34,11 +34,10 @@ describe('unit:subdomains/users/providers/UsersService', () => {
     Subject.repo.sequelize.addModels([User])
     queryInterface = Subject.repo.sequelize.getQueryInterface()
 
-    for (const dto of USERS) await Subject.repo.create(dto)
+    for (const dto of USERS) await Subject.repo.create(dto, { silent: true })
   })
 
   after(async () => {
-    await queryInterface.bulkDelete(DatabaseTable.USERS, {})
     await queryInterface.bulkDelete(DatabaseTable.SQLITE_SEQUENCE, {
       name: DatabaseTable.USERS
     })

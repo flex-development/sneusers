@@ -1,4 +1,4 @@
-import type { NullishString } from '@flex-development/tutils'
+import type { NullishNumber } from '@flex-development/tutils'
 
 /**
  * @file Users Subdomain Interfaces - IUserRaw
@@ -13,12 +13,12 @@ import type { NullishString } from '@flex-development/tutils'
  * [1]: https://sequelize.org/v7/manual/getters-setters-virtuals#virtual-fields
  */
 interface IUserRaw {
-  created_at: string
+  created_at: number
   email: string
   first_name: string
   id: number
   last_name: string
-  updated_at: NullishString
+  updated_at: NullishNumber
 }
 
 export default IUserRaw

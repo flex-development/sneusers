@@ -3,4 +3,4 @@
  * @module sneusers/utils
  */
 
-export {}
+export { default as isUnixTimestamp } from './is-unix-timestamp.util'
