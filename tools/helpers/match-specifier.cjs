@@ -16,7 +16,7 @@ const {
  * @see https://github.com/dividab/tsconfig-paths
  *
  * @param {string} specifier - Module specifier
- * @param {EsmLoader.HookContext.Resolve} ctx - Function context
+ * @param {{ parentURL: string }} ctx - Function context
  * @param {string} [ctx.parentURL] - Parent module specifier
  * @param {ExplicitParams} [explicitParams] - Tsconfig path mapping options
  * @return {string} Resolved file URL

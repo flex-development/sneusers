@@ -78,16 +78,7 @@ module.exports = {
     'jsdoc/no-undefined-types': [
       1,
       {
-        definedTypes: [
-          'EsmLoader',
-          'Exception',
-          'ExceptionJSON',
-          'Mocha',
-          'NodeJS',
-          'Package',
-          'never',
-          'unknown'
-        ]
+        definedTypes: ['Mocha', 'NodeJS', 'Package', 'never', 'unknown']
       }
     ],
     'jsdoc/require-hyphen-before-param-description': 1,

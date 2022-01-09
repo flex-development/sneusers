@@ -1,1 +1,1 @@
-declare const sandbox: ReturnType<typeof sinon['createSandbox']>
+/// <reference path='./sandbox.d.ts' />

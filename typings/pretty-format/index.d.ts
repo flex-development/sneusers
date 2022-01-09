@@ -1,1 +1,1 @@
-declare const pf: typeof import('pretty-format')['format']
+/// <reference path='./pf.d.ts' />

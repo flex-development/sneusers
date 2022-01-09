@@ -1,1 +1,1 @@
-declare const faker: typeof import('faker')
+/// <reference path='./faker.d.ts' />
