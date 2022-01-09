@@ -73,12 +73,12 @@ module.exports = {
     'jsdoc/check-indentation': [0, { excludeTags: ['description', 'example'] }],
     'jsdoc/check-line-alignment': 1,
     'jsdoc/check-syntax': 1,
-    'jsdoc/check-tag-names': [1, { definedTags: ['link'] }],
+    'jsdoc/check-tag-names': [1, { definedTags: ['internal', 'link'] }],
     'jsdoc/no-multi-asterisks': 0,
     'jsdoc/no-undefined-types': [
       1,
       {
-        definedTypes: ['Mocha', 'NodeJS', 'Package', 'never', 'unknown']
+        definedTypes: ['Chai', 'Mocha', 'NodeJS', 'Package', 'never', 'unknown']
       }
     ],
     'jsdoc/require-hyphen-before-param-description': 1,

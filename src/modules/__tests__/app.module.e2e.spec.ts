@@ -39,11 +39,7 @@ describe('e2e:modules/AppModule', () => {
         })
 
         it('should return api documentation', () => {
-          expect(res.headers['content-type']).to.match(/application\/json/)
-        })
-
-        it(`should return response with status ${HttpStatus.OK}`, () => {
-          expect(res.status).to.equal(HttpStatus.OK)
+          expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         })
 
         it('should return response with project description', () => {

@@ -3,6 +3,7 @@
  * @module tests/utils/types
  */
 
+export type { default as BulkDeleteResponse } from './bulk-delete-response.type'
 export type { default as MochaAssertionResult } from './mocha-assertion-result.type'
 export type { default as MochaReport } from './mocha-report.type'
 export type { default as MochaTestResult } from './mocha-test-result.type'

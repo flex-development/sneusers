@@ -1,3 +1,4 @@
+import { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { EmptyResultError } from 'sequelize'
@@ -7,10 +8,19 @@ import { EmptyResultError } from 'sequelize'
  * @module tests/fixtures/Exception
  */
 
-const message = 'User with id [4] not found'
+const message = 'Test exception'
 
-export default new Exception(ExceptionCode.NOT_FOUND, 'Test exception', {
-  errors: [new EmptyResultError(message)],
+const error = new EmptyResultError('User with id [4] not found')
+
+const data: ExceptionDataDTO<EmptyResultError> = {
+  errors: [error],
   message,
   options: { plain: true, rejectOnEmpty: true }
-})
+}
+
+export default new Exception(
+  ExceptionCode.NOT_FOUND,
+  message,
+  data,
+  error.stack
+)

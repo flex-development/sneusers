@@ -76,6 +76,7 @@ const config: UserConfig = {
         'tools',
         'types',
         'typescript',
+        'users',
         'utils',
         'vscode',
         'workflows',

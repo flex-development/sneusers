@@ -2,8 +2,8 @@ import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import type { NonNullFindOptions } from 'sequelize'
 
 /**
- * @file Type Definitions - AllSearchOptions
- * @module sneusers/types/AllSearchOptions
+ * @file Type Definitions - SearchOptions
+ * @module sneusers/types/SearchOptions
  */
 
 /**
@@ -11,8 +11,8 @@ import type { NonNullFindOptions } from 'sequelize'
  *
  * @template T - Entity attributes type
  */
-type AllSearchOptions<T extends ObjectPlain = ObjectUnknown> = Partial<
+type SearchOptions<T extends ObjectPlain = ObjectUnknown> = Partial<
   NonNullFindOptions<T>
 >
 
-export default AllSearchOptions
+export default SearchOptions

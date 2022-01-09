@@ -37,12 +37,12 @@ const createApp = async (
   if (metadata.imports) metadata.imports = [...imports, ...metadata.imports]
   if (!metadata.imports) metadata.imports = imports
 
-  const module_ref = await createTestingModule(metadata, provider, value)
-  const app = await useGlobal(module_ref.createNestApplication())
+  const ref = await createTestingModule(metadata, provider, value)
+  const app = await useGlobal(ref.createNestApplication())
 
-  await module_ref.get(Sequelize).sync({ force: true })
+  await ref.get(Sequelize).sync({ force: true })
 
-  return { app, module_ref }
+  return { app, ref }
 }
 
 export default createApp

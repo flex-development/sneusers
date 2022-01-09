@@ -1,13 +1,22 @@
+import type { INestApplication } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DatabaseTable, ExceptionCode } from '@sneusers/enums'
+import {
+  DatabaseTable,
+  ExceptionCode,
+  SequelizeErrorName as SequelizeError
+} from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { CreateUserDTO, PatchUserDTO } from '@sneusers/subdomains/users/dtos'
+import type {
+  CreateUserDTO,
+  PatchUserDTO
+} from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
-import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import createApp from '@tests/utils/create-app.util'
 import createUserDTO from '@tests/utils/create-user-dto.util'
 import createUsers from '@tests/utils/create-users.util'
+import resetSequence from '@tests/utils/reset-sequence.util'
+import seedTable from '@tests/utils/seed-table.util'
 import pick from 'lodash.pick'
 import type { QueryInterface } from 'sequelize'
 import TestSubject from '../users.service'
@@ -19,32 +28,31 @@ import TestSubject from '../users.service'
 
 describe('unit:subdomains/users/providers/UsersService', () => {
   const USERS: CreateUserDTO[] = createUsers(13)
-  const USER_ID_404: IUserRaw['id'] = USERS.length * 1000
 
-  let Subject: TestSubject
+  let app: INestApplication
   let queryInterface: QueryInterface
+  let subject: TestSubject
 
   before(async () => {
-    const app = await createApp({
+    const napp = await createApp({
       imports: [SequelizeModule.forFeature([User])],
       providers: [TestSubject]
     })
 
-    Subject = app.module_ref.get(TestSubject)
-    Subject.repo.sequelize.addModels([User])
-    queryInterface = Subject.repo.sequelize.getQueryInterface()
+    app = await napp.app.init()
+    subject = napp.ref.get(TestSubject)
+    queryInterface = subject.repo.sequelize.getQueryInterface()
 
-    for (const dto of USERS) await Subject.repo.create(dto, { silent: true })
+    await seedTable<User>(subject.repo, USERS)
   })
 
   after(async () => {
-    await queryInterface.bulkDelete(DatabaseTable.SQLITE_SEQUENCE, {
-      name: DatabaseTable.USERS
-    })
+    await resetSequence(queryInterface, DatabaseTable.USERS)
+    await app.close()
   })
 
   describe('#create', () => {
-    it('should return User instance if user was created', async () => {
+    it('should return typeof User if user was created', async () => {
       // Arrange
       const dto: CreateUserDTO = pick(createUserDTO(), [
         'email',
@@ -53,7 +61,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       ])
 
       // Act
-      const result = await Subject.create(dto)
+      const result = await subject.create(dto)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -69,7 +77,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Act
       try {
-        await Subject.create(dto)
+        await subject.create(dto)
       } catch (error) {
         exception = error as Exception
       }
@@ -77,6 +85,8 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(exception!).to.be.instanceOf(UniqueEmailException)
       expect(exception!.code).to.equal(ExceptionCode.CONFLICT)
+      expect(exception!.data.error).to.equal(SequelizeError.UniqueConstraint)
+      expect(exception!.errors).to.be.an('array')
       expect(exception!.message).to.match(/already exists/)
     })
   })
@@ -84,52 +94,49 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#find', () => {
     it('should return array of users', async () => {
       // Act
-      const result = await Subject.find()
+      const result = await subject.find()
 
       // Expect
       expect(result).to.be.an('array')
-      result.forEach(user => expect(user).to.be.instanceOf(User))
+      expect(result).each(user => user.to.be.instanceOf(User))
     })
   })
 
   describe('#findOne', () => {
-    it('should return User instance given uid of existing user', async () => {
-      expect(await Subject.findOne(USERS[0].email)).to.be.instanceOf(User)
+    it('should return typeof User given uid of existing user', async () => {
+      expect(await subject.findOne(USERS[0].email)).to.be.instanceOf(User)
     })
 
-    it('should return null if user is not found', async () => {
-      expect(await Subject.findOne(USER_ID_404)).to.be.null
+    it('should return null if user is not found', async function (this) {
+      expect(await subject.findOne(this.faker.name.firstName())).to.be.null
     })
   })
 
   describe('#patch', () => {
-    it('should return User instance if user was updated', async () => {
+    it('should return typeof User if user was updated', async function (this) {
       // Arrange
       const uid = USERS[USERS.length - 1].email
-      const dto: PatchUserDTO = {
-        email: faker.internet.exampleEmail(),
-        first_name: faker.name.firstName(),
-        last_name: faker.name.lastName()
-      }
+      const dto: PatchUserDTO = { last_name: this.faker.name.lastName() }
 
       // Act
-      const result = await Subject.patch(uid, dto)
+      const result = await subject.patch(uid, dto)
 
       // Expect
       expect(result).to.be.instanceOf(User)
-      expect(result.email).to.equal(dto.email)
-      expect(result.first_name).to.equal(dto.first_name)
+      expect(result.email).to.equal(uid)
+      expect(result.first_name).to.be.a('string')
       expect(result.last_name).to.equal(dto.last_name)
+      expect(result.updated_at).to.not.be.null
     })
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const email = (await Subject.repo.findByUid(USERS[0].email))!.email
+      const email = (await subject.repo.findByUid(USERS[0].email))!.email
       let exception: Exception
 
       // Act
       try {
-        await Subject.patch(USERS[USERS.length - 2].email, { email })
+        await subject.patch(USERS[USERS.length - 2].email, { email })
       } catch (error) {
         exception = error as Exception
       }
@@ -140,13 +147,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(exception!.message).to.match(/already exists/)
     })
 
-    it('should throw if user is not found', async () => {
+    it('should throw if user is not found', async function (this) {
       // Arrange
       let exception: Exception
 
       // Act
       try {
-        await Subject.patch(USER_ID_404)
+        await subject.patch(this.faker.internet.exampleEmail())
       } catch (error) {
         exception = error as Exception
       }
@@ -157,17 +164,17 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#remove', () => {
-    it('should return true if user was permanently deleted', async () => {
-      expect(await Subject.remove(USERS[3].email)).to.be.true
+    it('should return typeof User if user was deleted', async () => {
+      expect(await subject.remove(USERS[3].email)).to.be.instanceOf(User)
     })
 
-    it('should throw if user is not found', async () => {
+    it('should throw if user is not found', async function (this) {
       // Arrange
       let exception: Exception
 
       // Act
       try {
-        await Subject.remove(USER_ID_404)
+        await subject.remove(this.faker.datatype.number() * -1)
       } catch (error) {
         exception = error as Exception
       }

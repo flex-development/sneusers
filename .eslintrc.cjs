@@ -23,8 +23,11 @@ module.exports = {
           'dto',
           'dtos',
           'enums',
+          'foofoobaby',
           'keyof',
           'localhost',
+          'matcher',
+          'matchers',
           'mysql',
           'nestjs',
           'nginx',
@@ -53,15 +56,15 @@ module.exports = {
   overrides: [
     ...overrides,
     {
-      files: ['*.openapi.ts'],
+      files: ['*.openapi.ts', 'ecosystem.config.cjs'],
       rules: {
         'sort-keys': 0
       }
     },
     {
-      files: ['ecosystem.config.cjs'],
+      files: ['*.interceptor.ts'],
       rules: {
-        'sort-keys': 0
+        'unicorn/no-array-for-each': 0
       }
     },
     {

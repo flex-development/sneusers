@@ -8,7 +8,7 @@ import { Exception } from '@sneusers/exceptions'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import { AllSearchOptions, SequelizeError } from '@sneusers/types'
+import { SearchOptions, SequelizeError } from '@sneusers/types'
 import {
   AllowNull,
   Column,
@@ -39,15 +39,19 @@ import isEmail from 'validator/lib/isEmail'
 @Table<User>({
   hooks: {
     /**
-     * Forces the fields `created_at` and `updated_at` to be unix timestamps.
+     * Prepares a {@link User} instance for validation.
      *
-     * If `instance` is a new record, `updated_at` will be set to `null`.
+     * This includes:
+     *
+     * - Forcing the use of unix timestamps
      *
      * @param {User} instance - Current user instance
      * @return {void} Nothing when complete
      */
     beforeValidate(instance: User): void {
-      if (instance.isNewRecord) {
+      const isNewRecord = instance.id === null && instance.updated_at === null
+
+      if (isNewRecord) {
         let created_at = instance.dataValues.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
@@ -55,11 +59,11 @@ import isEmail from 'validator/lib/isEmail'
 
         instance.dataValues.created_at = created_at || Date.now()
         instance.dataValues.updated_at = null
+      } else instance.dataValues.updated_at = Date.now()
 
-        return
-      }
+      instance.isNewRecord = isNewRecord
 
-      instance.dataValues.updated_at = Date.now()
+      return
     }
   },
   omitNull: false,
@@ -149,20 +153,20 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * If a user isn't found, `null` will be returned. To force the function to
    * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
    *
-   * @see {@link AllSearchOptions}
+   * @see {@link SearchOptions}
    *
    * @static
    * @async
    * @param {string} email - Email address of user to find
-   * @param {AllSearchOptions<IUser>} [options={}] - Query options
+   * @param {SearchOptions<IUser>} [options={}] - Query options
    * @return {Promise<OrNull<User>>} `User` object or `null`
    * @throws {Exception}
    */
   static async findByEmail(
     email: IUser['email'],
-    options: AllSearchOptions<IUser> = {}
+    options: SearchOptions<IUser> = {}
   ): Promise<OrNull<User>> {
-    const find_options: AllSearchOptions<IUser> = {
+    const find_options: SearchOptions<IUser> = {
       ...options,
       plain: true,
       where: { ...(options.where && {}), email }
@@ -188,20 +192,24 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * If a user isn't found, `null` will be returned. To force the function to
    * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
    *
-   * @see {@link AllSearchOptions}
+   * @see {@link SearchOptions}
    *
    * @static
    * @async
    * @param {UserUid} uid - ID or email address of user to find
-   * @param {AllSearchOptions<IUser>} [options={}] - Query options
+   * @param {SearchOptions<IUser>} [options={}] - Query options
    * @return {Promise<OrNull<User>>} `User` object or `null`
    * @throws {Exception}
    */
   static async findByUid(
     uid: UserUid,
-    options: AllSearchOptions<IUser> = {}
+    options: SearchOptions<IUser> = {}
   ): Promise<OrNull<User>> {
     if (isEmail(uid.toString())) return this.findByEmail(`${uid}`, options)
+
+    if (typeof uid === 'string') uid = Number.parseInt(uid)
+    if (!['bigint', 'number'].includes(typeof uid)) uid = Number.NaN
+    if (Number.isNaN(uid)) uid = -1
 
     try {
       return await this.findByPk<User>(uid, { ...options, plain: true })

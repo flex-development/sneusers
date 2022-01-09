@@ -6,7 +6,7 @@ import configuration, {
   ENV_FILE_PATH as envFilePath,
   validate
 } from '@sneusers/config/configuration'
-import { EnvironmentVariables } from '@sneusers/models'
+import type { EnvironmentVariables } from '@sneusers/models'
 import { SequelizeConfigService } from '@sneusers/providers'
 
 /**

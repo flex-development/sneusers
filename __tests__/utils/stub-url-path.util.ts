@@ -1,8 +1,4 @@
-import type { NumberString, ObjectPlain } from '@flex-development/tutils'
-import isNIL from '@flex-development/tutils/guards/is-nil.guard'
-import merge from 'lodash.mergewith'
-import type { ParsedQuery as Query } from 'query-string'
-import qs from 'query-string'
+import { NumberString, ObjectPlain } from '@flex-development/tutils'
 
 /**
  * @file Global Test Utilities - stubURLPath
@@ -12,24 +8,20 @@ import qs from 'query-string'
 /**
  * Generates a URL path with optional query parameters.
  *
- * @param {NumberString | ObjectPlain | Query} [poq] - URL path or query params
- * @param {ObjectPlain} [query] - Query parameters
+ * @param {string} [path=''] - URL path
+ * @param {ObjectPlain | string | string[][]} [query] - Query parameters
  * @return {string} Test URL path with stringified query params
  */
 const stubURLPath = (
-  poq?: NumberString | ObjectPlain | Query,
-  query?: ObjectPlain
+  path: NumberString = '',
+  query?: ObjectPlain | string | string[][]
 ): string => {
-  if (!poq || typeof poq === 'number' || typeof poq === 'string') {
-    const querystring = query ? `?${qs.stringify(query)}` : ''
+  let url: string = `/${path}`
 
-    poq = `${isNIL(poq) ? '' : poq}`
-    if (poq[0] === '/') poq = poq.slice(1, poq.length)
+  if (url.startsWith('//')) url = url.replace('//', '/')
+  if (query) url = `${url}?${new URLSearchParams(query).toString()}`
 
-    return `/${poq || ''}${querystring}`
-  }
-
-  return `/?${qs.stringify(merge(poq, query))}`
+  return url
 }
 
 export default stubURLPath

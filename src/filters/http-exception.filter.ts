@@ -5,7 +5,9 @@ import {
   ExceptionFilter,
   HttpException
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { Exception } from '@sneusers/exceptions'
+import type { EnvironmentVariables } from '@sneusers/models'
 import type { Response } from 'express'
 
 /**
@@ -15,6 +17,8 @@ import type { Response } from 'express'
 
 @Catch(HttpException)
 export default class HttpExceptionFilter implements ExceptionFilter {
+  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+
   /**
    * Transforms `exception`, a {@link HttpException}, into an {@link Exception}.
    *
@@ -36,7 +40,12 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     if (type === 'BadRequestException') data.errors = response.message
     if (typeof response === 'string') data.message = response
 
-    res.status(status).json(new Exception(status, '', data).toJSON())
-    return res.end()
+    const payload = new Exception(status, undefined, data).toJSON()
+
+    if (!this.config.get<boolean>('PROD') && !payload.stack) {
+      payload.stack = exception.stack
+    }
+
+    return res.status(payload.code).json(payload).end()
   }
 }

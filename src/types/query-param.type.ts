@@ -5,20 +5,15 @@ import type {
   OneOrMany,
   Path
 } from '@flex-development/tutils'
-import type OrderDirection from '@sneusers/enums/order-direction.enum'
-import type {
-  LOCK,
-  WhereAttributeHash,
-  WhereOptions,
-  WhereValue
-} from 'sequelize'
+import type { LOCK } from '@sneusers/enums'
+import type { WhereAttributeHash, WhereOptions, WhereValue } from 'sequelize'
 import type { Model, ModelStatic } from 'sequelize-typescript'
 import type { Col, Fn } from 'sequelize/dist/lib/utils'
-import type AllSearchOptions from './all-search-options.type'
+import type SearchOptions from './search-options.type'
 
 /**
- * @file Type Definitions - SearchOption
- * @module sneusers/types/SearchOption
+ * @file Type Definitions - QueryParam
+ * @module sneusers/types/QueryParam
  */
 
 /**
@@ -26,42 +21,44 @@ import type AllSearchOptions from './all-search-options.type'
  *
  * **NOTE**: Some option types may be modified to support URL queries.
  *
- * @see {@link AllSearchOptions}
+ * @see {@link SearchOptions}
  *
  * @see https://sequelize.org/v7/manual/model-querying-basics
  * @see https://sequelize.org/v7/manual/model-querying-finders
  */
-namespace SearchOption {
+namespace QueryParam {
   /**
-   * List of the attributes to select.
+   * Comma-delimited list of the attributes to select.
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
-  export type Attributes<T extends ObjectPlain = ObjectUnknown> = Path<T>[]
+  export type Attributes<T extends ObjectPlain = ObjectUnknown> =
+    | Path<T>
+    | string
 
   /**
-   * [`GROUP BY`][1] in sql.
+   * Comma-delimitted list representing [`GROUP BY`][1] in sql.
    *
    * [1]: https://www.w3schools.com/sql/sql_groupby.asp
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
-  export type Group<T extends ObjectPlain = ObjectUnknown> = Path<T>
+  export type Group<T extends ObjectPlain = ObjectUnknown> = Path<T> | string
 
   /**
    * Limit number of results.
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
   export type Limit<T extends ObjectPlain = ObjectUnknown> =
-    AllSearchOptions<T>['limit']
+    SearchOptions<T>['limit']
 
   /**
    * Lock rows in a database table.
    *
    * @template M - Entity class
    */
-  export type LockOption<M extends Model = Model> =
+  export type Lock<M extends Model = Model> =
     | LOCK
     | boolean
     | { level: LOCK; of: ModelStatic<M> }
@@ -76,47 +73,44 @@ namespace SearchOption {
    * @example
    *  `{ 'user.username': 'john' }` => `{ user: { username: 'john' } }`
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
   export type Nest<T extends ObjectPlain = ObjectUnknown> =
-    AllSearchOptions<T>['nest']
+    SearchOptions<T>['nest']
 
   /**
    * Skip a certain number of results.
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
   export type Offset<T extends ObjectPlain = ObjectUnknown> =
-    AllSearchOptions<T>['offset']
+    SearchOptions<T>['offset']
 
   /**
-   * Specifies an ordering.
+   * Comma and/or bar delimited list that specifies how to sort results.
    *
-   * If a string is provided, it will be assumed to be the name of a column and
-   * escaped.
+   * If the list contains only commas, or no separators at all, the list will be
+   * assumed to be a list of column names.
    *
-   * Using an array, you can provide several columns to order by. Each element
-   * can be further wrapped in a two-element array.
+   * @example 'id'
+   * @example 'id,last_name'
    *
-   * The first element is the name of the column to order by, the second is the
-   * direction; e.g: `order: [['name', 'DESC']]`. In this way the column will be
-   * escaped, but the direction will not.
+   * Using a bar-delimited list, you can provide several columns to order by.
+   *
+   * @example 'id,ASC|name,DESC'
    *
    * @see https://sequelize.org/v7/manual/model-querying-basics#ordering-and-grouping
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
-  export type Order<T extends ObjectPlain = ObjectUnknown> = (
-    | Path<T>
-    | [Path<T>, OrderDirection]
-  )[]
+  export type Order<T extends ObjectPlain = ObjectUnknown> = Path<T> | string
 
   /**
    * Filter selected entities.
    *
    * @see https://sequelize.org/v7/manual/model-querying-basics.html#applying-where-clauses
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
   export type Where<T extends ObjectPlain = ObjectUnknown> = {
     [field in keyof T]?:
@@ -128,12 +122,12 @@ namespace SearchOption {
   /**
    * Throw an `Exception` if an entity isn't found instead of returning `null`.
    *
-   * @template T - Entity attributes type
+   * @template T - Entity attributes
    */
   export type RejectOnEmpty<T extends ObjectPlain = ObjectUnknown> = Extract<
-    AllSearchOptions<T>['rejectOnEmpty'],
+    SearchOptions<T>['rejectOnEmpty'],
     boolean
   >
 }
 
-export default SearchOption
+export default QueryParam

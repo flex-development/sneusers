@@ -38,6 +38,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
 
     const options: SequelizeModuleOptions = {
       autoLoadModels,
+      benchmark: true,
       database,
       define: {
         createdAt: 'created_at',

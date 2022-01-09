@@ -1,6 +1,9 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { Exception } from '@sneusers/exceptions'
+import type { EnvironmentVariables } from '@sneusers/models'
 import type { Response } from 'express'
+import isPlainObject from 'lodash.isplainobject'
 
 /**
  * @file Filters - ExceptionClassFilter
@@ -9,6 +12,8 @@ import type { Response } from 'express'
 
 @Catch(Exception)
 export default class ExceptionClassFilter implements ExceptionFilter {
+  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+
   /**
    * Creates a JSON representation of `exception`.
    *
@@ -23,9 +28,16 @@ export default class ExceptionClassFilter implements ExceptionFilter {
     const res = host.switchToHttp().getResponse<Response>()
 
     Reflect.deleteProperty(payload.data, 'isExceptionJSON')
-    Reflect.deleteProperty(payload.data.options, 'plain')
-    Reflect.deleteProperty(payload.data.options, 'rejectOnEmpty')
-    Reflect.deleteProperty(payload.data.options, 'transaction')
+
+    if (isPlainObject(payload.data.options)) {
+      Reflect.deleteProperty(payload.data.options, 'plain')
+      Reflect.deleteProperty(payload.data.options, 'rejectOnEmpty')
+      Reflect.deleteProperty(payload.data.options, 'transaction')
+    }
+
+    if (!this.config.get<boolean>('PROD') && !payload.stack) {
+      payload.stack = exception.stack
+    }
 
     return res.status(payload.code).json(payload).end()
   }

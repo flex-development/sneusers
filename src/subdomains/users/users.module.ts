@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { UsersController } from './controllers'
 import { User } from './entities'
 import { UsersService } from './providers'
 
@@ -9,6 +10,7 @@ import { UsersService } from './providers'
  */
 
 @Module({
+  controllers: [UsersController],
   imports: [SequelizeModule.forFeature([User])],
   providers: [UsersService]
 })

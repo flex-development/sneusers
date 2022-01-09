@@ -2,9 +2,8 @@ import {
   isExceptionCode,
   isExceptionJSON
 } from '@flex-development/exceptions/guards'
-import { ExceptionJSON } from '@flex-development/exceptions/interfaces'
 import { NullishString, ObjectPlain } from '@flex-development/tutils'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ExceptionDataDTO } from '@sneusers/dtos'
 import {
   ExceptionClassName,
@@ -12,9 +11,10 @@ import {
   ExceptionId,
   SequelizeErrorCode
 } from '@sneusers/enums'
+import { ExceptionJSON } from '@sneusers/interfaces'
 import { ExceptionData, ExceptionErrors, SequelizeError } from '@sneusers/types'
 import omit from 'lodash.omit'
-import { ValidationErrorItem } from 'sequelize/dist'
+import type { ValidationErrorItem } from 'sequelize'
 
 /**
  * @file Filters - Exception
@@ -99,6 +99,7 @@ export default class Exception<T = any> {
    * @readonly
    * @property {string} stack - Stack trace
    */
+  @ApiPropertyOptional({ description: 'Stack trace', type: String })
   readonly stack?: string
 
   /**
@@ -151,9 +152,9 @@ export default class Exception<T = any> {
    * To help identify JSON representations of {@link Exception} class objects,
    * the {@link data}  will have an `isExceptionJSON` property added.
    *
-   * @return {Readonly<ExceptionJSON<T>>} JSON representation of exception
+   * @return {ExceptionJSON<T>} JSON representation of exception
    */
-  toJSON(): Readonly<ExceptionJSON<T>> {
+  toJSON(): ExceptionJSON<T> {
     const json = {} as ExceptionJSON<T>
 
     Object.assign(json, { name: this.id })
@@ -162,6 +163,7 @@ export default class Exception<T = any> {
     Object.assign(json, { className: this.className })
     Object.assign(json, { data: { ...this.data, isExceptionJSON: true } })
     Object.assign(json, { errors: Object.freeze(this.errors) })
+    Object.assign(json, { stack: this.stack })
 
     return json
   }

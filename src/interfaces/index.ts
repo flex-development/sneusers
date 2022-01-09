@@ -4,4 +4,4 @@
  * @see https://www.typescriptlang.org/docs/handbook/2/objects.html
  */
 
-export {}
+export type { default as ExceptionJSON } from './exception-json.interface'

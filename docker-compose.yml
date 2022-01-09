@@ -14,7 +14,7 @@ services:
       ADMINER_PLUGINS:
         dump-alter dump-date dump-json edit-foreign email-table enum-option
         enum-types file-upload foreign-system table-indexes-structure
-        table-structure tables-filter tinymce
+        table-structure tables-filter
     ports:
       - ${ADMINER_PORT}:8080
     privileged: true

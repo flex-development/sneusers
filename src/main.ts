@@ -3,7 +3,7 @@ import { NestApplicationOptions } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import useGlobal from './hooks/use-global.hook'
-import type EnvironmentVariables from './models/environment-variables.model'
+import type { EnvironmentVariables } from './models'
 import AppModule from './modules/app.module'
 import AppService from './providers/app.service'
 

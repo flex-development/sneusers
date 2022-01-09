@@ -9,7 +9,7 @@ import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import { AllSearchOptions, SequelizeError } from '@sneusers/types'
+import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { UniqueConstraintError } from 'sequelize'
 
 /**
@@ -51,9 +51,8 @@ export default class UsersService {
 
         if (error.name === SequelizeErrorName.UniqueConstraint) {
           throw new UniqueEmailException(
-            data.dto.email,
-            error as UniqueConstraintError,
-            data
+            dto.email,
+            error as UniqueConstraintError
           )
         }
 
@@ -65,13 +64,13 @@ export default class UsersService {
   /**
    * Retrieves all entries from the `users` table.
    *
-   * @see {@link AllSearchOptions}
+   * @see {@link SearchOptions}
    *
    * @async
-   * @param {AllSearchOptions<IUser>} [options={}] - Query options
+   * @param {SearchOptions<IUser>} [options={}] - Query options
    * @return {Promise<User[]>} Array of `User` objects
    */
-  async find(options: AllSearchOptions<IUser> = {}): Promise<User[]> {
+  async find(options: SearchOptions<IUser> = {}): Promise<User[]> {
     return await this.repo.sequelize.transaction(async transaction => {
       return await this.repo.findAll<User>({ ...options, transaction })
     })
@@ -80,16 +79,16 @@ export default class UsersService {
   /**
    * Retrieve a user by {@link User#id} or {@link User#email} address.
    *
-   * @see {@link AllSearchOptions}
+   * @see {@link SearchOptions}
    *
    * @async
    * @param {UserUid} uid - ID or email of user to find
-   * @param {AllSearchOptions<IUser>} [options={}] - Query options
+   * @param {SearchOptions<IUser>} [options={}] - Query options
    * @return {Promise<OrNull<User>>} - Promise containing existing user
    */
   async findOne(
     uid: UserUid,
-    options: AllSearchOptions<IUser> = {}
+    options: SearchOptions<IUser> = {}
   ): Promise<OrNull<User>> {
     return await this.repo.sequelize.transaction(async transaction => {
       return await this.repo.findByUid(uid, { ...options, transaction })
@@ -107,7 +106,7 @@ export default class UsersService {
    */
   async patch(uid: UserUid, dto: PatchUserDTO = {}): Promise<User> {
     return await this.repo.sequelize.transaction(async transaction => {
-      const search: AllSearchOptions = { rejectOnEmpty: true, transaction }
+      const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 
       try {
@@ -142,21 +141,21 @@ export default class UsersService {
    *
    * @async
    * @param {UserUid} uid - ID or email of user to remove
-   * @return {Promise<boolean>} - Promise containing boolean when complete
+   * @return {Promise<User>} - Promise containing deleted user
    */
-  async remove(uid: UserUid): Promise<boolean> {
+  async remove(uid: UserUid): Promise<User> {
     return await this.repo.sequelize.transaction(async transaction => {
-      const search: AllSearchOptions = { rejectOnEmpty: true, transaction }
+      const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 
-      const rows = await this.repo.destroy({
+      await this.repo.destroy({
         cascade: true,
         force: true,
         transaction,
         where: { id: user.id }
       })
 
-      return rows === 1
+      return user
     })
   }
 }

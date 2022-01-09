@@ -29,7 +29,7 @@ describe('unit:exceptions/Exception', () => {
         const message = ERROR.message
 
         // Act
-        const Subject = new TestSubject(undefined, message, EJSON)
+        const Subject = new TestSubject(undefined, message, EJSON, EJSON.stack)
 
         // Expect
         expect(Subject.id).to.equal(EJSON.name)
@@ -134,7 +134,8 @@ describe('unit:exceptions/Exception', () => {
         data: { foo: data.foo, isExceptionJSON: true },
         errors: [data.errors],
         message,
-        name: ExceptionId.I_AM_A_TEAPOT
+        name: ExceptionId.I_AM_A_TEAPOT,
+        stack: undefined
       })
     })
   })

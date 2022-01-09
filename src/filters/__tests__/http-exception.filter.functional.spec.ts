@@ -1,8 +1,9 @@
-import type { ExceptionJSON } from '@flex-development/exceptions/interfaces'
 import type { ArgumentsHost } from '@nestjs/common'
 import { BadRequestException, HttpException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { ExceptionClassName, ExceptionCode, ExceptionId } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import type { ExceptionJSON } from '@sneusers/interfaces'
 import type { Testcase } from '@tests/utils/types'
 import TestSubject from '../http-exception.filter'
 
@@ -12,6 +13,12 @@ import TestSubject from '../http-exception.filter'
  */
 
 describe('functional:filters/HttpExceptionFilter', () => {
+  let subject: TestSubject
+
+  before(() => {
+    subject = new TestSubject(new ConfigService())
+  })
+
   describe('#catch', () => {
     describe('sends ExceptionJSON object to client', () => {
       type Case = Testcase<ExceptionJSON> & {
@@ -20,30 +27,38 @@ describe('functional:filters/HttpExceptionFilter', () => {
       }
 
       const cases: Case[] = [
-        {
-          exception: new HttpException('', ExceptionCode.INTERNAL_SERVER_ERROR),
-          expected: {
-            className: ExceptionClassName.INTERNAL_SERVER_ERROR,
-            code: ExceptionCode.INTERNAL_SERVER_ERROR,
-            data: { isExceptionJSON: true },
-            errors: [],
-            message: Exception.DEFAULT_MESSAGE,
-            name: ExceptionId.INTERNAL_SERVER_ERROR
-          },
-          testcase: 'handle HttpException'
-        },
         ((): Case => {
-          const body = { message: ['email must be an email'] }
+          const code = ExceptionCode.INTERNAL_SERVER_ERROR
+          const exception = new HttpException('', code)
 
           return {
-            exception: new BadRequestException(body),
+            exception,
+            expected: {
+              className: ExceptionClassName.INTERNAL_SERVER_ERROR,
+              code,
+              data: { isExceptionJSON: true },
+              errors: [],
+              message: Exception.DEFAULT_MESSAGE,
+              name: ExceptionId.INTERNAL_SERVER_ERROR,
+              stack: exception.stack
+            },
+            testcase: 'handle HttpException'
+          }
+        })(),
+        ((): Case => {
+          const body = { message: ['email must be an email'] }
+          const exception = new BadRequestException(body)
+
+          return {
+            exception,
             expected: {
               className: ExceptionClassName.BAD_REQUEST,
               code: ExceptionCode.BAD_REQUEST,
               data: { isExceptionJSON: true },
               errors: body.message,
               message: 'Bad Request Exception',
-              name: ExceptionId.BAD_REQUEST
+              name: ExceptionId.BAD_REQUEST,
+              stack: exception.stack
             },
             testcase: 'set #errors === BadRequestException#response.message'
           }
@@ -58,7 +73,7 @@ describe('functional:filters/HttpExceptionFilter', () => {
           const status = this.sandbox.fake(() => ({ json }))
 
           // Act
-          new TestSubject().catch(exception, {
+          subject.catch(exception, {
             switchToHttp: () => ({ getResponse: () => ({ end, json, status }) })
           } as unknown as ArgumentsHost)
 
