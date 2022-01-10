@@ -7,7 +7,6 @@ import {
   HttpCode,
   Param,
   Patch,
-  Post,
   Query,
   UseInterceptors,
   ValidationPipe
@@ -23,16 +22,11 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiTags,
-  ApiUnauthorizedResponse,
-  ApiUnprocessableEntityResponse
+  ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
-import {
-  CreateUserDTO,
-  PatchUserDTO,
-  UserDTO
-} from '@sneusers/subdomains/users/dtos'
+import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
@@ -50,20 +44,6 @@ import OPENAPI from './openapi/users.openapi'
 @UseInterceptors(PasswordInterceptor)
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
-
-  @Post()
-  @HttpCode(OPENAPI.create.status)
-  @ApiCreatedResponse(OPENAPI.create.responses[201])
-  @ApiBadRequestResponse(OPENAPI.create.responses[400])
-  @ApiConflictResponse(OPENAPI.create.responses[409])
-  @ApiUnprocessableEntityResponse(OPENAPI.create.responses[422])
-  @ApiInternalServerErrorResponse(OPENAPI.create.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.create.responses[502])
-  async create(
-    @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: CreateUserDTO
-  ): Promise<UserDTO> {
-    return (await this.users.create(dto)) as UserDTO
-  }
 
   @Delete(':uid')
   @HttpCode(OPENAPI.delete.status)

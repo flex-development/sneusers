@@ -13,11 +13,9 @@ import type {
   PatchUserDTO
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
-import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import createApp from '@tests/utils/create-app.util'
-import createUserDTO from '@tests/utils/create-user-dto.util'
 import createUsers from '@tests/utils/create-users.util'
 import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
@@ -35,11 +33,11 @@ import TestSubject from '../users.controller'
 
 describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
-  const USERS: CreateUserDTO[] = createUsers(13)
 
   let app: INestApplication
   let queryInterface: QueryInterface
   let req: SuperTest<Test>
+  let table: CreateUserDTO[]
   let users: UsersService
 
   before(async () => {
@@ -50,11 +48,12 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     })
 
     app = await napp.app.init()
-    req = request(napp.app.getHttpServer())
-    users = napp.ref.get(UsersService)
-    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
 
-    await seedTable<User>(users.repo, USERS)
+    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
+    users = napp.ref.get(UsersService)
+    req = request(napp.app.getHttpServer())
+
+    table = await seedTable<User>(users.repo, createUsers(13))
   })
 
   after(async () => {
@@ -63,46 +62,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   })
 
   describe('/users', () => {
-    describe('POST', () => {
-      it('should send UserDTO if new user was created', async () => {
-        // Arrange
-        const dto: CreateUserDTO = { ...createUserDTO(), password: 'password' }
-
-        // Act
-        const res = await req.post(URL).send(dto)
-
-        // Expect
-        expect(res).to.be.jsonResponse(HttpStatus.CREATED, 'object')
-        expect(res.body).not.to.be.instanceOf(User)
-        expect(res.body.email).to.equal(dto.email)
-        expect(res.body.first_name).to.equal(dto.first_name)
-        expect(res.body.password).to.be.undefined
-        expect(res.body.last_name).to.equal(dto.last_name)
-      })
-
-      it('should send error if user email is not unique', async () => {
-        // Arrange
-        const dto: CreateUserDTO = { ...createUserDTO(), email: USERS[0].email }
-
-        // Act
-        const res = await req.post(URL).send(dto)
-
-        // Expect
-        expect(res).to.be.jsonResponse(ExceptionCode.CONFLICT, 'object')
-        expect(res.body).not.to.be.instanceOf(UniqueEmailException)
-        expect(res.body.data.error).to.equal(SequelizeError.UniqueConstraint)
-        expect(res.body.errors).to.be.an('array')
-        expect(res.body.message).to.match(/already exists/)
-      })
-    })
-
     describe('GET', () => {
       it('should send search results array', async () => {
         // Arrange
         const query = new QueryParams<IUser>({
           attributes: 'email',
           group: 'email,id',
-          limit: Math.floor(USERS.length / 2),
+          limit: Math.floor(table.length / 2),
           order: 'id,ASC|last_name,DESC'
         })
 
@@ -123,7 +89,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('DELETE', () => {
       it('should send UserDTO if user was deleted', async () => {
         // Arrange
-        const user = USERS[USERS.length - 1]
+        const user = table[table.length - 1]
 
         // Act
         const res = await req.delete(`${URL}/${user.email}`)
@@ -160,7 +126,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('GET', () => {
       it('should send UserDTO given email of existing user', async () => {
         // Arrange
-        const email: User['email'] = USERS[0].email
+        const email: User['email'] = table[0].email
 
         // Act
         const res = await req.get([URL, email].join('/'))
@@ -217,7 +183,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('PATCH', () => {
       it('should send UserDTO if user was updated', async function (this) {
         // Arrange
-        const uid = USERS[1].email
+        const uid = table[1].email
         const dto: PatchUserDTO = { email: this.faker.internet.exampleEmail() }
 
         // Act
