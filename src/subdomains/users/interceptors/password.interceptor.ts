@@ -5,34 +5,32 @@ import {
   Injectable,
   NestInterceptor
 } from '@nestjs/common'
-import { EntityDTO } from '@sneusers/dtos'
-import { BaseEntity } from '@sneusers/entities'
+import { UserDTO } from '@sneusers/subdomains/users/dtos'
+import omit from 'lodash.omit'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 /**
- * @file Interceptors - EntityDTOInterceptor
- * @module sneusers/interceptors/EntityDTOInterceptor
+ * @file Users Subdomain Interceptors - PasswordInterceptor
+ * @module sneusers/subdomains/users/interceptors/PasswordInterceptor
  */
 
+type WithPassword = true
+
 /**
- * @template E - Entity (dao) class type
- * @template R - Controller payload type(s)
  * @template T - Pre-intercepted response type(s)
+ * @template R - Controller payload type(s)
  */
 @Injectable()
-class EntityDTOInterceptor<
-  E extends BaseEntity = BaseEntity,
-  R extends EntityDTO<E['_attributes']> = EntityDTO<E['_attributes']>,
-  T extends OneOrMany<E> = OneOrMany<E>
+class PasswordInterceptor<
+  T extends OneOrMany<UserDTO<WithPassword>> = OneOrMany<UserDTO<WithPassword>>,
+  R extends OneOrMany<UserDTO> = OneOrMany<UserDTO>
 > implements NestInterceptor<T, R>
 {
   /**
-   * Data mapper for {@link BaseEntity} instances.
+   * Removes the password property from {@link UserDTO}s.
    *
-   * Each instance will be converted into a serializable JSON object.
-   *
-   * @see {@link EntityDTO}
+   * @see {@link UserDTO}
    *
    * @param {ExecutionContext} context - Object containing methods for accessing
    * the route handler and the class about to be invoked
@@ -42,19 +40,21 @@ class EntityDTOInterceptor<
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
     /**
-     * Converts a single {@link BaseEntity} instance or array of instances into
-     * {@link EntityDTO}s.
+     * Removes the password property from a single {@link UserDTO} or each dto
+     * in an array.
      *
-     * @param {T} value - Single entity or array of entities
-     * @return {R} `EntityDTO`(s)
+     * @param {T} value - Single dto or array of dtos
+     * @return {R} Passwordless `UserDTO`(s)
      */
     const project = (value: T): R => {
       const array = Array.isArray(value)
-      return (array ? value.map(e => e.toJSON()) : value.toJSON()) as R
+
+      if (array) return value.map(user => omit(user, ['password'])) as R
+      return omit(value, ['password']) as unknown as R
     }
 
     return next.handle().pipe(map(project))
   }
 }
 
-export default EntityDTOInterceptor
+export default PasswordInterceptor

@@ -1,14 +1,20 @@
 import type { ObjectPlain } from '@flex-development/tutils'
 import { OrNull } from '@flex-development/tutils'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CURRENT_TIMESTAMP } from '@sneusers/config/constants.config'
+import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
-import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
+import {
+  DatabaseTable,
+  ExceptionCode,
+  SequelizeErrorName
+} from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
+import crypto from 'crypto'
 import {
   AllowNull,
   Column,
@@ -22,6 +28,7 @@ import {
 } from 'sequelize-typescript'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
+import isStrongPassword from 'validator/lib/isStrongPassword'
 
 /**
  * @file Users Subdomain Entities - User
@@ -38,6 +45,42 @@ import isEmail from 'validator/lib/isEmail'
  */
 @Table<User>({
   hooks: {
+    /**
+     * Hashes a user's password before the user is persisted to the database.
+     *
+     * @async
+     * @param {User} instance - Current user instance
+     * @return {Promise<void>} Empty promise when complete
+     */
+    async beforeCreate(instance: User): Promise<void> {
+      if (instance.password === null) return
+
+      const password = instance.password
+      const salt = crypto.randomBytes(16).toString('hex')
+
+      instance.password = await new Promise((resolve, reject) => {
+        crypto.scrypt(password, salt, 64, (error, derivedKey) => {
+          if (error !== null) {
+            const code = ExceptionCode.UNPROCESSABLE_ENTITY
+            const message = 'Password hashing failure'
+            const data: ExceptionDataDTO<Error> = {
+              errors: [error],
+              message: error.message,
+              password,
+              salt,
+              user: { email: instance.email }
+            }
+
+            reject(new Exception<Error>(code, message, data, error.stack))
+          }
+
+          resolve(`${salt}:${derivedKey.toString('hex')}`)
+        })
+      })
+
+      return
+    },
+
     /**
      * Prepares a {@link User} instance for validation.
      *
@@ -95,7 +138,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
 
   @ApiProperty({ description: 'First name', minLength: 1, type: String })
   @Comment('first name of user')
-  @Validate({ len: [1, Number.MAX_SAFE_INTEGER], notNull: true })
+  @Validate({ len: [1, 255], notNull: true })
   @AllowNull(false)
   @Index('first_name')
   @Column(DataType.STRING)
@@ -103,11 +146,22 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
 
   @ApiProperty({ description: 'Last name', minLength: 1, type: String })
   @Comment('last name of user')
-  @Validate({ len: [1, Number.MAX_SAFE_INTEGER], notNull: true })
+  @Validate({ len: [1, 255], notNull: true })
   @AllowNull(false)
   @Index('last_name')
   @Column(DataType.STRING)
   declare last_name: IUser['last_name']
+
+  @ApiPropertyOptional({
+    description: 'Hashed password',
+    nullable: true,
+    type: String
+  })
+  @Comment('hashed password')
+  @Validate({ len: [8, 255], strong: User.checkPasswordStrength })
+  @Default(null)
+  @Column(DataType.STRING)
+  declare password: IUser['password']
 
   @ApiProperty({
     default: null,
@@ -144,8 +198,28 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
     'first_name',
     'id',
     'last_name',
+    'password',
     'updated_at'
   ]
+
+  /**
+   * Checks a user's password strength.
+   *
+   * @static
+   * @param {any} password - Password to check
+   * @return {string} Password if strength check passes
+   */
+  static checkPasswordStrength(password: any): NonNullable<User['password']> {
+    const strong = isStrongPassword(password, {
+      minLength: 8,
+      minNumbers: 0,
+      minSymbols: 0,
+      minUppercase: 0
+    })
+
+    if (strong) return password
+    throw new Error('Must be at least 8 characters')
+  }
 
   /**
    * Retrieve a user by {@link User#email} address.

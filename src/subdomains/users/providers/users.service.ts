@@ -11,6 +11,7 @@ import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { UniqueConstraintError } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 /**
  * @file Users Subdomain Providers - UsersService
@@ -19,7 +20,10 @@ import { UniqueConstraintError } from 'sequelize'
 
 @Injectable()
 export default class UsersService {
-  constructor(@InjectModel(User) readonly repo: typeof User) {}
+  constructor(
+    @InjectModel(User) readonly repo: typeof User,
+    protected readonly sequelize: Sequelize
+  ) {}
 
   /**
    * Creates a new user.
@@ -35,10 +39,10 @@ export default class UsersService {
    * @throws {Exception | UniqueEmailException}
    */
   async create(dto: CreateUserDTO): Promise<User> {
-    return await this.repo.sequelize.transaction(async transaction => {
+    return await this.sequelize.transaction(async transaction => {
       try {
         return await this.repo.create(dto, {
-          fields: ['email', 'first_name', 'last_name'],
+          fields: ['email', 'first_name', 'last_name', 'password'],
           isNewRecord: true,
           raw: true,
           silent: true,
@@ -71,7 +75,7 @@ export default class UsersService {
    * @return {Promise<User[]>} Array of `User` objects
    */
   async find(options: SearchOptions<IUser> = {}): Promise<User[]> {
-    return await this.repo.sequelize.transaction(async transaction => {
+    return await this.sequelize.transaction(async transaction => {
       return await this.repo.findAll<User>({ ...options, transaction })
     })
   }
@@ -90,7 +94,7 @@ export default class UsersService {
     uid: UserUid,
     options: SearchOptions<IUser> = {}
   ): Promise<OrNull<User>> {
-    return await this.repo.sequelize.transaction(async transaction => {
+    return await this.sequelize.transaction(async transaction => {
       return await this.repo.findByUid(uid, { ...options, transaction })
     })
   }
@@ -105,7 +109,7 @@ export default class UsersService {
    * @throws {Exception | UniqueEmailException}
    */
   async patch(uid: UserUid, dto: PatchUserDTO = {}): Promise<User> {
-    return await this.repo.sequelize.transaction(async transaction => {
+    return await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 
@@ -144,7 +148,7 @@ export default class UsersService {
    * @return {Promise<User>} - Promise containing deleted user
    */
   async remove(uid: UserUid): Promise<User> {
-    return await this.repo.sequelize.transaction(async transaction => {
+    return await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 

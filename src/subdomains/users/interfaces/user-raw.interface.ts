@@ -1,4 +1,4 @@
-import type { NullishNumber } from '@flex-development/tutils'
+import type { NullishNumber, NullishString } from '@flex-development/tutils'
 
 /**
  * @file Users Subdomain Interfaces - IUserRaw
@@ -18,6 +18,7 @@ interface IUserRaw {
   first_name: string
   id: number
   last_name: string
+  password: NullishString
   updated_at: NullishNumber
 }
 

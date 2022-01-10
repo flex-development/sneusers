@@ -33,6 +33,7 @@ import {
   UserDTO
 } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
+import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import OPENAPI from './openapi/users.openapi'
@@ -45,6 +46,7 @@ import OPENAPI from './openapi/users.openapi'
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
 @UseInterceptors(new EntityDTOInterceptor<User, OneOrMany<UserDTO>>())
+@UseInterceptors(PasswordInterceptor)
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
@@ -59,7 +61,7 @@ export default class UsersController {
   async create(
     @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: CreateUserDTO
   ): Promise<UserDTO> {
-    return await this.users.create(dto)
+    return (await this.users.create(dto)) as UserDTO
   }
 
   @Delete(':uid')
@@ -72,7 +74,7 @@ export default class UsersController {
   async delete(
     @Param('uid') uid: IUser['email'] | IUser['id']
   ): Promise<UserDTO> {
-    return await this.users.remove(uid)
+    return (await this.users.remove(uid)) as UserDTO
   }
 
   @Get()
@@ -84,7 +86,9 @@ export default class UsersController {
   @ApiInternalServerErrorResponse(OPENAPI.find.responses[500])
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
   async find(@Query() query: QueryParams<IUser> = {}): Promise<UserDTO[]> {
-    return await this.users.find(this.users.repo.buildSearchOptions(query))
+    return (await this.users.find(
+      this.users.repo.buildSearchOptions(query)
+    )) as UserDTO[]
   }
 
   @Get(':uid')
@@ -100,10 +104,10 @@ export default class UsersController {
     @Param('uid') uid: IUser['email'] | IUser['id'],
     @Query() query: QueryParams<IUser> = {}
   ): Promise<UserDTO> {
-    query.rejectOnEmpty = true
-    const options = this.users.repo.buildSearchOptions(query)
-
-    return (await this.users.findOne(uid, options)) as UserDTO
+    return (await this.users.findOne(
+      uid,
+      this.users.repo.buildSearchOptions({ ...query, rejectOnEmpty: true })
+    )) as UserDTO
   }
 
   @Patch(':uid')
@@ -119,6 +123,6 @@ export default class UsersController {
     @Param('uid') uid: IUser['email'] | IUser['id'],
     @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: PatchUserDTO
   ): Promise<UserDTO> {
-    return await this.users.patch(uid, dto)
+    return (await this.users.patch(uid, dto)) as UserDTO
   }
 }

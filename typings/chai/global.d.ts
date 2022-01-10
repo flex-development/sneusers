@@ -5,7 +5,7 @@ declare module 'chai' {
   global {
     export namespace Chai {
       interface Assertion {
-        each(fn: (item: Chai.Assertion) => any): Chai.Assertion
+        each(fn: (item: Chai.Assertion, index: number) => any): Chai.Assertion
         jsonResponse(
           status?: HttpStatus | ExceptionCode,
           body?: 'array' | 'object'

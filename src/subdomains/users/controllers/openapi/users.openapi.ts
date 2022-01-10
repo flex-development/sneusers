@@ -16,8 +16,8 @@ export default {
     responses: {
       201: { description: 'Created new user', type: UserDTO },
       400: { description: 'body or query validation failure', type: Exception },
-      401: { description: 'User not logged in', type: Exception },
       409: { description: 'Email address is not unique', type: Exception },
+      422: { description: 'Password hashing failure', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }
     }

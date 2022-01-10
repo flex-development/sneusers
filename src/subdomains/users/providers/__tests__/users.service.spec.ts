@@ -19,6 +19,7 @@ import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
 import pick from 'lodash.pick'
 import type { QueryInterface } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../users.service'
 
 /**
@@ -41,7 +42,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     app = await napp.app.init()
     subject = napp.ref.get(TestSubject)
-    queryInterface = subject.repo.sequelize.getQueryInterface()
+    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
 
     await seedTable<User>(subject.repo, USERS)
   })

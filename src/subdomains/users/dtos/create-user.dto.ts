@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength
@@ -38,4 +39,14 @@ export default class CreateUserDTO {
   @IsString()
   @IsNotEmpty()
   readonly last_name: IUserRaw['last_name']
+
+  @ApiPropertyOptional({
+    description: 'Secure password',
+    minLength: 8,
+    nullable: true,
+    type: String
+  })
+  @IsString()
+  @IsOptional()
+  readonly password?: IUserRaw['password']
 }

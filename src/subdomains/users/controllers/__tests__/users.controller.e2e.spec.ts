@@ -23,6 +23,7 @@ import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
 import type { QueryInterface } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import type { SuperTest, Test } from 'supertest'
 import request from 'supertest'
 import TestSubject from '../users.controller'
@@ -51,7 +52,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     app = await napp.app.init()
     req = request(napp.app.getHttpServer())
     users = napp.ref.get(UsersService)
-    queryInterface = users.repo.sequelize.getQueryInterface()
+    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
 
     await seedTable<User>(users.repo, USERS)
   })
@@ -65,7 +66,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('POST', () => {
       it('should send UserDTO if new user was created', async () => {
         // Arrange
-        const dto: CreateUserDTO = createUserDTO()
+        const dto: CreateUserDTO = { ...createUserDTO(), password: 'password' }
 
         // Act
         const res = await req.post(URL).send(dto)
@@ -75,6 +76,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.email).to.equal(dto.email)
         expect(res.body.first_name).to.equal(dto.first_name)
+        expect(res.body.password).to.be.undefined
         expect(res.body.last_name).to.equal(dto.last_name)
       })
 
@@ -109,7 +111,10 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'array')
-        expect(res.body).each(user => user.not.to.be.instanceOf(User))
+        expect(res.body).each((user, index) => {
+          user.not.to.be.instanceOf(User)
+          expect(res.body[index].password).to.be.undefined
+        })
       })
     })
   })
@@ -132,6 +137,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.equal(user.last_name)
         expect(res.body.name).to.be.a('string')
+        expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -168,6 +174,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.name).to.be.a('string')
+        expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -187,6 +194,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.equal(id)
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.name).to.be.a('string')
+        expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -224,6 +232,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.name).to.be.a('string')
+        expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.a('number')
       })
 

@@ -19,9 +19,14 @@ const each = (chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void => {
     each.name,
     function (
       this: Chai.Assertion,
-      fn: (item: Chai.Assertion) => any
+      fn: (item: Chai.Assertion, index: number) => any
     ): Chai.Assertion {
-      for (const t of utils.flag(this, 'object')) fn(new chai.Assertion(t))
+      const array: any[] = utils.flag(this, 'object')
+
+      for (const [index, target] of array.entries()) {
+        fn(new chai.Assertion(target), index)
+      }
+
       return this
     }
   )
