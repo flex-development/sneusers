@@ -11,7 +11,7 @@ import { TerminusModule } from '@nestjs/terminus'
 import { HealthController } from '@sneusers/controllers'
 import * as MIDDLEWARE from '@sneusers/middleware'
 import { AppService } from '@sneusers/providers'
-import { UsersModule } from '@sneusers/subdomains'
+import { AuthModule, UsersModule } from '@sneusers/subdomains'
 
 /**
  * @file Modules - AppModule
@@ -26,7 +26,8 @@ import { UsersModule } from '@sneusers/subdomains'
     SequelizeModule.forRootAsync(AppService.sequelizeModuleOptions),
     HttpModule,
     TerminusModule,
-    UsersModule
+    UsersModule,
+    AuthModule
   ],
   providers: [AppService]
 })

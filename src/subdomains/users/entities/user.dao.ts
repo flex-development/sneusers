@@ -1,5 +1,5 @@
 import type { ObjectPlain } from '@flex-development/tutils'
-import { OrNull } from '@flex-development/tutils'
+import { NullishString, OrNull } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CURRENT_TIMESTAMP } from '@sneusers/config/constants.config'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
@@ -55,29 +55,7 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
     async beforeCreate(instance: User): Promise<void> {
       if (instance.password === null) return
 
-      const password = instance.password
-      const salt = crypto.randomBytes(16).toString('hex')
-
-      instance.password = await new Promise((resolve, reject) => {
-        crypto.scrypt(password, salt, 64, (error, derivedKey) => {
-          if (error !== null) {
-            const code = ExceptionCode.UNPROCESSABLE_ENTITY
-            const message = 'Password hashing failure'
-            const data: ExceptionDataDTO<Error> = {
-              errors: [error],
-              message: error.message,
-              password,
-              salt,
-              user: { email: instance.email }
-            }
-
-            reject(new Exception<Error>(code, message, data, error.stack))
-          }
-
-          resolve(`${salt}:${derivedKey.toString('hex')}`)
-        })
-      })
-
+      instance.password = await User.hashPassword(instance.password)
       return
     },
 
@@ -203,6 +181,37 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   ]
 
   /**
+   * Verifies a user's login credentials.
+   *
+   * @static
+   * @async
+   * @param {string} email - User email
+   * @param {NullishString} password - User password
+   * @return {Promise<User>} Promise containing authenticated user
+   * @throws {Exception}
+   */
+  static async authenticate(
+    email: User['email'],
+    password: User['password']
+  ): Promise<User> {
+    const options: SearchOptions<IUser> = { rejectOnEmpty: true }
+    const user = (await this.findByEmail(email, options)) as User
+
+    if (user.password === null && this.equal(user, { email })) {
+      return user
+    }
+
+    if (user.password && password) {
+      await this.verifyPassword(user.password, password)
+      return user
+    }
+
+    throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
+      user: { email, id: user.id, password }
+    })
+  }
+
+  /**
    * Checks a user's password strength.
    *
    * @static
@@ -219,6 +228,17 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
 
     if (strong) return password
     throw new Error('Must be at least 8 characters')
+  }
+
+  /**
+   * Check if two users are equivalent.
+   *
+   * @param {Partial<IUserRaw>} [user1] - First user
+   * @param {Partial<IUserRaw>} [user2] - User to compare to `user1`
+   * @return {boolean} `true` if id and email match, `false` otherwise
+   */
+  static equal(user1?: Partial<IUserRaw>, user2?: Partial<IUserRaw>): boolean {
+    return user1!.email === user2!.email || user1!.id === user2!.id
   }
 
   /**
@@ -297,6 +317,71 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
 
       throw Exception.fromSequelizeError(error, data)
     }
+  }
+
+  /**
+   * Hashes a user password.
+   *
+   * @static
+   * @async
+   * @param {string} password - Password to hash
+   * @return {Promise<string>} Promise containing hashed password
+   */
+  static async hashPassword(password: string): Promise<string> {
+    return await new Promise((resolve, reject) => {
+      const salt = crypto.randomBytes(16).toString('hex')
+
+      crypto.scrypt(password, salt, 64, (error, derivedKey) => {
+        if (error !== null) {
+          const code = ExceptionCode.UNPROCESSABLE_ENTITY
+          const message = 'Password hashing failure'
+          const data: ExceptionDataDTO<Error> = {
+            errors: [error],
+            message: error.message,
+            password,
+            salt
+          }
+
+          reject(new Exception<Error>(code, message, data, error.stack))
+        }
+
+        resolve(`${salt}:${derivedKey.toString('hex')}`)
+      })
+    })
+  }
+
+  /**
+   * Verifies a user password.
+   *
+   * @static
+   * @async
+   * @param {string} password_hashed - User's hashed password
+   * @param {string} password - Password to test
+   * @return {Promise<boolean>} Promise containing `true` if verified
+   */
+  static async verifyPassword(
+    password_hashed: string,
+    password: string
+  ): Promise<boolean> {
+    return await new Promise((resolve, reject) => {
+      const [salt, key] = password_hashed.split(':')
+
+      crypto.scrypt(password, salt as string, 64, (error, derivedKey) => {
+        if (error !== null) {
+          const code = ExceptionCode.UNAUTHORIZED
+          const message = 'Password verification failure'
+          const data: ExceptionDataDTO<Error> = {
+            errors: [error],
+            message: error.message,
+            password
+          }
+
+          reject(new Exception<Error>(code, message, data, error.stack))
+        }
+
+        resolve(key === derivedKey.toString('hex'))
+      })
+    })
   }
 }
 

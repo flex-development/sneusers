@@ -45,6 +45,7 @@ const config: UserConfig = {
       2,
       'always',
       [
+        'auth',
         'config',
         'db',
         'deploy',

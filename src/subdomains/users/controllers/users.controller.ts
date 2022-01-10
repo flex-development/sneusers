@@ -23,7 +23,8 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiTags,
-  ApiUnauthorizedResponse
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse
 } from '@nestjs/swagger'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
@@ -54,8 +55,8 @@ export default class UsersController {
   @HttpCode(OPENAPI.create.status)
   @ApiCreatedResponse(OPENAPI.create.responses[201])
   @ApiBadRequestResponse(OPENAPI.create.responses[400])
-  @ApiUnauthorizedResponse(OPENAPI.create.responses[401])
   @ApiConflictResponse(OPENAPI.create.responses[409])
+  @ApiUnprocessableEntityResponse(OPENAPI.create.responses[422])
   @ApiInternalServerErrorResponse(OPENAPI.create.responses[500])
   @ApiBadGatewayResponse(OPENAPI.create.responses[502])
   async create(
@@ -82,7 +83,6 @@ export default class UsersController {
   @ApiQuery(OPENAPI.find.query)
   @ApiOkResponse(OPENAPI.find.responses[200])
   @ApiBadRequestResponse(OPENAPI.find.responses[400])
-  @ApiUnauthorizedResponse(OPENAPI.find.responses[401])
   @ApiInternalServerErrorResponse(OPENAPI.find.responses[500])
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
   async find(@Query() query: QueryParams<IUser> = {}): Promise<UserDTO[]> {
@@ -96,7 +96,6 @@ export default class UsersController {
   @ApiQuery(OPENAPI.findOne.query)
   @ApiOkResponse(OPENAPI.findOne.responses[200])
   @ApiBadRequestResponse(OPENAPI.findOne.responses[400])
-  @ApiUnauthorizedResponse(OPENAPI.findOne.responses[401])
   @ApiNotFoundResponse(OPENAPI.findOne.responses[404])
   @ApiInternalServerErrorResponse(OPENAPI.findOne.responses[500])
   @ApiBadGatewayResponse(OPENAPI.findOne.responses[502])

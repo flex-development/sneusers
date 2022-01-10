@@ -38,7 +38,6 @@ export default {
     responses: {
       200: { description: 'Executed search', isArray: true, type: UserDTO },
       400: { description: 'query validation failure', type: Exception },
-      401: { description: 'User not logged in', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }
     }
@@ -49,7 +48,6 @@ export default {
     responses: {
       200: { description: 'Found user', type: UserDTO },
       400: { description: 'query validation failure', type: Exception },
-      401: { description: 'User not logged in', type: Exception },
       404: { description: 'User not found', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }

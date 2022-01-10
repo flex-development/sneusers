@@ -24,6 +24,7 @@ module.exports = {
           'dtos',
           'enums',
           'foofoobaby',
+          'healthchecks',
           'keyof',
           'localhost',
           'matcher',
@@ -58,7 +59,11 @@ module.exports = {
   overrides: [
     ...overrides,
     {
-      files: ['*.openapi.ts', 'ecosystem.config.cjs'],
+      files: [
+        '*.openapi.ts',
+        'ecosystem.config.cjs',
+        'src/hooks/use-swagger.hook.ts'
+      ],
       rules: {
         'sort-keys': 0
       }
