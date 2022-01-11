@@ -14,10 +14,10 @@ import type { NullishNumber, NullishString } from '@flex-development/tutils'
  */
 interface IUserRaw {
   created_at: number
-  email: string
-  first_name: string
+  email: Lowercase<string>
+  first_name: Lowercase<string>
   id: number
-  last_name: string
+  last_name: Lowercase<string>
   password: NullishString
   updated_at: NullishNumber
 }

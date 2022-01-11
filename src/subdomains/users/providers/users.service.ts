@@ -114,15 +114,13 @@ export default class UsersService {
       const user = (await this.repo.findByUid(uid, search)) as User
 
       try {
-        await this.repo.update(dto, {
-          fields: ['email', 'first_name', 'last_name'],
+        return await user.update(dto, {
+          fields: ['email', 'first_name', 'last_name', 'password'],
           silent: false,
           transaction,
           validate: true,
           where: { id: user.id }
         })
-
-        return (await this.repo.findByPk(user.id, search)) as User
       } catch (e) {
         const error = e as SequelizeError
         const data: ObjectPlain = { dto }

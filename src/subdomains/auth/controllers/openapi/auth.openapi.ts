@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common'
 import { Exception } from '@sneusers/exceptions'
-import { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
+import { LoginDTO, LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
 
 /**
@@ -16,7 +16,7 @@ export default {
     status: HttpStatus.OK,
     body: { type: LoginRequestDTO },
     responses: {
-      200: { description: 'Logged in user', type: UserDTO },
+      200: { description: 'Logged in user', type: LoginDTO },
       401: { description: 'Invalid login credentials', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }

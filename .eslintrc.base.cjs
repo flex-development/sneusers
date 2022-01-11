@@ -288,6 +288,8 @@ module.exports = {
         chai: true,
         describe: true,
         expect: true,
+        faker: true,
+        inspect: true,
         it: true,
         pf: true,
         sandbox: true

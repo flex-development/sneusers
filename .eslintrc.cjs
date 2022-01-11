@@ -17,6 +17,7 @@ module.exports = {
         ...RULES_SPELLCHECKER[1],
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
+          'authed',
           'dao',
           'datetime',
           'doppler',
@@ -27,6 +28,7 @@ module.exports = {
           'healthchecks',
           'keyof',
           'localhost',
+          'lowercased',
           'matcher',
           'matchers',
           'mysql',

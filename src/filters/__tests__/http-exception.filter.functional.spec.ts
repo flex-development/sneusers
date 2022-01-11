@@ -68,6 +68,7 @@ describe('functional:filters/HttpExceptionFilter', () => {
       cases.forEach(({ exception, expected, testcase }) => {
         it(`should ${testcase}`, function (this) {
           // Arrange
+          Reflect.deleteProperty(expected.data, 'isExceptionJSON')
           const end = this.sandbox.fake()
           const json = this.sandbox.fake(() => ({ end }))
           const status = this.sandbox.fake(() => ({ json }))

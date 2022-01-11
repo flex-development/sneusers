@@ -72,7 +72,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const URL = stubURLPath('auth/login')
 
     describe('POST', () => {
-      it('should send UserDTO if existing user was logged in', async () => {
+      it('should send LoginDTO if existing user was logged in', async () => {
         // Arrange
         const dto: LoginRequestDTO = {
           email: USER.email,

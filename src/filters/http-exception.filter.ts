@@ -40,11 +40,9 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof BadRequestException) data.errors = response.message
     if (typeof response === 'string') data.message = response
 
-    const payload = new Exception(status, undefined, data).toJSON()
+    const payload = new Exception(status, '', data, exception.stack).toJSON()
 
-    if (!this.config.get<boolean>('PROD') && !payload.stack) {
-      payload.stack = exception.stack
-    }
+    Reflect.deleteProperty(payload.data, 'isExceptionJSON')
 
     return res.status(payload.code).json(payload).end()
   }

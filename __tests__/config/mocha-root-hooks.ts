@@ -1,6 +1,7 @@
 import { each, jsonResponse } from '@tests/matchers'
 import type { RootHookObject } from 'mocha'
 import sinonChai from 'sinon-chai'
+import { inspect } from 'util'
 
 /**
  * @file Global Test Configuration - Root Hooks
@@ -55,8 +56,9 @@ export const mochaHooks: RootHookObject = {
    * @return {void} Nothing when complete
    */
   beforeAll(this: Mocha.Context): void {
-    // Add faker, pretty-format, and global sandbox to test context
+    // Add faker, inspect, pretty-format, and global sandbox to test context
     this.faker = faker
+    this.inspect = inspect
     this.pf = pf
     this.sandbox = sandbox
 

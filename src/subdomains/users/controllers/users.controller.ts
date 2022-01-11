@@ -21,11 +21,11 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
-  ApiUnauthorizedResponse
+  ApiTags
 } from '@nestjs/swagger'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
+import { UserAuth } from '@sneusers/subdomains/users/decorators'
 import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
@@ -35,7 +35,7 @@ import OPENAPI from './openapi/users.openapi'
 
 /**
  * @file Users Subdomain Controllers - UsersController
- * @module sneusers/subdomains/controllers/users/UsersController
+ * @module sneusers/subdomains/users/controllers/UsersController
  */
 
 @Controller(OPENAPI.controller)
@@ -45,10 +45,10 @@ import OPENAPI from './openapi/users.openapi'
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
+  @UserAuth()
   @Delete(':uid')
   @HttpCode(OPENAPI.delete.status)
   @ApiNoContentResponse(OPENAPI.delete.responses[204])
-  @ApiUnauthorizedResponse(OPENAPI.delete.responses[401])
   @ApiNotFoundResponse(OPENAPI.delete.responses[404])
   @ApiInternalServerErrorResponse(OPENAPI.delete.responses[500])
   @ApiBadGatewayResponse(OPENAPI.delete.responses[502])
@@ -71,6 +71,7 @@ export default class UsersController {
     )) as UserDTO[]
   }
 
+  @UserAuth('optional')
   @Get(':uid')
   @HttpCode(OPENAPI.findOne.status)
   @ApiQuery(OPENAPI.findOne.query)
@@ -89,11 +90,11 @@ export default class UsersController {
     )) as UserDTO
   }
 
+  @UserAuth()
   @Patch(':uid')
   @HttpCode(OPENAPI.patch.status)
   @ApiCreatedResponse(OPENAPI.patch.responses[200])
   @ApiBadRequestResponse(OPENAPI.patch.responses[400])
-  @ApiUnauthorizedResponse(OPENAPI.patch.responses[401])
   @ApiNotFoundResponse(OPENAPI.patch.responses[404])
   @ApiConflictResponse(OPENAPI.patch.responses[409])
   @ApiInternalServerErrorResponse(OPENAPI.patch.responses[500])

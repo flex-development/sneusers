@@ -35,10 +35,6 @@ export default class ExceptionClassFilter implements ExceptionFilter {
       Reflect.deleteProperty(payload.data.options, 'transaction')
     }
 
-    if (!this.config.get<boolean>('PROD') && !payload.stack) {
-      payload.stack = exception.stack
-    }
-
     return res.status(payload.code).json(payload).end()
   }
 }

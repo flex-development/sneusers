@@ -4,7 +4,7 @@ import { PassportModule } from '@nestjs/passport'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import { AuthController } from './controllers'
 import { AuthService, JwtConfigService } from './providers'
-import { LocalStrategy } from './strategies'
+import { JwtStrategy, LocalStrategy } from './strategies'
 
 /**
  * @file Auth Subdomain - AuthModule
@@ -19,7 +19,7 @@ import { LocalStrategy } from './strategies'
     PassportModule,
     JwtModule.registerAsync(AuthModule.jwtModuleOptions)
   ],
-  providers: [AuthService, LocalStrategy]
+  providers: [AuthService, LocalStrategy, JwtConfigService, JwtStrategy]
 })
 export default class AuthModule {
   /**

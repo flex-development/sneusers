@@ -4,6 +4,7 @@ declare global {
       chai: typeof chai
       expect: typeof expect
       faker: typeof faker
+      inspect: typeof import('util')['inspect']
       pf: typeof pf
       sandbox: typeof sandbox
     }

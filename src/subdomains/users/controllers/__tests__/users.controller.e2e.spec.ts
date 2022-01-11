@@ -1,5 +1,6 @@
 import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
+import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -8,6 +9,8 @@ import {
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
+import { JwtConfigService } from '@sneusers/subdomains/auth/providers'
+import { JwtStrategy } from '@sneusers/subdomains/auth/strategies'
 import type {
   CreateUserDTO,
   PatchUserDTO
@@ -16,6 +19,7 @@ import { User } from '@sneusers/subdomains/users/entities'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import createApp from '@tests/utils/create-app.util'
+import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUsers from '@tests/utils/create-users.util'
 import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
@@ -34,6 +38,10 @@ import TestSubject from '../users.controller'
 describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
 
+  const USERS = createUsers(13)
+  const AUTHED_USER_1 = createAuthedUser(USERS.length + 1)
+  const AUTHED_USER_2 = createAuthedUser(AUTHED_USER_1.id + 1)
+
   let app: INestApplication
   let queryInterface: QueryInterface
   let req: SuperTest<Test>
@@ -43,8 +51,8 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   before(async () => {
     const napp = await createApp({
       controllers: [TestSubject],
-      imports: [SequelizeModule.forFeature([User])],
-      providers: [UsersService]
+      imports: [SequelizeModule.forFeature([User]), PassportModule],
+      providers: [UsersService, JwtConfigService, JwtStrategy]
     })
 
     app = await napp.app.init()
@@ -53,7 +61,11 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     users = napp.ref.get(UsersService)
     req = request(napp.app.getHttpServer())
 
-    table = await seedTable<User>(users.repo, createUsers(13))
+    table = await seedTable<User>(
+      users.repo,
+      [...USERS, AUTHED_USER_1, AUTHED_USER_2],
+      { fields: ['email', 'first_name', 'last_name'] }
+    )
   })
 
   after(async () => {
@@ -89,30 +101,50 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('DELETE', () => {
       it('should send UserDTO if user was deleted', async () => {
         // Arrange
-        const user = table[table.length - 1]
+        const user = Object.assign({}, AUTHED_USER_1)
 
         // Act
-        const res = await req.delete(`${URL}/${user.email}`)
+        const res = await req
+          .delete([URL, user.email].join('/'))
+          .set('Authorization', `Bearer ${user.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK)
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
-        expect(res.body.email).to.equal(user.email)
-        expect(res.body.first_name).to.equal(user.first_name)
+        expect(res.body.email).to.equal(user.email.toLowerCase())
+        expect(res.body.first_name).to.equal(user.first_name.toLowerCase())
         expect(res.body.id).to.be.a('number')
-        expect(res.body.last_name).to.equal(user.last_name)
+        expect(res.body.last_name).to.equal(user.last_name.toLowerCase())
         expect(res.body.name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
+      it('should send error if user is not logged in', async () => {
+        // Arrange
+        const user = Object.assign({}, AUTHED_USER_1)
+
+        // Act
+        const res = await req.delete([URL, user.email].join('/'))
+
+        // Expect
+        expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
+        expect(res.body).not.to.be.instanceOf(Exception)
+        expect(res.body.data).to.deep.equal({})
+        expect(res.body.errors).to.be.an('array')
+        expect(res.body.message).to.equal('Unauthorized')
+      })
+
       it('should send error if user is not found', async function (this) {
         // Arrange
+        const access_token = Object.assign({}, AUTHED_USER_2).access_token
         const uid = this.faker.internet.email()
 
         // Act
-        const res = await req.delete([URL, uid].join('/'))
+        const res = await req
+          .delete([URL, uid].join('/'))
+          .set('Authorization', `Bearer ${access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
@@ -183,17 +215,20 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('PATCH', () => {
       it('should send UserDTO if user was updated', async function (this) {
         // Arrange
-        const uid = table[1].email
+        const user = Object.assign({}, AUTHED_USER_2)
         const dto: PatchUserDTO = { email: this.faker.internet.exampleEmail() }
 
         // Act
-        const res = await req.patch([URL, uid].join('/')).send(dto)
+        const res = await req
+          .patch([URL, user.id].join('/'))
+          .send(dto)
+          .set('Authorization', `Bearer ${user.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
-        expect(res.body.email).to.equal(dto.email)
+        expect(res.body.email).to.equal(dto.email!.toLowerCase())
         expect(res.body.first_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
@@ -202,13 +237,33 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.updated_at).to.be.a('number')
       })
 
-      it('should send error if user is not found', async function (this) {
+      it('should send error if user is not logged in', async function (this) {
         // Arrange
-        const uid = 'foofoobaby@email.com'
-        const dto: PatchUserDTO = { first_name: this.faker.name.firstName() }
+        const user = Object.assign({}, AUTHED_USER_2)
+        const dto: PatchUserDTO = { email: this.faker.internet.email() }
 
         // Act
-        const res = await req.patch([URL, uid].join('/')).send(dto)
+        const res = await req.patch([URL, user.id].join('/')).send(dto)
+
+        // Expect
+        expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
+        expect(res.body).not.to.be.instanceOf(Exception)
+        expect(res.body.data).to.deep.equal({})
+        expect(res.body.errors).to.be.an('array')
+        expect(res.body.message).to.equal('Unauthorized')
+      })
+
+      it('should send error if user is not found', async function (this) {
+        // Arrange
+        const access_token = Object.assign({}, AUTHED_USER_2).access_token
+        const dto: PatchUserDTO = { first_name: this.faker.name.firstName() }
+        const uid = 'foofoobaby@email.com'
+
+        // Act
+        const res = await req
+          .patch([URL, uid].join('/'))
+          .send(dto)
+          .set('Authorization', `Bearer ${access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')

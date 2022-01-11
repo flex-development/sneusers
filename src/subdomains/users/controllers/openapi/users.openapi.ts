@@ -15,7 +15,6 @@ export default {
     status: HttpStatus.OK,
     responses: {
       204: { description: 'Deleted user', type: Boolean },
-      401: { description: 'User not logged in', type: Exception },
       404: { description: 'User not found', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }
@@ -47,7 +46,6 @@ export default {
     responses: {
       200: { description: 'Updated user', type: UserDTO },
       400: { description: 'body or query validation failure', type: Exception },
-      401: { description: 'User not logged in', type: Exception },
       404: { description: 'User not found', type: Exception },
       409: { description: 'Email address is not unique', type: Exception },
       500: { description: 'Internal server error', type: Exception },

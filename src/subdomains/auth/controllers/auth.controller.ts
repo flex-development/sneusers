@@ -3,7 +3,6 @@ import {
   Controller,
   HttpCode,
   Post,
-  Request,
   UseGuards,
   UseInterceptors,
   ValidationPipe
@@ -22,8 +21,8 @@ import {
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { LocalAuthGuard } from '@sneusers/subdomains/auth/guards'
-import { LoginRequest } from '@sneusers/subdomains/auth/interfaces'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
+import { AuthedUser } from '@sneusers/subdomains/users/decorators'
 import { CreateUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
@@ -31,7 +30,7 @@ import OPENAPI from './openapi/auth.openapi'
 
 /**
  * @file Auth Subdomain Controllers - AuthController
- * @module sneusers/subdomains/controllers/auth/AuthController
+ * @module sneusers/subdomains/auth/controllers/AuthController
  */
 
 @Controller(OPENAPI.controller)
@@ -49,8 +48,8 @@ export default class AuthController {
   @ApiUnauthorizedResponse(OPENAPI.login.responses[401])
   @ApiInternalServerErrorResponse(OPENAPI.login.responses[500])
   @ApiBadGatewayResponse(OPENAPI.login.responses[502])
-  async login(@Request() req: LoginRequest): Promise<LoginDTO> {
-    return await this.auth.login(req.user)
+  async login(@AuthedUser() user: User): Promise<LoginDTO> {
+    return await this.auth.login(user)
   }
 
   @Post(OPENAPI.register.path)

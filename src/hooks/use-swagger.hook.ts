@@ -41,9 +41,17 @@ const useSwagger = async (
   builder.setTitle(name_no_org)
   builder.setVersion(version)
 
+  // Add security scheme
+  builder.addBearerAuth({
+    bearerFormat: 'JWT',
+    description: 'User access token',
+    scheme: 'bearer',
+    type: 'http'
+  })
+
   // Add tags
-  builder.addTag('auth', 'Authentication and Authorization')
-  builder.addTag('users', 'Create, find, update, and remove users')
+  builder.addTag('auth', 'Register and login users')
+  builder.addTag('users', 'Find, update, and remove users')
   builder.addTag('health', 'Healthchecks', {
     description: 'NestJS Docs - Healthchecks (Terminus)',
     url: 'https://docs.nestjs.com/recipes/terminus'
@@ -62,20 +70,19 @@ const useSwagger = async (
   // Get documentation in OpenAPI format
   const docs = SwaggerModule.createDocument(app, builder.build(), options)
 
-  // Sort docs
-  docs.components!.schemas = sortObject(docs.components!.schemas)
-
   // Add handler to view docs from path
   app.getHttpAdapter().get(path, (req: Req, res: Res) => {
+    docs.components!.schemas = sortObject(docs.components!.schemas)
+
     res.json({
       openapi: docs.openapi,
       info: docs.info,
       servers: docs.servers,
-      tags: docs.tags,
       security: docs.security,
+      tags: docs.tags,
       externalDocs: docs.externalDocs,
       paths: sortObject(docs.paths),
-      components: sortObject(docs.components)
+      components: docs.components
     })
 
     return res.end()

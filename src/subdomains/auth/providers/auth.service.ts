@@ -51,7 +51,7 @@ class AuthService {
       last_name: user.last_name
     }
 
-    return { access_token: this.jwt.sign(payload), ...payload }
+    return { access_token: await this.jwt.signAsync(payload), ...payload }
   }
 
   /**

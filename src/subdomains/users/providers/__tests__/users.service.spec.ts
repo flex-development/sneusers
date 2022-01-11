@@ -126,7 +126,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result).to.be.instanceOf(User)
       expect(result.email).to.equal(uid.toLowerCase())
       expect(result.first_name).to.be.a('string')
-      expect(result.last_name).to.equal(dto.last_name)
+      expect(result.last_name).to.equal(dto.last_name!.toLowerCase())
       expect(result.updated_at).to.not.be.null
     })
 

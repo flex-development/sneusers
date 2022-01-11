@@ -1,9 +1,10 @@
 declare global {
   namespace Mocha {
     interface Context {
-      faker: typeof faker
-      pf: typeof pf
-      sandbox: typeof sandbox
+      faker: NodeJS.TestingGlobal['faker']
+      inspect: NodeJS.TestingGlobal['inspect']
+      pf: NodeJS.TestingGlobal['pf']
+      sandbox: NodeJS.TestingGlobal['sandbox']
     }
 
     interface RunnerOptions {

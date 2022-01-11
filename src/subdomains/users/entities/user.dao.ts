@@ -50,20 +50,28 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
     /**
      * Hashes a user's password before the user is persisted to the database.
      *
-     * In addition to hashing passwords, all string fields will be lowercased
-     * and trimmed.
-     *
      * @async
      * @param {User} instance - Current user instance
      * @return {Promise<void>} Empty promise when complete
      */
     async beforeCreate(instance: User): Promise<void> {
+      if (instance.password === null) return
+      instance.password = await User.hashPassword(instance.password)
+
+      return
+    },
+
+    /**
+     * Trims string fields and forces a user's email, first name, and last name
+     * to be lowercased.
+     *
+     * @param {User} instance - Current user instance
+     * @return {void} Nothing when complete
+     */
+    beforeSave(instance: User): void {
       instance.email = instance.email.toLowerCase().trim()
       instance.first_name = instance.first_name.toLowerCase().trim()
       instance.last_name = instance.last_name.toLowerCase().trim()
-
-      if (instance.password === null) return
-      instance.password = await User.hashPassword(instance.password)
 
       return
     },
@@ -79,7 +87,7 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
      * @return {void} Nothing when complete
      */
     beforeValidate(instance: User): void {
-      const isNewRecord = instance.id === null && instance.updated_at === null
+      const isNewRecord = !instance.id && !instance.updated_at
 
       if (isNewRecord) {
         let created_at = instance.dataValues.created_at

@@ -2,6 +2,7 @@ import chai, { expect } from 'chai'
 import faker from 'faker'
 import { format } from 'pretty-format'
 import sinon from 'sinon'
+import { inspect } from 'util'
 
 /**
  * @file Global Test Configuration - Mocha Global Fixtures
@@ -17,6 +18,7 @@ declare const global: NodeJS.TestingGlobal
 global.expect = expect
 global.chai = chai
 global.faker = faker
+global.inspect = inspect
 global.pf = format
 global.sandbox = sinon.createSandbox()
 
