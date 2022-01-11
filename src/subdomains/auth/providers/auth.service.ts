@@ -1,7 +1,10 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { LoginDTO, LoginPayload } from '@sneusers/subdomains/auth/dtos'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
+import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 
 /**
@@ -11,7 +14,10 @@ import { UsersService } from '@sneusers/subdomains/users/providers'
 
 @Injectable()
 class AuthService {
-  constructor(protected readonly users: UsersService) {}
+  constructor(
+    private readonly jwt: JwtService,
+    protected readonly users: UsersService
+  ) {}
 
   /**
    * Verifies a user's email and password.
@@ -26,6 +32,26 @@ class AuthService {
     password: User['password']
   ): Promise<User> {
     return await this.users.repo.authenticate(email, password)
+  }
+
+  /**
+   * Logs in a user.
+   *
+   * @template T - User type
+   *
+   * @async
+   * @param {T} user - User to login
+   * @return {Promise<LoginDTO>} Promise containing access token
+   */
+  async login<T extends IUserRaw = User>(user: T): Promise<LoginDTO> {
+    const payload: LoginPayload = {
+      email: user.email,
+      first_name: user.first_name,
+      id: user.id,
+      last_name: user.last_name
+    }
+
+    return { access_token: this.jwt.sign(payload), ...payload }
   }
 
   /**

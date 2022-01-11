@@ -81,8 +81,9 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `DB_USERNAME`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DEBUG_COLORS`        | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DEBUG`               | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `JWT_SECRET`          | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 | `SERVER_NAME`         | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |

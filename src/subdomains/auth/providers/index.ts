@@ -4,3 +4,4 @@
  */
 
 export { default as AuthService } from './auth.service'
+export { default as JwtConfigService } from './jwt-config.service'

@@ -54,6 +54,7 @@ services:
       GH_PAT: ${GH_PAT}
       HOST: ${HOST}
       HOSTNAME: ${HOSTNAME}
+      JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}

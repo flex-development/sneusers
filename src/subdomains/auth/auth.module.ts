@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
+import { JwtModule, JwtModuleAsyncOptions } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import { AuthController } from './controllers'
-import { AuthService } from './providers'
+import { AuthService, JwtConfigService } from './providers'
 import { LocalStrategy } from './strategies'
 
 /**
@@ -12,7 +13,23 @@ import { LocalStrategy } from './strategies'
 
 @Module({
   controllers: [AuthController],
-  imports: [UsersModule, PassportModule],
+  exports: [AuthService],
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.registerAsync(AuthModule.jwtModuleOptions)
+  ],
   providers: [AuthService, LocalStrategy]
 })
-export default class AuthModule {}
+export default class AuthModule {
+  /**
+   * Returns the module {@link JwtModuleAsyncOptions}.
+   *
+   * @see https://github.com/nestjs/jwt#async-options
+   *
+   * @return {JwtModuleAsyncOptions} Module `JwtModuleAsyncOptions`
+   */
+  static get jwtModuleOptions(): JwtModuleAsyncOptions {
+    return { useClass: JwtConfigService }
+  }
+}

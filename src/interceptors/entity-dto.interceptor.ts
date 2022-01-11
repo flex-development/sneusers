@@ -49,8 +49,11 @@ class EntityDTOInterceptor<
      * @return {R} `EntityDTO`(s)
      */
     const project = (value: T): R => {
-      const array = Array.isArray(value)
-      return (array ? value.map(e => e.toJSON()) : value.toJSON()) as R
+      if (Array.isArray(value)) {
+        return value.map(e => (e instanceof BaseEntity ? e.toJSON() : e)) as R
+      }
+
+      return (value instanceof BaseEntity ? value.toJSON() : value) as R
     }
 
     return next.handle().pipe(map(project))

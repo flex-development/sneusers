@@ -95,6 +95,15 @@ class EnvironmentVariables {
   HOSTNAME: string
 
   /**
+   * JWT signing secret.
+   *
+   * Defaults to `'secret'` in non-production environments.
+   */
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET: string
+
+  /**
    * Current Node environment.
    *
    * @default NodeEnv.ENV

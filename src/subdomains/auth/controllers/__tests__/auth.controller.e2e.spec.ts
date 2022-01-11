@@ -1,6 +1,7 @@
 import type { NullishString } from '@flex-development/tutils'
 import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import {
   DatabaseTable,
@@ -8,6 +9,7 @@ import {
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import AuthModule from '@sneusers/subdomains/auth/auth.module'
 import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
 import { LocalStrategy } from '@sneusers/subdomains/auth/strategies'
@@ -44,7 +46,11 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
   before(async () => {
     const napp = await createApp({
       controllers: [TestSubject],
-      imports: [UsersModule, PassportModule],
+      imports: [
+        UsersModule,
+        PassportModule,
+        JwtModule.registerAsync(AuthModule.jwtModuleOptions)
+      ],
       providers: [AuthService, LocalStrategy]
     })
 
@@ -79,13 +85,14 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
-        expect(res.body.created_at).to.be.a('number')
+        expect(res.body.access_token).to.be.a('string')
+        expect(res.body.created_at).to.be.undefined
         expect(res.body.email).to.equal(dto.email.toLowerCase())
         expect(res.body.first_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
-        expect(res.body.updated_at).to.be.null
+        expect(res.body.updated_at).to.be.undefined
       })
 
       it('should send error if user is not found', async function (this) {

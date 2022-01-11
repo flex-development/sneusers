@@ -7,7 +7,7 @@ import configuration, {
   validate
 } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
-import { SequelizeConfigService } from '@sneusers/providers'
+import SequelizeConfigService from './sequelize-config.service'
 
 /**
  * @file Providers - AppService

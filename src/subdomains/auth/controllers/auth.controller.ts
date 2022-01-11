@@ -1,4 +1,3 @@
-import type { OneOrMany } from '@flex-development/tutils'
 import {
   Body,
   Controller,
@@ -21,6 +20,7 @@ import {
   ApiUnprocessableEntityResponse
 } from '@nestjs/swagger'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
+import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { LocalAuthGuard } from '@sneusers/subdomains/auth/guards'
 import { LoginRequest } from '@sneusers/subdomains/auth/interfaces'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
@@ -36,7 +36,7 @@ import OPENAPI from './openapi/auth.openapi'
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntityDTOInterceptor<User, OneOrMany<UserDTO>>())
+@UseInterceptors(new EntityDTOInterceptor<User, LoginDTO | UserDTO>())
 @UseInterceptors(PasswordInterceptor)
 export default class AuthController {
   constructor(protected readonly auth: AuthService) {}
@@ -49,8 +49,8 @@ export default class AuthController {
   @ApiUnauthorizedResponse(OPENAPI.login.responses[401])
   @ApiInternalServerErrorResponse(OPENAPI.login.responses[500])
   @ApiBadGatewayResponse(OPENAPI.login.responses[502])
-  async login(@Request() req: LoginRequest): Promise<UserDTO> {
-    return req.user as UserDTO
+  async login(@Request() req: LoginRequest): Promise<LoginDTO> {
+    return await this.auth.login(req.user)
   }
 
   @Post(OPENAPI.register.path)

@@ -30,6 +30,7 @@ const validate = ({
   DB_USERNAME,
   HOST,
   HOSTNAME = 'localhost',
+  JWT_SECRET,
   NODE_ENV = NodeEnv.DEV,
   PORT = '8080'
 }: Record<string, any>): EnvironmentVariables => {
@@ -55,6 +56,7 @@ const validate = ({
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
+  env.JWT_SECRET = env.PROD ? JWT_SECRET : JWT_SECRET || 'secret'
   env.TEST = NODE_ENV === NodeEnv.TEST
 
   // Validate environment variables
@@ -92,6 +94,7 @@ const configuration = (
     DB_USERNAME: process.env.DB_USERNAME,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
+    JWT_SECRET: process.env.JWT_SECRET,
     NODE_ENV: NODE_ENV || process.env.NODE_ENV,
     PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
   })
