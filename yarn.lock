@@ -720,6 +720,7 @@ __metadata:
     "@nestjs/common": 8.2.4
     "@nestjs/config": 1.1.5
     "@nestjs/core": 8.2.4
+    "@nestjs/passport": 8.0.1
     "@nestjs/platform-express": 8.2.4
     "@nestjs/schematics": 8.0.5
     "@nestjs/sequelize": 8.0.0
@@ -757,6 +758,7 @@ __metadata:
     "@types/mocha": 9.0.0
     "@types/mvdan-sh": 0.5.1
     "@types/node": 16.0.0
+    "@types/passport-local": 1.0.34
     "@types/sequelize": 4.28.11
     "@types/shelljs": 0.8.10
     "@types/sinon": 10.0.6
@@ -810,6 +812,8 @@ __metadata:
     lodash.pick: 4.4.0
     mocha: 9.1.3
     nyc: 15.1.0
+    passport: 0.5.2
+    passport-local: 1.0.0
     prettier: 2.5.1
     prettier-plugin-sh: 0.8.1
     pretty-format: 27.4.2
@@ -1095,6 +1099,16 @@ __metadata:
     class-validator: ^0.11.1 || ^0.12.0 || ^0.13.0
     reflect-metadata: ^0.1.12
   checksum: 64e4bb9313a0d71c9535a36679e3c0d3590a8cfd3cd0897175213131afa9bb4b47f547607955f0e3578f26c509e755d7adc898bfcf47bb90117688b5d9b333fb
+  languageName: node
+  linkType: hard
+
+"@nestjs/passport@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@nestjs/passport@npm:8.0.1"
+  peerDependencies:
+    "@nestjs/common": ^6.0.0 || ^7.0.0 || ^8.0.0
+    passport: ^0.4.0
+  checksum: eefaab06e1fe6cf433e09cd9925509afbaffe621fd0b9df21c3996ebf18aaf31cecf7f812cc6205e3893a3ae17f567cef68ad79ce7e59694b3c4bbe4d5e3011b
   languageName: node
   linkType: hard
 
@@ -1728,7 +1742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:4.17.13":
+"@types/express@npm:*, @types/express@npm:4.17.13":
   version: 4.17.13
   resolution: "@types/express@npm:4.17.13"
   dependencies:
@@ -1924,6 +1938,36 @@ __metadata:
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
   checksum: fd6bce2b674b6efc3db4c7c3d336bd70c90838e8439de639b909ce22f3720d21344f52427f1d9e57b265fcb7f6c018699b99e5e0c208a1a4823014269a6bf35b
+  languageName: node
+  linkType: hard
+
+"@types/passport-local@npm:1.0.34":
+  version: 1.0.34
+  resolution: "@types/passport-local@npm:1.0.34"
+  dependencies:
+    "@types/express": "*"
+    "@types/passport": "*"
+    "@types/passport-strategy": "*"
+  checksum: c8e162f571c8685344f4496b1473645eb1244a2ecb1c810854d43ac8897145083ac7412b8d3a3231f72f27a22d57e526fc8421d8208c18cdff8f83266e875f37
+  languageName: node
+  linkType: hard
+
+"@types/passport-strategy@npm:*":
+  version: 0.2.35
+  resolution: "@types/passport-strategy@npm:0.2.35"
+  dependencies:
+    "@types/express": "*"
+    "@types/passport": "*"
+  checksum: e5949063ad8977ce1f7cf2a5df6bc379c4d43a959c9946bfed6570ef379c6c12d1713212a29b3b5aafc631c5ebe9bfe082116f3e75ca1bf45d79dd889671532d
+  languageName: node
+  linkType: hard
+
+"@types/passport@npm:*":
+  version: 1.0.7
+  resolution: "@types/passport@npm:1.0.7"
+  dependencies:
+    "@types/express": "*"
+  checksum: 1b78fbbb589774a2d9794449e039d590c21fefd6b3f0a5cc911e2a79bac85f363121cfdc330d15840879abeb4fb2d68d521111e595bded0f5dc4356bf8dba3ec
   languageName: node
   linkType: hard
 
@@ -9397,6 +9441,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"passport-local@npm:1.0.0":
+  version: 1.0.0
+  resolution: "passport-local@npm:1.0.0"
+  dependencies:
+    passport-strategy: 1.x.x
+  checksum: 86dc08b12f05f0ce1bb109780ccb0377eff45bbba70aa9c0d65f092b3ef476d344c0443517db2e9f3e5ec0ca849171ab25fb622164e0f69a677173af42b9bba7
+  languageName: node
+  linkType: hard
+
+"passport-strategy@npm:1.x.x":
+  version: 1.0.0
+  resolution: "passport-strategy@npm:1.0.0"
+  checksum: 5086693f2508e538dffa55a338c89fe8192fb5f4478c71f80cd5890b8573419a098f4fec88b505374f60bbe9049f6f24b9f3992678612528a3370b4dc73354a2
+  languageName: node
+  linkType: hard
+
+"passport@npm:0.5.2":
+  version: 0.5.2
+  resolution: "passport@npm:0.5.2"
+  dependencies:
+    passport-strategy: 1.x.x
+    pause: 0.0.1
+  checksum: be17a64a069f412299dea342fea1f4c755aea66fcd71e9422c5e254be18b069a39b00d141e4c63fb852f1bfea6030e8e170593d7f0db5c197fddec781e9e8de4
+  languageName: node
+  linkType: hard
+
 "password-prompt@npm:^1.1.2":
   version: 1.1.2
   resolution: "password-prompt@npm:1.1.2"
@@ -9506,6 +9576,13 @@ __metadata:
   version: 1.1.1
   resolution: "pathval@npm:1.1.1"
   checksum: 090e3147716647fb7fb5b4b8c8e5b55e5d0a6086d085b6cd23f3d3c01fcf0ff56fd3cc22f2f4a033bd2e46ed55d61ed8379e123b42afe7d531a2a5fc8bb556d6
+  languageName: node
+  linkType: hard
+
+"pause@npm:0.0.1":
+  version: 0.0.1
+  resolution: "pause@npm:0.0.1"
+  checksum: e96ee581b68085e6f2ba5adbcb4d4a41fe88e5b514061e76df2fe1905f0f65f4fe5a843b538e9551122c6b9184ff4be266c2ee0ea4614702f9a3d04466d9f462
   languageName: node
   linkType: hard
 

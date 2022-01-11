@@ -15,6 +15,7 @@ import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
 import crypto from 'crypto'
+import pick from 'lodash.pick'
 import {
   AllowNull,
   Column,
@@ -26,6 +27,7 @@ import {
   Unique,
   Validate
 } from 'sequelize-typescript'
+import sortObject from 'sort-object-keys'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
 import isStrongPassword from 'validator/lib/isStrongPassword'
@@ -48,14 +50,21 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
     /**
      * Hashes a user's password before the user is persisted to the database.
      *
+     * In addition to hashing passwords, all string fields will be lowercased
+     * and trimmed.
+     *
      * @async
      * @param {User} instance - Current user instance
      * @return {Promise<void>} Empty promise when complete
      */
     async beforeCreate(instance: User): Promise<void> {
-      if (instance.password === null) return
+      instance.email = instance.email.toLowerCase().trim()
+      instance.first_name = instance.first_name.toLowerCase().trim()
+      instance.last_name = instance.last_name.toLowerCase().trim()
 
+      if (instance.password === null) return
       instance.password = await User.hashPassword(instance.password)
+
       return
     },
 
@@ -197,13 +206,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
     const options: SearchOptions<IUser> = { rejectOnEmpty: true }
     const user = (await this.findByEmail(email, options)) as User
 
-    if (user.password === null && this.equal(user, { email })) {
-      return user
-    }
+    if (this.equal(user, { email })) {
+      if (user.password === null && password === null) return user
 
-    if (user.password && password) {
-      await this.verifyPassword(user.password, password)
-      return user
+      if (user.password && password) {
+        await this.verifyPassword(user.password, password, user)
+        return user
+      }
     }
 
     throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
@@ -238,7 +247,10 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @return {boolean} `true` if id and email match, `false` otherwise
    */
   static equal(user1?: Partial<IUserRaw>, user2?: Partial<IUserRaw>): boolean {
-    return user1!.email === user2!.email || user1!.id === user2!.id
+    return (
+      user1!.email!.toLowerCase() === user2!.email!.toLowerCase() ||
+      user1!.id === user2!.id
+    )
   }
 
   /**
@@ -263,7 +275,10 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
     const find_options: SearchOptions<IUser> = {
       ...options,
       plain: true,
-      where: { ...(options.where && {}), email }
+      where: {
+        ...(options.where && {}),
+        email: this.sequelize.fn('lower', email)
+      }
     }
 
     try {
@@ -328,7 +343,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @return {Promise<string>} Promise containing hashed password
    */
   static async hashPassword(password: string): Promise<string> {
-    return await new Promise((resolve, reject) => {
+    return await new Promise<string>((resolve, reject) => {
       const salt = crypto.randomBytes(16).toString('hex')
 
       crypto.scrypt(password, salt, 64, (error, derivedKey) => {
@@ -357,13 +372,16 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @async
    * @param {string} password_hashed - User's hashed password
    * @param {string} password - Password to test
+   * @param {Partial<Pick<IUserRaw, 'email' | 'id'>>} [user={}] - Extra data
    * @return {Promise<boolean>} Promise containing `true` if verified
+   * @throws {Exception}
    */
   static async verifyPassword(
     password_hashed: string,
-    password: string
+    password: string,
+    user: Partial<Pick<IUserRaw, 'email' | 'id'>> = {}
   ): Promise<boolean> {
-    return await new Promise((resolve, reject) => {
+    const verified = await new Promise<boolean>((resolve, reject) => {
       const [salt, key] = password_hashed.split(':')
 
       crypto.scrypt(password, salt as string, 64, (error, derivedKey) => {
@@ -382,6 +400,14 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
         resolve(key === derivedKey.toString('hex'))
       })
     })
+
+    if (!verified) {
+      throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
+        user: sortObject({ password, ...pick(user, ['email', 'id']) })
+      })
+    }
+
+    return verified
   }
 }
 

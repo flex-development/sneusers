@@ -4,4 +4,5 @@
  */
 
 export type { default as IUserRaw } from './user-raw.interface'
+export type { default as UserRequest } from './user-request.interface'
 export type { default as IUser } from './user.interface'

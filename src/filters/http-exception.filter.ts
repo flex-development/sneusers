@@ -1,6 +1,7 @@
 import type { ObjectPlain } from '@flex-development/tutils'
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException
@@ -35,9 +36,8 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     const data: ObjectPlain = { message: exception.message }
     const response = exception.getResponse() as ObjectPlain
     const status = exception.getStatus()
-    const type = exception.constructor.name
 
-    if (type === 'BadRequestException') data.errors = response.message
+    if (exception instanceof BadRequestException) data.errors = response.message
     if (typeof response === 'string') data.message = response
 
     const payload = new Exception(status, undefined, data).toJSON()

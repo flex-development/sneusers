@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
+import { PassportModule } from '@nestjs/passport'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import { AuthController } from './controllers'
 import { AuthService } from './providers'
+import { LocalStrategy } from './strategies'
 
 /**
  * @file Auth Subdomain - AuthModule
@@ -10,7 +12,7 @@ import { AuthService } from './providers'
 
 @Module({
   controllers: [AuthController],
-  imports: [UsersModule],
-  providers: [AuthService]
+  imports: [UsersModule, PassportModule],
+  providers: [AuthService, LocalStrategy]
 })
 export default class AuthModule {}

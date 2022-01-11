@@ -36,8 +36,8 @@ class AuthService {
    * @return {Promise<User>} - Promise containing new user
    */
   async register(dto: CreateUserDTO): Promise<User> {
-    const { email, password } = await this.users.create(dto)
-    return await this.authenticate(email, password)
+    await this.users.create(dto)
+    return await this.authenticate(dto.email, dto.password || null)
   }
 }
 

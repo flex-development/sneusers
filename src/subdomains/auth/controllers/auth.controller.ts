@@ -4,18 +4,25 @@ import {
   Controller,
   HttpCode,
   Post,
+  Request,
+  UseGuards,
   UseInterceptors,
   ValidationPipe
 } from '@nestjs/common'
 import {
   ApiBadGatewayResponse,
+  ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse
 } from '@nestjs/swagger'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
+import { LocalAuthGuard } from '@sneusers/subdomains/auth/guards'
+import { LoginRequest } from '@sneusers/subdomains/auth/interfaces'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
 import { CreateUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
@@ -33,6 +40,18 @@ import OPENAPI from './openapi/auth.openapi'
 @UseInterceptors(PasswordInterceptor)
 export default class AuthController {
   constructor(protected readonly auth: AuthService) {}
+
+  @UseGuards(LocalAuthGuard)
+  @Post(OPENAPI.login.path)
+  @HttpCode(OPENAPI.login.status)
+  @ApiBody(OPENAPI.login.body)
+  @ApiOkResponse(OPENAPI.login.responses[200])
+  @ApiUnauthorizedResponse(OPENAPI.login.responses[401])
+  @ApiInternalServerErrorResponse(OPENAPI.login.responses[500])
+  @ApiBadGatewayResponse(OPENAPI.login.responses[502])
+  async login(@Request() req: LoginRequest): Promise<UserDTO> {
+    return req.user as UserDTO
+  }
 
   @Post(OPENAPI.register.path)
   @HttpCode(OPENAPI.register.status)

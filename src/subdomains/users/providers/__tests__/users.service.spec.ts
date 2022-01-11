@@ -66,9 +66,9 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Expect
       expect(result).to.be.instanceOf(User)
-      expect(result.email).to.equal(dto.email)
-      expect(result.first_name).to.equal(dto.first_name)
-      expect(result.last_name).to.equal(dto.last_name)
+      expect(result.email).to.equal(dto.email.toLowerCase())
+      expect(result.first_name).to.equal(dto.first_name.toLowerCase())
+      expect(result.last_name).to.equal(dto.last_name.toLowerCase())
     })
 
     it('should throw if dto.email is not unique', async () => {
@@ -124,7 +124,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Expect
       expect(result).to.be.instanceOf(User)
-      expect(result.email).to.equal(uid)
+      expect(result.email).to.equal(uid.toLowerCase())
       expect(result.first_name).to.be.a('string')
       expect(result.last_name).to.equal(dto.last_name)
       expect(result.updated_at).to.not.be.null
