@@ -126,10 +126,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
-        expect(res.body.data.user).to.be.an('object')
-        expect(res.body.data.user.email).to.equal(dto.email.toLowerCase())
-        expect(res.body.data.user.id).to.be.a('number')
-        expect(res.body.data.user.password).to.equal(dto.password)
+        expect(res.body.data.credential).to.equal(dto.password)
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('Invalid credentials')
       })

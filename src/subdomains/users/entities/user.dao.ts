@@ -2,7 +2,6 @@ import type { ObjectPlain } from '@flex-development/tutils'
 import { NullishString, OrNull } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CURRENT_TIMESTAMP } from '@sneusers/config/constants.config'
-import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
 import {
   DatabaseTable,
@@ -14,8 +13,6 @@ import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
-import crypto from 'crypto'
-import pick from 'lodash.pick'
 import {
   AllowNull,
   Column,
@@ -27,7 +24,6 @@ import {
   Unique,
   Validate
 } from 'sequelize-typescript'
-import sortObject from 'sort-object-keys'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
 import isStrongPassword from 'validator/lib/isStrongPassword'
@@ -55,8 +51,8 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
      * @return {Promise<void>} Empty promise when complete
      */
     async beforeCreate(instance: User): Promise<void> {
-      if (instance.password === null) return
-      instance.password = await User.hashPassword(instance.password)
+      if (!instance.password) return
+      instance.password = await User.secrets.hash(instance.password)
 
       return
     },
@@ -218,7 +214,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
       if (user.password === null && password === null) return user
 
       if (user.password && password) {
-        await this.verifyPassword(user.password, password, user)
+        await this.secrets.verify(user.password, password)
         return user
       }
     }
@@ -340,82 +336,6 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
 
       throw Exception.fromSequelizeError(error, data)
     }
-  }
-
-  /**
-   * Hashes a user password.
-   *
-   * @static
-   * @async
-   * @param {string} password - Password to hash
-   * @return {Promise<string>} Promise containing hashed password
-   */
-  static async hashPassword(password: string): Promise<string> {
-    return await new Promise<string>((resolve, reject) => {
-      const salt = crypto.randomBytes(16).toString('hex')
-
-      crypto.scrypt(password, salt, 64, (error, derivedKey) => {
-        if (error !== null) {
-          const code = ExceptionCode.UNPROCESSABLE_ENTITY
-          const message = 'Password hashing failure'
-          const data: ExceptionDataDTO<Error> = {
-            errors: [error],
-            message: error.message,
-            password,
-            salt
-          }
-
-          reject(new Exception<Error>(code, message, data, error.stack))
-        }
-
-        resolve(`${salt}:${derivedKey.toString('hex')}`)
-      })
-    })
-  }
-
-  /**
-   * Verifies a user password.
-   *
-   * @static
-   * @async
-   * @param {string} password_hashed - User's hashed password
-   * @param {string} password - Password to test
-   * @param {Partial<Pick<IUserRaw, 'email' | 'id'>>} [user={}] - Extra data
-   * @return {Promise<boolean>} Promise containing `true` if verified
-   * @throws {Exception}
-   */
-  static async verifyPassword(
-    password_hashed: string,
-    password: string,
-    user: Partial<Pick<IUserRaw, 'email' | 'id'>> = {}
-  ): Promise<boolean> {
-    const verified = await new Promise<boolean>((resolve, reject) => {
-      const [salt, key] = password_hashed.split(':')
-
-      crypto.scrypt(password, salt as string, 64, (error, derivedKey) => {
-        if (error !== null) {
-          const code = ExceptionCode.UNAUTHORIZED
-          const message = 'Password verification failure'
-          const data: ExceptionDataDTO<Error> = {
-            errors: [error],
-            message: error.message,
-            password
-          }
-
-          reject(new Exception<Error>(code, message, data, error.stack))
-        }
-
-        resolve(key === derivedKey.toString('hex'))
-      })
-    })
-
-    if (!verified) {
-      throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
-        user: sortObject({ password, ...pick(user, ['email', 'id']) })
-      })
-    }
-
-    return verified
   }
 }
 

@@ -5,12 +5,22 @@ const { overrides, rules } = require('./.eslintrc.base.cjs')
  * @see https://eslint.org/docs/user-guide/configuring
  */
 
+const RULES_NO_UNDEFINED_TYPES = rules['jsdoc/no-undefined-types']
 const RULES_SPELLCHECKER = rules['spellcheck/spell-checker']
 
 module.exports = {
   root: true,
   extends: ['./.eslintrc.base.cjs'],
   rules: {
+    'jsdoc/no-undefined-types': [
+      RULES_NO_UNDEFINED_TYPES[0],
+      {
+        definedTypes: [
+          ...RULES_NO_UNDEFINED_TYPES[1].definedTypes,
+          'BufferEncoding'
+        ]
+      }
+    ],
     'spellcheck/spell-checker': [
       RULES_SPELLCHECKER[0],
       {
@@ -37,6 +47,7 @@ module.exports = {
           'nginx',
           'openapi',
           'passwordless',
+          'plaintext',
           'poq',
           'readonly',
           'req',

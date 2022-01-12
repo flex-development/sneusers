@@ -1,6 +1,7 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import { LOCK } from '@sneusers/enums'
 import { QueryParams } from '@sneusers/models'
+import { HashService } from '@sneusers/subdomains/crypto/providers'
 import { SearchOptions } from '@sneusers/types'
 import { isUnixTimestamp } from '@sneusers/utils'
 import isPlainObject from 'lodash.isplainobject'
@@ -34,6 +35,14 @@ class BaseEntity<
   TModelAttributes extends ObjectPlain = ObjectPlain,
   TCreationAttributes extends ObjectPlain = TModelAttributes
 > extends Model<TModelAttributes, TCreationAttributes> {
+  /**
+   * @protected
+   * @static
+   * @readonly
+   * @property {HashService} secrets - Hashing service
+   */
+  protected static readonly secrets: HashService = new HashService()
+
   /** @property {TModelAttributes} dataValues - Instance attributes */
   declare dataValues: TModelAttributes
 
