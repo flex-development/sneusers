@@ -24,7 +24,7 @@ import {
   ApiTags
 } from '@nestjs/swagger'
 import type { ResBodyEntity } from '@sneusers/dtos'
-import { EntityDTOInterceptor } from '@sneusers/interceptors'
+import { EntitySerializer } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
 import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
@@ -43,7 +43,7 @@ type ResBody = OneOrMany<UserDTO>
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntityDTOInterceptor<User, ResBodyEntity<IUser>>())
+@UseInterceptors(new EntitySerializer<User, ResBodyEntity<IUser>>())
 @UseInterceptors(new PasswordInterceptor<ResBodyEntity<IUser>, ResBody>())
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}

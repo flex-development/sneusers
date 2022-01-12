@@ -11,8 +11,8 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 /**
- * @file Interceptors - EntityDTOInterceptor
- * @module sneusers/interceptors/EntityDTOInterceptor
+ * @file Interceptors - EntitySerializer
+ * @module sneusers/interceptors/EntitySerializer
  */
 
 /**
@@ -21,7 +21,7 @@ import { map } from 'rxjs/operators'
  * @template T - Pre-intercepted response type(s)
  */
 @Injectable()
-class EntityDTOInterceptor<
+class EntitySerializer<
   E extends BaseEntity = BaseEntity,
   R extends ResBodyEntity<E['_attributes']> = ResBodyEntity<E['_attributes']>,
   T extends OneOrMany<E> = OneOrMany<E>
@@ -30,9 +30,9 @@ class EntityDTOInterceptor<
   /**
    * Data mapper for {@link BaseEntity} instances.
    *
-   * Each instance will be converted into a serializable JSON object.
+   * Each instance will be converted into a JSON object.
    *
-   * @see {@link EntityDTO}
+   * @see {@link ResBodyEntity}
    *
    * @param {ExecutionContext} context - Object containing methods for accessing
    * the route handler and the class about to be invoked
@@ -41,23 +41,23 @@ class EntityDTOInterceptor<
    * @return {Observable<R>} {@link Observable} containing {@link Payload}
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
-    /**
-     * Converts a single {@link BaseEntity} instance or array of instances into
-     * {@link EntityDTO}s.
-     *
-     * @param {T} value - Single entity or array of entities
-     * @return {R} `EntityDTO`(s)
-     */
-    const project = (value: T): R => {
-      if (Array.isArray(value)) {
-        return value.map(e => (e instanceof BaseEntity ? e.toJSON() : e)) as R
-      }
+    return next.handle().pipe(map(this.serialize))
+  }
 
-      return (value instanceof BaseEntity ? value.toJSON() : value) as R
+  /**
+   * Creates JSON representations of {@link BaseEntity} instances.
+   *
+   * @param {T} payload - Entity or array of entities to transform
+   * @return {R} Serialized entity or array of serialized entities
+   */
+  serialize(payload: T): R {
+    const json = (entity: E | Exclude<T, any[]>): Exclude<R, any[]> => {
+      return entity instanceof BaseEntity ? entity.toJSON() : entity
     }
 
-    return next.handle().pipe(map(project))
+    if (Array.isArray(payload)) return payload.map(e => json(e)) as unknown as R
+    return json(payload as Exclude<T, any[]>)
   }
 }
 
-export default EntityDTOInterceptor
+export default EntitySerializer

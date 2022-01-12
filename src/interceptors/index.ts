@@ -4,4 +4,4 @@
  * @see https://docs.nestjs.com/interceptors
  */
 
-export { default as EntityDTOInterceptor } from './entity-dto.interceptor'
+export { default as EntitySerializer } from './entity-serializer.interceptor'
