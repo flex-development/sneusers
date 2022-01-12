@@ -18,6 +18,7 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse
 } from '@nestjs/swagger'
+import type { EntityDTO } from '@sneusers/dtos'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { LocalAuthGuard } from '@sneusers/subdomains/auth/guards'
@@ -26,6 +27,7 @@ import { AuthedUser } from '@sneusers/subdomains/users/decorators'
 import { CreateUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
+import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import OPENAPI from './openapi/auth.openapi'
 
 /**
@@ -33,10 +35,12 @@ import OPENAPI from './openapi/auth.openapi'
  * @module sneusers/subdomains/auth/controllers/AuthController
  */
 
+type ResBody = LoginDTO | UserDTO
+
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntityDTOInterceptor<User, LoginDTO | UserDTO>())
-@UseInterceptors(PasswordInterceptor)
+@UseInterceptors(new EntityDTOInterceptor<User, EntityDTO<IUser>>())
+@UseInterceptors(new PasswordInterceptor<EntityDTO<IUser>, ResBody>())
 export default class AuthController {
   constructor(protected readonly auth: AuthService) {}
 
@@ -62,6 +66,6 @@ export default class AuthController {
   async register(
     @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: CreateUserDTO
   ): Promise<UserDTO> {
-    return (await this.auth.register(dto)) as UserDTO
+    return await this.auth.register(dto)
   }
 }

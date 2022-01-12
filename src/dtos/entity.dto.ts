@@ -1,8 +1,4 @@
-import type {
-  ObjectPlain,
-  ObjectUnknown,
-  OneOrMany
-} from '@flex-development/tutils'
+import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import type { BaseEntity } from '@sneusers/entities'
 
 /**
@@ -11,12 +7,14 @@ import type { BaseEntity } from '@sneusers/entities'
  */
 
 /**
- * Entity payload types.
+ * JSON representation of an entity.
+ *
+ * @see {@link BaseEntity}
  *
  * @template T - Entity attributes
  */
-type EntityDTO<T extends ObjectPlain = ObjectUnknown> = OneOrMany<
-  Partial<T> & { id: BaseEntity['id'] }
->
+type EntityDTO<T extends ObjectPlain = ObjectUnknown> = Partial<T> & {
+  id: BaseEntity['id']
+}
 
 export default EntityDTO

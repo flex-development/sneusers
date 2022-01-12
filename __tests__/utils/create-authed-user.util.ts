@@ -1,4 +1,4 @@
-import { LoginDTO, LoginPayload } from '@sneusers/subdomains/auth/dtos'
+import { JwtPayload, LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import jwt from '@tests/fixtures/jwt-service.fixture'
 import createUserDTO from './create-user-dto.util'
 
@@ -14,7 +14,7 @@ import createUserDTO from './create-user-dto.util'
  * @return {LoginDTO} Mock login response
  */
 const createAuthedUser = (id: number): LoginDTO => {
-  const payload: LoginPayload = { ...createUserDTO(), id }
+  const payload: JwtPayload = { ...createUserDTO(), id }
 
   /** @see https://github.com/nestjs/jwt#api-spec */
   return { access_token: jwt.sign(payload), ...payload }

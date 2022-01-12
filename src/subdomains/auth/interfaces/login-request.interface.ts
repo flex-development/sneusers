@@ -12,11 +12,10 @@ import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
  *
  * Successful logins will attach a `user` property to the request.
  *
- * @extends {UserRequest<UserDTO<true>, never, LoginRequestDTO>}
+ * @extends {UserRequest<UserDTO, never, LoginRequestDTO>}
  */
-interface LoginRequest
-  extends UserRequest<UserDTO<true>, never, LoginRequestDTO> {
-  user: UserRequest<UserDTO<true>, never, LoginRequestDTO>['user'] | never
+interface LoginRequest extends UserRequest<UserDTO, never, LoginRequestDTO> {
+  user: UserRequest<UserDTO, never, LoginRequestDTO>['user'] | never
 }
 
 export default LoginRequest

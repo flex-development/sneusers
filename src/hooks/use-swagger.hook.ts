@@ -3,7 +3,6 @@ import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { PACKAGE } from '@sneusers/config/constants.config'
 import { QueryParams } from '@sneusers/models'
-import { LoginPayload } from '@sneusers/subdomains/auth/dtos'
 import type { Request as Req, Response as Res } from 'express'
 import sortObject from 'sort-object-keys'
 
@@ -60,7 +59,7 @@ const useSwagger = async (
   // Get documentation options
   const options: SwaggerDocumentOptions = {
     deepScanRoutes: true,
-    extraModels: [LoginPayload, QueryParams],
+    extraModels: [QueryParams],
     ignoreGlobalPrefix: false,
     operationIdFactory(controllerKey: string, methodKey: string): string {
       return `${controllerKey}#${methodKey}`

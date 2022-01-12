@@ -13,19 +13,19 @@ import type IUser from './user.interface'
 /**
  * HTTP request with a {@link User} entity object attached.
  *
- * @template Payload - Response type
- * @template Query - Query parameters
- * @template Body - Request body type
+ * @template ResBody - Response body
+ * @template ReqQuery - Query parameters
+ * @template ReqBody - Request body
  * @template Params - Request parameters
  *
  * @extends {Request}
  */
 interface UserRequest<
-  Payload extends OneOrMany<UserDTO<boolean>> = OneOrMany<UserDTO>,
-  Query extends QueryParams<IUser> = QueryParams<IUser>,
-  Body = any,
+  ResBody extends OneOrMany<UserDTO> = OneOrMany<UserDTO>,
+  ReqQuery extends QueryParams<IUser> = QueryParams<IUser>,
+  ReqBody = any,
   Params extends ObjectPlain = ObjectPlain
-> extends Request<Params, Payload, Body, Query> {
+> extends Request<Params, ResBody, ReqBody, ReqQuery> {
   user: User
 }
 

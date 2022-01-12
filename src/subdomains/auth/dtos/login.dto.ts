@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
-import LoginPayload from './login-payload.dto'
+import JwtPayload from './jwt-payload.dto'
 
 /**
  * @file Auth Subdomain DTOs - LoginDTO
@@ -8,11 +8,11 @@ import LoginPayload from './login-payload.dto'
  */
 
 /**
- * Payload from a successful login.
+ * Successful login response body.
  *
- * @extends {LoginPayload}
+ * @extends {JwtPayload}
  */
-export default class LoginDTO extends LoginPayload {
+export default class LoginDTO extends JwtPayload {
   @ApiProperty({ description: 'User access token', type: String })
   @IsString()
   readonly access_token: string

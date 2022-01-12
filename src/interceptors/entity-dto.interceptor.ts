@@ -5,7 +5,7 @@ import {
   Injectable,
   NestInterceptor
 } from '@nestjs/common'
-import { EntityDTO } from '@sneusers/dtos'
+import type { ResBodyEntity } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -23,7 +23,7 @@ import { map } from 'rxjs/operators'
 @Injectable()
 class EntityDTOInterceptor<
   E extends BaseEntity = BaseEntity,
-  R extends EntityDTO<E['_attributes']> = EntityDTO<E['_attributes']>,
+  R extends ResBodyEntity<E['_attributes']> = ResBodyEntity<E['_attributes']>,
   T extends OneOrMany<E> = OneOrMany<E>
 > implements NestInterceptor<T, R>
 {

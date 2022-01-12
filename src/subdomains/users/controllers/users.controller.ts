@@ -23,6 +23,7 @@ import {
   ApiQuery,
   ApiTags
 } from '@nestjs/swagger'
+import type { ResBodyEntity } from '@sneusers/dtos'
 import { EntityDTOInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
@@ -38,10 +39,12 @@ import OPENAPI from './openapi/users.openapi'
  * @module sneusers/subdomains/users/controllers/UsersController
  */
 
+type ResBody = OneOrMany<UserDTO>
+
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntityDTOInterceptor<User, OneOrMany<UserDTO>>())
-@UseInterceptors(PasswordInterceptor)
+@UseInterceptors(new EntityDTOInterceptor<User, ResBodyEntity<IUser>>())
+@UseInterceptors(new PasswordInterceptor<ResBodyEntity<IUser>, ResBody>())
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
@@ -55,7 +58,7 @@ export default class UsersController {
   async delete(
     @Param('uid') uid: IUser['email'] | IUser['id']
   ): Promise<UserDTO> {
-    return (await this.users.remove(uid)) as UserDTO
+    return await this.users.remove(uid)
   }
 
   @Get()
@@ -66,9 +69,7 @@ export default class UsersController {
   @ApiInternalServerErrorResponse(OPENAPI.find.responses[500])
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
   async find(@Query() query: QueryParams<IUser> = {}): Promise<UserDTO[]> {
-    return (await this.users.find(
-      this.users.repo.buildSearchOptions(query)
-    )) as UserDTO[]
+    return await this.users.find(this.users.repo.buildSearchOptions(query))
   }
 
   @UserAuth('optional')
@@ -103,6 +104,6 @@ export default class UsersController {
     @Param('uid') uid: IUser['email'] | IUser['id'],
     @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: PatchUserDTO
   ): Promise<UserDTO> {
-    return (await this.users.patch(uid, dto)) as UserDTO
+    return await this.users.patch(uid, dto)
   }
 }

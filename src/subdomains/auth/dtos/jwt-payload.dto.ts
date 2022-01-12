@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger'
 import type { User } from '@sneusers/subdomains/users/entities'
 
 /**
- * @file Auth Subdomain DTOs - LoginPayload
- * @module sneusers/subdomains/auth/dtos/LoginPayload
+ * @file Auth Subdomain DTOs - JwtPayload
+ * @module sneusers/subdomains/auth/dtos/JwtPayload
  */
 
 /**
  * Data used to create a user access token.
  */
-export default class LoginPayload {
+export default class JwtPayload {
   @ApiProperty({ description: "User's email address", type: String })
   readonly email: User['email']
 

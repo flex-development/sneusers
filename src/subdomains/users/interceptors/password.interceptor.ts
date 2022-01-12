@@ -6,6 +6,7 @@ import {
   NestInterceptor
 } from '@nestjs/common'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
+import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import omit from 'lodash.omit'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -15,22 +16,20 @@ import { map } from 'rxjs/operators'
  * @module sneusers/subdomains/users/interceptors/PasswordInterceptor
  */
 
-type WithPassword = true
-
 /**
  * @template T - Pre-intercepted response type(s)
  * @template R - Controller payload type(s)
  */
 @Injectable()
 class PasswordInterceptor<
-  T extends OneOrMany<UserDTO<WithPassword>> = OneOrMany<UserDTO<WithPassword>>,
+  T extends OneOrMany<Partial<IUser>> = OneOrMany<Partial<IUser>>,
   R extends OneOrMany<UserDTO> = OneOrMany<UserDTO>
 > implements NestInterceptor<T, R>
 {
   /**
-   * Removes the password property from {@link UserDTO}s.
+   * Removes the password property from {@link IUser} objects.
    *
-   * @see {@link UserDTO}
+   * @see {@link IUser}
    *
    * @param {ExecutionContext} context - Object containing methods for accessing
    * the route handler and the class about to be invoked
@@ -40,11 +39,11 @@ class PasswordInterceptor<
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
     /**
-     * Removes the password property from a single {@link UserDTO} or each dto
-     * in an array.
+     * Removes the password property from a single {@link IUser} object or each
+     * object in an array.
      *
      * @param {T} value - Single dto or array of dtos
-     * @return {R} Passwordless `UserDTO`(s)
+     * @return {R} `UserDTO`(s)
      */
     const project = (value: T): R => {
       const array = Array.isArray(value)

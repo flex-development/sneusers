@@ -1,7 +1,7 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { LoginDTO, LoginPayload } from '@sneusers/subdomains/auth/dtos'
+import { JwtPayload, LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
@@ -44,7 +44,7 @@ class AuthService {
    * @return {Promise<LoginDTO>} Promise containing access token
    */
   async login<T extends IUserRaw = User>(user: T): Promise<LoginDTO> {
-    const payload: LoginPayload = {
+    const payload: JwtPayload = {
       email: user.email,
       first_name: user.first_name,
       id: user.id,
