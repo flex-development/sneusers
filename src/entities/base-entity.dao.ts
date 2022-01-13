@@ -1,7 +1,7 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import { LOCK } from '@sneusers/enums'
 import { QueryParams } from '@sneusers/models'
-import { HashService } from '@sneusers/subdomains/crypto/providers'
+import { HashService } from '@sneusers/providers'
 import { SearchOptions } from '@sneusers/types'
 import { isUnixTimestamp } from '@sneusers/utils'
 import isPlainObject from 'lodash.isplainobject'

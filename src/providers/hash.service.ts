@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common'
+import { Global, Injectable } from '@nestjs/common'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import crypto from 'crypto'
 
 /**
- * @file Crypto Subdomain Providers - HashService
- * @module sneusers/subdomains/crypto/providers/HashService
+ * @file Providers - HashService
+ * @module sneusers/providers/HashService
  */
 
+@Global()
 @Injectable()
 export default class HashService {
   /**
