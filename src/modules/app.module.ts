@@ -6,11 +6,14 @@ import {
   RequestMethod
 } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { APP_FILTER } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TerminusModule } from '@nestjs/terminus'
 import { HealthController } from '@sneusers/controllers'
-import { ErrorFilter } from '@sneusers/filters'
+import {
+  ErrorFilter,
+  ExceptionClassFilter,
+  HttpExceptionFilter
+} from '@sneusers/filters'
 import {
   CookieParserMiddleware,
   HttpLoggerMiddleware
@@ -35,7 +38,12 @@ import CryptoModule from './crypto.module'
     TerminusModule,
     UsersModule
   ],
-  providers: [AppService, { provide: APP_FILTER, useClass: ErrorFilter }]
+  providers: [
+    AppService,
+    ErrorFilter.PROVIDER,
+    ExceptionClassFilter.PROVIDER,
+    HttpExceptionFilter.PROVIDER
+  ]
 })
 export default class AppModule implements NestModule {
   /**

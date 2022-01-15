@@ -1,7 +1,6 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
@@ -10,7 +9,11 @@ import {
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { ErrorFilter } from '@sneusers/filters'
+import {
+  ErrorFilter,
+  ExceptionClassFilter,
+  HttpExceptionFilter
+} from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import { QueryParams } from '@sneusers/models'
 import AuthModule from '@sneusers/subdomains/auth/auth.module'
@@ -69,8 +72,10 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         SequelizeModule.forFeature([RefreshToken, User])
       ],
       providers: [
-        { provide: APP_FILTER, useClass: ErrorFilter },
         AuthService,
+        ErrorFilter.PROVIDER,
+        ExceptionClassFilter.PROVIDER,
+        HttpExceptionFilter.PROVIDER,
         JwtConfigService,
         JwtStrategy,
         RefreshTokensService,

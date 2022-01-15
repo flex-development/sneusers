@@ -1,7 +1,6 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { NullishString } from '@flex-development/tutils'
 import { HttpStatus, INestApplication } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -11,7 +10,11 @@ import {
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { ErrorFilter } from '@sneusers/filters'
+import {
+  ErrorFilter,
+  ExceptionClassFilter,
+  HttpExceptionFilter
+} from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import AuthModule from '@sneusers/subdomains/auth/auth.module'
 import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
@@ -73,11 +76,13 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         UsersModule
       ],
       providers: [
-        { provide: APP_FILTER, useClass: ErrorFilter },
         AuthService,
+        ErrorFilter.PROVIDER,
+        ExceptionClassFilter.PROVIDER,
+        HttpExceptionFilter.PROVIDER,
         JwtConfigService,
-        JwtStrategy,
         JwtRefreshStrategy,
+        JwtStrategy,
         LocalStrategy,
         RefreshTokensService,
         TokensService

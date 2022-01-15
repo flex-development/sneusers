@@ -1,11 +1,4 @@
 import type { INestApplication } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import {
-  ErrorFilter,
-  ExceptionClassFilter,
-  HttpExceptionFilter
-} from '@sneusers/filters'
-import type { EnvironmentVariables } from '@sneusers/models'
 
 /**
  * @file Hooks - useExceptionFilters
@@ -24,12 +17,6 @@ import type { EnvironmentVariables } from '@sneusers/models'
 const useExceptionFilters = async (
   app: INestApplication
 ): Promise<INestApplication> => {
-  const conf: ConfigService<EnvironmentVariables, true> = app.get(ConfigService)
-
-  app = app.useGlobalFilters(new ErrorFilter(conf))
-  app = app.useGlobalFilters(new ExceptionClassFilter(conf))
-  app = app.useGlobalFilters(new HttpExceptionFilter(conf))
-
   return app
 }
 

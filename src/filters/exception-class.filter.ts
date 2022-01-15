@@ -1,5 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common'
+import {
+  ArgumentsHost,
+  Catch,
+  ClassProvider,
+  ExceptionFilter
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { APP_FILTER } from '@nestjs/core'
 import { Exception } from '@sneusers/exceptions'
 import type { EnvironmentVariables } from '@sneusers/models'
 import type { Response } from 'express'
@@ -13,6 +19,21 @@ import isPlainObject from 'lodash.isplainobject'
 @Catch(Exception)
 export default class ExceptionClassFilter implements ExceptionFilter {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+
+  /**
+   * Returns a global-scoped application filter.
+   *
+   * Use this custom provider instead of `useGlobalFilters` to enable depedency
+   * injection for this class.
+   *
+   * @see https://docs.nestjs.com/exception-filters#binding-filters
+   *
+   * @static
+   * @return {ClassProvider<ExceptionClassFilter>} Application filter
+   */
+  static get PROVIDER(): ClassProvider<ExceptionClassFilter> {
+    return { provide: APP_FILTER, useClass: ExceptionClassFilter }
+  }
 
   /**
    * Creates a JSON representation of `exception`.
