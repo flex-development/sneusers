@@ -42,7 +42,10 @@ export default class HttpExceptionFilter implements ExceptionFilter {
 
     const payload = new Exception(status, '', data, exception.stack).toJSON()
 
-    Reflect.deleteProperty(payload.data, 'isExceptionJSON')
+    if (this.config.get<boolean>('PROD')) {
+      Reflect.deleteProperty(payload, 'stack')
+      Reflect.deleteProperty(payload.data, 'isExceptionJSON')
+    }
 
     return res.status(payload.code).json(payload).end()
   }

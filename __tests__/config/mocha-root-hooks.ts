@@ -1,4 +1,5 @@
 import { each, jsonResponse } from '@tests/matchers'
+import chaiHttp from 'chai-http'
 import type { RootHookObject } from 'mocha'
 import sinonChai from 'sinon-chai'
 import { inspect } from 'util'
@@ -50,6 +51,7 @@ export const mochaHooks: RootHookObject = {
    * @see https://github.com/marak/Faker.js
    * @see https://github.com/facebook/jest/tree/main/packages/pretty-format
    * @see https://sinonjs.org/releases/v11.1.2/sandbox
+   * @see https://github.com/chaijs/chai-http#assertions
    * @see https://github.com/domenic/sinon-chai#installation-and-usage
    *
    * @param {Mocha.Context} this - Current test context
@@ -63,6 +65,7 @@ export const mochaHooks: RootHookObject = {
     this.sandbox = sandbox
 
     // Initialize plugins
+    chai.use(chaiHttp)
     chai.use(each)
     chai.use(jsonResponse)
     chai.use(sinonChai)

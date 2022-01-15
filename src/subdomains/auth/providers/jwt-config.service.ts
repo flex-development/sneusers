@@ -21,8 +21,8 @@ export default class JwtConfigService implements JwtOptionsFactory {
    */
   createJwtOptions(): JwtModuleOptions {
     return {
-      secret: this.config.get<string>('JWT_SECRET'),
-      signOptions: { expiresIn: '15m' }
+      secret: this.config.get<string>('JWT_SECRET_ACCESS'),
+      signOptions: { expiresIn: this.config.get<string>('JWT_EXP_ACCESS') }
     }
   }
 }

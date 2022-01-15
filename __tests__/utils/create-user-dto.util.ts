@@ -14,11 +14,11 @@ const createUserDTO = (): CreateUserDTO => {
   const first_name = faker.name.firstName()
   const last_name = faker.name.lastName()
 
-  return {
+  return new CreateUserDTO({
     email: faker.internet.email(first_name, last_name),
     first_name,
     last_name
-  }
+  })
 }
 
 export default createUserDTO

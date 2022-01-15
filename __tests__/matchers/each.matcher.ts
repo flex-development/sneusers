@@ -1,6 +1,6 @@
 /**
  * @file Custom Matchers - each
- * @module tests/config/each
+ * @module tests/config/matchers/each
  */
 
 /**

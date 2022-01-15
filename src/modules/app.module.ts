@@ -6,10 +6,15 @@ import {
   RequestMethod
 } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { APP_FILTER } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TerminusModule } from '@nestjs/terminus'
 import { HealthController } from '@sneusers/controllers'
-import * as MIDDLEWARE from '@sneusers/middleware'
+import { ErrorFilter } from '@sneusers/filters'
+import {
+  CookieParserMiddleware,
+  HttpLoggerMiddleware
+} from '@sneusers/middleware'
 import { AppService } from '@sneusers/providers'
 import { AuthModule, UsersModule } from '@sneusers/subdomains'
 import CryptoModule from './crypto.module'
@@ -22,15 +27,15 @@ import CryptoModule from './crypto.module'
 @Module({
   controllers: [HealthController],
   imports: [
+    AuthModule,
     ConfigModule.forRoot(AppService.configModuleOptions),
-    SequelizeModule.forRootAsync(AppService.sequelizeModuleOptions),
-    HttpModule,
-    TerminusModule,
     CryptoModule,
-    UsersModule,
-    AuthModule
+    HttpModule,
+    SequelizeModule.forRootAsync(AppService.sequelizeModuleOptions),
+    TerminusModule,
+    UsersModule
   ],
-  providers: [AppService]
+  providers: [AppService, { provide: APP_FILTER, useClass: ErrorFilter }]
 })
 export default class AppModule implements NestModule {
   /**
@@ -40,7 +45,9 @@ export default class AppModule implements NestModule {
    * @return {void} Nothing when complete
    */
   configure(consumer: MiddlewareConsumer): void {
-    for (const m of Object.values(MIDDLEWARE)) {
+    const middleware = [HttpLoggerMiddleware, CookieParserMiddleware]
+
+    for (const m of middleware) {
       consumer.apply(m).forRoutes({ method: RequestMethod.ALL, path: '*' })
     }
   }

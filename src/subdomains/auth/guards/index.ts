@@ -6,4 +6,5 @@
  */
 
 export { default as JwtAuthGuard } from './jwt-auth.guard'
+export { default as JwtRefreshGuard } from './jwt-refresh.guard'
 export { default as LocalAuthGuard } from './local-auth.guard'

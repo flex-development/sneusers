@@ -48,7 +48,10 @@ const config = (config: Configuration): Configuration => {
     DB_USERNAME,
     HOST,
     HOSTNAME,
-    JWT_SECRET,
+    JWT_EXP_ACCESS,
+    JWT_EXP_REFRESH,
+    JWT_SECRET_ACCESS,
+    JWT_SECRET_REFRESH,
     PORT
   } = secrets({ log: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false') })
 
@@ -116,7 +119,10 @@ const config = (config: Configuration): Configuration => {
         'process.env.DB_USERNAME': JSON.stringify(DB_USERNAME),
         'process.env.HOST': JSON.stringify(HOST),
         'process.env.HOSTNAME': JSON.stringify(HOSTNAME),
-        'process.env.JWT_SECRET': JSON.stringify(JWT_SECRET),
+        'process.env.JWT_EXP_ACCESS': JSON.stringify(JWT_EXP_ACCESS),
+        'process.env.JWT_EXP_REFRESH': JSON.stringify(JWT_EXP_REFRESH),
+        'process.env.JWT_SECRET_ACCESS': JSON.stringify(JWT_SECRET_ACCESS),
+        'process.env.JWT_SECRET_REFRESH': JSON.stringify(JWT_SECRET_REFRESH),
         'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
         'process.env.PORT': JSON.stringify(PORT)
       })

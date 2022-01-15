@@ -7,28 +7,21 @@ import volleyball from 'volleyball'
  * @module sneusers/middleware/HttpLoggerMiddleware
  */
 
-/**
- * Logs incoming requests and outgoing responses as separate events.
- *
- * Request-response pairs can be identified by a color-coded, 4 character id.
- *
- * @see https://github.com/glebec/volleyball
- *
- * @implements {NestMiddleware}
- */
 @Injectable()
 export default class HttpLoggerMiddleware implements NestMiddleware {
   /**
    * @static
-   * @protected
+   * @readonly
    * @property {string} DEBUG_NAMESPACE - Debugger namespace
    */
-  protected static DEBUG_NAMESPACE: string = 'http'
+  static readonly DEBUG_NAMESPACE: string = 'http'
 
   /**
-   * Initializes [volleyball][1].
+   * Logs incoming requests and outgoing responses as separate events.
    *
-   * [1]: https://github.com/glebec/volleyball
+   * Request-response pairs can be identified by a color-coded, 4 character id.
+   *
+   * @see https://github.com/glebec/volleyball
    *
    * @param {Request} req - Incoming request
    * @param {Response} res - Server response

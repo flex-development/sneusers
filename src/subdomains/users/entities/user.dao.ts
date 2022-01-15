@@ -9,6 +9,7 @@ import {
   SequelizeErrorName
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { RefreshToken } from '@sneusers/subdomains/auth/entities'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
@@ -19,6 +20,7 @@ import {
   Comment,
   DataType,
   Default,
+  HasMany,
   Index,
   Table,
   Unique,
@@ -154,6 +156,9 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   @Column(DataType.STRING)
   declare password: IUser['password']
 
+  @HasMany(() => RefreshToken)
+  declare refresh_tokens: RefreshToken[]
+
   @ApiProperty({
     default: null,
     description: 'When user was last modified',
@@ -198,19 +203,21 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    *
    * @static
    * @async
-   * @param {string} email - User email
-   * @param {NullishString} password - User password
+   * @param {UserUid} uid - User email or id
+   * @param {NullishString} [password=null] - User password
    * @return {Promise<User>} Promise containing authenticated user
    * @throws {Exception}
    */
   static async authenticate(
-    email: User['email'],
-    password: User['password']
+    uid: UserUid,
+    password: User['password'] = null
   ): Promise<User> {
     const options: SearchOptions<IUser> = { rejectOnEmpty: true }
-    const user = (await this.findByEmail(email, options)) as User
+    const user = (await this.findByUid(uid, options)) as User
+    const email = uid.toString()
+    const id = Number.parseInt(email)
 
-    if (this.equal(user, { email })) {
+    if (this.equal(user, { email, id: id })) {
       if (user.password === null && password === null) return user
 
       if (user.password && password) {
@@ -309,7 +316,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    *
    * @static
    * @async
-   * @param {UserUid} uid - ID or email address of user to find
+   * @param {UserUid} uid - Id or email address of user to find
    * @param {SearchOptions<IUser>} [options={}] - Query options
    * @return {Promise<OrNull<User>>} `User` object or `null`
    * @throws {Exception}

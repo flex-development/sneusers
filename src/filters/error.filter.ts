@@ -1,0 +1,55 @@
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter
+  // HttpException
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { ExceptionDataDTO } from '@sneusers/dtos'
+import { ExceptionCode } from '@sneusers/enums'
+import { Exception } from '@sneusers/exceptions'
+import type { EnvironmentVariables } from '@sneusers/models'
+import type { Response } from 'express'
+import { isHttpError } from 'http-errors'
+
+/**
+ * @file Filters - ErrorFilter
+ * @module sneusers/filters/ErrorFilter
+ */
+
+@Catch()
+export default class ErrorFilter implements ExceptionFilter {
+  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+
+  /**
+   * Transforms `error`, a {@link Error}, into an {@link Exception}.
+   *
+   * An `ExceptionJSON` object will be returned to the client.
+   *
+   * @param {Error} error - Exception thrown
+   * @param {ArgumentsHost} host - Methods for retrieving handler arguments
+   * @return {void} Nothing when complete
+   */
+  catch(error: Error, host: ArgumentsHost): void {
+    const ctx = host.switchToHttp()
+    const res = ctx.getResponse<Response>()
+
+    const data: ExceptionDataDTO = {}
+    let code: ExceptionCode | undefined
+
+    if (isHttpError(error)) {
+      code = error.status as ExceptionCode
+      data.headers = error.headers
+    }
+
+    const exception = new Exception(code, error.message, data, error.stack)
+    const payload = exception.toJSON()
+
+    if (this.config.get<boolean>('PROD')) {
+      Reflect.deleteProperty(payload, 'stack')
+      Reflect.deleteProperty(payload.data, 'isExceptionJSON')
+    }
+
+    return res.status(payload.code).json(payload).end()
+  }
+}

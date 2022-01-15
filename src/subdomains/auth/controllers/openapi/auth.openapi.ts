@@ -22,6 +22,25 @@ export default {
       502: { description: 'Nginx reverse proxy failure', type: String }
     }
   },
+  logout: {
+    path: 'logout',
+    status: HttpStatus.OK,
+    responses: {
+      200: { description: 'Logged out user', type: UserDTO },
+      500: { description: 'Internal server error', type: Exception },
+      502: { description: 'Nginx reverse proxy failure', type: String }
+    }
+  },
+  refresh: {
+    path: 'refresh',
+    status: HttpStatus.OK,
+    responses: {
+      200: { description: 'Updated refresh token', type: LoginDTO },
+      401: { description: 'Unauthorized', type: Exception },
+      500: { description: 'Internal server error', type: Exception },
+      502: { description: 'Nginx reverse proxy failure', type: String }
+    }
+  },
   register: {
     path: 'register',
     status: HttpStatus.CREATED,

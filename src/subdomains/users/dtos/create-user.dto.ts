@@ -1,3 +1,4 @@
+import type { ObjectPlain } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import {
@@ -49,4 +50,16 @@ export default class CreateUserDTO {
   @IsString()
   @IsOptional()
   readonly password?: IUserRaw['password']
+
+  constructor({
+    email,
+    first_name,
+    last_name,
+    password = null
+  }: CreateUserDTO | ObjectPlain = {}) {
+    this.email = email
+    this.first_name = first_name
+    this.last_name = last_name
+    this.password = password
+  }
 }

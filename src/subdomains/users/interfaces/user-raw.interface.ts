@@ -6,7 +6,7 @@ import type { NullishNumber, NullishString } from '@flex-development/tutils'
  */
 
 /**
- * Object representing a `User` entity **(from a database table)**.
+ * Object representing a `User` entity **(from the database)**.
  *
  * **Does not include any [virtual fields][1]**.
  *

@@ -40,11 +40,16 @@ const useSwagger = async (
   builder.setTitle(name_no_org)
   builder.setVersion(version)
 
-  // Add security scheme
+  // Add security schemes
   builder.addBearerAuth({
     bearerFormat: 'JWT',
     description: 'User access token',
     scheme: 'bearer',
+    type: 'http'
+  })
+  builder.addCookieAuth('Refresh', {
+    description: 'User refresh token',
+    name: 'Refresh',
     type: 'http'
   })
 
@@ -78,7 +83,7 @@ const useSwagger = async (
       info: docs.info,
       servers: docs.servers,
       security: docs.security,
-      tags: docs.tags,
+      tags: docs.tags!.sort((t1, t2) => t1.name.localeCompare(t2.name)),
       externalDocs: docs.externalDocs,
       paths: sortObject(docs.paths),
       components: docs.components

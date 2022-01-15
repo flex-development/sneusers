@@ -14,8 +14,8 @@ describe('integration:modules/AppModule', () => {
   let app: INestApplication
 
   before(async () => {
-    const napp = await createApp({ imports: [TestSubject] })
-    app = await napp.app.init()
+    const ntapp = await createApp({ imports: [TestSubject] })
+    app = await ntapp.app.init()
   })
 
   after(async () => {

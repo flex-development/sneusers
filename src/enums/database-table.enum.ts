@@ -9,6 +9,7 @@
  * @enum {string}
  */
 enum DatabaseTable {
+  REFRESH_TOKENS = 'refresh_tokens',
   SQLITE_SEQUENCE = 'sqlite_sequence',
   USERS = 'users'
 }

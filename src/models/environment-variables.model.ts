@@ -26,6 +26,7 @@ class EnvironmentVariables {
    * @default true
    */
   @IsBoolean()
+  @IsOptional()
   DB_AUTO_LOAD_MODELS: boolean
 
   /**
@@ -35,6 +36,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   DB_HOST: string
 
   /**
@@ -59,6 +61,7 @@ class EnvironmentVariables {
    * @default 3306
    */
   @IsNumber()
+  @IsOptional()
   DB_PORT: number
 
   /**
@@ -92,16 +95,44 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   HOSTNAME: string
 
   /**
-   * JWT signing secret.
+   * User access token expiration time.
    *
-   * Defaults to `'secret'` in non-production environments.
+   * @default 900
+   */
+  @IsNumber()
+  @IsOptional()
+  JWT_EXP_ACCESS: number
+
+  /**
+   * User refresh token expiration time.
+   *
+   * @default 86400
+   */
+  @IsNumber()
+  @IsOptional()
+  JWT_EXP_REFRESH: number
+
+  /**
+   * JWT access token signing secret.
+   *
+   * Defaults to `'JWT_SECRET'` in non-production environments.
    */
   @IsString()
   @IsNotEmpty()
-  JWT_SECRET: string
+  JWT_SECRET_ACCESS: string
+
+  /**
+   * JWT refresh token signing secret.
+   *
+   * Defaults to `'JWT_SECRET'` in non-production environments.
+   */
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET_REFRESH: string
 
   /**
    * Current Node environment.
@@ -109,6 +140,7 @@ class EnvironmentVariables {
    * @default NodeEnv.ENV
    */
   @IsEnum(NodeEnv)
+  @IsOptional()
   NODE_ENV: NodeEnv
 
   /**
@@ -117,6 +149,7 @@ class EnvironmentVariables {
    * @default 8080
    */
   @IsNumber()
+  @IsOptional()
   PORT: number
 
   /**

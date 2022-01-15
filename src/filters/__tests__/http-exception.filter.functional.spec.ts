@@ -1,9 +1,10 @@
-import type { ArgumentsHost } from '@nestjs/common'
+import type { ArgumentsHost, INestApplication } from '@nestjs/common'
 import { BadRequestException, HttpException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ExceptionClassName, ExceptionCode, ExceptionId } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { ExceptionJSON } from '@sneusers/interfaces'
+import createApp from '@tests/utils/create-app.util'
 import type { Testcase } from '@tests/utils/types'
 import TestSubject from '../http-exception.filter'
 
@@ -13,10 +14,18 @@ import TestSubject from '../http-exception.filter'
  */
 
 describe('functional:filters/HttpExceptionFilter', () => {
+  let app: INestApplication
   let subject: TestSubject
 
-  before(() => {
-    subject = new TestSubject(new ConfigService())
+  before(async () => {
+    const ntapp = await createApp()
+
+    app = await ntapp.app.init()
+    subject = new TestSubject(app.get(ConfigService))
+  })
+
+  after(async () => {
+    await app.close()
   })
 
   describe('#catch', () => {
@@ -68,7 +77,6 @@ describe('functional:filters/HttpExceptionFilter', () => {
       cases.forEach(({ exception, expected, testcase }) => {
         it(`should ${testcase}`, function (this) {
           // Arrange
-          Reflect.deleteProperty(expected.data, 'isExceptionJSON')
           const end = this.sandbox.fake()
           const json = this.sandbox.fake(() => ({ end }))
           const status = this.sandbox.fake(() => ({ json }))

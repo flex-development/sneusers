@@ -26,13 +26,16 @@ const validate = ({
   DB_HOST = 'localhost',
   DB_NAME,
   DB_PASSWORD,
-  DB_PORT = '3306',
+  DB_PORT = 3306,
   DB_USERNAME,
   HOST,
   HOSTNAME = 'localhost',
-  JWT_SECRET,
+  JWT_EXP_ACCESS = 900,
+  JWT_EXP_REFRESH = 86_400,
+  JWT_SECRET_ACCESS,
+  JWT_SECRET_REFRESH,
   NODE_ENV = NodeEnv.DEV,
-  PORT = '8080'
+  PORT = 8080
 }: Record<string, any>): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
@@ -56,7 +59,10 @@ const validate = ({
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
-  env.JWT_SECRET = env.PROD ? JWT_SECRET : JWT_SECRET || 'secret'
+  env.JWT_EXP_ACCESS = Number.parseInt(JWT_EXP_ACCESS.toString())
+  env.JWT_EXP_REFRESH = Number.parseInt(JWT_EXP_REFRESH.toString())
+  env.JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
+  env.JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
   env.TEST = NODE_ENV === NodeEnv.TEST
 
   // Validate environment variables
@@ -94,7 +100,10 @@ const configuration = (
     DB_USERNAME: process.env.DB_USERNAME,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_EXP_ACCESS: process.env.JWT_EXP_ACCESS,
+    JWT_EXP_REFRESH: process.env.JWT_EXP_REFRESH,
+    JWT_SECRET_ACCESS: process.env.JWT_SECRET_ACCESS,
+    JWT_SECRET_REFRESH: process.env.JWT_SECRET_REFRESH,
     NODE_ENV: NODE_ENV || process.env.NODE_ENV,
     PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
   })

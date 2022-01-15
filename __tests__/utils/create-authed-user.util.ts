@@ -1,6 +1,6 @@
-import { JwtPayload, LoginDTO } from '@sneusers/subdomains/auth/dtos'
-import jwt from '@tests/fixtures/jwt-service.fixture'
+import { AuthService } from '@sneusers/subdomains/auth/providers'
 import createUserDTO from './create-user-dto.util'
+import { MockAuthedUser } from './types'
 
 /**
  * @file Global Test Utilities - createAuthedUser
@@ -8,16 +8,23 @@ import createUserDTO from './create-user-dto.util'
  */
 
 /**
- * Generates a {@link CreateUserDTO} object.
+ * Generates a mock authenticated user.
  *
- * @param {number} id - ID of authed user
- * @return {LoginDTO} Mock login response
+ * @param {AuthService} auth - Current auth service
+ * @param {number} id - Id of authenticated user
+ * @return {Promise<MockAuthedUser>} Promise containing mock authenticated user
  */
-const createAuthedUser = (id: number): LoginDTO => {
-  const payload: JwtPayload = { ...createUserDTO(), id }
-
-  /** @see https://github.com/nestjs/jwt#api-spec */
-  return { access_token: jwt.sign(payload), ...payload }
+const createAuthedUser = async (
+  auth: AuthService,
+  id: number
+): Promise<MockAuthedUser> => {
+  return {
+    ...createUserDTO(),
+    // @ts-expect-error Property 'tokens' is protected and only accessible
+    // within class 'AuthService' and its subclasses
+    access_token: await auth.tokens.createAccessToken({ id }),
+    id
+  }
 }
 
 export default createAuthedUser

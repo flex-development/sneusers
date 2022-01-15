@@ -35,16 +35,16 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   let subject: TestSubject
 
   before(async () => {
-    const napp = await createApp({
+    const ntapp = await createApp({
       imports: [SequelizeModule.forFeature([User])],
       providers: [TestSubject]
     })
 
-    app = await napp.app.init()
-    subject = napp.ref.get(TestSubject)
-    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
+    app = await ntapp.app.init()
+    subject = ntapp.ref.get(TestSubject)
+    queryInterface = ntapp.ref.get(Sequelize).getQueryInterface()
 
-    await seedTable<User>(subject.repo, USERS)
+    await seedTable<User>(subject.repository, USERS)
   })
 
   after(async () => {
@@ -132,7 +132,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const email = (await subject.repo.findByUid(USERS[0].email))!.email
+      const email = (await subject.repository.findByUid(USERS[0].email))!.email
       let exception: Exception
 
       // Act

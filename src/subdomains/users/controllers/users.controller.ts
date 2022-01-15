@@ -26,6 +26,7 @@ import {
 import type { ResBodyEntity } from '@sneusers/dtos'
 import { EntitySerializer } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
+import { CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
 import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
@@ -48,6 +49,7 @@ type ResBody = OneOrMany<UserDTO>
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
+  @CsrfTokenAuth()
   @UserAuth()
   @Delete(':uid')
   @HttpCode(OPENAPI.delete.status)
@@ -69,10 +71,9 @@ export default class UsersController {
   @ApiInternalServerErrorResponse(OPENAPI.find.responses[500])
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
   async find(@Query() query: QueryParams<IUser> = {}): Promise<UserDTO[]> {
-    return await this.users.find(this.users.repo.buildSearchOptions(query))
+    return await this.users.find(this.users.buildSearchOptions(query))
   }
 
-  @UserAuth('optional')
   @Get(':uid')
   @HttpCode(OPENAPI.findOne.status)
   @ApiQuery(OPENAPI.findOne.query)
@@ -87,10 +88,11 @@ export default class UsersController {
   ): Promise<UserDTO> {
     return (await this.users.findOne(
       uid,
-      this.users.repo.buildSearchOptions({ ...query, rejectOnEmpty: true })
+      this.users.buildSearchOptions({ ...query, rejectOnEmpty: true })
     )) as UserDTO
   }
 
+  @CsrfTokenAuth()
   @UserAuth()
   @Patch(':uid')
   @HttpCode(OPENAPI.patch.status)

@@ -1,10 +1,11 @@
 import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
 import type { UserDTO } from '@sneusers/subdomains/users/dtos'
+import type { User } from '@sneusers/subdomains/users/entities'
 import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
 
 /**
- * @file Users Subdomain Interfaces - LoginRequest
- * @module sneusers/subdomains/users/interfaces/LoginRequest
+ * @file Auth Subdomain Interfaces - LoginRequest
+ * @module sneusers/subdomains/auth/interfaces/LoginRequest
  */
 
 /**
@@ -15,7 +16,12 @@ import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
  * @extends {UserRequest<UserDTO, never, LoginRequestDTO>}
  */
 interface LoginRequest extends UserRequest<UserDTO, never, LoginRequestDTO> {
-  user: UserRequest<UserDTO, never, LoginRequestDTO>['user'] | never
+  /**
+   * The authenticated user.
+   *
+   * @see {@link User}
+   */
+  user: User | never
 }
 
 export default LoginRequest

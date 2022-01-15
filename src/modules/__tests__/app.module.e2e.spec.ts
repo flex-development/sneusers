@@ -3,8 +3,7 @@ import { HttpStatus } from '@nestjs/common'
 import { PACKAGE } from '@sneusers/config/constants.config'
 import createApp from '@tests/utils/create-app.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
-import type { Response, SuperTest, Test } from 'supertest'
-import request from 'supertest'
+import type { Response } from 'superagent'
 import TestSubject from '../app.module'
 
 /**
@@ -14,13 +13,13 @@ import TestSubject from '../app.module'
 
 describe('e2e:modules/AppModule', () => {
   let app: INestApplication
-  let req: SuperTest<Test>
+  let req: ChaiHttp.Agent
 
   before(async () => {
-    const { app: napp } = await createApp({ imports: [TestSubject] })
+    const ntapp = await createApp({ imports: [TestSubject] })
 
-    app = await (app = napp).init()
-    req = request(app.getHttpServer())
+    app = await ntapp.app.init()
+    req = chai.request.agent(app.getHttpServer())
   })
 
   after(async () => {

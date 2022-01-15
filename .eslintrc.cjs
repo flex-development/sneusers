@@ -17,7 +17,8 @@ module.exports = {
       {
         definedTypes: [
           ...RULES_NO_UNDEFINED_TYPES[1].definedTypes,
-          'BufferEncoding'
+          'BufferEncoding',
+          'ChaiHttp'
         ]
       }
     ],
@@ -28,6 +29,8 @@ module.exports = {
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
           'authed',
+          'csrf',
+          'csurf',
           'dao',
           'datetime',
           'doppler',
@@ -57,6 +60,7 @@ module.exports = {
           'sqlite',
           'strftime',
           'stringified',
+          'subclasses',
           'subdomain',
           'subdomains',
           'timestamps',
@@ -64,6 +68,7 @@ module.exports = {
           'uid',
           'unix',
           'webpack',
+          'xsrf',
           'zerollup'
         ]
       }
@@ -96,6 +101,12 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-var-requires': 0,
         'unicorn/prefer-module': 0
+      }
+    },
+    {
+      files: ['src/models/environment-variables.model.ts'],
+      rules: {
+        'unicorn/consistent-function-scoping': 0
       }
     },
     {

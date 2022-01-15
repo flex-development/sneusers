@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { JwtPayload } from '@sneusers/subdomains/auth/dtos'
-import { JwtConfigService } from '@sneusers/subdomains/auth/providers'
+import { ENV } from '@sneusers/config/configuration'
+import { AccessTokenPayload } from '@sneusers/subdomains/auth/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import type { StrategyOptions } from 'passport-jwt'
@@ -14,17 +14,14 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 
 @Injectable()
 class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private readonly config: JwtConfigService,
-    private readonly users: UsersService
-  ) {
+  constructor(private readonly users: UsersService) {
     super({
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken()
       ]),
       passReqToCallback: false,
-      secretOrKey: config.createJwtOptions().secret
+      secretOrKey: ENV.JWT_SECRET_ACCESS
     } as StrategyOptions)
   }
 
@@ -37,15 +34,15 @@ class JwtStrategy extends PassportStrategy(Strategy) {
    * @see https://docs.nestjs.com/security/authentication#implementing-passport-jwt
    *
    * @async
-   * @param {JwtPayload} payload - Data used to create a user access token
+   * @param {AccessTokenPayload} payload - Access token payload
    * @param {string} payload.email - User's email address
    * @param {string} payload.first_name - User's first name
    * @param {number} payload.id - User's id
    * @param {string} payload.last_name - User's last name
    * @return {Promise<User>} Promise containing authenticated user
    */
-  async validate(payload: JwtPayload): Promise<User> {
-    return (await this.users.findOne(payload.id)) as User
+  async validate(payload: AccessTokenPayload): Promise<User> {
+    return (await this.users.findOne(payload.sub)) as User
   }
 }
 

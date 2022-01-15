@@ -1,9 +1,10 @@
 import type { ObjectPlain } from '@flex-development/tutils'
-import { OrNull } from '@flex-development/tutils'
+import { NullishString, OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { QueryParams } from '@sneusers/models'
 import { CreateUserDTO, PatchUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
@@ -21,9 +22,40 @@ import { Sequelize } from 'sequelize-typescript'
 @Injectable()
 export default class UsersService {
   constructor(
-    @InjectModel(User) readonly repo: typeof User,
+    @InjectModel(User) protected readonly repo: typeof User,
     protected readonly sequelize: Sequelize
   ) {}
+
+  /**
+   * Retrieves the service repository instance.
+   *
+   * @return {typeof User} Entity dao class
+   */
+  get repository(): typeof User {
+    return this.repo
+  }
+
+  /**
+   * Verifies a user's login credentials.
+   *
+   * @async
+   * @param {UserUid} uid - User email or id
+   * @param {NullishString} [password=null] - User password
+   * @return {Promise<User>} Promise containing authenticated user
+   */
+  async authenticate(uid: UserUid, password: IUser['password']): Promise<User> {
+    return await this.repo.authenticate(uid, password)
+  }
+
+  /**
+   * Converts query parameters into a search options object.
+   *
+   * @param {QueryParams<IUser>} [query={}] - Query parameters
+   * @return {SearchOptions<IUser>} Search options
+   */
+  buildSearchOptions(query: QueryParams<IUser> = {}): SearchOptions<IUser> {
+    return this.repo.buildSearchOptions<IUser>(query)
+  }
 
   /**
    * Creates a new user.
@@ -71,7 +103,7 @@ export default class UsersService {
    * @see {@link SearchOptions}
    *
    * @async
-   * @param {SearchOptions<IUser>} [options={}] - Query options
+   * @param {SearchOptions<IUser>} [options={}] - Search options
    * @return {Promise<User[]>} Array of `User` objects
    */
   async find(options: SearchOptions<IUser> = {}): Promise<User[]> {
@@ -86,8 +118,8 @@ export default class UsersService {
    * @see {@link SearchOptions}
    *
    * @async
-   * @param {UserUid} uid - ID or email of user to find
-   * @param {SearchOptions<IUser>} [options={}] - Query options
+   * @param {UserUid} uid - Id or email of user to find
+   * @param {SearchOptions<IUser>} [options={}] - Search options
    * @return {Promise<OrNull<User>>} - Promise containing existing user
    */
   async findOne(
@@ -103,7 +135,7 @@ export default class UsersService {
    * Updates an existing user.
    *
    * @async
-   * @param {UserUid} uid - ID or email of user to update
+   * @param {UserUid} uid - Id or email of user to update
    * @param {PatchUserDTO} [dto={}] - Data to update user
    * @return {Promise<User>} - Promise containing updated user
    * @throws {Exception | UniqueEmailException}
@@ -142,7 +174,7 @@ export default class UsersService {
    * **Permanantly** deletes an existing user.
    *
    * @async
-   * @param {UserUid} uid - ID or email of user to remove
+   * @param {UserUid} uid - Id or email of user to remove
    * @return {Promise<User>} - Promise containing deleted user
    */
   async remove(uid: UserUid): Promise<User> {

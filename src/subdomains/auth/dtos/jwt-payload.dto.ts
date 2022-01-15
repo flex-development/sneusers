@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import type { User } from '@sneusers/subdomains/users/entities'
+import type AccessTokenPayload from './access-token-payload.dto'
+import type RefreshTokenPayload from './refresh-token-payload.dto'
 
 /**
  * @file Auth Subdomain DTOs - JwtPayload
@@ -7,18 +7,8 @@ import type { User } from '@sneusers/subdomains/users/entities'
  */
 
 /**
- * Data used to create a user access token.
+ * JWT payload extracted from a decoded access or refresh token.
  */
-export default class JwtPayload {
-  @ApiProperty({ description: "User's email address", type: String })
-  readonly email: User['email']
+type JwtPayload = AccessTokenPayload | RefreshTokenPayload
 
-  @ApiProperty({ description: "User's first name", type: String })
-  readonly first_name: User['first_name']
-
-  @ApiProperty({ description: 'User id', type: Number })
-  readonly id: User['id']
-
-  @ApiProperty({ description: "User's last name", type: String })
-  readonly last_name: User['last_name']
-}
+export default JwtPayload

@@ -22,11 +22,11 @@ type ReporterOptions = {
 /**
  * Intergrated [Mocha Spec][1] and `JSON` file reporter.
  *
- * @see https://mochajs.org/api/tutorial-custom-reporter.html
- *
  * [1]: https://mochajs.org/#spec
  *
- * @extends {Mocha.reporters.Spec}
+ * @see https://mochajs.org/api/tutorial-custom-reporter.html
+ *
+ * @extends Mocha.reporters.Spec
  */
 class Reporter extends Mocha.reporters.Spec {
   /**

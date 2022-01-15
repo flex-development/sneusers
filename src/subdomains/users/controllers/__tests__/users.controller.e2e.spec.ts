@@ -1,6 +1,8 @@
+import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
-import { PassportModule } from '@nestjs/passport'
+import { APP_FILTER } from '@nestjs/core'
+import { JwtModule } from '@nestjs/jwt'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -8,8 +10,17 @@ import {
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { ErrorFilter } from '@sneusers/filters'
+import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import { QueryParams } from '@sneusers/models'
-import { JwtConfigService } from '@sneusers/subdomains/auth/providers'
+import AuthModule from '@sneusers/subdomains/auth/auth.module'
+import { RefreshToken } from '@sneusers/subdomains/auth/entities'
+import {
+  AuthService,
+  JwtConfigService,
+  RefreshTokensService,
+  TokensService
+} from '@sneusers/subdomains/auth/providers'
 import { JwtStrategy } from '@sneusers/subdomains/auth/strategies'
 import type {
   CreateUserDTO,
@@ -18,16 +29,17 @@ import type {
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
+import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUsers from '@tests/utils/create-users.util'
+import getCsrfToken from '@tests/utils/get-csrf-token.util'
 import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
+import type { MockAuthedUser, MockCsrfToken } from '@tests/utils/types'
 import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import type { SuperTest, Test } from 'supertest'
-import request from 'supertest'
 import TestSubject from '../users.controller'
 
 /**
@@ -37,35 +49,56 @@ import TestSubject from '../users.controller'
 
 describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
-
   const USERS = createUsers(13)
-  const AUTHED_USER_1 = createAuthedUser(USERS.length + 1)
-  const AUTHED_USER_2 = createAuthedUser(AUTHED_USER_1.id + 1)
 
   let app: INestApplication
+  let auth: AuthService
+  let csrf: MockCsrfToken
   let queryInterface: QueryInterface
-  let req: SuperTest<Test>
+  let req: ChaiHttp.Agent
   let table: CreateUserDTO[]
   let users: UsersService
+  let user_authed_1: MockAuthedUser
+  let user_authed_2: MockAuthedUser
 
   before(async () => {
-    const napp = await createApp({
-      controllers: [TestSubject],
-      imports: [SequelizeModule.forFeature([User]), PassportModule],
-      providers: [UsersService, JwtConfigService, JwtStrategy]
+    const ntapp = await createApp({
+      controllers: [CsrfTokenController, TestSubject],
+      imports: [
+        JwtModule.registerAsync(AuthModule.JWT_MODULE_OPTIONS),
+        SequelizeModule.forFeature([RefreshToken, User])
+      ],
+      providers: [
+        { provide: APP_FILTER, useClass: ErrorFilter },
+        AuthService,
+        JwtConfigService,
+        JwtStrategy,
+        RefreshTokensService,
+        TokensService,
+        UsersService
+      ]
     })
 
-    app = await napp.app.init()
+    CsurfMiddleware.configure({ ignoreRoutes: ['/csrf-token'] })
 
-    queryInterface = napp.ref.get(Sequelize).getQueryInterface()
-    users = napp.ref.get(UsersService)
-    req = request(napp.app.getHttpServer())
+    ntapp.app.use(new CookieParserMiddleware().use)
+    ntapp.app.use(new CsurfMiddleware().use)
 
-    table = await seedTable<User>(
-      users.repo,
-      [...USERS, AUTHED_USER_1, AUTHED_USER_2],
-      { fields: ['email', 'first_name', 'last_name'] }
-    )
+    app = await ntapp.app.init()
+    auth = ntapp.ref.get(AuthService)
+    queryInterface = ntapp.ref.get(Sequelize).getQueryInterface()
+    req = chai.request.agent(app.getHttpServer())
+    users = ntapp.ref.get(UsersService)
+    user_authed_1 = await createAuthedUser(auth, USERS.length + 1)
+    user_authed_2 = await createAuthedUser(auth, user_authed_1.id + 1)
+
+    USERS.push(user_authed_1, user_authed_2)
+
+    table = await seedTable<User>(users.repository, USERS, {
+      fields: ['email', 'first_name', 'last_name']
+    })
+
+    csrf = await getCsrfToken(req)
   })
 
   after(async () => {
@@ -101,11 +134,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('DELETE', () => {
       it('should send UserDTO if user was deleted', async () => {
         // Arrange
-        const user = Object.assign({}, AUTHED_USER_1)
+        const user = Object.assign({}, user_authed_1)
 
         // Act
         const res = await req
           .delete([URL, user.email].join('/'))
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('csrf-token', csrf.csrf_token)
           .set('Authorization', `Bearer ${user.access_token}`)
 
         // Expect
@@ -121,34 +156,52 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.updated_at).to.be.null
       })
 
-      it('should send error if user is not logged in', async () => {
-        // Arrange
-        const user = Object.assign({}, AUTHED_USER_1)
-
+      it('should send error if csrf token is invalid', async () => {
         // Act
-        const res = await req.delete([URL, user.email].join('/'))
+        const res = await req
+          .delete([URL, user_authed_1.email].join('/'))
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('x-csrf-token', 'x-csrf-token')
+          .set('Authorization', `Bearer ${user_authed_1.access_token}`)
+
+        expect(res).to.be.jsonResponse(ExceptionCode.FORBIDDEN, 'object')
+        expect(res.body).not.to.be.instanceOf(Exception)
+        expect(isExceptionJSON(res.body)).to.be.true
+        expect(res.body.errors).to.be.an('array')
+        expect(res.body.message).to.equal('invalid csrf token')
+      })
+
+      it('should send error if access token is invalid', async () => {
+        // Act
+        const res = await req
+          .delete([URL, user_authed_1.email].join('/'))
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('x-csrf-token', csrf.csrf_token)
+          .set('Authorization', 'Bearer user_access_token')
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
-        expect(res.body.data).to.deep.equal({})
+        expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('Unauthorized')
       })
 
       it('should send error if user is not found', async function (this) {
         // Arrange
-        const access_token = Object.assign({}, AUTHED_USER_2).access_token
         const uid = this.faker.internet.email()
 
         // Act
         const res = await req
           .delete([URL, uid].join('/'))
-          .set('Authorization', `Bearer ${access_token}`)
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('xsrf-token', csrf.csrf_token)
+          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
+        expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.data.error).to.equal(SequelizeError.EmptyResult)
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.match(new RegExp(uid))
@@ -201,11 +254,12 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         const uid = this.faker.datatype.number() * 420
 
         // Act
-        const res = await req.get(`${URL}/${uid}`)
+        const res = await req.get([URL, uid].join('/'))
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
+        expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.data.error).to.equal(SequelizeError.EmptyResult)
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.match(new RegExp(uid.toString()))
@@ -215,14 +269,15 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('PATCH', () => {
       it('should send UserDTO if user was updated', async function (this) {
         // Arrange
-        const user = Object.assign({}, AUTHED_USER_2)
         const dto: PatchUserDTO = { email: this.faker.internet.exampleEmail() }
 
         // Act
         const res = await req
-          .patch([URL, user.id].join('/'))
+          .patch([URL, user_authed_2.id].join('/'))
           .send(dto)
-          .set('Authorization', `Bearer ${user.access_token}`)
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('x-xsrf-token', csrf.csrf_token)
+          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
@@ -237,37 +292,55 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.updated_at).to.be.a('number')
       })
 
-      it('should send error if user is not logged in', async function (this) {
-        // Arrange
-        const user = Object.assign({}, AUTHED_USER_2)
-        const dto: PatchUserDTO = { email: this.faker.internet.email() }
-
+      it('should send error if csrf token is invalid', async function (this) {
         // Act
-        const res = await req.patch([URL, user.id].join('/')).send(dto)
+        const res = await req
+          .patch([URL, user_authed_2.id].join('/'))
+          .send({ first_name: this.faker.name.firstName() } as PatchUserDTO)
+          .set('Cookie', '_csrf=_csrf')
+          .set('csrf-token', csrf.csrf_token)
+          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
+
+        expect(res).to.be.jsonResponse(ExceptionCode.FORBIDDEN, 'object')
+        expect(res.body).not.to.be.instanceOf(Exception)
+        expect(isExceptionJSON(res.body)).to.be.true
+        expect(res.body.errors).to.be.an('array')
+        expect(res.body.message).to.equal('invalid csrf token')
+      })
+
+      it('should send error if access token is invalid', async function (this) {
+        // Act
+        const res = await req
+          .patch([URL, user_authed_2.id].join('/'))
+          .send({ last_name: this.faker.name.lastName() } as PatchUserDTO)
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('csrf-token', csrf.csrf_token)
+          .set('Authorization', `Bearer ${this.faker.datatype.uuid()}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
-        expect(res.body.data).to.deep.equal({})
+        expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('Unauthorized')
       })
 
       it('should send error if user is not found', async function (this) {
         // Arrange
-        const access_token = Object.assign({}, AUTHED_USER_2).access_token
-        const dto: PatchUserDTO = { first_name: this.faker.name.firstName() }
         const uid = 'foofoobaby@email.com'
 
         // Act
         const res = await req
           .patch([URL, uid].join('/'))
-          .send(dto)
-          .set('Authorization', `Bearer ${access_token}`)
+          .send({ password: this.faker.internet.password(13) } as PatchUserDTO)
+          .set('Cookie', `_csrf=${csrf._csrf}`)
+          .set('x-csrf-token', csrf.csrf_token)
+          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
+        expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.data.error).to.equal(SequelizeError.EmptyResult)
         expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.match(new RegExp(uid))
