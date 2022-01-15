@@ -16,6 +16,7 @@ import {
 } from '@sneusers/filters'
 import {
   CookieParserMiddleware,
+  HelmetMiddleware,
   HttpLoggerMiddleware
 } from '@sneusers/middleware'
 import { AppService } from '@sneusers/providers'
@@ -53,7 +54,11 @@ export default class AppModule implements NestModule {
    * @return {void} Nothing when complete
    */
   configure(consumer: MiddlewareConsumer): void {
-    const middleware = [HttpLoggerMiddleware, CookieParserMiddleware]
+    const middleware = [
+      HttpLoggerMiddleware,
+      HelmetMiddleware,
+      CookieParserMiddleware
+    ]
 
     for (const m of middleware) {
       consumer.apply(m).forRoutes({ method: RequestMethod.ALL, path: '*' })

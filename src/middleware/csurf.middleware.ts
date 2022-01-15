@@ -25,7 +25,7 @@ export default class CsurfMiddleware implements NestMiddleware {
    * @see https://github.com/expressjs/csurf#options
    *
    * @param {CsurfOptions} [options={}] - Configuration options
-   * @return {typeof CsurfMiddleware} Update middleware class
+   * @return {typeof CsurfMiddleware} Updated middleware class
    */
   static configure(options: CsurfOptions = {}): typeof CsurfMiddleware {
     return Object.assign(this, {

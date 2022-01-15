@@ -11,4 +11,5 @@ export type {
 } from './cookie-parser.middleware'
 export { default as CsurfMiddleware } from './csurf.middleware'
 export type { CsurfOptions } from './csurf.middleware'
+export { default as HelmetMiddleware } from './helmet.middleware'
 export { default as HttpLoggerMiddleware } from './http-logger.middleware'
