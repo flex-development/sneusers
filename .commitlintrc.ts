@@ -71,6 +71,7 @@ const config: UserConfig = {
         'providers',
         'release',
         'scripts',
+        'security',
         'server',
         'subdomains',
         'tests',
