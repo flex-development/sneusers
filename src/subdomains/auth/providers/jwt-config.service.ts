@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { JwtModuleOptions, JwtOptionsFactory } from '@nestjs/jwt'
+import {
+  JwtModuleAsyncOptions,
+  JwtModuleOptions,
+  JwtOptionsFactory
+} from '@nestjs/jwt'
 import type { EnvironmentVariables } from '@sneusers/models'
 
 /**
@@ -13,11 +17,24 @@ export default class JwtConfigService implements JwtOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Returns the application {@link JwtModuleOptions}.
+   * Returns the application [`JwtModule`][1] configuration options.
    *
-   * @see https://github.com/nestjs/jwt#async-options
+   * [1]: https://github.com/nestjs/jwt
+   * [2]: https://github.com/nestjs/jwt#async-options
    *
-   * @return {JwtModuleOptions} Application `JwtModuleOptions`
+   * @static
+   * @return {JwtModuleAsyncOptions} [`JwtModule.registerAsync`][2] options
+   */
+  static get moduleOptions(): JwtModuleAsyncOptions {
+    return { useClass: JwtConfigService }
+  }
+
+  /**
+   * Returns the application JWT [secret and encryption key][1] options.
+   *
+   * [1]: https://github.com/nestjs/jwt#secret--encryption-key-options
+   *
+   * @return {JwtModuleOptions} Secret and encryption key options
    */
   createJwtOptions(): JwtModuleOptions {
     return {

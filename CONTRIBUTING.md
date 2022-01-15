@@ -90,6 +90,8 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 | `SERVER_NAME`         | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
+| `THROTTLE_LIMIT`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `THROTTLE_TTL`        | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 
 Default values are located in `.env`.

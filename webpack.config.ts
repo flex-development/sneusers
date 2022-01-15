@@ -52,7 +52,9 @@ const config = (config: Configuration): Configuration => {
     JWT_EXP_REFRESH,
     JWT_SECRET_ACCESS,
     JWT_SECRET_REFRESH,
-    PORT
+    PORT,
+    THROTTLE_LIMIT,
+    THROTTLE_TTL
   } = secrets({ log: JSON.parse(process.env.WEBPACK_LOG_SECRETS || 'false') })
 
   return mergeWebpack(config, {
@@ -123,6 +125,8 @@ const config = (config: Configuration): Configuration => {
         'process.env.JWT_EXP_REFRESH': JSON.stringify(JWT_EXP_REFRESH),
         'process.env.JWT_SECRET_ACCESS': JSON.stringify(JWT_SECRET_ACCESS),
         'process.env.JWT_SECRET_REFRESH': JSON.stringify(JWT_SECRET_REFRESH),
+        'process.env.THROTTLE_LIMIT': JSON.stringify(THROTTLE_LIMIT),
+        'process.env.THROTTLE_TTL': JSON.stringify(THROTTLE_TTL),
         'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
         'process.env.PORT': JSON.stringify(PORT)
       })

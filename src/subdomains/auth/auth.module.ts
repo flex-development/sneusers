@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { JwtModule, JwtModuleAsyncOptions } from '@nestjs/jwt'
+import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CsurfMiddleware } from '@sneusers/middleware'
@@ -25,7 +25,7 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   controllers: [AuthController],
   exports: [AuthService],
   imports: [
-    JwtModule.registerAsync(AuthModule.JWT_MODULE_OPTIONS),
+    JwtModule.registerAsync(JwtConfigService.moduleOptions),
     PassportModule,
     SequelizeModule.forFeature([RefreshToken]),
     UsersModule
@@ -41,15 +41,6 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   ]
 })
 export default class AuthModule {
-  /**
-   * @static
-   * @readonly
-   * @property {JwtModuleAsyncOptions} JWT_MODULE_OPTIONS - `JwtModule` options
-   */
-  static readonly JWT_MODULE_OPTIONS: JwtModuleAsyncOptions = {
-    useClass: JwtConfigService
-  }
-
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {
     CsurfMiddleware.configure({ ignoreRoutes: ['/auth/register'] })
   }

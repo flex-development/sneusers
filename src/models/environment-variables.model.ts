@@ -175,6 +175,24 @@ class EnvironmentVariables {
    */
   @IsBoolean()
   TEST: boolean
+
+  /**
+   * Maximum number of requests within the @see {@link THROTTLE_TTL} limit.
+   *
+   * @default 10
+   */
+  @IsNumber()
+  @IsOptional()
+  THROTTLE_LIMIT: number
+
+  /**
+   * Number of seconds that each request will last in storage.
+   *
+   * @default 60
+   */
+  @IsNumber()
+  @IsOptional()
+  THROTTLE_TTL: number
 }
 
 export default EnvironmentVariables

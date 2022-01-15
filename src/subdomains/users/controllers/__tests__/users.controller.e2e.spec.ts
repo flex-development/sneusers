@@ -16,7 +16,6 @@ import {
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import { QueryParams } from '@sneusers/models'
-import AuthModule from '@sneusers/subdomains/auth/auth.module'
 import { RefreshToken } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
@@ -68,7 +67,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     const ntapp = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
-        JwtModule.registerAsync(AuthModule.JWT_MODULE_OPTIONS),
+        JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([RefreshToken, User])
       ],
       providers: [

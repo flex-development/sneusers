@@ -62,6 +62,8 @@ services:
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
       WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
+      THROTTLE_LIMIT: ${THROTTLE_LIMIT}
+      THROTTLE_TTL: ${THROTTLE_TTL}
       YARN_VERSION: 3.2.0-rc.8
     ports:
       - ${PORT}:${PORT}

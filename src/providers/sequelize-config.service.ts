@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { SequelizeOptionsFactory } from '@nestjs/sequelize'
-import { SequelizeModuleOptions } from '@nestjs/sequelize'
+import {
+  SequelizeModuleAsyncOptions as SequelizeAsyncOptions,
+  SequelizeModuleOptions
+} from '@nestjs/sequelize'
 import { OrderDirection } from '@sneusers/enums'
 import type { EnvironmentVariables } from '@sneusers/models'
 import noop from '@stdlib/utils-noop'
@@ -12,7 +15,6 @@ import sqlite3 from 'sqlite3'
 /**
  * @file Providers - SequelizeConfigService
  * @module sneusers/providers/SequelizeConfigService
- * @see https://docs.nestjs.com/techniques/database#async-configuration-1
  */
 
 @Injectable()
@@ -20,7 +22,20 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Returns [`Sequelize`][1] configuration options.
+   * Returns the application [`SequelizeModule`][1] configuration options.
+   *
+   * [1]: https://docs.nestjs.com/techniques/database#sequelize-integration
+   * [2]: https://docs.nestjs.com/techniques/database#async-configuration-1
+   *
+   * @static
+   * @return {SequelizeAsyncOptions} [`SequelizeModule.forRootAsync`][2] options
+   */
+  static get moduleOptions(): SequelizeAsyncOptions {
+    return { useClass: SequelizeConfigService }
+  }
+
+  /**
+   * Returns the application [`Sequelize`][1] options.
    *
    * [1]: https://sequelize.org/v7
    * [2]: https://docs.nestjs.com/techniques/database#sequelize-integration

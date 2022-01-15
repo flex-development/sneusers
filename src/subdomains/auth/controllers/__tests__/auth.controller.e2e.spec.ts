@@ -16,7 +16,6 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
-import AuthModule from '@sneusers/subdomains/auth/auth.module'
 import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { RefreshToken } from '@sneusers/subdomains/auth/entities'
@@ -70,7 +69,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const ntapp = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
-        JwtModule.registerAsync(AuthModule.JWT_MODULE_OPTIONS),
+        JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
         SequelizeModule.forFeature([RefreshToken]),
         UsersModule

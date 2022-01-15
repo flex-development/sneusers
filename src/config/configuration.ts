@@ -35,7 +35,9 @@ const validate = ({
   JWT_SECRET_ACCESS,
   JWT_SECRET_REFRESH,
   NODE_ENV = NodeEnv.DEV,
-  PORT = 8080
+  PORT = 8080,
+  THROTTLE_LIMIT = 10,
+  THROTTLE_TTL = 60
 }: Record<string, any>): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
@@ -64,6 +66,8 @@ const validate = ({
   env.JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
   env.JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
   env.TEST = NODE_ENV === NodeEnv.TEST
+  env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString())
+  env.THROTTLE_TTL = Number.parseInt(THROTTLE_TTL.toString())
 
   // Validate environment variables
   const errors: ValidationError[] = validateSync(env, {
@@ -105,7 +109,9 @@ const configuration = (
     JWT_SECRET_ACCESS: process.env.JWT_SECRET_ACCESS,
     JWT_SECRET_REFRESH: process.env.JWT_SECRET_REFRESH,
     NODE_ENV: NODE_ENV || process.env.NODE_ENV,
-    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString()
+    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString(),
+    THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,
+    THROTTLE_TTL: process.env.THROTTLE_TTL
   })
 }
 

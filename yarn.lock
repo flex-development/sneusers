@@ -728,6 +728,7 @@ __metadata:
     "@nestjs/swagger": 5.1.5
     "@nestjs/terminus": 8.0.3
     "@nestjs/testing": 8.2.4
+    "@nestjs/throttler": 2.0.0
     "@sneusers/config": "link:src/config"
     "@sneusers/dtos": "link:src/dtos"
     "@sneusers/entities": "link:src/entities"
@@ -1237,6 +1238,19 @@ __metadata:
     "@nestjs/platform-express":
       optional: true
   checksum: bef7bd003086b7ccbb0e4e6324bb1f47465a8b99eb81e1b58db251f30a7cc1c5d742648c36619dccd2881b13ed71e520bfc421407b4b9945096b735af887dc19
+  languageName: node
+  linkType: hard
+
+"@nestjs/throttler@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@nestjs/throttler@npm:2.0.0"
+  dependencies:
+    md5: ^2.2.1
+  peerDependencies:
+    "@nestjs/common": ^7.0.0 || ^8.0.0
+    "@nestjs/core": ^7.0.0 || ^8.0.0
+    reflect-metadata: ^0.1.13
+  checksum: 506d1d7903575f8d2b28cf8763e12a68e160f06180e93e3a332ff677d32deb72d704569db7115bbca249b136b9ffd65a300a3fb52e8bf046941ff014147cb579
   languageName: node
   linkType: hard
 
@@ -3543,6 +3557,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"charenc@npm:0.0.2":
+  version: 0.0.2
+  resolution: "charenc@npm:0.0.2"
+  checksum: 81dcadbe57e861d527faf6dd3855dc857395a1c4d6781f4847288ab23cffb7b3ee80d57c15bba7252ffe3e5e8019db767757ee7975663ad2ca0939bb8fcaf2e5
+  languageName: node
+  linkType: hard
+
 "check-disk-space@npm:3.0.1":
   version: 3.0.1
   resolution: "check-disk-space@npm:3.0.1"
@@ -4483,6 +4504,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
+  languageName: node
+  linkType: hard
+
+"crypt@npm:0.0.2":
+  version: 0.0.2
+  resolution: "crypt@npm:0.0.2"
+  checksum: baf4c7bbe05df656ec230018af8cf7dbe8c14b36b98726939cef008d473f6fe7a4fad906cfea4062c93af516f1550a3f43ceb4d6615329612c6511378ed9fe34
   languageName: node
   linkType: hard
 
@@ -7187,6 +7215,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-buffer@npm:~1.1.6":
+  version: 1.1.6
+  resolution: "is-buffer@npm:1.1.6"
+  checksum: 4a186d995d8bbf9153b4bd9ff9fd04ae75068fe695d29025d25e592d9488911eeece84eefbd8fa41b8ddcc0711058a71d4c466dcf6f1f6e1d83830052d8ca707
+  languageName: node
+  linkType: hard
+
 "is-builtin-module@npm:^3.1.0":
   version: 3.1.0
   resolution: "is-builtin-module@npm:3.1.0"
@@ -8426,6 +8461,17 @@ __metadata:
   dependencies:
     markdown-it: 12.2.0
   checksum: 5308070947796d706e752e7dfe6c741fe613d007be152e710a1fb7bbe2f0481beb2be4c0ed053065aea631daeac3f86d66e5e8cb9a753febf35158930771f34f
+  languageName: node
+  linkType: hard
+
+"md5@npm:^2.2.1":
+  version: 2.3.0
+  resolution: "md5@npm:2.3.0"
+  dependencies:
+    charenc: 0.0.2
+    crypt: 0.0.2
+    is-buffer: ~1.1.6
+  checksum: a63cacf4018dc9dee08c36e6f924a64ced735b37826116c905717c41cebeb41a522f7a526ba6ad578f9c80f02cb365033ccd67fe186ffbcc1a1faeb75daa9b6e
   languageName: node
   linkType: hard
 

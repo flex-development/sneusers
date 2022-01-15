@@ -8,6 +8,7 @@ import {
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TerminusModule } from '@nestjs/terminus'
+import { ThrottlerModule } from '@nestjs/throttler'
 import { HealthController } from '@sneusers/controllers'
 import {
   ErrorFilter,
@@ -19,7 +20,11 @@ import {
   HelmetMiddleware,
   HttpLoggerMiddleware
 } from '@sneusers/middleware'
-import { AppService } from '@sneusers/providers'
+import {
+  AppService,
+  SequelizeConfigService,
+  ThrottlerConfigService
+} from '@sneusers/providers'
 import { AuthModule, UsersModule } from '@sneusers/subdomains'
 import CryptoModule from './crypto.module'
 
@@ -35,8 +40,9 @@ import CryptoModule from './crypto.module'
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
     HttpModule,
-    SequelizeModule.forRootAsync(AppService.sequelizeModuleOptions),
+    SequelizeModule.forRootAsync(SequelizeConfigService.moduleOptions),
     TerminusModule,
+    ThrottlerModule.forRootAsync(ThrottlerConfigService.moduleOptions),
     UsersModule
   ],
   providers: [
