@@ -24,7 +24,7 @@ export default {
     status: HttpStatus.OK,
     query: { type: QueryParams },
     responses: {
-      200: { description: 'Executed search', isArray: true, type: UserDTO },
+      200: { description: 'Executed search' },
       400: { description: 'query validation failure', type: Exception },
       500: { description: 'Internal server error', type: Exception },
       502: { description: 'Nginx reverse proxy failure', type: String }

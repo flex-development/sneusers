@@ -93,13 +93,17 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#find', () => {
-    it('should return array of users', async () => {
+    it('should return PaginatedDTO<User>', async () => {
       // Act
       const result = await subject.find()
 
       // Expect
-      expect(result).to.be.an('array')
-      expect(result).each(user => user.to.be.instanceOf(User))
+      expect(result).to.be.an('object')
+      expect(result.count).to.be.a('number')
+      expect(result.limit).to.equal(result.results.length)
+      expect(result.offset).to.equal(0)
+      expect(result.results).each(user => user.to.be.instanceOf(User))
+      expect(result.total).to.be.a('number')
     })
   })
 

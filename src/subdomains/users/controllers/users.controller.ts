@@ -1,4 +1,3 @@
-import type { OneOrMany } from '@flex-development/tutils'
 import {
   Body,
   Controller,
@@ -23,14 +22,15 @@ import {
   ApiQuery,
   ApiTags
 } from '@nestjs/swagger'
-import type { ResBodyEntity } from '@sneusers/dtos'
+import { ApiPaginatedResponse } from '@sneusers/decorators'
+import type { PaginatedDTO } from '@sneusers/dtos'
 import { EntitySerializer } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
 import { CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
 import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
-import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
+import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import OPENAPI from './openapi/users.openapi'
@@ -40,12 +40,12 @@ import OPENAPI from './openapi/users.openapi'
  * @module sneusers/subdomains/users/controllers/UsersController
  */
 
-type ResBody = OneOrMany<UserDTO>
+type ResBody = UserDTO | PaginatedDTO<UserDTO>
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntitySerializer<User, ResBodyEntity<IUser>>())
-@UseInterceptors(new PasswordInterceptor<ResBodyEntity<IUser>, ResBody>())
+@UseInterceptors(new EntitySerializer<User, IUser | PaginatedDTO<IUser>>())
+@UseInterceptors(new UserInterceptor<IUser | PaginatedDTO<IUser>, ResBody>())
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
@@ -66,11 +66,14 @@ export default class UsersController {
   @Get()
   @HttpCode(OPENAPI.find.status)
   @ApiQuery(OPENAPI.find.query)
-  @ApiOkResponse(OPENAPI.find.responses[200])
+  @ApiPaginatedResponse(UserDTO, OPENAPI.find.responses[200])
   @ApiBadRequestResponse(OPENAPI.find.responses[400])
   @ApiInternalServerErrorResponse(OPENAPI.find.responses[500])
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
-  async find(@Query() query: QueryParams<IUser> = {}): Promise<UserDTO[]> {
+  async find(
+    @Query(new ValidationPipe({ transform: true }))
+    query: QueryParams<IUser> = {}
+  ): Promise<PaginatedDTO<UserDTO>> {
     return await this.users.find(this.users.buildSearchOptions(query))
   }
 
@@ -84,7 +87,8 @@ export default class UsersController {
   @ApiBadGatewayResponse(OPENAPI.findOne.responses[502])
   async findOne(
     @Param('uid') uid: IUser['email'] | IUser['id'],
-    @Query() query: QueryParams<IUser> = {}
+    @Query(new ValidationPipe({ transform: true }))
+    query: QueryParams<IUser> = {}
   ): Promise<UserDTO> {
     return (await this.users.findOne(
       uid,
@@ -104,7 +108,7 @@ export default class UsersController {
   @ApiBadGatewayResponse(OPENAPI.patch.responses[502])
   async patch(
     @Param('uid') uid: IUser['email'] | IUser['id'],
-    @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: PatchUserDTO
+    @Body(new ValidationPipe({ transform: true })) dto: PatchUserDTO
   ): Promise<UserDTO> {
     return await this.users.patch(uid, dto)
   }

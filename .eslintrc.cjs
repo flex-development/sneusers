@@ -116,6 +116,12 @@ module.exports = {
       }
     },
     {
+      files: ['src/subdomains/users/interceptors/user.interceptor.ts'],
+      rules: {
+        'prefer-const': 0
+      }
+    },
+    {
       files: [
         'src/types/http-exception-json.type.ts',
         'tools/helpers/secrets.ts'

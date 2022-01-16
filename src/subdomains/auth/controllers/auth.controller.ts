@@ -35,7 +35,7 @@ import { AuthService } from '@sneusers/subdomains/auth/providers'
 import { AuthedUser, UserAuth } from '@sneusers/subdomains/users/decorators'
 import { CreateUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
-import { PasswordInterceptor } from '@sneusers/subdomains/users/interceptors'
+import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import type { IUser, UserRequest } from '@sneusers/subdomains/users/interfaces'
 import { Response } from 'express'
 import OPENAPI from './openapi/auth.openapi'
@@ -45,12 +45,10 @@ import OPENAPI from './openapi/auth.openapi'
  * @module sneusers/subdomains/auth/controllers/AuthController
  */
 
-type ResBody = LoginDTO | UserDTO
-
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
 @UseInterceptors(new EntitySerializer<User, EntityDTO<IUser>>())
-@UseInterceptors(new PasswordInterceptor<EntityDTO<IUser>, ResBody>())
+@UseInterceptors(new UserInterceptor<EntityDTO<IUser>, LoginDTO | UserDTO>())
 export default class AuthController {
   constructor(protected readonly auth: AuthService) {}
 
@@ -107,7 +105,7 @@ export default class AuthController {
   @ApiInternalServerErrorResponse(OPENAPI.register.responses[500])
   @ApiBadGatewayResponse(OPENAPI.register.responses[502])
   async register(
-    @Body(new ValidationPipe({ forbidUnknownValues: true })) dto: CreateUserDTO,
+    @Body(new ValidationPipe({ transform: true })) dto: CreateUserDTO,
     @Res({ passthrough: true }) res: Response,
     @CsrfToken('create') csrf_token: string
   ): Promise<UserDTO> {

@@ -3,6 +3,7 @@ import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { PaginatedDTO } from '@sneusers/dtos'
 import {
   DatabaseTable,
   ExceptionCode,
@@ -15,7 +16,7 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
-import { QueryParams } from '@sneusers/models'
+import type { QueryParams } from '@sneusers/models'
 import { RefreshToken } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
@@ -112,23 +113,24 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
 
   describe('/users', () => {
     describe('GET', () => {
-      it('should send search results array', async () => {
+      it('should send PaginatedDTO<UserDTO>', async () => {
         // Arrange
-        const query = new QueryParams<IUser>({
+        const query: QueryParams<IUser> = {
           attributes: 'email',
           group: 'email,id',
           limit: Math.floor(table.length / 2),
           order: 'id,ASC|last_name,DESC'
-        })
+        }
 
         // Act
         const res = await req.get(stubURLPath(URL, query))
 
         // Expect
-        expect(res).to.be.jsonResponse(HttpStatus.OK, 'array')
-        expect(res.body).each((user, index) => {
+        expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
+        expect(res.body).not.to.be.instanceOf(PaginatedDTO)
+        expect(res.body.results).each((user, index) => {
           user.not.to.be.instanceOf(User)
-          expect(res.body[index].password).to.be.undefined
+          expect(res.body.results[index].password).to.be.undefined
         })
       })
     })

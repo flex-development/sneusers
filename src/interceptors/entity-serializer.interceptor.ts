@@ -1,4 +1,3 @@
-import type { OneOrMany } from '@flex-development/tutils'
 import {
   CallHandler,
   ExecutionContext,
@@ -6,6 +5,7 @@ import {
   NestInterceptor
 } from '@nestjs/common'
 import type { ResBodyEntity } from '@sneusers/dtos'
+import { PaginatedDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -17,14 +17,14 @@ import { map } from 'rxjs/operators'
 
 /**
  * @template E - Entity (dao) class type
- * @template R - Controller payload type(s)
+ * @template R - Interceptor output type(s)
  * @template T - Pre-intercepted response type(s)
  */
 @Injectable()
 class EntitySerializer<
   E extends BaseEntity = BaseEntity,
   R extends ResBodyEntity<E['_attributes']> = ResBodyEntity<E['_attributes']>,
-  T extends OneOrMany<E> = OneOrMany<E>
+  T extends E | PaginatedDTO<E> = E | PaginatedDTO<E>
 > implements NestInterceptor<T, R>
 {
   /**
@@ -51,12 +51,19 @@ class EntitySerializer<
    * @return {R} Serialized entity or array of serialized entities
    */
   serialize(payload: T): R {
-    const json = (entity: E | Exclude<T, any[]>): Exclude<R, any[]> => {
-      return entity instanceof BaseEntity ? entity.toJSON() : entity
+    if (payload instanceof PaginatedDTO) {
+      payload.results = payload.results.map(entity => ({
+        ...(entity instanceof BaseEntity ? entity.toJSON() : entity),
+        id: entity.id
+      }))
+
+      return payload as unknown as R
     }
 
-    if (Array.isArray(payload)) return payload.map(e => json(e)) as unknown as R
-    return json(payload as Exclude<T, any[]>)
+    return {
+      ...(payload instanceof BaseEntity ? payload.toJSON() : payload),
+      id: payload.id
+    } as R
   }
 }
 

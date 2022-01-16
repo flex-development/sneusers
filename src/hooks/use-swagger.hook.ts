@@ -2,8 +2,9 @@ import type { INestApplication } from '@nestjs/common'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { PACKAGE } from '@sneusers/config/constants.config'
+import { PaginatedDTO } from '@sneusers/dtos'
 import { QueryParams } from '@sneusers/models'
-import type { Request as Req, Response as Res } from 'express'
+import type { Request, Response } from 'express'
 import sortObject from 'sort-object-keys'
 
 /**
@@ -64,7 +65,7 @@ const useSwagger = async (
   // Get documentation options
   const options: SwaggerDocumentOptions = {
     deepScanRoutes: true,
-    extraModels: [QueryParams],
+    extraModels: [PaginatedDTO, QueryParams],
     ignoreGlobalPrefix: false,
     operationIdFactory(controllerKey: string, methodKey: string): string {
       return `${controllerKey}#${methodKey}`
@@ -75,7 +76,7 @@ const useSwagger = async (
   const docs = SwaggerModule.createDocument(app, builder.build(), options)
 
   // Add handler to view docs from path
-  app.getHttpAdapter().get(path, (req: Req, res: Res) => {
+  app.getHttpAdapter().get(path, (req: Request, res: Response) => {
     docs.components!.schemas = sortObject(docs.components!.schemas)
 
     res.json({

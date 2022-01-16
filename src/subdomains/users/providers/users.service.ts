@@ -1,7 +1,7 @@
-import type { ObjectPlain } from '@flex-development/tutils'
-import { NullishString, OrNull } from '@flex-development/tutils'
+import { NullishString, ObjectPlain, OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { PaginatedDTO } from '@sneusers/dtos'
 import { SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
@@ -104,11 +104,25 @@ export default class UsersService {
    *
    * @async
    * @param {SearchOptions<IUser>} [options={}] - Search options
-   * @return {Promise<User[]>} Array of `User` objects
+   * @return {Promise<PaginatedDTO<User>>} Paginated `User` response
    */
-  async find(options: SearchOptions<IUser> = {}): Promise<User[]> {
+  async find(options: SearchOptions<IUser> = {}): Promise<PaginatedDTO<User>> {
     return await this.sequelize.transaction(async transaction => {
-      return await this.repo.findAll<User>({ ...options, transaction })
+      const { count, rows } = await this.repo.findAndCountAll<User>({
+        ...options,
+        transaction
+      })
+
+      if (typeof options.limit === 'undefined') options.limit = rows.length
+      if (typeof options.offset === 'undefined') options.offset = 0
+
+      return new PaginatedDTO<User>({
+        count,
+        limit: options.limit,
+        offset: options.offset,
+        results: rows,
+        total: rows.length
+      })
     })
   }
 

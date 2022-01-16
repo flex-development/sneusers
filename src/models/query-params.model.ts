@@ -1,7 +1,8 @@
-import { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
+import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import OrderDirection from '@sneusers/enums/order-direction.enum'
 import type { QueryParam } from '@sneusers/types'
+import { Type } from 'class-transformer'
 import {
   IsBoolean,
   IsNumber,
@@ -11,7 +12,6 @@ import {
   IsString,
   Min
 } from 'class-validator'
-import isPlainObject from 'lodash.isplainobject'
 
 /**
  * @file Models - QueryParams
@@ -32,6 +32,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   })
   @IsString()
   @IsOptional()
+  @Type(() => String)
   attributes?: QueryParam.Attributes<T>
 
   @ApiPropertyOptional({
@@ -44,6 +45,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   })
   @IsString()
   @IsOptional()
+  @Type(() => String)
   group?: QueryParam.Group<T>
 
   @ApiPropertyOptional({
@@ -52,6 +54,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   })
   @IsObject()
   @IsOptional()
+  @Type(() => Object)
   having?: QueryParam.Where<T>
 
   @ApiPropertyOptional({
@@ -63,6 +66,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsNumber()
   @IsPositive()
   @IsOptional()
+  @Type(() => Number)
   limit?: QueryParam.Limit<T>
 
   /**
@@ -80,6 +84,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   nest?: QueryParam.Nest<T>
 
   @ApiPropertyOptional({
@@ -90,6 +95,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsNumber()
   @Min(0)
   @IsOptional()
+  @Type(() => Number)
   offset?: QueryParam.Offset<T>
 
   @ApiPropertyOptional({
@@ -104,6 +110,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   })
   @IsString()
   @IsOptional()
+  @Type(() => String)
   order?: QueryParam.Order<T>
 
   /**
@@ -115,34 +122,8 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @ApiPropertyOptional({ description: 'Filter selected results', type: Object })
   @IsObject()
   @IsOptional()
+  @Type(() => Object)
   where?: QueryParam.Where<T>
-
-  /**
-   * Creates a new `QueryParams` object.
-   *
-   * @param {QueryParams<T> | ObjectPlain} param0 - Parameters
-   */
-  constructor({
-    attributes,
-    group,
-    having,
-    limit = 10,
-    nest = true,
-    offset,
-    order = `id,${OrderDirection.ASC}`,
-    where
-  }: QueryParams<T> | ObjectPlain) {
-    if (!attributes.split(',').includes('id')) attributes = `id,${attributes}`
-
-    if (typeof attributes === 'string') this.attributes = attributes
-    if (typeof group === 'string') this.group = group
-    if (isPlainObject(having)) this.having = having
-    if (typeof limit === 'number') this.limit = limit
-    if (typeof nest === 'boolean') this.nest = nest
-    if (typeof offset === 'number') this.offset = offset
-    if (typeof order === 'string') this.order = order
-    if (isPlainObject(where)) this.where = where
-  }
 }
 
 export default QueryParams
