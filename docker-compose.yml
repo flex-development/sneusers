@@ -43,6 +43,8 @@ services:
     # environment variables, the variables below do NOT need to be exposed.
     # Exposing them enhances DX when inspecting the container in Docker Hub.
     environment:
+      CACHE_MAX: ${CACHE_MAX}
+      CACHE_TTL: ${CACHE_TTL}
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}

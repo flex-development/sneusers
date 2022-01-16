@@ -1,5 +1,7 @@
 import {
   Body,
+  CacheKey,
+  CacheTTL,
   Controller,
   Delete,
   Get,
@@ -24,7 +26,7 @@ import {
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '@sneusers/decorators'
 import type { PaginatedDTO } from '@sneusers/dtos'
-import { EntitySerializer } from '@sneusers/interceptors'
+import { EntitySerializer, HttpCacheInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
 import { CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
@@ -49,9 +51,9 @@ type ResBody = UserDTO | PaginatedDTO<UserDTO>
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
+  @Delete(':uid')
   @CsrfTokenAuth()
   @UserAuth()
-  @Delete(':uid')
   @HttpCode(OPENAPI.delete.status)
   @ApiNoContentResponse(OPENAPI.delete.responses[204])
   @ApiNotFoundResponse(OPENAPI.delete.responses[404])
@@ -64,6 +66,9 @@ export default class UsersController {
   }
 
   @Get()
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(UsersService.CACHE_KEY)
+  @CacheTTL(120)
   @HttpCode(OPENAPI.find.status)
   @ApiQuery(OPENAPI.find.query)
   @ApiPaginatedResponse(UserDTO, OPENAPI.find.responses[200])
@@ -78,6 +83,9 @@ export default class UsersController {
   }
 
   @Get(':uid')
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(UsersService.CACHE_KEY)
+  @CacheTTL(120)
   @HttpCode(OPENAPI.findOne.status)
   @ApiQuery(OPENAPI.findOne.query)
   @ApiOkResponse(OPENAPI.findOne.responses[200])
@@ -96,9 +104,9 @@ export default class UsersController {
     )) as UserDTO
   }
 
+  @Patch(':uid')
   @CsrfTokenAuth()
   @UserAuth()
-  @Patch(':uid')
   @HttpCode(OPENAPI.patch.status)
   @ApiCreatedResponse(OPENAPI.patch.responses[200])
   @ApiBadRequestResponse(OPENAPI.patch.responses[400])

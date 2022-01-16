@@ -19,6 +19,26 @@ import {
  */
 class EnvironmentVariables {
   /**
+   * Maximum number of responses to store in the cache.
+   *
+   * @default 100
+   */
+  @IsNumber()
+  @IsOptional()
+  CACHE_MAX: number
+
+  /**
+   * Amount of time in seconds that a response is cached before it is deleted.
+   *
+   * Subsequent requests will go to the route handler and refresh the cache.
+   *
+   * @default 5
+   */
+  @IsNumber()
+  @IsOptional()
+  CACHE_TTL: number
+
+  /**
    * Automatically load database models.
    *
    * @see https://docs.nestjs.com/techniques/database#auto-load-models

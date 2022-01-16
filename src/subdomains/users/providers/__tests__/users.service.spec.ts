@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common'
+import { CacheModule } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -6,6 +7,7 @@ import {
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { CacheConfigService } from '@sneusers/providers'
 import type {
   CreateUserDTO,
   PatchUserDTO
@@ -36,7 +38,10 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
   before(async () => {
     const ntapp = await createApp({
-      imports: [SequelizeModule.forFeature([User])],
+      imports: [
+        CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        SequelizeModule.forFeature([User])
+      ],
       providers: [TestSubject]
     })
 

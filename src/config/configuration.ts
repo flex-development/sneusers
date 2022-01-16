@@ -22,6 +22,8 @@ const ENV_FILE_PATH = [`${process.cwd()}/.env.local`, `${process.cwd()}/.env`]
  * @throws {ValidationError[]}
  */
 const validate = ({
+  CACHE_MAX = 100,
+  CACHE_TTL = 5,
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'localhost',
   DB_NAME,
@@ -53,6 +55,8 @@ const validate = ({
   env.PORT = Number.parseInt(PORT.toString())
 
   // Assign remaining environment variables
+  env.CACHE_MAX = Number.parseInt(CACHE_MAX.toString())
+  env.CACHE_TTL = Number.parseInt(CACHE_TTL.toString())
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
   env.DB_NAME = DB_NAME
@@ -96,6 +100,8 @@ const configuration = (
   PORT?: NumberString
 ): EnvironmentVariables => {
   return validate({
+    CACHE_MAX: process.env.CACHE_MAX,
+    CACHE_TTL: process.env.CACHE_TTL,
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
     DB_NAME: process.env.DB_NAME,

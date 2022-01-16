@@ -1,6 +1,6 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { NullishString } from '@flex-development/tutils'
-import { HttpStatus, INestApplication } from '@nestjs/common'
+import { CacheModule, HttpStatus, INestApplication } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -16,6 +16,7 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
+import { CacheConfigService } from '@sneusers/providers'
 import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { RefreshToken } from '@sneusers/subdomains/auth/entities'
@@ -69,6 +70,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const ntapp = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
+        CacheModule.registerAsync(CacheConfigService.moduleOptions),
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
         SequelizeModule.forFeature([RefreshToken]),

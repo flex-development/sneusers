@@ -748,6 +748,7 @@ __metadata:
     "@sneusers/utils": "link:src/utils"
     "@stdlib/utils-noop": 0.0.8
     "@tests/utils": "link:__tests__/utils"
+    "@types/cache-manager": 3.4.2
     "@types/chai": 4.3.0
     "@types/cookie": 0.4.1
     "@types/cookie-parser": 1.4.2
@@ -782,6 +783,7 @@ __metadata:
     "@vates/toggle-scripts": 1.0.0
     "@zerollup/ts-transform-paths": 1.7.18
     babel-plugin-istanbul: 6.1.1
+    cache-manager: 3.6.0
     chai: 4.3.4
     chai-http: 4.3.0
     chalk: 4.1.2
@@ -1665,6 +1667,13 @@ __metadata:
     "@types/connect": "*"
     "@types/node": "*"
   checksum: e17840c7d747a549f00aebe72c89313d09fbc4b632b949b2470c5cb3b1cb73863901ae84d9335b567a79ec5efcfb8a28ff8e3f36bc8748a9686756b6d5681f40
+  languageName: node
+  linkType: hard
+
+"@types/cache-manager@npm:3.4.2":
+  version: 3.4.2
+  resolution: "@types/cache-manager@npm:3.4.2"
+  checksum: 121cad75d66da5e65aa9096dfe706d2ec696b20b6bd558128606063488dcedebdafaafc16b27ff620e1fd9c860ca64e088866f01e05cbaf0708a4d43b341c9d5
   languageName: node
   linkType: hard
 
@@ -3043,6 +3052,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async@npm:3.2.0":
+  version: 3.2.0
+  resolution: "async@npm:3.2.0"
+  checksum: 6739fae769e6c9f76b272558f118ef041d45c979c573a8fe93f8cfbc32eb9c92da032e9effe6bbcc9b1131292cde6c4a9e61a442894aa06a262addd8dd3adda1
+  languageName: node
+  linkType: hard
+
 "asynckit@npm:^0.4.0":
   version: 0.4.0
   resolution: "asynckit@npm:0.4.0"
@@ -3353,6 +3369,17 @@ __metadata:
     tar: ^6.0.2
     unique-filename: ^1.1.1
   checksum: a07327c27a4152c04eb0a831c63c00390d90f94d51bb80624a66f4e14a6b6360bbf02a84421267bd4d00ca73ac9773287d8d7169e8d2eafe378d2ce140579db8
+  languageName: node
+  linkType: hard
+
+"cache-manager@npm:3.6.0":
+  version: 3.6.0
+  resolution: "cache-manager@npm:3.6.0"
+  dependencies:
+    async: 3.2.0
+    lodash: ^4.17.21
+    lru-cache: 6.0.0
+  checksum: c768d2b2927fb245b44a1dbf90d0815ad5318bfa1e4fc733e84a1538189227a4218dade7bfcad0a800e0b0c29e0338d79901cbe506e2e59f729155d73b7a3c51
   languageName: node
   linkType: hard
 
@@ -8342,6 +8369,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:6.0.0, lru-cache@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "lru-cache@npm:6.0.0"
+  dependencies:
+    yallist: ^4.0.0
+  checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^4.1.5":
   version: 4.1.5
   resolution: "lru-cache@npm:4.1.5"
@@ -8349,15 +8385,6 @@ __metadata:
     pseudomap: ^1.0.2
     yallist: ^2.1.2
   checksum: 4bb4b58a36cd7dc4dcec74cbe6a8f766a38b7426f1ff59d4cf7d82a2aa9b9565cd1cb98f6ff60ce5cd174524868d7bc9b7b1c294371851356066ca9ac4cf135a
-  languageName: node
-  linkType: hard
-
-"lru-cache@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "lru-cache@npm:6.0.0"
-  dependencies:
-    yallist: ^4.0.0
-  checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
   languageName: node
   linkType: hard
 

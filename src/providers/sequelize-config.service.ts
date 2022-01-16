@@ -28,7 +28,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
    * [2]: https://docs.nestjs.com/techniques/database#async-configuration-1
    *
    * @static
-   * @return {SequelizeAsyncOptions} [`SequelizeModule.forRootAsync`][2] options
+   * @return {SequelizeAsyncOptions} [`SequelizeModule#forRootAsync`][2] options
    */
   static get moduleOptions(): SequelizeAsyncOptions {
     return { useClass: SequelizeConfigService }
@@ -41,7 +41,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
    * [2]: https://docs.nestjs.com/techniques/database#sequelize-integration
    *
    * @param {string} [name] - Name of database connection
-   * @return {SequelizeModuleOptions} [`SequelizeModule.forRoot`][2] options
+   * @return {SequelizeModuleOptions} [`SequelizeModule#forRoot`][2] options
    */
   createSequelizeOptions(name?: string): SequelizeModuleOptions {
     const autoLoadModels = this.config.get<boolean>('DB_AUTO_LOAD_MODELS')

@@ -72,6 +72,8 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
 | `ADMINER_PORT`        | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 | `ADMINER_SERVER_NAME` | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
+| `CACHE_MAX`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `CACHE_TTL`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `DB_DOCS_TOKEN`       | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
 | `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |

@@ -23,7 +23,7 @@ export default class ThrottlerConfigService implements ThrottlerOptionsFactory {
    * [2]: https://docs.nestjs.com/security/rate-limiting#async-configuration
    *
    * @static
-   * @return {ThrottlerAsyncOptions} [`ThrottlerModule.forRootAsync`][2] options
+   * @return {ThrottlerAsyncOptions} [`ThrottlerModule#forRootAsync`][2] options
    */
   static get moduleOptions(): ThrottlerAsyncOptions {
     return { useClass: ThrottlerConfigService }

@@ -1,6 +1,6 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { INestApplication } from '@nestjs/common'
-import { HttpStatus } from '@nestjs/common'
+import { CacheModule, HttpStatus } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
@@ -17,6 +17,7 @@ import {
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import type { QueryParams } from '@sneusers/models'
+import { CacheConfigService } from '@sneusers/providers'
 import { RefreshToken } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
@@ -68,6 +69,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     const ntapp = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
+        CacheModule.registerAsync(CacheConfigService.moduleOptions),
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([RefreshToken, User])
       ],
@@ -275,7 +277,9 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('PATCH', () => {
       it('should send UserDTO if user was updated', async function (this) {
         // Arrange
-        const dto: PatchUserDTO = { email: this.faker.internet.exampleEmail() }
+        const dto: PatchUserDTO = {
+          email: this.faker.internet.exampleEmail()
+        }
 
         // Act
         const res = await req
@@ -338,7 +342,9 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         // Act
         const res = await req
           .patch([URL, uid].join('/'))
-          .send({ password: this.faker.internet.password(13) } as PatchUserDTO)
+          .send({
+            password: this.faker.internet.password(13)
+          } as PatchUserDTO)
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('x-csrf-token', csrf.csrf_token)
           .set('Authorization', `Bearer ${user_authed_2.access_token}`)

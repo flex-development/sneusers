@@ -40,6 +40,8 @@ const config = (config: Configuration): Configuration => {
 
   // Get application environment variables
   const {
+    CACHE_MAX,
+    CACHE_TTL,
     DB_AUTO_LOAD_MODELS,
     DB_HOST,
     DB_NAME,
@@ -113,6 +115,8 @@ const config = (config: Configuration): Configuration => {
     },
     plugins: [
       new DefinePlugin({
+        'process.env.CACHE_MAX': JSON.stringify(CACHE_MAX),
+        'process.env.CACHE_TTL': JSON.stringify(CACHE_TTL),
         'process.env.DB_AUTO_LOAD_MODELS': JSON.stringify(DB_AUTO_LOAD_MODELS),
         'process.env.DB_HOST': JSON.stringify(DB_HOST),
         'process.env.DB_NAME': JSON.stringify(DB_NAME),

@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import {
+  CacheModule,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -22,6 +23,7 @@ import {
 } from '@sneusers/middleware'
 import {
   AppService,
+  CacheConfigService,
   SequelizeConfigService,
   ThrottlerConfigService
 } from '@sneusers/providers'
@@ -37,6 +39,7 @@ import CryptoModule from './crypto.module'
   controllers: [HealthController],
   imports: [
     AuthModule,
+    CacheModule.registerAsync(CacheConfigService.moduleOptions),
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
     HttpModule,

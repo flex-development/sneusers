@@ -1,5 +1,5 @@
 import { NullishString, ObjectPlain, OrNull } from '@flex-development/tutils'
-import { Injectable } from '@nestjs/common'
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
 import { SequelizeErrorName } from '@sneusers/enums'
@@ -11,6 +11,7 @@ import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
+import { Cache } from 'cache-manager'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -21,9 +22,17 @@ import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export default class UsersService {
+  /**
+   * @static
+   * @readonly
+   * @property {string} CACHE_KEY - Cache key
+   */
+  static readonly CACHE_KEY: string = 'USERS'
+
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,
-    protected readonly sequelize: Sequelize
+    @Inject(Sequelize) protected readonly sequelize: Sequelize,
+    @Inject(CACHE_MANAGER) protected readonly cache: Cache
   ) {}
 
   /**
@@ -58,6 +67,22 @@ export default class UsersService {
   }
 
   /**
+   * Removes all cached items under {@link UsersService.CACHE_KEY}.
+   *
+   * @async
+   * @return {Promise<boolean>} Boolean indicating if cache was cleared
+   */
+  async clearCache(): Promise<boolean> {
+    if (!this.cache.store.keys) return false
+
+    for (const key of await this.cache.store.keys()) {
+      if (key.startsWith(UsersService.CACHE_KEY)) await this.cache.del(key)
+    }
+
+    return true
+  }
+
+  /**
    * Creates a new user.
    *
    * If `dto.email` conflicts with an existing email, an error will be thrown.
@@ -71,9 +96,9 @@ export default class UsersService {
    * @throws {Exception | UniqueEmailException}
    */
   async create(dto: CreateUserDTO): Promise<User> {
-    return await this.sequelize.transaction(async transaction => {
+    const user = await this.sequelize.transaction(async transaction => {
       try {
-        return await this.repo.create(dto, {
+        const user = await this.repo.create(dto, {
           fields: ['email', 'first_name', 'last_name', 'password'],
           isNewRecord: true,
           raw: true,
@@ -81,6 +106,8 @@ export default class UsersService {
           transaction,
           validate: true
         })
+
+        return user
       } catch (e) {
         const error = e as SequelizeError
         const data: ObjectPlain = { dto }
@@ -95,6 +122,9 @@ export default class UsersService {
         throw Exception.fromSequelizeError(error, data)
       }
     })
+
+    await this.clearCache()
+    return user
   }
 
   /**
@@ -155,7 +185,7 @@ export default class UsersService {
    * @throws {Exception | UniqueEmailException}
    */
   async patch(uid: UserUid, dto: PatchUserDTO = {}): Promise<User> {
-    return await this.sequelize.transaction(async transaction => {
+    const user = await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 
@@ -182,6 +212,9 @@ export default class UsersService {
         throw Exception.fromSequelizeError(error, data)
       }
     })
+
+    await this.clearCache()
+    return user
   }
 
   /**
@@ -192,7 +225,7 @@ export default class UsersService {
    * @return {Promise<User>} - Promise containing deleted user
    */
   async remove(uid: UserUid): Promise<User> {
-    return await this.sequelize.transaction(async transaction => {
+    const user = await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
       const user = (await this.repo.findByUid(uid, search)) as User
 
@@ -205,5 +238,8 @@ export default class UsersService {
 
       return user
     })
+
+    await this.clearCache()
+    return user
   }
 }
