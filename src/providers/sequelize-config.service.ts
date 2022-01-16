@@ -25,10 +25,9 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
    * Returns the application [`SequelizeModule`][1] configuration options.
    *
    * [1]: https://docs.nestjs.com/techniques/database#sequelize-integration
-   * [2]: https://docs.nestjs.com/techniques/database#async-configuration-1
    *
    * @static
-   * @return {SequelizeAsyncOptions} [`SequelizeModule#forRootAsync`][2] options
+   * @return {SequelizeAsyncOptions} Module config options
    */
   static get moduleOptions(): SequelizeAsyncOptions {
     return { useClass: SequelizeConfigService }

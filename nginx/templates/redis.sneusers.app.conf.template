@@ -1,0 +1,32 @@
+upstream redis {
+  server redis-commander:${REDIS_PORT};            
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name ${REDIS_SERVER_NAME};
+
+  # SSL
+  ssl_certificate ssl/sneusers.app.crt;
+  ssl_certificate_key ssl/sneusers.app.key;
+  ssl_password_file ssl/sneusers.app.pass;
+
+  # LOGGING
+  access_log logs/redis.access.log main;
+  error_log logs/redis.error.log warn;
+
+  # REVERSE PROXY
+  location / {
+    include proxy.conf;
+    proxy_pass http://redis$request_uri;
+  }
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name ${REDIS_SERVER_NAME};
+
+  return 301 https://$host$request_uri;
+}

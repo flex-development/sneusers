@@ -1,6 +1,5 @@
 import {
   Body,
-  CacheKey,
   CacheTTL,
   Controller,
   Delete,
@@ -67,7 +66,6 @@ export default class UsersController {
 
   @Get()
   @UseInterceptors(HttpCacheInterceptor)
-  @CacheKey(UsersService.CACHE_KEY)
   @CacheTTL(120)
   @HttpCode(OPENAPI.find.status)
   @ApiQuery(OPENAPI.find.query)
@@ -84,7 +82,6 @@ export default class UsersController {
 
   @Get(':uid')
   @UseInterceptors(HttpCacheInterceptor)
-  @CacheKey(UsersService.CACHE_KEY)
   @CacheTTL(120)
   @HttpCode(OPENAPI.findOne.status)
   @ApiQuery(OPENAPI.findOne.query)

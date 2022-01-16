@@ -68,33 +68,37 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 
 #### Application
 
-| name                  | required | development        | test               | production         | release            |
-| --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
-| `ADMINER_PORT`        | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
-| `ADMINER_SERVER_NAME` | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
-| `CACHE_MAX`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `CACHE_TTL`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_AUTO_LOAD_MODELS` | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_DOCS_TOKEN`       | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
-| `DB_HOST`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_PASSWORD`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_USERNAME`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DEBUG_COLORS`        | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DEBUG`               | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_EXP_ACCESS`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_EXP_REFRESH`     | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_SECRET_ACCESS`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_SECRET_REFRESH`  | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `SERVER_NAME`         | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
-| `THROTTLE_LIMIT`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `THROTTLE_TTL`        | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `WEBPACK_LOG_SECRETS` | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| name                   | required | development        | test               | production         | release            |
+| ---------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
+| `ADMINER_PORT`         | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `ADMINER_SERVER_NAME`  | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
+| `CACHE_MAX`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `CACHE_TTL`            | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_AUTO_LOAD_MODELS`  | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_DOCS_TOKEN`        | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
+| `DB_HOST`              | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_NAME`              | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_PASSWORD`          | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_PORT`              | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DB_USERNAME`          | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DEBUG_COLORS`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DEBUG`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `HOST`                 | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `HOSTNAME`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `JWT_EXP_ACCESS`       | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `JWT_EXP_REFRESH`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `JWT_SECRET_ACCESS`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `JWT_SECRET_REFRESH`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `NODE_ENV`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `PORT`                 | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| `REDIS_COMMANDER_PORT` | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `REDIS_HOST`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `REDIS_PORT`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `REDIS_SERVER_NAME`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `SERVER_NAME`          | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :x:                |
+| `THROTTLE_LIMIT`       | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `THROTTLE_TTL`         | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `WEBPACK_LOG_SECRETS`  | `false`  | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
 
 Default values are located in `.env`.
 
@@ -193,6 +197,20 @@ Follow the steps below to autosource environment variables:
    ```
 
 8. Save shell startup file and re-launch shell
+
+#### Adding New Environment Variables
+
+Follow the steps below to add new environment variables:
+
+1. Add default values to [`.env`](.env) (if necessary)
+2. Add new variables to [Doppler](#doppler)
+3. Update [Environment Variables](#environment-variables) section in this guide
+4. Update `DefinePlugin` configuration in [Webpack config](webpack.config.ts)
+5. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
+6. Update app [configuration](src/config/configuration.ts)
+7. Update [`app` `environment`](docker-compose.yml) settings
+8. Restart Docker
+   - if already running: `yarn stop:dev && yarn start:dev -d`
 
 ### Git Configuration
 

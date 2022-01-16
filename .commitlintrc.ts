@@ -46,6 +46,7 @@ const config: UserConfig = {
       'always',
       [
         'auth',
+        'cache',
         'config',
         'db',
         'deploy',

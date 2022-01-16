@@ -1,6 +1,6 @@
 /**
  * @file Utilities - isUnixTimestamp
- * @module sneusers/utils/isUnixTimestamp
+ * @module sneusers/utils/isUnixTimestamp/impl
  */
 
 /**

@@ -1,5 +1,6 @@
 /// <reference path='@flex-development/exceptions/index.d.ts' />
 /// <reference path='chai/index.d.ts' />
+/// <reference path='cache-manager-redis-store/index.d.ts' />
 /// <reference path='faker/index.d.ts' />
 /// <reference path='mocha/index.d.ts' />
 /// <reference path='node/index.d.ts' />

@@ -9,12 +9,16 @@ services:
   adminer:
     container_name: adminer
     image: adminer
+    depends_on:
+      - redis
     environment:
       ADMINER_DESIGN: dracula
       ADMINER_PLUGINS:
         dump-alter dump-date dump-json edit-foreign email-table enum-option
         enum-types file-upload foreign-system table-indexes-structure
         table-structure tables-filter
+    links:
+      - redis:${REDIS_HOST}
     ports:
       - ${ADMINER_PORT}:8080
     privileged: true
@@ -39,6 +43,7 @@ services:
     command: ['yarn', 'run:app', '-wd']
     depends_on:
       - adminer
+      - redis
     # NOTE: With the exception of build arguments (see list above) doubling as
     # environment variables, the variables below do NOT need to be exposed.
     # Exposing them enhances DX when inspecting the container in Docker Hub.
@@ -63,10 +68,14 @@ services:
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
-      WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
+      WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       YARN_VERSION: 3.2.0-rc.8
+    links:
+      - redis:${REDIS_HOST}
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
@@ -92,6 +101,22 @@ services:
       - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
       - ./yarn.lock:/opt/sneusers/yarn.lock
     working_dir: /opt/sneusers
+  redis:
+    container_name: ${REDIS_HOST}
+    image: redis:alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    restart: always
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT}
+    depends_on:
+      - redis
+    ports:
+      - ${REDIS_COMMANDER_PORT}:8081
+    restart: always
   server:
     container_name: server
     image: nginx:alpine-perl
@@ -100,13 +125,17 @@ services:
       ADMINER_PORT: 8080
       ADMINER_SERVER_NAME: ${ADMINER_SERVER_NAME}
       PORT: ${PORT}
+      REDIS_PORT: 8081
+      REDIS_SERVER_NAME: ${REDIS_SERVER_NAME}
       SERVER_NAME: ${SERVER_NAME}
     depends_on:
       - adminer
       - app
+      - redis-commander
     links:
       - adminer:adminer
       - app:app
+      - redis-commander:redis-commander
     ports:
       - 443:443
       - 80:80

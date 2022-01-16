@@ -189,6 +189,32 @@ class EnvironmentVariables {
   PROD_LOCAL: boolean
 
   /**
+   * IP address of the [Redis][1] server host.
+   *
+   * [1]: https://redis.io
+   *
+   * @see https://github.com/redis/node-redis/tree/v3.0.2
+   *
+   * @default 'redis'
+   */
+  @IsString()
+  @IsOptional()
+  REDIS_HOST: string
+
+  /**
+   * Port to run [Redis][1] server on.
+   *
+   * [1]: https://redis.io
+   *
+   * @see https://github.com/redis/node-redis/tree/v3.0.2
+   *
+   * @default 6379
+   */
+  @IsNumber()
+  @IsOptional()
+  REDIS_PORT: number
+
+  /**
    * Indicates if application is running in `test` Node environment.
    *
    * **Note**: This value is computed by the application.

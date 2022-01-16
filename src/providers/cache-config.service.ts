@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { EnvironmentVariables } from '@sneusers/models'
+import RedisCacheStore from 'cache-manager-redis-store'
+import type { ClientOpts as RedisClientOpts } from 'redis'
 
 /**
  * @file Providers - CacheConfigService
@@ -13,7 +15,9 @@ import type { EnvironmentVariables } from '@sneusers/models'
  */
 
 @Injectable()
-export default class CacheConfigService implements CacheOptionsFactory {
+export default class CacheConfigService
+  implements CacheOptionsFactory<RedisClientOpts>
+{
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
@@ -23,9 +27,9 @@ export default class CacheConfigService implements CacheOptionsFactory {
    * [2]: https://docs.nestjs.com/techniques/caching#async-configuration
    *
    * @static
-   * @return {CacheModuleAsyncOptions} [`CacheModule#registerAsync`][2] options
+   * @return {CacheModuleAsyncOptions<RedisClientOpts>} Module config options
    */
-  static get moduleOptions(): CacheModuleAsyncOptions {
+  static get moduleOptions(): CacheModuleAsyncOptions<RedisClientOpts> {
     return { isGlobal: true, useClass: CacheConfigService }
   }
 
@@ -34,11 +38,14 @@ export default class CacheConfigService implements CacheOptionsFactory {
    *
    * [1]: https://docs.nestjs.com/techniques/caching#customize-caching
    *
-   * @return {CacheModuleOptions} Caching configuration options
+   * @return {CacheModuleOptions<RedisClientOpts>} Caching configuration options
    */
-  createCacheOptions(): CacheModuleOptions {
+  createCacheOptions(): CacheModuleOptions<RedisClientOpts> {
     return {
+      host: this.config.get<string>('REDIS_HOST'),
       max: this.config.get<number>('CACHE_MAX'),
+      port: this.config.get<number>('REDIS_PORT'),
+      store: this.config.get<boolean>('TEST') ? 'memory' : RedisCacheStore,
       ttl: this.config.get<number>('CACHE_TTL')
     }
   }

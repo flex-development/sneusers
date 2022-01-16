@@ -14,6 +14,7 @@ import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { Cache } from 'cache-manager'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import OPENAPI from '../controllers/openapi/users.openapi'
 
 /**
  * @file Users Subdomain Providers - UsersService
@@ -27,7 +28,7 @@ export default class UsersService {
    * @readonly
    * @property {string} CACHE_KEY - Cache key
    */
-  static readonly CACHE_KEY: string = 'USERS'
+  static readonly CACHE_KEY: string = ['/', OPENAPI.controller].join('')
 
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,

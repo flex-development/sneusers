@@ -6,6 +6,7 @@ import useGlobal from './hooks/use-global.hook'
 import type { EnvironmentVariables } from './models'
 import AppModule from './modules/app.module'
 import AppService from './providers/app.service'
+import { runInCluster } from './utils'
 
 /**
  * @file Server Entry Point
@@ -39,4 +40,5 @@ async function bootstrap(options?: NestApplicationOptions): Promise<void> {
 }
 
 // ! Run application
-bootstrap(AppService.options)
+/** @see {@link runInCluster} */
+runInCluster(bootstrap, AppService.options)

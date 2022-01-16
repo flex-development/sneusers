@@ -24,11 +24,7 @@ class HttpCacheInterceptor extends CacheInterceptor {
   protected trackBy(context: ExecutionContext): OrUndefined<string> {
     const key = this.reflector.get(CACHE_KEY_METADATA, context.getHandler())
 
-    if (key) {
-      const req = context.switchToHttp().getRequest<Request>()
-      return `${key}_${req.url.slice(1, req.url.length)}`
-    }
-
+    if (key) return `${key}-${context.switchToHttp().getRequest<Request>().url}`
     return super.trackBy(context)
   }
 }
