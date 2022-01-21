@@ -1,16 +1,18 @@
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 
 /**
- * @file Auth Subdomain DTOs - AccessTokenPayload
- * @module sneusers/subdomains/auth/dtos/AccessTokenPayload
+ * @file Auth Subdomain DTOs - JwtPayloadAccess
+ * @module sneusers/subdomains/auth/dtos/JwtPayloadAccess
  */
 
 /**
  * JWT payload extracted from a decoded access token.
  */
-export default class AccessTokenPayload {
+class JwtPayloadAccess {
   /**
    * Id of user who access token was issued to.
    */
-  sub: IUserRaw['id']
+  sub: `${IUserRaw['id']}`
 }
+
+export default JwtPayloadAccess

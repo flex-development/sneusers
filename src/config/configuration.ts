@@ -1,8 +1,7 @@
-import type { NumberString } from '@flex-development/tutils'
-import isNIL from '@flex-development/tutils/guards/is-nil.guard'
+import { ObjectPlain } from '@flex-development/tutils'
 import { NodeEnv } from '@sneusers/enums'
 import { EnvironmentVariables } from '@sneusers/models'
-import { classToPlain } from 'class-transformer'
+import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
 
 /**
@@ -17,7 +16,7 @@ const ENV_FILE_PATH = [`${process.cwd()}/.env.local`, `${process.cwd()}/.env`]
 /**
  * Validates environment variables.
  *
- * @param {Record<string, any>} config - Object containing environment variables
+ * @param {ObjectPlain} config - Object containing environment variables
  * @return {EnvironmentVariables} **Validated** environment variables
  * @throws {ValidationError[]}
  */
@@ -30,19 +29,27 @@ const validate = ({
   DB_PASSWORD,
   DB_PORT = 3306,
   DB_USERNAME,
+  EMAIL_CLIENT,
+  EMAIL_HOST = 'smtp.gmail.com',
+  EMAIL_PORT = 465,
+  EMAIL_PRIVATE_KEY,
+  EMAIL_SEND_AS,
+  EMAIL_USER,
   HOST,
   HOSTNAME = 'localhost',
   JWT_EXP_ACCESS = 900,
   JWT_EXP_REFRESH = 86_400,
+  JWT_EXP_VERIFY = 86_400,
   JWT_SECRET_ACCESS,
   JWT_SECRET_REFRESH,
+  JWT_SECRET_VERIFY,
   NODE_ENV = NodeEnv.DEV,
   PORT = 8080,
   REDIS_HOST = 'redis',
   REDIS_PORT = 6379,
   THROTTLE_LIMIT = 10,
   THROTTLE_TTL = 60
-}: Record<string, any>): EnvironmentVariables => {
+}: ObjectPlain): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
   // Set Node environment
@@ -66,16 +73,24 @@ const validate = ({
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
+  env.EMAIL_CLIENT = EMAIL_CLIENT
+  env.EMAIL_HOST = EMAIL_HOST
+  env.EMAIL_PORT = Number.parseInt(EMAIL_PORT.toString(), 10)
+  env.EMAIL_PRIVATE_KEY = EMAIL_PRIVATE_KEY!.replace(/\\n/g, '\n')
+  env.EMAIL_SEND_AS = EMAIL_SEND_AS
+  env.EMAIL_USER = EMAIL_USER
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
-  env.JWT_EXP_ACCESS = Number.parseInt(JWT_EXP_ACCESS.toString())
-  env.JWT_EXP_REFRESH = Number.parseInt(JWT_EXP_REFRESH.toString())
+  env.JWT_EXP_ACCESS = Number.parseInt(JWT_EXP_ACCESS.toString(), 10)
+  env.JWT_EXP_REFRESH = Number.parseInt(JWT_EXP_REFRESH.toString(), 10)
+  env.JWT_EXP_VERIFY = Number.parseInt(JWT_EXP_VERIFY.toString(), 10)
   env.JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
   env.JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
+  env.JWT_SECRET_VERIFY = (env.PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
   env.REDIS_HOST = REDIS_HOST
-  env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString())
+  env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString(), 10)
   env.TEST = NODE_ENV === NodeEnv.TEST
-  env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString())
-  env.THROTTLE_TTL = Number.parseInt(THROTTLE_TTL.toString())
+  env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString(), 10)
+  env.THROTTLE_TTL = Number.parseInt(THROTTLE_TTL.toString(), 10)
 
   // Validate environment variables
   const errors: ValidationError[] = validateSync(env, {
@@ -89,20 +104,15 @@ const validate = ({
   if (errors.length > 0) throw errors
 
   // Return validated environment variables as plain object
-  return classToPlain(env) as EnvironmentVariables
+  return instanceToPlain(env) as EnvironmentVariables
 }
 
 /**
  * Returns an object containing the application's environment variables.
  *
- * @param {NodeEnv} [NODE_ENV] - Stub Node environment
- * @param {NumberString} [PORT] - Stub port to run application on
  * @return {EnvironmentVariables} **Validated** environment variables
  */
-const configuration = (
-  NODE_ENV?: NodeEnv,
-  PORT?: NumberString
-): EnvironmentVariables => {
+const configuration = (): EnvironmentVariables => {
   return validate({
     CACHE_MAX: process.env.CACHE_MAX,
     CACHE_TTL: process.env.CACHE_TTL,
@@ -112,14 +122,22 @@ const configuration = (
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,
     DB_USERNAME: process.env.DB_USERNAME,
+    EMAIL_CLIENT: process.env.EMAIL_CLIENT,
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    EMAIL_PORT: process.env.EMAIL_PORT,
+    EMAIL_PRIVATE_KEY: process.env.EMAIL_PRIVATE_KEY,
+    EMAIL_SEND_AS: process.env.EMAIL_SEND_AS,
+    EMAIL_USER: process.env.EMAIL_USER,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
     JWT_EXP_ACCESS: process.env.JWT_EXP_ACCESS,
     JWT_EXP_REFRESH: process.env.JWT_EXP_REFRESH,
+    JWT_EXP_VERIFY: process.env.JWT_EXP_VERIFY,
     JWT_SECRET_ACCESS: process.env.JWT_SECRET_ACCESS,
     JWT_SECRET_REFRESH: process.env.JWT_SECRET_REFRESH,
-    NODE_ENV: NODE_ENV || process.env.NODE_ENV,
-    PORT: isNIL(PORT) ? process.env.PORT : PORT.toString(),
+    JWT_SECRET_VERIFY: process.env.JWT_SECRET_VERIFY,
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PORT: process.env.REDIS_PORT,
     THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,

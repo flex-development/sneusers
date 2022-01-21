@@ -34,6 +34,7 @@ import type { User } from '@sneusers/subdomains/users/entities'
 import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
+import type { OrPaginated } from '@sneusers/types'
 import OPENAPI from './openapi/users.openapi'
 
 /**
@@ -41,12 +42,13 @@ import OPENAPI from './openapi/users.openapi'
  * @module sneusers/subdomains/users/controllers/UsersController
  */
 
-type ResBody = UserDTO | PaginatedDTO<UserDTO>
+type Serialized = OrPaginated<IUser>
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntitySerializer<User, IUser | PaginatedDTO<IUser>>())
-@UseInterceptors(new UserInterceptor<IUser | PaginatedDTO<IUser>, ResBody>())
+@UseInterceptors(new EntitySerializer<User, Serialized>())
+@UseInterceptors(new UserInterceptor<Serialized, OrPaginated<UserDTO>>())
+@UseInterceptors(HttpCacheInterceptor)
 export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
@@ -65,7 +67,6 @@ export default class UsersController {
   }
 
   @Get()
-  @UseInterceptors(HttpCacheInterceptor)
   @CacheTTL(120)
   @HttpCode(OPENAPI.find.status)
   @ApiQuery(OPENAPI.find.query)
@@ -75,13 +76,12 @@ export default class UsersController {
   @ApiBadGatewayResponse(OPENAPI.find.responses[502])
   async find(
     @Query(new ValidationPipe({ transform: true }))
-    query: QueryParams<IUser> = {}
+    query: QueryParams<User> = {}
   ): Promise<PaginatedDTO<UserDTO>> {
-    return await this.users.find(this.users.buildSearchOptions(query))
+    return await this.users.find(this.users.getSearchOptions(query))
   }
 
   @Get(':uid')
-  @UseInterceptors(HttpCacheInterceptor)
   @CacheTTL(120)
   @HttpCode(OPENAPI.findOne.status)
   @ApiQuery(OPENAPI.findOne.query)
@@ -93,11 +93,11 @@ export default class UsersController {
   async findOne(
     @Param('uid') uid: IUser['email'] | IUser['id'],
     @Query(new ValidationPipe({ transform: true }))
-    query: QueryParams<IUser> = {}
+    query: QueryParams<User> = {}
   ): Promise<UserDTO> {
     return (await this.users.findOne(
       uid,
-      this.users.buildSearchOptions({ ...query, rejectOnEmpty: true })
+      this.users.getSearchOptions({ ...query, rejectOnEmpty: true })
     )) as UserDTO
   }
 

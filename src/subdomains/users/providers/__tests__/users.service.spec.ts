@@ -4,9 +4,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
   ExceptionCode,
-  SequelizeErrorName as SequelizeError
+  SequelizeErrorName
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
 import type {
   CreateUserDTO,
@@ -14,6 +15,8 @@ import type {
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
+import type { SequelizeError } from '@sneusers/types'
+import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createUserDTO from '@tests/utils/create-user-dto.util'
 import createUsers from '@tests/utils/create-users.util'
@@ -30,16 +33,16 @@ import TestSubject from '../users.service'
  */
 
 describe('unit:subdomains/users/providers/UsersService', () => {
-  const USERS: CreateUserDTO[] = createUsers(13)
-
   let app: INestApplication
   let queryInterface: QueryInterface
   let subject: TestSubject
+  let users: User[]
 
   before(async () => {
     const ntapp = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        EmailModule,
         SequelizeModule.forFeature([User])
       ],
       providers: [TestSubject]
@@ -49,7 +52,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
     subject = ntapp.ref.get(TestSubject)
     queryInterface = ntapp.ref.get(Sequelize).getQueryInterface()
 
-    await seedTable<User>(subject.repository, USERS)
+    users = await seedTable<User>(subject.repository, createUsers(MAGIC_NUMBER))
   })
 
   after(async () => {
@@ -58,7 +61,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#create', () => {
-    it('should return typeof User if user was created', async () => {
+    it('should return User if user was created', async () => {
       // Arrange
       const dto: CreateUserDTO = pick(createUserDTO(), [
         'email',
@@ -71,29 +74,35 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Expect
       expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
       expect(result.email).to.equal(dto.email.toLowerCase())
+      expect(result.email_verified).to.be.false
       expect(result.first_name).to.equal(dto.first_name.toLowerCase())
+      expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name.toLowerCase())
+      expect(result.password).to.be.null
+      expect(result.updated_at).to.be.null
     })
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const dto: CreateUserDTO = USERS[2]
-      let exception: Exception
+      const dto: CreateUserDTO = pick(users[2], [
+        'email',
+        'first_name',
+        'last_name'
+      ])
+
+      let exception: UniqueEmailException
 
       // Act
       try {
         await subject.create(dto)
       } catch (error) {
-        exception = error as Exception
+        exception = error as typeof exception
       }
 
       // Expect
       expect(exception!).to.be.instanceOf(UniqueEmailException)
-      expect(exception!.code).to.equal(ExceptionCode.CONFLICT)
-      expect(exception!.data.error).to.equal(SequelizeError.UniqueConstraint)
-      expect(exception!.errors).to.be.an('array')
-      expect(exception!.message).to.match(/already exists/)
     })
   })
 
@@ -113,19 +122,53 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#findOne', () => {
-    it('should return typeof User given uid of existing user', async () => {
-      expect(await subject.findOne(USERS[0].email)).to.be.instanceOf(User)
+    it('should return User given uid of existing user', async () => {
+      // Arrange
+      const uid: User['email'] = users[0].email
+
+      // Act
+      const result = await subject.findOne(uid)
+
+      // Act
+      expect(result).to.be.instanceOf(User)
+      expect(result!.created_at).to.be.a('number')
+      expect(result!.email).to.equal(uid.toLowerCase())
+      expect(result!.email_verified).to.be.false
+      expect(result!.first_name).to.be.a('string')
+      expect(result!.id).to.be.a('number')
+      expect(result!.last_name).to.be.a('string')
+      expect(result!.password).to.be.null
+      expect(result!.updated_at).to.be.null
     })
 
     it('should return null if user is not found', async function (this) {
       expect(await subject.findOne(this.faker.name.firstName())).to.be.null
     })
+
+    it('should throw if user is not found', async () => {
+      // Arrange
+      const uid: User['id'] = users.length * -72
+      let exception: Exception<SequelizeError>
+
+      // Act
+      try {
+        await subject.findOne(uid, { rejectOnEmpty: true })
+      } catch (error) {
+        exception = error as typeof exception
+      }
+
+      // Expect
+      expect(exception!).to.be.instanceOf(Exception)
+      expect(exception!.data.error).to.equal(SequelizeErrorName.EmptyResult)
+      expect(exception!.data.id).to.equal(uid)
+      expect(exception!.message).to.match(new RegExp(uid.toString()))
+    })
   })
 
   describe('#patch', () => {
-    it('should return typeof User if user was updated', async function (this) {
+    it('should return User if user was updated', async function (this) {
       // Arrange
-      const uid = USERS[USERS.length - 1].email
+      const uid: User['email'] = users[users.length - 1].email
       const dto: PatchUserDTO = { last_name: this.faker.name.lastName() }
 
       // Act
@@ -133,22 +176,27 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Expect
       expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
       expect(result.email).to.equal(uid.toLowerCase())
+      expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
+      expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name!.toLowerCase())
+      expect(result.password).to.be.null
       expect(result.updated_at).to.not.be.null
     })
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const email = (await subject.repository.findByUid(USERS[0].email))!.email
-      let exception: Exception
+      let exception: UniqueEmailException
 
       // Act
       try {
-        await subject.patch(USERS[USERS.length - 2].email, { email })
+        await subject.patch(users[users.length - 2].email, {
+          email: users[0].email
+        })
       } catch (error) {
-        exception = error as Exception
+        exception = error as typeof exception
       }
 
       // Expect
@@ -159,13 +207,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should throw if user is not found', async function (this) {
       // Arrange
-      let exception: Exception
+      let exception: Exception<SequelizeError>
 
       // Act
       try {
         await subject.patch(this.faker.internet.exampleEmail())
       } catch (error) {
-        exception = error as Exception
+        exception = error as typeof exception
       }
 
       // Expect
@@ -174,23 +222,78 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#remove', () => {
-    it('should return typeof User if user was deleted', async () => {
-      expect(await subject.remove(USERS[3].email)).to.be.instanceOf(User)
+    it('should return User if user was deleted', async () => {
+      // Arrange
+      const uid: User['email'] = users[3].email
+
+      // Act
+      const result = await subject.remove(uid)
+
+      // Act
+      expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
+      expect(result.email).to.equal(uid.toLowerCase())
+      expect(result.email_verified).to.be.false
+      expect(result.first_name).to.be.a('string')
+      expect(result.id).to.be.a('number')
+      expect(result.last_name).to.be.a('string')
+      expect(result.password).to.be.null
+      expect(result.updated_at).to.be.null
     })
 
     it('should throw if user is not found', async function (this) {
       // Arrange
-      let exception: Exception
+      let exception: Exception<SequelizeError>
 
       // Act
       try {
         await subject.remove(this.faker.datatype.number() * -1)
       } catch (error) {
-        exception = error as Exception
+        exception = error as typeof exception
       }
 
       // Expect
       expect(exception!).to.be.instanceOf(Exception)
+    })
+  })
+
+  describe('#sendEmail', () => {
+    it('should return email sent and recipient', async () => {
+      // Arrange
+      const uid: User['email'] = users[5].email
+
+      // Act
+      const result = await subject.sendEmail(uid, {
+        template: 'layouts/email/verification',
+        text: 'hello!'
+      })
+
+      // Expect
+      expect(result.email).to.not.be.undefined
+      expect(result.email.envelope.to).to.have.deep.ordered.members([uid])
+      expect(result.user).to.be.instanceOf(User)
+      expect(result.user.email).to.equal(uid)
+    })
+  })
+
+  describe('#verifyEmail', () => {
+    it('should return verified User', async () => {
+      // Arrange
+      const uid: User['id'] = users[1].id
+
+      // Act
+      const result = await subject.verifyEmail(uid)
+
+      // Act
+      expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
+      expect(result.email).to.be.a('string')
+      expect(result.email_verified).to.be.true
+      expect(result.first_name).to.be.a('string')
+      expect(result.id).to.equal(uid)
+      expect(result.last_name).to.be.a('string')
+      expect(result.password).to.be.null
+      expect(result.updated_at).to.not.be.null
     })
   })
 })

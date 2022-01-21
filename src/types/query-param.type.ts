@@ -9,6 +9,7 @@ import type { LOCK } from '@sneusers/enums'
 import type { WhereAttributeHash, WhereOptions, WhereValue } from 'sequelize'
 import type { Model, ModelStatic } from 'sequelize-typescript'
 import type { Col, Fn } from 'sequelize/dist/lib/utils'
+import type ModelAttributes from './model-attributes.type'
 import type SearchOptions from './search-options.type'
 
 /**
@@ -30,10 +31,10 @@ namespace QueryParam {
   /**
    * Comma-delimited list of the attributes to select.
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type Attributes<T extends ObjectPlain = ObjectUnknown> =
-    | Path<T>
+    | Path<ModelAttributes.All<T>>
     | string
 
   /**
@@ -41,14 +42,16 @@ namespace QueryParam {
    *
    * [1]: https://www.w3schools.com/sql/sql_groupby.asp
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
-  export type Group<T extends ObjectPlain = ObjectUnknown> = Path<T> | string
+  export type Group<T extends ObjectPlain = ObjectUnknown> =
+    | Path<ModelAttributes.All<T>>
+    | string
 
   /**
    * Limit number of results.
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type Limit<T extends ObjectPlain = ObjectUnknown> =
     SearchOptions<T>['limit']
@@ -73,7 +76,7 @@ namespace QueryParam {
    * @example
    *  `{ 'user.username': 'john' }` => `{ user: { username: 'john' } }`
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type Nest<T extends ObjectPlain = ObjectUnknown> =
     SearchOptions<T>['nest']
@@ -81,7 +84,7 @@ namespace QueryParam {
   /**
    * Skip a certain number of results.
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type Offset<T extends ObjectPlain = ObjectUnknown> =
     SearchOptions<T>['offset']
@@ -101,28 +104,35 @@ namespace QueryParam {
    *
    * @see https://sequelize.org/v7/manual/model-querying-basics#ordering-and-grouping
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
-  export type Order<T extends ObjectPlain = ObjectUnknown> = Path<T> | string
+  export type Order<T extends ObjectPlain = ObjectUnknown> =
+    | (T extends Model ? T['_attributes'] : Path<T>)
+    | string
 
   /**
    * Filter selected entities.
    *
    * @see https://sequelize.org/v7/manual/model-querying-basics.html#applying-where-clauses
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type Where<T extends ObjectPlain = ObjectUnknown> = {
-    [field in keyof T]?:
-      | Exclude<WhereValue<T>, ReadonlyArray<any> | Buffer | Col | Fn>
-      | Exclude<WhereOptions<T>, Fn>
-      | Readonly<OneOrMany<NumberString | WhereAttributeHash<T>>>
+    [field in keyof ModelAttributes.All<T>]?:
+      | Exclude<
+          WhereValue<ModelAttributes.All<T>>,
+          ReadonlyArray<any> | Buffer | Col | Fn
+        >
+      | Exclude<WhereOptions<ModelAttributes.All<T>>, Fn>
+      | Readonly<
+          OneOrMany<NumberString | WhereAttributeHash<ModelAttributes.All<T>>>
+        >
   }
 
   /**
    * Throw an `Exception` if an entity isn't found instead of returning `null`.
    *
-   * @template T - Entity attributes
+   * @template T - Raw entity attributes
    */
   export type RejectOnEmpty<T extends ObjectPlain = ObjectUnknown> = Extract<
     SearchOptions<T>['rejectOnEmpty'],

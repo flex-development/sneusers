@@ -40,25 +40,20 @@ class UserInterceptor<
    * @return {Observable<R>} {@link Observable} containing {@link Payload}
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
-    const purify = map((value: T): R => {
-      let payload: R
-
-      payload = this.stripPassword(value)
-
-      return payload
-    })
-
-    return next.handle().pipe(purify)
+    return next.handle().pipe(map(this.strip))
   }
 
   /**
-   * Removes the password property {@link IUser} objects.
+   * Removes the following properties from {@link IUser} objects:
+   *
+   * - `email_verified`
+   * - `password`
    *
    * @param {T} payload - User object or paginated response
-   * @return {R} Payload without user password(s)
+   * @return {R} Payload without listed properties
    */
-  stripPassword(payload: T): R {
-    const STRIP = ['password']
+  strip(payload: T): R {
+    const STRIP = ['email_verified', 'password']
 
     if (payload instanceof PaginatedDTO) {
       payload.results = payload.results.map(user => omit(user, STRIP))

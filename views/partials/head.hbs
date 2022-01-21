@@ -1,0 +1,117 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" initial-scale="1" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <!--[if !mso]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <![endif]-->
+
+  <!--[if mso]>
+    <style>
+      * {
+        font-family: sans-serif !important;
+      }
+    </style>
+  <![endif]-->
+
+  {{#if font_url}}
+  <!--[if mso]><link href="{{font_url}}" rel="stylesheet" /><![endif]-->
+  {{/if}}
+
+  <style>
+    *,
+    *:after,
+    *:before {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    * {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    html,
+    body,
+    .document {
+      height: 100% !important;
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+    }
+
+    body {
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    div[style*='margin: 16px 0'] {
+      margin: 0 !important;
+    }
+
+    table,
+    td {
+      mso-table-rspace: 0pt;
+      mso-table-lspace: 0pt;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      margin: 0 auto;
+      table-layout: fixed;
+    }
+
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      max-width: 100%;
+    }
+
+    *[x-apple-data-detectors] {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+
+    .x-gmail-data-detectors,
+    .x-gmail-data-detectors *,
+    .aBn {
+      border-bottom: 0 !important;
+      cursor: default !important;
+    }
+
+    .btn {
+      -webkit-transition: all 200ms ease;
+      transition: all 200ms ease;
+    }
+
+    .btn:hover {
+      background-color: dodgerblue;
+    }
+
+    .hide {
+      display: none;
+      max-height: 0px;
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: 750px) {
+      .container {
+        margin: auto;
+        width: 100%;
+      }
+
+      .stack {
+        display: block;
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  </style>
+
+  {{#if title}}
+  <title>{{title}}</title>
+  {{/if}}
+</head>

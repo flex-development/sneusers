@@ -7,11 +7,11 @@ import { CsurfMiddleware } from '@sneusers/middleware'
 import type { EnvironmentVariables } from '@sneusers/models'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import { AuthController } from './controllers'
-import { RefreshToken } from './entities'
+import { Token } from './entities'
 import {
   AuthService,
+  AuthTokensService,
   JwtConfigService,
-  RefreshTokensService,
   TokensService
 } from './providers'
 import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
@@ -27,22 +27,24 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   imports: [
     JwtModule.registerAsync(JwtConfigService.moduleOptions),
     PassportModule,
-    SequelizeModule.forFeature([RefreshToken]),
+    SequelizeModule.forFeature([Token]),
     UsersModule
   ],
   providers: [
     AuthService,
+    AuthTokensService,
     JwtConfigService,
     JwtRefreshStrategy,
     JwtStrategy,
     LocalStrategy,
-    RefreshTokensService,
     TokensService
   ]
 })
 export default class AuthModule {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {
-    CsurfMiddleware.configure({ ignoreRoutes: ['/auth/register'] })
+    CsurfMiddleware.configure({
+      ignoreRoutes: ['/auth/register', '/auth/verify', '/auth/verify/resend']
+    })
   }
 
   /**

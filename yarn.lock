@@ -767,6 +767,8 @@ __metadata:
     "@types/mocha": 9.0.0
     "@types/mvdan-sh": 0.5.1
     "@types/node": 16.0.0
+    "@types/nodemailer": 6.4.4
+    "@types/nodemailer-express-handlebars": 4.0.2
     "@types/passport-jwt": 3.0.6
     "@types/passport-local": 1.0.34
     "@types/redis": 2.8.32
@@ -818,18 +820,22 @@ __metadata:
     eslint-plugin-tree-shaking: 1.9.2
     eslint-plugin-unicorn: 39.0.0
     express: 4.17.2
+    express-handlebars: 6.0.2
     faker: 5.5.3
     growl: 1.10.5
     helmet: 5.0.1
     http-errors: 2.0.0
     husky: 7.0.4
     is-ci: 3.0.1
+    jsonwebtoken: 8.5.1
     lint-staged: 11.2.6
     lodash.isplainobject: 4.0.6
     lodash.mergewith: 4.6.2
     lodash.omit: 4.5.0
     lodash.pick: 4.4.0
     mocha: 9.1.3
+    nodemailer: 6.7.2
+    nodemailer-express-handlebars: 4.0.0
     nyc: 15.1.0
     passport: 0.5.2
     passport-jwt: 4.0.0
@@ -1818,6 +1824,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express-handlebars@npm:^5":
+  version: 5.3.1
+  resolution: "@types/express-handlebars@npm:5.3.1"
+  checksum: b7ca00c985ea2a6374283f4ad743a6a70e54beb4a8aa9f12c009872bb8c936590db653b96559550e86c4590fc263f1a606a660f5c1e5f0b042c4acc65de9b8ab
+  languageName: node
+  linkType: hard
+
 "@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^4.17.18":
   version: 4.17.28
   resolution: "@types/express-serve-static-core@npm:4.17.28"
@@ -2047,6 +2060,25 @@ __metadata:
   version: 16.0.0
   resolution: "@types/node@npm:16.0.0"
   checksum: 57e5731ba8d64d9a6434c69f1153186b7fc1b0f58ae54f3eb8c32cd122e87e9aca35947f62e92e1902027994dac97b5bff7cce4d9c56cb319f07f694fe55d012
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer-express-handlebars@npm:4.0.2":
+  version: 4.0.2
+  resolution: "@types/nodemailer-express-handlebars@npm:4.0.2"
+  dependencies:
+    "@types/express-handlebars": ^5
+    "@types/nodemailer": "*"
+  checksum: 3ed151dfb376591eae6510b433aeb35e08b96ccc0b53cad1ac58804c50662b84adce39bfb59a456b6d8f04d736cbb562384907cf3112bf5578239f95340ea32d
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer@npm:*, @types/nodemailer@npm:6.4.4":
+  version: 6.4.4
+  resolution: "@types/nodemailer@npm:6.4.4"
+  dependencies:
+    "@types/node": "*"
+  checksum: 16ed1bad2cd8471fd3b026471e234da33ba3b65935dc44b31be3145eff7bdb067eb4d08ec4b41d23339b988075299abc1a0c0fe77b99f04ca235827bca95af81
   languageName: node
   linkType: hard
 
@@ -5816,6 +5848,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-handlebars@npm:6.0.2":
+  version: 6.0.2
+  resolution: "express-handlebars@npm:6.0.2"
+  dependencies:
+    glob: ^7.2.0
+    graceful-fs: ^4.2.8
+    handlebars: ^4.7.7
+  checksum: f5cac557e0c4feaf27f00bdf8acd84964e84e4a51bb7e54f3096f3ab063f7a992fa88b27562bf0f5dab56dc2662fd1672a4e09b9b80cea685c95205ccd3a45d9
+  languageName: node
+  linkType: hard
+
+"express-handlebars@npm:^4.0.0":
+  version: 4.0.6
+  resolution: "express-handlebars@npm:4.0.6"
+  dependencies:
+    glob: ^7.1.6
+    graceful-fs: ^4.2.4
+    handlebars: ^4.7.6
+  checksum: 92f57c60b9cb1271d0735fff6fad48ec501de1db2c3c91b69c4687ee2affb27fadbd08bbad516e30bc546ac9fde3063b72f4aba0981c7614e24d35bda8d2fd5c
+  languageName: node
+  linkType: hard
+
 "express@npm:4.17.1":
   version: 4.17.1
   resolution: "express@npm:4.17.1"
@@ -6705,10 +6759,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
-  version: 4.2.8
-  resolution: "graceful-fs@npm:4.2.8"
-  checksum: 5d224c8969ad0581d551dfabdb06882706b31af2561bd5e2034b4097e67cc27d05232849b8643866585fd0a41c7af152950f8776f4dd5579e9853733f31461c6
+"graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.8":
+  version: 4.2.9
+  resolution: "graceful-fs@npm:4.2.9"
+  checksum: 68ea4e07ff2c041ada184f9278b830375f8e0b75154e3f080af6b70f66172fabb4108d19b3863a96b53fc068a310b9b6493d86d1291acc5f3861eb4b79d26ad6
   languageName: node
   linkType: hard
 
@@ -6719,7 +6773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:^4.7.6":
+"handlebars@npm:^4.7.6, handlebars@npm:^4.7.7":
   version: 4.7.7
   resolution: "handlebars@npm:4.7.7"
   dependencies:
@@ -9220,6 +9274,22 @@ __metadata:
   version: 2.0.1
   resolution: "node-releases@npm:2.0.1"
   checksum: b20dd8d4bced11f75060f0387e05e76b9dc4a0451f7bb3516eade6f50499ea7768ba95d8a60d520c193402df1e58cb3fe301510cc1c1ad68949c3d57b5149866
+  languageName: node
+  linkType: hard
+
+"nodemailer-express-handlebars@npm:4.0.0":
+  version: 4.0.0
+  resolution: "nodemailer-express-handlebars@npm:4.0.0"
+  dependencies:
+    express-handlebars: ^4.0.0
+  checksum: fd05775804842dd2f08bf4894ef1a340cf577d13868fe097cd23b59a8a549983a304d54716ab562c314d499e435a9005f42bc990fbd4e411d9b346de5aabc947
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:6.7.2":
+  version: 6.7.2
+  resolution: "nodemailer@npm:6.7.2"
+  checksum: 3c37a40928448e2f5118a9f2f016c7a4f32228d0e6b7cc7d1834b8001374cc77280dc077a83239420f6daea4c898d9a1f336dfc2273bb7eddaf51a36bd126f72
   languageName: node
   linkType: hard
 

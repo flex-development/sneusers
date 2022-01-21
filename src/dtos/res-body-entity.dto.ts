@@ -1,6 +1,6 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
+import type { OrPaginated } from '@sneusers/types'
 import type EntityDTO from './entity.dto'
-import type PaginatedDTO from './paginated.dto'
 
 /**
  * @file Data Transfer Objects - ResBodyEntity
@@ -12,8 +12,8 @@ import type PaginatedDTO from './paginated.dto'
  *
  * @template T - Entity attributes
  */
-type ResBodyEntity<T extends ObjectPlain = ObjectUnknown> =
-  | EntityDTO<T>
-  | PaginatedDTO<EntityDTO<T>>
+type ResBodyEntity<T extends ObjectPlain = ObjectUnknown> = OrPaginated<
+  EntityDTO<T>
+>
 
 export default ResBodyEntity

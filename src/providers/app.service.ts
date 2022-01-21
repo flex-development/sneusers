@@ -6,6 +6,7 @@ import configuration, {
   validate
 } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
+import pkg from 'read-pkg'
 
 /**
  * @file Providers - AppService
@@ -53,5 +54,17 @@ export default class AppService {
         preflightContinue: true
       }
     }
+  }
+
+  /**
+   * Returns `package.json` data.
+   *
+   * @return {Package & { app: string; org: string }} Package data
+   */
+  static get package(): Package & { app: string; org: string } {
+    const data = pkg.sync({ normalize: false }) as Package
+    const name = data.name.split('/')
+
+    return { ...data, app: name[1] as string, org: name[0] as string }
   }
 }

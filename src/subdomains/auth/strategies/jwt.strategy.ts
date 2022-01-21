@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ENV } from '@sneusers/config/configuration'
-import { AccessTokenPayload } from '@sneusers/subdomains/auth/dtos'
+import { JwtPayloadAccess } from '@sneusers/subdomains/auth/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import type { StrategyOptions } from 'passport-jwt'
@@ -34,14 +34,14 @@ class JwtStrategy extends PassportStrategy(Strategy) {
    * @see https://docs.nestjs.com/security/authentication#implementing-passport-jwt
    *
    * @async
-   * @param {AccessTokenPayload} payload - Access token payload
+   * @param {JwtPayloadAccess} payload - Access token payload
    * @param {string} payload.email - User's email address
    * @param {string} payload.first_name - User's first name
    * @param {number} payload.id - User's id
    * @param {string} payload.last_name - User's last name
    * @return {Promise<User>} Promise containing authenticated user
    */
-  async validate(payload: AccessTokenPayload): Promise<User> {
+  async validate(payload: JwtPayloadAccess): Promise<User> {
     return (await this.users.findOne(payload.sub)) as User
   }
 }

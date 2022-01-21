@@ -58,13 +58,21 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
+      EMAIL_CLIENT: ${EMAIL_CLIENT}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_SEND_AS: ${EMAIL_SEND_AS}
+      EMAIL_PRIVATE_KEY: ${EMAIL_PRIVATE_KEY}
+      EMAIL_USER: ${EMAIL_USER}
       GH_PAT: ${GH_PAT}
       HOST: ${HOST}
       HOSTNAME: ${HOSTNAME}
       JWT_EXP_ACCESS: ${JWT_EXP_ACCESS}
       JWT_EXP_REFRESH: ${JWT_EXP_REFRESH}
+      JWT_EXP_VERIFY: ${JWT_EXP_VERIFY}
       JWT_SECRET_ACCESS: ${JWT_SECRET_ACCESS}
       JWT_SECRET_REFRESH: ${JWT_SECRET_REFRESH}
+      JWT_SECRET_VERIFY: ${JWT_SECRET_VERIFY}
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
@@ -90,6 +98,7 @@ services:
       - ./src:/opt/sneusers/src
       - ./tools/helpers:/opt/sneusers/tools/helpers
       - ./typings:/opt/sneusers/typings
+      - ./views:/opt/sneusers/views
       - ./.env:/opt/sneusers/.env
       - ./.env.doppler:/opt/sneusers/.env.doppler
       - ./.yarnrc.yml:/opt/sneusers/.yarnrc.yml
@@ -142,4 +151,3 @@ services:
     restart: always
     volumes:
       - ./nginx:/etc/nginx:rw
-      - ./public:/usr/share/nginx/html:ro

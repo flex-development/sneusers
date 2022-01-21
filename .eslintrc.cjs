@@ -37,9 +37,13 @@ module.exports = {
           'dto',
           'dtos',
           'enums',
+          'exphbs',
           'foofoobaby',
+          'gmail',
+          'hbs',
           'healthchecks',
           'impl',
+          'jti',
           'keyof',
           'localhost',
           'lowercased',
@@ -47,6 +51,7 @@ module.exports = {
           'matchers',
           'mysql',
           'nestjs',
+          'nodemailer',
           'nullish',
           'nginx',
           'openapi',
@@ -57,6 +62,7 @@ module.exports = {
           'redis',
           'req',
           'sequelize',
+          'smtp',
           'sneusers',
           'sql',
           'sqlite',
@@ -66,9 +72,11 @@ module.exports = {
           'subdomain',
           'subdomains',
           'timestamps',
+          'ttl',
           'tutils',
           'uid',
           'unix',
+          'verif',
           'webpack',
           'xsrf',
           'zerollup'
@@ -109,6 +117,12 @@ module.exports = {
       files: ['src/models/environment-variables.model.ts'],
       rules: {
         'unicorn/consistent-function-scoping': 0
+      }
+    },
+    {
+      files: ['src/subdomains/auth/entities/token.dao.ts'],
+      rules: {
+        eqeqeq: 0
       }
     },
     {

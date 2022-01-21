@@ -1,8 +1,8 @@
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 
 /**
- * @file Auth Subdomain Interfaces - IRefreshTokenRaw
- * @module sneusers/subdomains/auth/interfaces/IRefreshTokenRaw
+ * @file Auth Subdomain Interfaces - ITokenRaw
+ * @module sneusers/subdomains/auth/interfaces/ITokenRaw
  */
 
 /**
@@ -12,11 +12,11 @@ import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
  *
  * [1]: https://sequelize.org/v7/manual/getters-setters-virtuals#virtual-fields
  */
-interface IRefreshTokenRaw {
+interface ITokenRaw {
   expires: number
   id: number
   revoked: boolean
   user: IUserRaw['id']
 }
 
-export default IRefreshTokenRaw
+export default ITokenRaw

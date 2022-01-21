@@ -12,6 +12,7 @@ import {
   IsString,
   Min
 } from 'class-validator'
+import type { Model } from 'sequelize-typescript'
 
 /**
  * @file Models - QueryParams
@@ -23,7 +24,7 @@ import {
  *
  * @see {@link QueryParam}
  *
- * @template T - Entity attributes
+ * @template T - Raw entity attributes
  */
 class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @ApiPropertyOptional({
@@ -73,7 +74,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
    * @internal
    * @see {@link QueryParam.Lock}
    */
-  lock?: QueryParam.Lock
+  lock?: QueryParam.Lock<T extends Model ? T : never>
 
   @ApiPropertyOptional({
     default: true,
@@ -117,7 +118,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
    * @internal
    * @see {@link QueryParam.RejectOnEmpty}
    */
-  rejectOnEmpty?: QueryParam.RejectOnEmpty
+  rejectOnEmpty?: QueryParam.RejectOnEmpty<T>
 
   @ApiPropertyOptional({ description: 'Filter selected results', type: Object })
   @IsObject()

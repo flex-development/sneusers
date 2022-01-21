@@ -2,7 +2,7 @@ import { OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ENV } from '@sneusers/config/configuration'
-import { RefreshTokenPayload } from '@sneusers/subdomains/auth/dtos'
+import { JwtPayloadRefresh } from '@sneusers/subdomains/auth/dtos'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
@@ -45,14 +45,14 @@ class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
    *
    * @async
    * @param {Request} req - Incoming request
-   * @param {RefreshTokenPayload} payload - Refresh token payload
+   * @param {JwtPayloadRefresh} payload - Refresh token payload
    * @param {string} payload.email - User's email address
    * @param {string} payload.first_name - User's first name
    * @param {number} payload.id - User's id
    * @param {string} payload.last_name - User's last name
    * @return {Promise<User>} Promise containing authenticated user
    */
-  async validate(req: Request, payload: RefreshTokenPayload): Promise<User> {
+  async validate(req: Request, payload: JwtPayloadRefresh): Promise<User> {
     return await this.auth.authenticate(
       payload.sub,
       null,

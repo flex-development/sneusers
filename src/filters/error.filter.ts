@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { APP_FILTER } from '@nestjs/core'
-import { ExceptionDataDTO } from '@sneusers/dtos'
+import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { EnvironmentVariables } from '@sneusers/models'

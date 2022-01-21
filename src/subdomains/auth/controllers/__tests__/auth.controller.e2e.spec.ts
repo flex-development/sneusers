@@ -16,14 +16,15 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
+import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
-import type { LoginRequestDTO } from '@sneusers/subdomains/auth/dtos'
+import type { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
-import { RefreshToken } from '@sneusers/subdomains/auth/entities'
+import { Token } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
+  AuthTokensService,
   JwtConfigService,
-  RefreshTokensService,
   TokensService
 } from '@sneusers/subdomains/auth/providers'
 import {
@@ -36,6 +37,7 @@ import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
+import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUserDTO from '@tests/utils/create-user-dto.util'
@@ -56,7 +58,7 @@ import TestSubject from '../auth.controller'
  */
 
 describe('e2e:subdomains/auth/controllers/AuthController', () => {
-  const USERS = createUsers(13)
+  const USERS = createUsers(MAGIC_NUMBER)
 
   let app: INestApplication
   let auth: AuthService
@@ -71,13 +73,15 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
-        SequelizeModule.forFeature([RefreshToken]),
+        SequelizeModule.forFeature([Token]),
         UsersModule
       ],
       providers: [
         AuthService,
+        AuthTokensService,
         ErrorFilter.PROVIDER,
         ExceptionClassFilter.PROVIDER,
         HttpExceptionFilter.PROVIDER,
@@ -85,7 +89,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         JwtRefreshStrategy,
         JwtStrategy,
         LocalStrategy,
-        RefreshTokensService,
         TokensService
       ]
     })
@@ -142,7 +145,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
 
       it('should send error if csrf token is invalid', async () => {
         // Arrange
-        const dto: LoginRequestDTO = {
+        const dto: RequestLoginDTO = {
           email: user_authed.email,
           password: user_authed.password as NullishString
         }
@@ -164,7 +167,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
 
       it('should send error if user is not found', async function (this) {
         // Arrange
-        const dto: LoginRequestDTO = {
+        const dto: RequestLoginDTO = {
           email: this.faker.internet.email(),
           password: this.faker.internet.password()
         }
@@ -187,7 +190,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
 
       it('should send error if login credentials are invalid', async () => {
         // Arrange
-        const dto: LoginRequestDTO = {
+        const dto: RequestLoginDTO = {
           email: user_authed.email,
           password: 'foofoobaby'
         }
@@ -203,9 +206,11 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.data.credential).to.equal(dto.password)
+        expect(res.body.data.user.email).to.be.a('string')
+        expect(res.body.data.user.id).to.be.a('number')
+        expect(res.body.data.user.password).to.equal(dto.password)
         expect(res.body.errors).to.be.an('array')
-        expect(res.body.message).to.equal('Invalid credentials')
+        expect(res.body.message).to.equal('Invalid login credentials')
       })
     })
   })

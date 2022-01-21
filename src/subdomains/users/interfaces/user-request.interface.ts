@@ -3,7 +3,6 @@ import type { QueryParams } from '@sneusers/models'
 import type { UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
-import type IUser from './user.interface'
 
 /**
  * @file Users Subdomain Interfaces - UserRequest
@@ -18,11 +17,11 @@ import type IUser from './user.interface'
  * @template ReqBody - Request body
  * @template Params - Request parameters
  *
- * @extends {Request}
+ * @extends Request
  */
 interface UserRequest<
   ResBody extends OneOrMany<UserDTO> = OneOrMany<UserDTO>,
-  ReqQuery extends QueryParams<IUser> = QueryParams<IUser>,
+  ReqQuery extends QueryParams<User> = QueryParams<User>,
   ReqBody = any,
   Params extends ObjectPlain = ObjectPlain
 > extends Request<Params, ResBody, ReqBody, ReqQuery> {

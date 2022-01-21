@@ -1,5 +1,6 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import type { NonNullFindOptions } from 'sequelize'
+import type ModelAttributes from './model-attributes.type'
 
 /**
  * @file Type Definitions - SearchOptions
@@ -9,10 +10,10 @@ import type { NonNullFindOptions } from 'sequelize'
 /**
  * Alias for {@link NonNullFindOptions}.
  *
- * @template T - Entity attributes type
+ * @template T - Raw entity attributes
  */
 type SearchOptions<T extends ObjectPlain = ObjectUnknown> = Partial<
-  NonNullFindOptions<T>
+  NonNullFindOptions<ModelAttributes.All<T>>
 >
 
 export default SearchOptions

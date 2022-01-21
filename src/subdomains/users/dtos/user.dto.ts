@@ -21,7 +21,7 @@ export class UserDTOBase extends PartialType(PickType(User, KEYS)) {}
 /**
  * {@link User} entity payload type.
  *
- * @extends {UserDTOBase}
+ * @extends UserDTOBase
  */
 export default class UserDTO extends UserDTOBase {
   @ApiProperty({ description: 'Unique identifier', type: Number })

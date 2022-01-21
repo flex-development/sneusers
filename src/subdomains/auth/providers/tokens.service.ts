@@ -1,23 +1,21 @@
-import { NullishString } from '@flex-development/tutils/cjs'
+import { OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { JwtService } from '@nestjs/jwt'
+import { InjectModel } from '@nestjs/sequelize'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionCode } from '@sneusers/enums'
+import { PaginatedDTO } from '@sneusers/dtos'
+import { ExceptionCode, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import type { EnvironmentVariables } from '@sneusers/models'
 import {
-  AccessTokenPayload,
-  JwtPayload,
-  RefreshTokenPayload,
-  ResolvedRefreshToken
+  CreateTokenDTO,
+  JwtPayloadToken,
+  PatchTokenDTO
 } from '@sneusers/subdomains/auth/dtos'
-import { RefreshToken } from '@sneusers/subdomains/auth/entities'
-import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
-import { UsersService } from '@sneusers/subdomains/users/providers'
-import { UserUid } from '@sneusers/subdomains/users/types'
-import type { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
-import RefreshTokensService from './refresh-tokens.service'
+import { Token } from '@sneusers/subdomains/auth/entities'
+import { TokenType } from '@sneusers/subdomains/auth/enums'
+import { User } from '@sneusers/subdomains/users/entities'
+import type { SequelizeError } from '@sneusers/types'
+import { SearchOptions } from '@sneusers/types'
+import { Sequelize } from 'sequelize-typescript'
 
 /**
  * @file Auth Subdomain Providers - TokensService
@@ -27,168 +25,222 @@ import RefreshTokensService from './refresh-tokens.service'
 @Injectable()
 export default class TokensService {
   constructor(
-    protected readonly config: ConfigService<EnvironmentVariables, true>,
-    protected readonly jwt: JwtService,
-    protected readonly refresh_tokens: RefreshTokensService,
-    protected readonly users: UsersService
+    @InjectModel(Token) protected readonly repo: typeof Token,
+    protected readonly sequelize: Sequelize
   ) {}
 
   /**
-   * Generates an access token.
+   * Creates a new token instance.
+   *
+   * If `dto.user` is not an existing {@link User} id, an error will be thrown.
+   *
+   * @see {@link CreateTokenDTO}
    *
    * @async
-   * @param {Pick<IUserRaw, 'id'>} user - User to create access token for
-   * @return {Promise<string>} Promise containing access token
-   */
-  async createAccessToken(user: Pick<IUserRaw, 'id'>): Promise<string> {
-    const host = this.config.get<string>('HOST')
-    const payload = {}
-
-    return await this.jwt.signAsync(payload, {
-      audience: host,
-      issuer: host,
-      subject: user.id.toString()
-    })
-  }
-
-  /**
-   * Generates a raw refresh token.
-   *
-   * @async
-   * @param {Pick<IUserRaw, 'id'>} user - User to create token for
-   * @return {Promise<string>} Promise containing refresh token
-   */
-  async createRefreshToken(user: Pick<IUserRaw, 'id'>): Promise<string> {
-    const host = this.config.get<string>('HOST')
-    const ttl = this.config.get<number>('JWT_EXP_REFRESH')
-
-    const payload = {}
-    const token = await this.refresh_tokens.create({ ttl, user: user.id })
-
-    return await this.jwt.signAsync(payload, {
-      audience: host,
-      expiresIn: ttl,
-      issuer: host,
-      jwtid: token.id.toString(),
-      secret: this.config.get<string>('JWT_SECRET_REFRESH'),
-      subject: token.user.toString()
-    })
-  }
-
-  /**
-   * Retrieves a refresh token instance and token owner.
-   *
-   * @async
-   * @param {string} refresh_token - Refresh token to resolve
-   * @return {Promise<ResolvedRefreshToken>} Promise containing token and owner
-   */
-  async resolveRefreshToken(
-    refresh_token: string
-  ): Promise<ResolvedRefreshToken> {
-    const payload = await this.verify('refresh', refresh_token)
-    const token = await this.refresh_tokens.findByPayload(payload)
-
-    if (!token) {
-      throw new Exception(
-        ExceptionCode.UNPROCESSABLE_ENTITY,
-        'Refresh token not found',
-        payload
-      )
-    }
-
-    if (token.revoked) {
-      throw new Exception(
-        ExceptionCode.UNPROCESSABLE_ENTITY,
-        'Refresh token revoked',
-        payload
-      )
-    }
-
-    const user = await this.refresh_tokens.findOwnerByPayload(payload)
-
-    if (!user) {
-      throw new Exception(
-        ExceptionCode.UNPROCESSABLE_ENTITY,
-        'Refresh token malformed',
-        payload
-      )
-    }
-
-    return { token, user }
-  }
-
-  /**
-   * Marks a refresh token as revoked.
-   *
-   * @async
-   * @param {number} id - Id of refresh token to revoke
-   * @return {Promise<RefreshToken>} Promise containing revoked refresh token
-   */
-  async revokeRefreshToken(id: number): Promise<RefreshToken> {
-    return await this.refresh_tokens.revoke(id)
-  }
-
-  /**
-   * Resolves a refresh token and verifies the token owner.
-   *
-   * @async
-   * @param {NullishString} [refresh_token=null] - User refresh token
-   * @param {UserUid} uid - User email or id
-   * @return {Promise<ResolvedRefreshToken>} Promise containing token and owner
+   * @param {CreateTokenDTO} dto - Data to create new token
+   * @param {number} [dto.ttl=86400] - Time to live (in seconds)
+   * @param {boolean} [dto.revoked=false] - Revoke token when created
+   * @param {TokenType} dto.type - Type of token to create
+   * @param {number} dto.user - Token owner id
+   * @return {Promise<Token>} Promise containing new token instance
    * @throws {Exception}
    */
-  async validateRefreshToken(
-    refresh_token: NullishString,
-    uid: UserUid
-  ): Promise<ResolvedRefreshToken> {
-    if (refresh_token) {
-      const token = await this.resolveRefreshToken(refresh_token)
-      const user = await this.users.findOne(uid, { rejectOnEmpty: false })
+  async create(dto: CreateTokenDTO): Promise<Token> {
+    return await this.sequelize.transaction(async transaction => {
+      try {
+        return await this.repo.create(dto, {
+          fields: ['revoked', 'ttl', 'type', 'user'],
+          isNewRecord: true,
+          raw: true,
+          silent: true,
+          transaction,
+          validate: true
+        })
+      } catch (e) {
+        const error = e as SequelizeError
+        const data: ExceptionDataDTO<SequelizeError> = { dto }
 
-      if (token.user.id === user?.id) return token
-      throw new Exception(ExceptionCode.UNAUTHORIZED, 'Unauthorized')
-    }
+        if (error.name === SequelizeErrorName.ForeignKeyConstraint) {
+          data.code = ExceptionCode.UNPROCESSABLE_ENTITY
+          data.message = `User with id [${dto.user}] does not exist`
+        }
 
-    throw new Exception(
-      ExceptionCode.UNPROCESSABLE_ENTITY,
-      'Refresh token not found',
-      { refresh_token }
-    )
+        throw Exception.fromSequelizeError(error, data)
+      }
+    })
   }
 
   /**
-   * Decodes a JSON web token.
+   * Executes a {@link Token} search.
    *
-   * @template T - Token type
+   * @see {@link SearchOptions}
    *
-   * @param {'access' | 'refresh'} type - Token type
-   * @param {string} token - Token to verify
-   * @return {Promise<JwtPayload>} Promise containing token payload
+   * @async
+   * @param {SearchOptions<Token>} [options={}] - Search options
+   * @return {Promise<PaginatedDTO<Token>>} Paginated `Token` response
    */
-  async verify<T extends 'access' | 'refresh'>(
-    type: T,
-    token: string
-  ): Promise<T extends 'access' ? AccessTokenPayload : RefreshTokenPayload> {
-    const TYPE = `${type.charAt(0).toUpperCase()}${type.slice(1, type.length)}`
+  async find(options: SearchOptions<Token> = {}): Promise<PaginatedDTO<Token>> {
+    return await this.sequelize.transaction(async transaction => {
+      const { count, rows } = await this.repo.findAndCountAll<Token>({
+        ...options,
+        transaction
+      })
 
-    try {
-      return this.jwt.verifyAsync(token)
-    } catch (e) {
-      const error = e as JsonWebTokenError & TokenExpiredError
-      const data: ExceptionDataDTO<JsonWebTokenError> = {
-        errors: [error],
-        message: `${TYPE} token malformed`,
-        token
-      }
+      if (typeof options.limit === 'undefined') options.limit = rows.length
+      if (typeof options.offset === 'undefined') options.offset = 0
 
-      if (error.expiredAt) data.message = `${TYPE} token expired`
+      return new PaginatedDTO<Token>({
+        count,
+        limit: options.limit,
+        offset: options.offset,
+        results: rows,
+        total: rows.length
+      })
+    })
+  }
 
-      throw new Exception(
-        ExceptionCode.UNPROCESSABLE_ENTITY,
-        error.message,
-        data,
-        error.stack
-      )
-    }
+  /**
+   * Finds a {@link Token} via payload.
+   *
+   * If a token isn't found, `null` will be returned. To force the function to
+   * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
+   *
+   * @see {@link JwtPayloadToken}
+   * @see {@link SearchOptions}
+   *
+   * @async
+   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {number} payload.jti - Id of assigned `Token`
+   * @param {string} payload.sub - Id or email of `User` who token was issued to
+   * @param {TokenType} payload.type - Token type
+   * @param {SearchOptions<Token>} [options={}] - Search options
+   * @return {Promise<OrNull<Token>>} - Promise containing token
+   */
+  async findByPayload(
+    payload: JwtPayloadToken,
+    options: SearchOptions<Token> = {}
+  ): Promise<OrNull<Token>> {
+    return await this.repo.findByPayload(payload, options)
+  }
+
+  /**
+   * Retrieve a {@link Token} by `id`.
+   *
+   * If a token isn't found, `null` will be returned. To force the function to
+   * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
+   *
+   * @see {@link SearchOptions}
+   *
+   * @async
+   * @param {number} id - Id of token to find
+   * @param {SearchOptions<Token>} [options={}] - Search options
+   * @return {Promise<OrNull<Token>>} - Promise containing existing token
+   */
+  async findOne(
+    id: Token['id'],
+    options: SearchOptions<Token> = {}
+  ): Promise<OrNull<Token>> {
+    return await this.sequelize.transaction(async transaction => {
+      return await this.repo.findByPk(id, { ...options, transaction })
+    })
+  }
+
+  /**
+   * Finds a token owner via payload.
+   *
+   * If an owner is found, but doesn't match user identified by `payload`, an
+   * {@link Exception} will be thrown.
+   *
+   * @see {@link JwtPayloadToken}
+   * @see {@link SearchOptions}
+   * @see {@link TokenType}
+   * @see {@link User}
+   *
+   * @async
+   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {number} payload.jti - Id of assigned `Token`
+   * @param {string} payload.sub - Id or email of `User` who token was issued to
+   * @param {TokenType} payload.type - Token type
+   * @param {SearchOptions<User>} [options={}] - Search options
+   * @return {Promise<User>} - Promise containing token owner
+   */
+  async findOwnerByPayload(
+    payload: JwtPayloadToken,
+    options: SearchOptions<User> = {}
+  ): Promise<User> {
+    return await this.repo.findOwnerByPayload(payload, options)
+  }
+
+  /**
+   * Updates an existing token.
+   *
+   * @async
+   * @param {number} id - Id of token to update
+   * @param {PatchTokenDTO} [dto={}] - Data to update token
+   * @param {boolean} [dto.revoked] - Update revocation status
+   * @return {Promise<Token>} - Promise containing updated token
+   */
+  async patch(id: number, dto: PatchTokenDTO = {}): Promise<Token> {
+    const token = await this.sequelize.transaction(async transaction => {
+      const token = await this.repo.findByPk(id, {
+        rejectOnEmpty: true,
+        transaction
+      })
+
+      return await token!.update(dto, {
+        fields: ['revoked'],
+        silent: false,
+        transaction,
+        validate: true,
+        where: { id: token!.id }
+      })
+    })
+
+    return await token.reload()
+  }
+
+  /**
+   * **Permanantly** deletes an existing token.
+   *
+   * @async
+   * @param {number} id - Id of token to remove
+   * @return {Promise<Token>} - Promise containing deleted token
+   */
+  async remove(id: number): Promise<Token> {
+    return await this.sequelize.transaction(async transaction => {
+      const token = await this.repo.findByPk(id, {
+        rejectOnEmpty: true,
+        transaction
+      })
+
+      await this.repo.destroy({
+        cascade: true,
+        force: true,
+        transaction,
+        where: { id: token!.id }
+      })
+
+      return token!
+    })
+  }
+
+  /**
+   * Retrieves the service repository instance.
+   *
+   * @return {typeof Token} Entity dao class
+   */
+  get repository(): typeof Token {
+    return this.repo
+  }
+
+  /**
+   * Marks a token as revoked.
+   *
+   * @async
+   * @param {number} id - Id of token to revoke
+   * @return {Promise<Token>} Promise containing revoked token
+   */
+  async revoke(id: number): Promise<Token> {
+    return await this.patch(id, { revoked: true })
   }
 }

@@ -1,9 +1,9 @@
 import type { INestApplication } from '@nestjs/common'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { PACKAGE } from '@sneusers/config/constants.config'
 import { PaginatedDTO } from '@sneusers/dtos'
 import { QueryParams } from '@sneusers/models'
+import { AppService } from '@sneusers/providers'
 import type { Request, Response } from 'express'
 import sortObject from 'sort-object-keys'
 
@@ -30,16 +30,15 @@ const useSwagger = async (
   const builder = new DocumentBuilder()
 
   // Get package data
-  const { bugs, description, homepage, license, name, version } = PACKAGE
-  const { 0: org = '', 1: name_no_org = '' } = name.split('/')
+  const pkg = AppService.package
 
   // Set basic info
-  builder.setContact(org, bugs, undefined as unknown as string)
-  builder.setDescription(description)
-  builder.setExternalDoc('GitHub Repository', homepage)
-  builder.setLicense(license, undefined as unknown as string)
-  builder.setTitle(name_no_org)
-  builder.setVersion(version)
+  builder.setContact(pkg.org, pkg.bugs, undefined as unknown as string)
+  builder.setDescription(pkg.description)
+  builder.setExternalDoc('GitHub Repository', pkg.homepage)
+  builder.setLicense(pkg.license, undefined as unknown as string)
+  builder.setTitle(pkg.app)
+  builder.setVersion(pkg.version)
 
   // Add security schemes
   builder.addBearerAuth({

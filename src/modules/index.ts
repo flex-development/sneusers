@@ -6,3 +6,4 @@
 
 export { default as AppModule } from './app.module'
 export { default as CryptoModule } from './crypto.module'
+export { default as EmailModule } from './email.module'

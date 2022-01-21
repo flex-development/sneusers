@@ -1,0 +1,17 @@
+<html>
+  {{> head title='Sneusers Email Verification' preheader=preheader }}
+
+  <body>
+    {{#> email/container }}
+    <tr>
+      <td valign="top">
+        <h1>Thanks for Joining Sneusers! 🤠</h1>
+        <p style="font-size: 14px">
+          To confirm your email, click here:
+          <a href="{{url}}">{{url}}</a>
+        </p>
+      </td>
+    </tr>
+    {{/ email/container }}
+  </body>
+</html>

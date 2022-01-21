@@ -1,3 +1,4 @@
+import { NullishString } from '@flex-development/tutils'
 import { Global, Injectable } from '@nestjs/common'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
@@ -64,16 +65,19 @@ export default class HashService {
    * Checks a plaintext value against a hashed secret.
    *
    * @async
-   * @param {string} secret - Hashed secret
-   * @param {string} credential - Plaintext value
+   * @param {NullishString} secret - Hashed secret
+   * @param {NullishString} credential - Plaintext value
    * @return {Promise<boolean>} Promise containing `true` if verified
    * @throws {Exception}
    */
-  async verify(secret: string, credential: string): Promise<boolean> {
+  async verify(
+    secret: NullishString,
+    credential: NullishString
+  ): Promise<boolean> {
     const verified = await new Promise<boolean>((resolve, reject) => {
-      const [salt, key] = secret.split(':')
+      const [salt = '', key] = secret?.split(':') ?? []
 
-      crypto.scrypt(credential, salt as string, 64, (error, derivedKey) => {
+      crypto.scrypt(credential || '', salt, 64, (error, derivedKey) => {
         if (error !== null) {
           const code = ExceptionCode.UNAUTHORIZED
           const message = 'Secret authorization failure'
@@ -91,7 +95,7 @@ export default class HashService {
     })
 
     if (!verified) {
-      throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
+      throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credential', {
         credential
       })
     }

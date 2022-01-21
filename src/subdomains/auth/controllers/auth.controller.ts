@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -16,6 +17,7 @@ import {
   ApiConflictResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiTags,
@@ -26,7 +28,12 @@ import type { EntityDTO } from '@sneusers/dtos'
 import { EntitySerializer } from '@sneusers/interceptors'
 import { CsurfMiddleware } from '@sneusers/middleware'
 import { CsrfToken, CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
-import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
+import {
+  LoginDTO,
+  RequestVerifDTO,
+  RequestVerifResendDTO,
+  VerifEmailSentDTO
+} from '@sneusers/subdomains/auth/dtos'
 import {
   JwtRefreshGuard,
   LocalAuthGuard
@@ -45,10 +52,12 @@ import OPENAPI from './openapi/auth.openapi'
  * @module sneusers/subdomains/auth/controllers/AuthController
  */
 
+type Serialized = EntityDTO<IUser>
+
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
 @UseInterceptors(new EntitySerializer<User, EntityDTO<IUser>>())
-@UseInterceptors(new UserInterceptor<EntityDTO<IUser>, LoginDTO | UserDTO>())
+@UseInterceptors(new UserInterceptor<Serialized, UserDTO>())
 export default class AuthController {
   constructor(protected readonly auth: AuthService) {}
 
@@ -111,5 +120,32 @@ export default class AuthController {
   ): Promise<UserDTO> {
     res.cookie('csrf-token', csrf_token, CsurfMiddleware.cookie())
     return await this.auth.register(dto)
+  }
+
+  @UserAuth()
+  @Post(OPENAPI.resendVerification.path)
+  @HttpCode(OPENAPI.resendVerification.status)
+  @ApiOkResponse(OPENAPI.resendVerification.responses[200])
+  @ApiForbiddenResponse(OPENAPI.resendVerification.responses[403])
+  @ApiInternalServerErrorResponse(OPENAPI.resendVerification.responses[500])
+  @ApiBadGatewayResponse(OPENAPI.resendVerification.responses[502])
+  async resendVerification(
+    @AuthedUser() user: User,
+    @Query(new ValidationPipe({ transform: true })) query: RequestVerifResendDTO
+  ): Promise<VerifEmailSentDTO> {
+    return await this.auth.resendVerification(user.id, query)
+  }
+
+  @Get(OPENAPI.verify.path)
+  @HttpCode(OPENAPI.verify.status)
+  @ApiOkResponse(OPENAPI.verify.responses[200])
+  @ApiUnauthorizedResponse(OPENAPI.verify.responses[401])
+  @ApiForbiddenResponse(OPENAPI.verify.responses[403])
+  @ApiInternalServerErrorResponse(OPENAPI.verify.responses[500])
+  @ApiBadGatewayResponse(OPENAPI.verify.responses[502])
+  async verify(
+    @Query(new ValidationPipe({ transform: true })) query: RequestVerifDTO
+  ): Promise<UserDTO> {
+    return await this.auth.verify(query)
   }
 }

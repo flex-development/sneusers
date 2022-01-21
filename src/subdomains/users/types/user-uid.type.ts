@@ -1,4 +1,4 @@
-import type User from '@sneusers/subdomains/users/entities/user.dao'
+import type { User } from '@sneusers/subdomains/users/entities'
 
 /**
  * @file Type Definitions - UserUid

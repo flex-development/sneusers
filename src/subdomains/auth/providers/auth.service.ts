@@ -1,13 +1,23 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
+import { ExceptionCode } from '@sneusers/enums'
+import { Exception } from '@sneusers/exceptions'
+import {
+  LoginDTO,
+  RequestVerifDTO,
+  RequestVerifResendDTO,
+  VerifEmailSentDTO
+} from '@sneusers/subdomains/auth/dtos'
+import { TokenType, VerifType } from '@sneusers/subdomains/auth/enums'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import TokensService from './tokens.service'
+import pick from 'lodash.pick'
+import OPENAPI from '../controllers/openapi/auth.openapi'
+import AuthTokensService from './auth-tokens.service'
 
 /**
  * @file Auth Subdomain Providers - AuthService
@@ -17,17 +27,17 @@ import TokensService from './tokens.service'
 @Injectable()
 class AuthService {
   constructor(
-    protected readonly tokens: TokensService,
     protected readonly users: UsersService,
+    protected readonly tokens: AuthTokensService,
     protected readonly config: ConfigService
   ) {}
 
   /**
    * Retrieves the current {@link UsersService} instance.
    *
-   * @return {TokensService} `TokensService` instance
+   * @return {AuthTokensService} `TokensService` instance
    */
-  get _tokens(): TokensService {
+  get _tokens(): AuthTokensService {
     return this.tokens
   }
 
@@ -55,7 +65,13 @@ class AuthService {
     refresh_token: NullishString = null
   ): Promise<User> {
     if (refresh_token) {
-      return (await this.tokens.validateRefreshToken(refresh_token, uid)).user
+      const { user } = await this.tokens.validateToken(
+        TokenType.REFRESH,
+        refresh_token,
+        uid
+      )
+
+      return user
     }
 
     return await this.users.authenticate(uid, password)
@@ -110,16 +126,19 @@ class AuthService {
   }
 
   /**
-   * Generates a new access token for `user`.
+   * Generates a new access token for a user.
    *
    * @async
-   * @param {string} refresh_token - User's current refresh token
+   * @param {string} refresh_token - User refresh token
    * @return {Promise<LoginDTO>} Promise containing access token and user id
    */
   async refresh(refresh_token: string): Promise<LoginDTO> {
-    const token = await this.tokens.resolveRefreshToken(refresh_token)
+    const token = await this.tokens.resolveToken(
+      TokenType.REFRESH,
+      refresh_token
+    )
 
-    await this.tokens.revokeRefreshToken(token.token.id)
+    await this.tokens.revokeToken(token.token.id)
 
     return {
       access_token: await this.tokens.createAccessToken(token.user),
@@ -135,8 +154,133 @@ class AuthService {
    * @return {Promise<User>} - Promise containing new user
    */
   async register(dto: CreateUserDTO): Promise<User> {
-    await this.users.create(dto)
-    return await this.authenticate(dto.email, dto.password || null)
+    let user = await this.users.create(dto)
+
+    user = await this.authenticate(dto.email, dto.password || null)
+    await this.sendVerificationEmail(user)
+
+    return user
+  }
+
+  /**
+   * Re-sends user verificationn data.
+   *
+   * @async
+   * @param {UserUid} uid - Id or email of user to re-send email to
+   * @param {RequestVerifResendDTO} dto - Data to res-send verification
+   * @param {VerifType} dto.type - Verification type
+   * @return {Promise<VerifEmailSentDTO>} Promise containg message and user ids
+   * @throws {Exception}
+   */
+  async resendVerification(
+    uid: UserUid,
+    dto: RequestVerifResendDTO
+  ): Promise<VerifEmailSentDTO> {
+    if (dto.type === VerifType.EMAIL) {
+      return await this.resendVerificationEmail(uid)
+    }
+
+    throw new Exception(ExceptionCode.FORBIDDEN, 'Invalid verification type', {
+      dto
+    })
+  }
+
+  /**
+   * Re-sends a verification email to a user.
+   *
+   * @async
+   * @param {UserUid} uid - Id or email of user to re-send email to
+   * @return {Promise<VerifEmailSentDTO>} Promise containg message and user ids
+   * @throws {Exception}
+   */
+  async resendVerificationEmail(uid: UserUid): Promise<VerifEmailSentDTO> {
+    const user = await this.users.findOne(uid, {
+      rejectOnEmpty: true
+    })
+
+    return await this.sendVerificationEmail(user!)
+  }
+
+  /**
+   * Sends a verification email to a user.
+   *
+   * @async
+   * @param {Pick<IUserRaw, 'email' | 'id'>} user - User to send email to
+   * @return {Promise<VerifEmailSentDTO>} Promise containg message and user ids
+   * @throws {Exception}
+   */
+  async sendVerificationEmail(
+    user: Pick<IUserRaw, 'email' | 'id'>
+  ): Promise<VerifEmailSentDTO> {
+    user = (await this.users.findOne(user.id, { rejectOnEmpty: true })) as User
+
+    if ((user as User).email_verified) {
+      const code = ExceptionCode.FORBIDDEN
+      const message = 'Email already verified'
+
+      throw new Exception(code, message, {
+        user: pick(user, ['email', 'email_verified', 'id'])
+      })
+    }
+
+    const HOST = this.config.get<string>('HOST')
+    const PATH = `${HOST}/${OPENAPI.controller}/${OPENAPI.verify.path}`
+    const token = await this.tokens.createVerificationToken(user)
+
+    const { email } = await this.users.sendEmail(user.email, {
+      context: { url: `${PATH}?type=${VerifType.EMAIL}&token=${token}` },
+      subject: 'Sneusers Email Confirmation',
+      template: 'layouts/email/verification'
+    })
+
+    return { email: email.messageId, user: user.id }
+  }
+
+  /**
+   * Confirms a user.
+   *
+   * @async
+   * @param {RequestVerifDTO} dto - Data to verify user
+   * @param {NullishString} [dto.token] - User verification token
+   * @param {VerifType} dto.type - Verification type
+   * @return {Promise<User>} Promise containing user
+   * @throws {Exception}
+   */
+  async verify(dto: RequestVerifDTO): Promise<User> {
+    if (dto.type === VerifType.EMAIL) return await this.verifyEmail(dto.token)
+
+    throw new Exception(ExceptionCode.FORBIDDEN, 'Invalid verification type', {
+      dto
+    })
+  }
+
+  /**
+   * Confirms a user's email address.
+   *
+   * @async
+   * @param {NullishString} verification_token - User verification token
+   * @return {Promise<User>} Promise containing user
+   * @throws {Exception}
+   */
+  async verifyEmail(verification_token: NullishString): Promise<User> {
+    const token = await this.tokens.resolveToken(
+      TokenType.VERIFICATION,
+      verification_token
+    )
+
+    if (token.user.email_verified) {
+      const code = ExceptionCode.FORBIDDEN
+      const message = 'Email already verified'
+
+      throw new Exception(code, message, {
+        user: pick(token.user, ['email', 'email_verified', 'id'])
+      })
+    }
+
+    await this.users.verifyEmail(token.user.id)
+    await this.tokens.revokeToken(token.token.id)
+
+    return token.user
   }
 }
 

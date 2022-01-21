@@ -1,16 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import { Type } from 'class-transformer'
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator'
 
 /**
- * @file Auth Subdomain DTOs - LoginRequestDTO
- * @module sneusers/subdomains/auth/dtos/LoginRequestDTO
+ * @file Auth Subdomain DTOs - RequestLoginDTO
+ * @module sneusers/subdomains/auth/dtos/RequestLoginDTO
  */
 
 /**
  * Data used to login an existing user.
  */
-export default class LoginRequestDTO {
+class RequestLoginDTO {
   @ApiProperty({
     description: 'Email address',
     maxLength: 254,
@@ -20,6 +21,7 @@ export default class LoginRequestDTO {
   @IsEmail()
   @MinLength(3)
   @MaxLength(254)
+  @Type(() => String)
   readonly email: IUserRaw['email']
 
   @ApiProperty({
@@ -29,5 +31,8 @@ export default class LoginRequestDTO {
     type: String
   })
   @IsString()
+  @Type(() => String)
   readonly password: IUserRaw['password']
 }
+
+export default RequestLoginDTO

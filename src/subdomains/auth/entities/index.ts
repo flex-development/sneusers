@@ -3,4 +3,4 @@
  * @module sneusers/subdomains/auth/entities
  */
 
-export { default as RefreshToken } from './refresh-token.dao'
+export { default as Token } from './token.dao'

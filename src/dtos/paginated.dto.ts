@@ -9,7 +9,9 @@ import { ApiProperty } from '@nestjs/swagger'
 /**
  * Object representing a paginated response.
  *
- * @template T - Response data type
+ * [1]: https://en.wikipedia.org/wiki/Data_access_object
+ *
+ * @template T - Paginated data type
  */
 class PaginatedDTO<T extends ObjectPlain = ObjectUnknown> {
   @ApiProperty({ description: 'Total number of results', type: Number })
@@ -24,6 +26,7 @@ class PaginatedDTO<T extends ObjectPlain = ObjectUnknown> {
   @ApiProperty({ description: 'Number of results skipped', type: Number })
   offset: number
 
+  /** Array containing paginated data. */
   results: T[]
 
   constructor({ count, limit, offset, results, total }: ObjectPlain) {

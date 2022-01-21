@@ -1,5 +1,5 @@
-import type AccessTokenPayload from './access-token-payload.dto'
-import type RefreshTokenPayload from './refresh-token-payload.dto'
+import type JwtPayloadAccess from './jwt-payload-access.dto'
+import type JwtPayloadToken from './jwt-payload-token.dto'
 
 /**
  * @file Auth Subdomain DTOs - JwtPayload
@@ -7,8 +7,8 @@ import type RefreshTokenPayload from './refresh-token-payload.dto'
  */
 
 /**
- * JWT payload extracted from a decoded access or refresh token.
+ * JWT payload extracted from a decoded access, refresh, or verification token.
  */
-type JwtPayload = AccessTokenPayload | RefreshTokenPayload
+type JwtPayload = JwtPayloadAccess | JwtPayloadToken
 
 export default JwtPayload

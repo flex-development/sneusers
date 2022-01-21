@@ -1,7 +1,7 @@
 import { ObjectPlain } from '@flex-development/tutils'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UniqueConstraintError } from 'sequelize'
 
 /**
@@ -16,6 +16,7 @@ class UniqueEmailException extends Exception<UniqueConstraintError> {
    * @param {string} email - Conflicting user email address
    * @param {UniqueConstraintError} error - {@link UniqueConstraintError} thrown
    * @param {ObjectPlain} [data={}] - Custom error data
+   * @param {string} [data.message] - Custom error message. Overrides `message`
    */
   constructor(
     email: IUserRaw['email'],

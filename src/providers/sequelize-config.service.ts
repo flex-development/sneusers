@@ -57,9 +57,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       define: {
         createdAt: 'created_at',
         defaultScope: { order: [['id', OrderDirection.ASC]] },
-        omitNull: false,
-        paranoid: false,
-        timestamps: true,
+        deletedAt: 'deleted_at',
         underscored: true,
         updatedAt: 'updated_at'
       },

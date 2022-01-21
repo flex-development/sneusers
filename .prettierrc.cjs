@@ -21,6 +21,12 @@ module.exports = {
   useTabs: false,
   overrides: [
     {
+      files: ['*.hbs'],
+      options: {
+        parser: 'html'
+      }
+    },
+    {
       files: [
         '*.sh',
         '.husky/commit-msg',

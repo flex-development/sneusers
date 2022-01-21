@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import AccessTokenPayload from './access-token-payload.dto'
+import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 
 /**
  * @file Auth Subdomain DTOs - LoginDTO
@@ -9,10 +9,12 @@ import AccessTokenPayload from './access-token-payload.dto'
 /**
  * Successful login response body.
  */
-export default class LoginDTO {
+class LoginDTO {
   @ApiProperty({ description: 'User access token', type: String })
   readonly access_token: string
 
   @ApiProperty({ description: 'User id', type: Number })
-  readonly id: AccessTokenPayload['sub']
+  readonly id: IUserRaw['id']
 }
+
+export default LoginDTO

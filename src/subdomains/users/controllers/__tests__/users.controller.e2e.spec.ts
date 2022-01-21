@@ -17,12 +17,13 @@ import {
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import type { QueryParams } from '@sneusers/models'
+import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
-import { RefreshToken } from '@sneusers/subdomains/auth/entities'
+import { Token } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
+  AuthTokensService,
   JwtConfigService,
-  RefreshTokensService,
   TokensService
 } from '@sneusers/subdomains/auth/providers'
 import { JwtStrategy } from '@sneusers/subdomains/auth/strategies'
@@ -31,9 +32,9 @@ import type {
   PatchUserDTO
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
-import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
+import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUsers from '@tests/utils/create-users.util'
@@ -53,7 +54,7 @@ import TestSubject from '../users.controller'
 
 describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
-  const USERS = createUsers(13)
+  const USERS = createUsers(MAGIC_NUMBER)
 
   let app: INestApplication
   let auth: AuthService
@@ -70,17 +71,18 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
-        SequelizeModule.forFeature([RefreshToken, User])
+        SequelizeModule.forFeature([Token, User])
       ],
       providers: [
         AuthService,
+        AuthTokensService,
         ErrorFilter.PROVIDER,
         ExceptionClassFilter.PROVIDER,
         HttpExceptionFilter.PROVIDER,
         JwtConfigService,
         JwtStrategy,
-        RefreshTokensService,
         TokensService,
         UsersService
       ]
@@ -117,7 +119,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('GET', () => {
       it('should send PaginatedDTO<UserDTO>', async () => {
         // Arrange
-        const query: QueryParams<IUser> = {
+        const query: QueryParams<User> = {
           attributes: 'email',
           group: 'email,id',
           limit: Math.floor(table.length / 2),
@@ -343,7 +345,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         const res = await req
           .patch([URL, uid].join('/'))
           .send({
-            password: this.faker.internet.password(13)
+            password: this.faker.internet.password(MAGIC_NUMBER)
           } as PatchUserDTO)
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('x-csrf-token', csrf.csrf_token)

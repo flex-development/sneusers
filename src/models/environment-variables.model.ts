@@ -100,6 +100,53 @@ class EnvironmentVariables {
   DEV: boolean
 
   /**
+   * Google service account `client_id`.
+   */
+  @IsString()
+  EMAIL_CLIENT: string
+
+  /**
+   * Email host server.
+   *
+   * @default 'smtp.gmail.com'
+   */
+  @IsString()
+  @IsOptional()
+  EMAIL_HOST: string
+
+  /**
+   * Port to send emails from.
+   *
+   * @default 465
+   */
+  @IsNumber()
+  @IsOptional()
+  EMAIL_PORT: number
+
+  /**
+   * Google service account `private_key`.
+   */
+  @IsString()
+  EMAIL_PRIVATE_KEY: string
+
+  /**
+   * Email address to send emails from.
+   *
+   * This address must be listed under "Send mail as" in {@link EMAIL_USER}'s,
+   * Gmail account.
+   *
+   * @see https://support.google.com/mail/answer/22370?hl=en
+   */
+  @IsString()
+  EMAIL_SEND_AS: string
+
+  /**
+   * Email address used to authenticate with Google APIs.
+   */
+  @IsString()
+  EMAIL_USER: string
+
+  /**
    * Application URL.
    *
    * @default `${'http'|'https'}://${HOSTNAME}:${PORT}`
@@ -137,6 +184,15 @@ class EnvironmentVariables {
   JWT_EXP_REFRESH: number
 
   /**
+   * User verification token expiration time.
+   *
+   * @default 86400
+   */
+  @IsNumber()
+  @IsOptional()
+  JWT_EXP_VERIFY: number
+
+  /**
    * JWT access token signing secret.
    *
    * Defaults to `'JWT_SECRET'` in non-production environments.
@@ -153,6 +209,15 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   JWT_SECRET_REFRESH: string
+
+  /**
+   * JWT verification token signing secret.
+   *
+   * Defaults to `'JWT_SECRET'` in non-production environments.
+   */
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET_VERIFY: string
 
   /**
    * Current Node environment.

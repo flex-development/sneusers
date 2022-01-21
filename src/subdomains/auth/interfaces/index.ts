@@ -4,4 +4,5 @@
  */
 
 export type { default as LoginRequest } from './login-request.interface'
-export type { default as IRefreshTokenRaw } from './refresh-token-raw.interface'
+export type { default as ITokenRaw } from './token-raw.interface'
+export type { default as IToken } from './token.interface'

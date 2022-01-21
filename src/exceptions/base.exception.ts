@@ -108,6 +108,7 @@ export default class Exception<T = any> {
    * @param {ExceptionCode} [code=500] - HTTP error response status code
    * @param {NullishString} [message=Exception.DEFAULT_MESSAGE] - Error message
    * @param {ExceptionDataDTO<T> | ObjectPlain} [data={}] - Custom error data
+   * @param {ExceptionCode} [data.code] - Override error response status code
    * @param {ExceptionErrors<T>} [data.errors] - Single error or group of errors
    * @param {string} [data.message] - Custom error message. Overrides `message`
    * @param {string} [stack] - Error stack
@@ -118,7 +119,7 @@ export default class Exception<T = any> {
     data: ExceptionDataDTO<T> | ObjectPlain = {},
     stack?: string
   ) {
-    this.code = Exception.formatCode(code)
+    this.code = data.code || Exception.formatCode(code)
     this.errors = [data.errors || []].flat() as ExceptionErrors<T>
     this.id = Exception.idByCode(code)
     this.message = data.message || message || Exception.DEFAULT_MESSAGE
@@ -200,6 +201,9 @@ export default class Exception<T = any> {
    *
    * @param {SequelizeError} error - Sequelize error
    * @param {ExceptionDataDTO<T> | ObjectPlain} [data={}] - Custom error data
+   * @param {ExceptionCode} [data.code] - Override error response status code
+   * @param {ExceptionErrors<T>} [data.errors] - Single error or group of errors
+   * @param {string} [data.message] - Custom error message. Overrides `message`
    * @return {Exception<T>} New `Exception` instance
    */
   static fromSequelizeError<

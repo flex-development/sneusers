@@ -29,6 +29,7 @@ import {
 } from '@sneusers/providers'
 import { AuthModule, UsersModule } from '@sneusers/subdomains'
 import CryptoModule from './crypto.module'
+import EmailModule from './email.module'
 
 /**
  * @file Modules - AppModule
@@ -42,6 +43,7 @@ import CryptoModule from './crypto.module'
     CacheModule.registerAsync(CacheConfigService.moduleOptions),
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
+    EmailModule,
     HttpModule,
     SequelizeModule.forRootAsync(SequelizeConfigService.moduleOptions),
     TerminusModule,

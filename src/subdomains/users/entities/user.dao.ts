@@ -1,19 +1,15 @@
-import type { ObjectPlain } from '@flex-development/tutils'
 import { NullishString, OrNull } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { CURRENT_TIMESTAMP } from '@sneusers/config/constants.config'
+import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
-import {
-  DatabaseTable,
-  ExceptionCode,
-  SequelizeErrorName
-} from '@sneusers/enums'
+import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { RefreshToken } from '@sneusers/subdomains/auth/entities'
+import { Token } from '@sneusers/subdomains/auth/entities'
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import { SearchOptions, SequelizeError } from '@sneusers/types'
+import type { SequelizeError } from '@sneusers/types'
+import { SearchOptions } from '@sneusers/types'
 import {
   AllowNull,
   Column,
@@ -40,10 +36,11 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
  *
  * [1]: https://en.wikipedia.org/wiki/Data_access_object
  *
- * @extends {BaseEntity<IUserRaw, CreateUserDTO>}
+ * @extends {BaseEntity<IUserRaw, CreateUserDTO, IUser>}
  * @implements {IUser}
  */
 @Table<User>({
+  deletedAt: false,
   hooks: {
     /**
      * Hashes a user's password before the user is persisted to the database.
@@ -91,7 +88,9 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
         let created_at = instance.dataValues.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if (created_at.toString() === CURRENT_TIMESTAMP) created_at = Date.now()
+        if (created_at?.toString() === User.CURRENT_TIMESTAMP) {
+          created_at = Date.now()
+        }
 
         instance.dataValues.created_at = created_at || Date.now()
         instance.dataValues.updated_at = null
@@ -103,15 +102,17 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
     }
   },
   omitNull: false,
-  tableName: DatabaseTable.USERS
+  paranoid: false,
+  tableName: DatabaseTable.USERS,
+  timestamps: true
 })
-class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
+class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @ApiProperty({ description: 'When user was created', type: Number })
   @Comment('when user was created')
   @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @AllowNull(false)
   @Index('created_at')
-  @Default(CURRENT_TIMESTAMP)
+  @Default(User.CURRENT_TIMESTAMP)
   @Column('TIMESTAMP')
   declare created_at: IUser['created_at']
 
@@ -128,6 +129,14 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   @Index('email')
   @Column(DataType.STRING(254))
   declare email: IUser['email']
+
+  @ApiProperty({ description: 'Email address verified?', type: Boolean })
+  @Comment('user verified?')
+  @AllowNull(false)
+  @Index('email_verified')
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  declare email_verified: IUser['email_verified']
 
   @ApiProperty({ description: 'First name', minLength: 1, type: String })
   @Comment('first name of user')
@@ -156,8 +165,8 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   @Column(DataType.STRING)
   declare password: IUser['password']
 
-  @HasMany(() => RefreshToken)
-  declare refresh_tokens: RefreshToken[]
+  @HasMany(() => Token)
+  declare tokens: Token[]
 
   @ApiProperty({
     default: null,
@@ -191,6 +200,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   static readonly RAW_KEYS: (keyof IUserRaw)[] = [
     'created_at',
     'email',
+    'email_verified',
     'first_name',
     'id',
     'last_name',
@@ -212,23 +222,27 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
     uid: UserUid,
     password: User['password'] = null
   ): Promise<User> {
-    const options: SearchOptions<IUser> = { rejectOnEmpty: true }
-    const user = (await this.findByUid(uid, options)) as User
-    const email = uid.toString()
-    const id = Number.parseInt(email)
+    const user = (await this.findByUid(uid, { rejectOnEmpty: true })) as User
 
-    if (this.equal(user, { email, id: id })) {
-      if (user.password === null && password === null) return user
+    if (user.password === null && password === null) return user
 
-      if (user.password && password) {
-        await this.secrets.verify(user.password, password)
-        return user
+    try {
+      await this.secrets.verify(user.password, password)
+    } catch (error) {
+      const exception = error as Exception
+
+      Object.assign(exception, {
+        data: { user: { email: user.email, id: user.id, password } }
+      })
+
+      if (exception.message === 'Invalid credential') {
+        Object.assign(exception, { message: 'Invalid login credentials' })
       }
+
+      throw exception
     }
 
-    throw new Exception(ExceptionCode.UNAUTHORIZED, 'Invalid credentials', {
-      user: { email, id: user.id, password }
-    })
+    return user
   }
 
   /**
@@ -237,8 +251,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @static
    * @param {any} password - Password to check
    * @return {string} Password if strength check passes
+   * @throws {Error | TypeError}
    */
   static checkPasswordStrength(password: any): NonNullable<User['password']> {
+    if (typeof password !== 'string') {
+      throw new TypeError('Password must be a string')
+    }
+
     const strong = isStrongPassword(password, {
       minLength: 8,
       minNumbers: 0,
@@ -253,13 +272,17 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   /**
    * Check if two users are equivalent.
    *
-   * @param {Partial<IUserRaw>} [user1] - First user
-   * @param {Partial<IUserRaw>} [user2] - User to compare to `user1`
+   * @static
+   * @param {Partial<Pick<IUser, 'email' | 'id'>>} [user1] - First user
+   * @param {Partial<Pick<IUser, 'email' | 'id'>>} [user2] - User to compare
    * @return {boolean} `true` if id and email match, `false` otherwise
    */
-  static equal(user1?: Partial<IUserRaw>, user2?: Partial<IUserRaw>): boolean {
+  static equal(
+    user1?: Partial<Pick<IUser, 'email' | 'id'>>,
+    user2?: Partial<Pick<IUser, 'email' | 'id'>>
+  ): boolean {
     return (
-      user1!.email!.toLowerCase() === user2!.email!.toLowerCase() ||
+      user1!.email?.toLowerCase() === user2!.email?.toLowerCase() ||
       user1!.id === user2!.id
     )
   }
@@ -275,15 +298,15 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @static
    * @async
    * @param {string} email - Email address of user to find
-   * @param {SearchOptions<IUser>} [options={}] - Query options
-   * @return {Promise<OrNull<User>>} `User` object or `null`
+   * @param {SearchOptions<User>} [options={}] - Search options
+   * @return {Promise<OrNull<User>>} `User` instance or `null`
    * @throws {Exception}
    */
   static async findByEmail(
     email: IUser['email'],
-    options: SearchOptions<IUser> = {}
+    options: SearchOptions<User> = {}
   ): Promise<OrNull<User>> {
-    const find_options: SearchOptions<IUser> = {
+    const find_options: SearchOptions<User> = {
       ...options,
       plain: true,
       where: {
@@ -296,7 +319,10 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
       return await this.findOne<User>(find_options)
     } catch (e) {
       const error = e as SequelizeError
-      const data: ObjectPlain = { options: find_options }
+      const data: ExceptionDataDTO<SequelizeError> = {
+        email,
+        options: find_options
+      }
 
       if (error.name === SequelizeErrorName.EmptyResult) {
         data.message = `User with email [${email}] not found`
@@ -307,7 +333,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
   }
 
   /**
-   * Retrieve a user by {@link User#id} or {@link User#email} address.
+   * Retrieve a user by {@link User#id} or {@link User#email}.
    *
    * If a user isn't found, `null` will be returned. To force the function to
    * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
@@ -317,32 +343,16 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO> implements IUser {
    * @static
    * @async
    * @param {UserUid} uid - Id or email address of user to find
-   * @param {SearchOptions<IUser>} [options={}] - Query options
-   * @return {Promise<OrNull<User>>} `User` object or `null`
+   * @param {SearchOptions<User>} [options={}] - Search options
+   * @return {Promise<OrNull<User>>} `User` instance or `null`
    * @throws {Exception}
    */
   static async findByUid(
     uid: UserUid,
-    options: SearchOptions<IUser> = {}
+    options: SearchOptions<User> = {}
   ): Promise<OrNull<User>> {
-    if (isEmail(uid.toString())) return this.findByEmail(`${uid}`, options)
-
-    if (typeof uid === 'string') uid = Number.parseInt(uid)
-    if (!['bigint', 'number'].includes(typeof uid)) uid = Number.NaN
-    if (Number.isNaN(uid)) uid = -1
-
-    try {
-      return await this.findByPk<User>(uid, { ...options, plain: true })
-    } catch (e) {
-      const error = e as SequelizeError
-      const data: ObjectPlain = { options }
-
-      if (error.name === SequelizeErrorName.EmptyResult) {
-        data.message = `User with id [${uid}] not found`
-      }
-
-      throw Exception.fromSequelizeError(error, data)
-    }
+    if (!isEmail(uid.toString())) return await this.findByPk(uid, options)
+    return await this.findByEmail(uid as string, options)
   }
 }
 
