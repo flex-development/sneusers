@@ -1,5 +1,5 @@
-import type { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { EnvironmentVariables } from '@sneusers/models'
 import createApp from '@tests/utils/create-app.util'
 import type { Testcase } from '@tests/utils/types'
@@ -11,7 +11,7 @@ import TestSubject from '../app.module'
  */
 
 describe('integration:modules/AppModule', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
 
   before(async () => {
     const ntapp = await createApp({ imports: [TestSubject] })

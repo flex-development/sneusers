@@ -1,5 +1,5 @@
-import type { INestApplication } from '@nestjs/common'
 import { CacheModule } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -33,7 +33,7 @@ import TestSubject from '../users.service'
  */
 
 describe('unit:subdomains/users/providers/UsersService', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let queryInterface: QueryInterface
   let subject: TestSubject
   let users: User[]

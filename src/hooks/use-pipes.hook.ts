@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 
 /**
  * @file Hooks - usePipes
@@ -11,10 +11,12 @@ import type { INestApplication } from '@nestjs/common'
  * [1]: https://docs.nestjs.com/pipes
  *
  * @async
- * @param {INestApplication} app - NestJS application
- * @return {Promise<INestApplication>} Promise containing enhanced `app`
+ * @param {NestExpressApplication} app - NestJS application
+ * @return {Promise<NestExpressApplication>} Promise containing enhanced `app`
  */
-const usePipes = async (app: INestApplication): Promise<INestApplication> => {
+const usePipes = async (
+  app: NestExpressApplication
+): Promise<NestExpressApplication> => {
   return app
 }
 

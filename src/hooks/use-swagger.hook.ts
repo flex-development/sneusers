@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { PaginatedDTO } from '@sneusers/dtos'
@@ -18,14 +18,14 @@ import sortObject from 'sort-object-keys'
  * [1]: https://docs.nestjs.com/openapi/introduction
  *
  * @async
- * @param {INestApplication} app - NestJS application
+ * @param {NestExpressApplication} app - NestJS application
  * @param {string} [path=''] - Path to serve documentation from
- * @return {Promise<INestApplication>} Promise containing enhanced `app`
+ * @return {Promise<NestExpressApplication>} Promise containing enhanced `app`
  */
 const useSwagger = async (
-  app: INestApplication,
+  app: NestExpressApplication,
   path: string = ''
-): Promise<INestApplication> => {
+): Promise<NestExpressApplication> => {
   // Initialize documentation builder
   const builder = new DocumentBuilder()
 

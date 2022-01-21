@@ -1,8 +1,9 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { NullishString } from '@flex-development/tutils'
-import { CacheModule, HttpStatus, INestApplication } from '@nestjs/common'
+import { CacheModule, HttpStatus } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -60,7 +61,7 @@ import TestSubject from '../auth.controller'
 describe('e2e:subdomains/auth/controllers/AuthController', () => {
   const USERS = createUsers(MAGIC_NUMBER)
 
-  let app: INestApplication
+  let app: NestExpressApplication
   let auth: AuthService
   let csrf: MockCsrfToken
   let queryInterface: QueryInterface

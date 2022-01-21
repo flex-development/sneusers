@@ -1,4 +1,4 @@
-upstream api {
+upstream app {
   server app:${PORT};            
 }
 
@@ -27,7 +27,7 @@ server {
   # REVERSE PROXY
   location / {
     include proxy.conf;
-    proxy_pass http://api$request_uri;
+    proxy_pass http://app$request_uri;
   }
 }
 

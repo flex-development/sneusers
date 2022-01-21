@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -30,7 +30,7 @@ import TestSubject from '../tokens.service'
  */
 
 describe('unit:subdomains/auth/providers/TokensService', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let queryInterface: QueryInterface
   let subject: TestSubject
   let tokens: Token[]

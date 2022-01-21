@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import type { TestingModule } from '@nestjs/testing'
 
 /**
@@ -10,7 +10,7 @@ import type { TestingModule } from '@nestjs/testing'
  * Object containing a NestJS application and testing module reference.
  */
 type NestTestApp = {
-  app: INestApplication
+  app: NestExpressApplication
   ref: TestingModule
 }
 

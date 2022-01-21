@@ -4,4 +4,4 @@
  * @see https://docs.nestjs.com/guards
  */
 
-export {}
+export { default as ThrottlerProxyGuard } from './throttler-proxy.guard'

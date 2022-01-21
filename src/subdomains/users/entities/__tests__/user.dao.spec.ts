@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
@@ -26,7 +26,7 @@ import TestSubject from '../user.dao'
 
 describe('unit:subdomains/users/entities/User', () => {
   let Subject: typeof TestSubject
-  let app: INestApplication
+  let app: NestExpressApplication
   let queryInterface: QueryInterface
   let sequelize: Sequelize
   let users: TestSubject[]

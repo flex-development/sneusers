@@ -1,4 +1,4 @@
-upstream redis {
+upstream redis-commander {
   server redis-commander:${REDIS_PORT};            
 }
 
@@ -19,7 +19,7 @@ server {
   # REVERSE PROXY
   location / {
     include proxy.conf;
-    proxy_pass http://redis$request_uri;
+    proxy_pass http://redis-commander$request_uri;
   }
 }
 

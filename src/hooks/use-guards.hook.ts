@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 
 /**
  * @file Hooks - useGuards
@@ -11,10 +11,12 @@ import type { INestApplication } from '@nestjs/common'
  * [1]: https://docs.nestjs.com/guards
  *
  * @async
- * @param {INestApplication} app - NestJS application
- * @return {Promise<INestApplication>} Promise containing enhanced `app`
+ * @param {NestExpressApplication} app - NestJS application
+ * @return {Promise<NestExpressApplication>} Promise containing enhanced `app`
  */
-const useGuards = async (app: INestApplication): Promise<INestApplication> => {
+const useGuards = async (
+  app: NestExpressApplication
+): Promise<NestExpressApplication> => {
   return app
 }
 

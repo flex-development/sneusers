@@ -1,7 +1,7 @@
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
-import type { INestApplication } from '@nestjs/common'
 import { CacheModule, HttpStatus } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
 import {
@@ -56,7 +56,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
   const USERS = createUsers(MAGIC_NUMBER)
 
-  let app: INestApplication
+  let app: NestExpressApplication
   let auth: AuthService
   let csrf: MockCsrfToken
   let queryInterface: QueryInterface

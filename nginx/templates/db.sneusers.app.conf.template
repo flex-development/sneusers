@@ -1,4 +1,4 @@
-upstream db {
+upstream adminer {
   server adminer:${ADMINER_PORT};            
 }
 
@@ -19,7 +19,7 @@ server {
   # REVERSE PROXY
   location / {
     include proxy.conf;
-    proxy_pass http://db$request_uri;
+    proxy_pass http://adminer$request_uri;
   }
 }
 

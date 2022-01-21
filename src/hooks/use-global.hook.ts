@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import useExceptionFilters from './use-exception-filters.hook'
 import useGuards from './use-guards.hook'
 import useInterceptors from './use-interceptors.hook'
@@ -25,10 +25,16 @@ import useSwagger from './use-swagger.hook'
  * @see https://docs.nestjs.com/faq/global-prefix
  *
  * @async
- * @param {INestApplication} app - NestJS application
- * @return {Promise<INestApplication>} Promise containing enhanced `app`
+ * @param {NestExpressApplication} app - NestJS application
+ * @return {Promise<NestExpressApplication>} Promise containing enhanced `app`
  */
-const useGlobal = async (app: INestApplication): Promise<INestApplication> => {
+const useGlobal = async (
+  app: NestExpressApplication
+): Promise<NestExpressApplication> => {
+  // Trust proxy
+  /** @see https://expressjs.com/guide/behind-proxies.html */
+  app.enable('trust proxy')
+
   // Configure app to serve docs from root endpoint
   app = await useSwagger(app)
 

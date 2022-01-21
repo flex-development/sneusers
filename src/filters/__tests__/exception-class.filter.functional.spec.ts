@@ -1,5 +1,6 @@
-import type { ArgumentsHost, INestApplication } from '@nestjs/common'
+import type { ArgumentsHost } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import EJSON from '@tests/fixtures/exception-json.fixture'
 import EXCEPTION from '@tests/fixtures/exception.fixture'
 import createApp from '@tests/utils/create-app.util'
@@ -11,7 +12,7 @@ import TestSubject from '../exception-class.filter'
  */
 
 describe('functional:filters/ExceptionClassFilter', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let subject: TestSubject
 
   before(async () => {

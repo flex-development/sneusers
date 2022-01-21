@@ -16,6 +16,7 @@ import {
   ExceptionClassFilter,
   HttpExceptionFilter
 } from '@sneusers/filters'
+import { ThrottlerProxyGuard } from '@sneusers/guards'
 import {
   CookieParserMiddleware,
   HelmetMiddleware,
@@ -54,7 +55,8 @@ import EmailModule from './email.module'
     AppService,
     ErrorFilter.PROVIDER,
     ExceptionClassFilter.PROVIDER,
-    HttpExceptionFilter.PROVIDER
+    HttpExceptionFilter.PROVIDER,
+    ThrottlerProxyGuard.PROVIDER
   ]
 })
 export default class AppModule implements NestModule {

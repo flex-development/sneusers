@@ -1,5 +1,5 @@
-import type { INestApplication } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import { PACKAGE } from '@sneusers/config/constants.config'
 import createApp from '@tests/utils/create-app.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
@@ -12,7 +12,7 @@ import TestSubject from '../app.module'
  */
 
 describe('e2e:modules/AppModule', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let req: ChaiHttp.Agent
 
   before(async () => {
