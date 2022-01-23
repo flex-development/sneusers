@@ -1,8 +1,8 @@
 import type { SentMessageInfo } from 'nodemailer/lib/smtp-transport'
 
 /**
- * @file Data Transfer Objects - EmailSentDTO
- * @module sneusers/dtos/EmailSentDTO
+ * @file EmailModule DTOs - EmailSentDTO
+ * @module sneusers/modules/email/dtos/EmailSentDTO
  */
 
 /**

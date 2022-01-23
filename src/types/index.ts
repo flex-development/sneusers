@@ -7,7 +7,6 @@ export type {
   ExceptionData,
   ExceptionErrors
 } from '@flex-development/exceptions/types'
-export type { default as MailerOptions } from './mailer-options.type'
 export type { default as ModelAttributes } from './model-attributes.type'
 export type { default as OrPaginated } from './or-paginated.type'
 export type { default as QueryParam } from './query-param.type'

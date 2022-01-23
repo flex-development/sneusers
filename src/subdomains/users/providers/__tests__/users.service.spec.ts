@@ -7,8 +7,8 @@ import {
   SequelizeErrorName
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
+import { VerifType } from '@sneusers/subdomains/auth/enums'
 import type {
   CreateUserDTO,
   PatchUserDTO
@@ -42,7 +42,6 @@ describe('unit:subdomains/users/providers/UsersService', () => {
     const ntapp = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        EmailModule,
         SequelizeModule.forFeature([User])
       ],
       providers: [TestSubject]
@@ -258,13 +257,15 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#sendEmail', () => {
-    it('should return email sent and recipient', async () => {
+    it('should return email sent and recipient', async function (this) {
       // Arrange
       const uid: User['email'] = users[5].email
+      const url = this.faker.internet.url()
 
       // Act
       const result = await subject.sendEmail(uid, {
-        template: 'layouts/email/verification',
+        context: { url: `${url}?type=${VerifType.EMAIL}&token=token` },
+        template: 'email/verification',
         text: 'hello!'
       })
 

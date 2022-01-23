@@ -7,7 +7,7 @@ import TestSubject from '../app.module'
 
 /**
  * @file Integration Tests - AppModule
- * @module sneusers/modules/tests/integration/AppModule
+ * @module sneusers/modules/app/tests/integration/AppModule
  */
 
 describe('integration:modules/AppModule', () => {
@@ -36,6 +36,8 @@ describe('integration:modules/AppModule', () => {
       }
 
       const cases: Case[] = [
+        { expected: 'number', variable: 'CACHE_MAX' },
+        { expected: 'number', variable: 'CACHE_TTL' },
         { expected: 'boolean', variable: 'DB_AUTO_LOAD_MODELS' },
         { expected: 'string', variable: 'DB_HOST' },
         { expected: 'string', variable: 'DB_NAME' },
@@ -43,12 +45,30 @@ describe('integration:modules/AppModule', () => {
         { expected: 'number', variable: 'DB_PORT' },
         { expected: 'string', variable: 'DB_USERNAME' },
         { expected: 'boolean', variable: 'DEV' },
+        { expected: 'string', variable: 'EMAIL_CLIENT' },
+        { expected: 'string', variable: 'EMAIL_HOST' },
+        { expected: 'number', variable: 'EMAIL_PORT' },
+        { expected: 'string', variable: 'EMAIL_PRIVATE_KEY' },
+        { expected: 'string', variable: 'EMAIL_SEND_AS' },
+        { expected: 'string', variable: 'EMAIL_USER' },
+        { expected: 'string', variable: 'GA_TRACKING_ID' },
         { expected: 'string', variable: 'HOST' },
         { expected: 'string', variable: 'HOSTNAME' },
+        { expected: 'number', variable: 'JWT_EXP_ACCESS' },
+        { expected: 'number', variable: 'JWT_EXP_REFRESH' },
+        { expected: 'number', variable: 'JWT_EXP_VERIFY' },
+        { expected: 'string', variable: 'JWT_SECRET_ACCESS' },
+        { expected: 'string', variable: 'JWT_SECRET_REFRESH' },
+        { expected: 'string', variable: 'JWT_SECRET_VERIFY' },
         { expected: 'string', type: 'NodeEnv', variable: 'NODE_ENV' },
         { expected: 'number', variable: 'PORT' },
         { expected: 'boolean', variable: 'PROD' },
-        { expected: 'boolean', variable: 'TEST' }
+        { expected: 'boolean', variable: 'PROD_LOCAL' },
+        { expected: 'string', variable: 'REDIS_HOST' },
+        { expected: 'number', variable: 'REDIS_PORT' },
+        { expected: 'boolean', variable: 'TEST' },
+        { expected: 'number', variable: 'THROTTLE_LIMIT' },
+        { expected: 'number', variable: 'THROTTLE_TTL' }
       ]
 
       cases.forEach(({ expected, type = expected, variable }) => {

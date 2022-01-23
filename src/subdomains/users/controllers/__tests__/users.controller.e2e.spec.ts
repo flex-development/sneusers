@@ -17,7 +17,6 @@ import {
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
 import type { QueryParams } from '@sneusers/models'
-import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import {
@@ -71,7 +70,6 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([Token, User])
       ],

@@ -1,11 +1,13 @@
 import { NullishString, ObjectPlain, OrNull } from '@flex-development/tutils'
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { CreateEmailSentDTO, PaginatedDTO } from '@sneusers/dtos'
+import { PaginatedDTO } from '@sneusers/dtos'
 import { SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
-import { EmailService } from '@sneusers/providers'
+import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
+import { EMAIL_SERVICE } from '@sneusers/modules/email/email.module.constants'
+import { EmailService } from '@sneusers/modules/email/providers'
 import {
   CreateUserDTO,
   PatchUserDTO,
@@ -37,7 +39,7 @@ export default class UsersService {
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,
     @Inject(Sequelize) protected readonly sequelize: Sequelize,
-    @Inject(EmailService) protected readonly email: EmailService,
+    @Inject(EMAIL_SERVICE) protected readonly email: EmailService,
     @Inject(CACHE_MANAGER) protected readonly cache: Cache
   ) {}
 
@@ -277,12 +279,12 @@ export default class UsersService {
    *
    * @async
    * @param {UserUid} uid - Id or email of user to send email to
-   * @param {CreateEmailSentDTO} options - Message options
+   * @param {CreateEmailDTO} options - Message options
    * @return {Promise<UserEmailSentDTO>} Email sent and user
    */
   async sendEmail(
     uid: UserUid,
-    options: CreateEmailSentDTO
+    options: CreateEmailDTO
   ): Promise<UserEmailSentDTO> {
     const user = (await this.findOne(uid, { rejectOnEmpty: true })) as User
     const email = await this.email.send({ ...options, to: user.email })

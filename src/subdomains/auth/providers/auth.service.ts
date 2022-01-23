@@ -230,7 +230,7 @@ class AuthService {
     const { email } = await this.users.sendEmail(user.email, {
       context: { url: `${PATH}?type=${VerifType.EMAIL}&token=${token}` },
       subject: 'Sneusers Email Confirmation',
-      template: 'layouts/email/verification'
+      template: 'email/verification'
     })
 
     return { email: email.messageId, user: user.id }

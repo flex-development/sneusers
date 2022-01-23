@@ -17,7 +17,6 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
-import { EmailModule } from '@sneusers/modules'
 import { CacheConfigService } from '@sneusers/providers'
 import type { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
@@ -74,7 +73,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
         SequelizeModule.forFeature([Token]),

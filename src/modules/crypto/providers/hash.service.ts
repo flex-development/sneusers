@@ -1,16 +1,15 @@
 import { NullishString } from '@flex-development/tutils'
-import { Global, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import crypto from 'crypto'
 
 /**
- * @file Providers - HashService
- * @module sneusers/providers/HashService
+ * @file CryptoModule Providers - HashService
+ * @module sneusers/modules/crypto/providers/HashService
  */
 
-@Global()
 @Injectable()
 export default class HashService {
   /**

@@ -2,9 +2,10 @@ import { ModuleMetadata } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import useGlobal from '@sneusers/hooks/use-global.hook'
-import CryptoModule from '@sneusers/modules/crypto.module'
+import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import EmailModule from '@sneusers/modules/email/email.module'
 import { AppService } from '@sneusers/providers'
-import sequelize_config from '@tests/fixtures/sequelize-config-service.fixture'
+import SequelizeConfig from '@tests/fixtures/sequelize-config-service.fixture'
 import { Sequelize } from 'sequelize-typescript'
 import createTestingModule from './creating-testing-module.util'
 import { NestTestApp } from './types'
@@ -32,8 +33,9 @@ const createApp = async (
 ): Promise<NestTestApp> => {
   const imports = [
     ConfigModule.forRoot(AppService.configModuleOptions),
-    SequelizeModule.forRoot(sequelize_config.createSequelizeOptions()),
-    CryptoModule
+    CryptoModule,
+    EmailModule,
+    SequelizeModule.forRoot(SequelizeConfig.createSequelizeOptions())
   ]
 
   if (metadata.imports) metadata.imports = [...imports, ...metadata.imports]

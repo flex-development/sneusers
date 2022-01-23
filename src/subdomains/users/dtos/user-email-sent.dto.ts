@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { EmailSentDTO } from '@sneusers/dtos'
+import { EmailSentDTO } from '@sneusers/modules/email/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import UserDTO from './user.dto'
 

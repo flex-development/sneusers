@@ -8,7 +8,7 @@ import TestSubject from '../app.module'
 
 /**
  * @file E2E Tests - AppModule
- * @module sneusers/modules/tests/e2e/AppModule
+ * @module sneusers/modules/app/tests/e2e/AppModule
  */
 
 describe('e2e:modules/AppModule', () => {

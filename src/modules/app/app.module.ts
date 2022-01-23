@@ -22,19 +22,20 @@ import {
   HelmetMiddleware,
   HttpLoggerMiddleware
 } from '@sneusers/middleware'
+import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import EmailModule from '@sneusers/modules/email/email.module'
 import {
   AppService,
   CacheConfigService,
   SequelizeConfigService,
   ThrottlerConfigService
 } from '@sneusers/providers'
-import { AuthModule, UsersModule } from '@sneusers/subdomains'
-import CryptoModule from './crypto.module'
-import EmailModule from './email.module'
+import AuthModule from '@sneusers/subdomains/auth/auth.module'
+import UsersModule from '@sneusers/subdomains/users/users.module'
 
 /**
- * @file Modules - AppModule
- * @module sneusers/modules/AppModule
+ * @file AppModule
+ * @module sneusers/modules/app/AppModule
  */
 
 @Module({
@@ -52,7 +53,6 @@ import EmailModule from './email.module'
     UsersModule
   ],
   providers: [
-    AppService,
     ErrorFilter.PROVIDER,
     ExceptionClassFilter.PROVIDER,
     HttpExceptionFilter.PROVIDER,
