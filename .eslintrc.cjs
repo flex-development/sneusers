@@ -29,6 +29,7 @@ module.exports = {
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
           'authed',
+          'axios',
           'csrf',
           'csurf',
           'dao',

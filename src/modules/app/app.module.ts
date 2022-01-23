@@ -27,6 +27,7 @@ import EmailModule from '@sneusers/modules/email/email.module'
 import {
   AppService,
   CacheConfigService,
+  HttpConfigService,
   SequelizeConfigService,
   ThrottlerConfigService
 } from '@sneusers/providers'
@@ -46,7 +47,7 @@ import UsersModule from '@sneusers/subdomains/users/users.module'
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
     EmailModule,
-    HttpModule,
+    HttpModule.registerAsync(HttpConfigService.moduleOptions),
     SequelizeModule.forRootAsync(SequelizeConfigService.moduleOptions),
     TerminusModule,
     ThrottlerModule.forRootAsync(ThrottlerConfigService.moduleOptions),
