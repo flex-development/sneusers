@@ -99,7 +99,7 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `JWT_SECRET_REFRESH`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `JWT_SECRET_VERIFY`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `PORT`                 | `false`  | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| `PORT`                 | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `REDIS_COMMANDER_PORT` | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `REDIS_HOST`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `REDIS_PORT`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |

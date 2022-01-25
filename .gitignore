@@ -110,3 +110,6 @@ nginx/conf.d/
 
 # Directories
 nginx/run/
+
+# letsencrypt
+nginx/ssl/letsencrypt/

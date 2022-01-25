@@ -9,16 +9,12 @@ services:
   adminer:
     container_name: adminer
     image: adminer
-    depends_on:
-      - redis
     environment:
       ADMINER_DESIGN: dracula
       ADMINER_PLUGINS:
         dump-alter dump-date dump-json edit-foreign email-table enum-option
         enum-types file-upload foreign-system table-indexes-structure
         table-structure tables-filter
-    links:
-      - redis:${REDIS_HOST}
     ports:
       - ${ADMINER_PORT}:8080
     privileged: true
@@ -39,11 +35,11 @@ services:
         WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       context: .
       dockerfile: ./Dockerfile
-      target: builder
-    command: ['yarn', 'run:app', '-wd']
+      target: runner
     depends_on:
       - adminer
       - redis
+      - redis-commander
     # NOTE: With the exception of build arguments (see list above) doubling as
     # environment variables, the variables below do NOT need to be exposed.
     # Exposing them enhances DX when inspecting the container in Docker Hub.
@@ -73,7 +69,7 @@ services:
       JWT_SECRET_ACCESS: ${JWT_SECRET_ACCESS}
       JWT_SECRET_REFRESH: ${JWT_SECRET_REFRESH}
       JWT_SECRET_VERIFY: ${JWT_SECRET_VERIFY}
-      NEST_DEBUG: true
+      NEST_DEBUG: 1
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
@@ -88,13 +84,12 @@ services:
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
-    restart: unless-stopped
+    restart: always
     volumes:
-      - ./__tests__:/opt/sneusers/__tests__
       - ./.yarn:/opt/sneusers/.yarn
       - ./db/config:/opt/sneusers/db/config
       - ./db/data:/opt/sneusers/db/data
-      - ./db/seeds:/opt/sneusers/db/seeds
+      - ./db/seeders:/opt/sneusers/db/seeders
       - ./db/migrations:/opt/sneusers/db/migrations
       - ./src:/opt/sneusers/src
       - ./tools/helpers:/opt/sneusers/tools/helpers
@@ -103,7 +98,6 @@ services:
       - ./.env:/opt/sneusers/.env
       - ./.env.doppler:/opt/sneusers/.env.doppler
       - ./.yarnrc.yml:/opt/sneusers/.yarnrc.yml
-      - ./doppler.yaml:/opt/sneusers/doppler.yaml
       - ./nest-cli.json:/opt/sneusers/nest-cli.json
       - ./package.json:/opt/sneusers/package.json
       - ./tsconfig.app.json:/opt/sneusers/tsconfig.app.json
@@ -111,24 +105,8 @@ services:
       - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
       - ./yarn.lock:/opt/sneusers/yarn.lock
     working_dir: /opt/sneusers
-  redis:
-    container_name: ${REDIS_HOST}
-    image: redis:alpine
-    ports:
-      - ${REDIS_PORT}:6379
-    restart: always
-  redis-commander:
-    container_name: redis-commander
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local:redis:${REDIS_PORT}
-    depends_on:
-      - redis
-    ports:
-      - ${REDIS_COMMANDER_PORT}:8081
-    restart: always
-  server:
-    container_name: server
+  nginx:
+    container_name: nginx
     image: nginx:alpine-perl
     command: ['nginx-debug', '-g', 'daemon off;']
     environment:
@@ -150,5 +128,23 @@ services:
       - 443:443
       - 80:80
     restart: always
+    tty: true
     volumes:
-      - ./nginx:/etc/nginx:rw
+      - ./nginx:/etc/nginx
+
+  redis:
+    container_name: ${REDIS_HOST}
+    image: redis:alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    restart: always
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT}
+    depends_on:
+      - redis
+    ports:
+      - ${REDIS_COMMANDER_PORT}:8081
+    restart: always

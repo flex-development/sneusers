@@ -147,12 +147,12 @@ const config = (config: Configuration): Configuration => {
         'process.env.JWT_SECRET_ACCESS': JSON.stringify(JWT_SECRET_ACCESS),
         'process.env.JWT_SECRET_REFRESH': JSON.stringify(JWT_SECRET_REFRESH),
         'process.env.JWT_SECRET_VERIFY': JSON.stringify(JWT_SECRET_VERIFY),
+        'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+        'process.env.PORT': JSON.stringify(PORT),
         'process.env.REDIS_HOST': JSON.stringify(REDIS_HOST),
         'process.env.REDIS_PORT': JSON.stringify(REDIS_PORT),
         'process.env.THROTTLE_LIMIT': JSON.stringify(THROTTLE_LIMIT),
-        'process.env.THROTTLE_TTL': JSON.stringify(THROTTLE_TTL),
-        'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-        'process.env.PORT': JSON.stringify(PORT)
+        'process.env.THROTTLE_TTL': JSON.stringify(THROTTLE_TTL)
       })
     ],
     resolve: {

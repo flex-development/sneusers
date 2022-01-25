@@ -8,9 +8,8 @@ server {
   server_name ${SERVER_NAME};
 
   # SSL
-  ssl_certificate ssl/sneusers.app.crt;
-  ssl_certificate_key ssl/sneusers.app.key;
-  ssl_password_file ssl/sneusers.app.pass;
+  include ssl.conf;
+  include ssl-params.conf;
 
   # SECURITY
   include security.conf;

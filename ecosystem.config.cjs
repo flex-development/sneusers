@@ -10,8 +10,9 @@ module.exports = {
     {
       name: pkg.name.split('/')[1],
       script: './dist/main.js',
+      node_args: '-r ts-node/register',
       watch: true,
-      ignore_watch: ['node_modules']
+      ignore_watch: ['db/data', 'node_modules']
     }
   ]
 }

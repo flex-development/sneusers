@@ -51,7 +51,6 @@ describe('integration:modules/AppModule', () => {
         { expected: 'string', variable: 'EMAIL_PRIVATE_KEY' },
         { expected: 'string', variable: 'EMAIL_SEND_AS' },
         { expected: 'string', variable: 'EMAIL_USER' },
-        { expected: 'string', variable: 'GA_TRACKING_ID' },
         { expected: 'string', variable: 'HOST' },
         { expected: 'string', variable: 'HOSTNAME' },
         { expected: 'number', variable: 'JWT_EXP_ACCESS' },

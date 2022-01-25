@@ -32,7 +32,7 @@ export type SecretsOptions = {
    *
    * @default false
    */
-  log?: boolean
+  log?: boolean | 0 | 1
 }
 
 /**
@@ -51,7 +51,7 @@ export type SecretsOptions = {
  *
  * @param {SecretsOptions} options - Retrieval options
  * @param {boolean} [options.format=SecretsFormat.JSON] - Secrets formatting
- * @param {boolean} [options.log=false] - Log secrets after retrieval
+ * @param {boolean | 0 | 1} [options.log=false] - Log secrets after retrieval
  * @return {SecretsJson | string} Secrets
  */
 function secrets<R extends SecretsJson | string = SecretsJson>({
