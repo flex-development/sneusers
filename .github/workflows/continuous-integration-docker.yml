@@ -1,0 +1,201 @@
+# Continuous Integration (Docker)
+#
+# References:
+#
+# - https://github.com/lewagon/wait-on-check-action/tree/v1.1.1
+# - https://github.com/actions/checkout
+# - https://github.com/docker/login-action/tree/v1.10.0
+# - https://github.com/docker/metadata-action/tree/v3.6.2
+# - https://github.com/docker/build-push-action/tree/v2.7.0
+# - https://github.com/fifsky/ssh-action/tree/v0.0.6
+# - https://github.com/appleboy/scp-action/tree/v0.1.2
+
+---
+name: continuous-integration-docker
+on:
+  pull_request:
+    paths:
+      - .github/workflows/continuous-integration-docker.yml
+      - .yarn/plugins/**
+      - .yarn/releases/**
+      - db/config/**
+      - db/migrations/**
+      - db/seeders/**
+      - src/**
+      - tools/helpers/match-specifier.cjs
+      - tools/helpers/tsconfig-paths.cjs
+      - typings/**
+      - views/**
+      - .dockerignore
+      - .yarnrc.yml
+      - docker-cloud.yml
+      - docker-compose.yml
+      - Dockerfile
+      - ecosystem.config.cjs
+      - nest-cli.json
+      - package.json
+      - tsconfig.app.json
+      - tsconfig.json
+      - webpack.config.ts
+      - yarn.lock
+  push:
+    branches:
+      - next
+    paths:
+      - .github/workflows/continuous-integration-docker.yml
+      - .yarn/plugins/**
+      - .yarn/releases/**
+      - db/config/**
+      - db/migrations/**
+      - db/seeders/**
+      - src/**
+      - tools/helpers/match-specifier.cjs
+      - tools/helpers/tsconfig-paths.cjs
+      - typings/**
+      - views/**
+      - .dockerignore
+      - .yarnrc.yml
+      - docker-cloud.yml
+      - docker-compose.yml
+      - Dockerfile
+      - ecosystem.config.cjs
+      - nest-cli.json
+      - package.json
+      - tsconfig.app.json
+      - tsconfig.json
+      - webpack.config.ts
+      - yarn.lock
+  workflow_dispatch:
+jobs:
+  ci-docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [14.13.1]
+    steps:
+      - id: ci-wait
+        name: Wait for ci job to succeed
+        uses: lewagon/wait-on-check-action@v1.1.1
+        if: github.event_name != 'workflow_dispatch'
+        with:
+          check-name: ci (${{ matrix.node }})
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 20
+      - id: checkout
+        name: Checkout branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - id: ghcr-login
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1.10.0
+        with:
+          password: ${{ secrets.PAT_CPR_ADMIN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+      - id: ghcr-meta
+        name: Extract container image metadata
+        uses: docker/metadata-action@v3.6.2
+        with:
+          flavor: latest=false
+          images: ghcr.io/${{ github.repository }}
+          labels: |
+            maintainer=unicornware
+            org.opencontainers.image.title=sneusers
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          tags: |
+            edge
+            type=edge,branch=${{ github.ref_name }}
+            type=sha,prefix=,format=long
+            type=sha,prefix=edge-
+      - id: ghcr-build-push
+        name: Build and push container image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          build-args: |
+            GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
+            PORT=${{ secrets.PORT }}
+          context: .
+          file: ./Dockerfile
+          labels: ${{ steps.ghcr-meta.outputs.labels }}
+          push: true
+          tags: ${{ steps.ghcr-meta.outputs.tags }}
+          target: ecosystem
+      - id: create-secret-files
+        name: Create secret files
+        run: |
+          mkdir -p $SSL_SOURCE
+
+          echo "DOPPLER_PROJECT=$DOPPLER_PROJECT" >> .env.doppler
+          echo "DOPPLER_TOKEN=$DOPPLER_TOKEN" >> .env.doppler
+          echo $SSL_CERTIFICATE >> $SSL_SOURCE/fullchain.pem
+          echo $SSL_CERTIFICATE_KEY >> $SSL_SOURCE/privkey.pem
+          echo $SSL_TRUSTED_CERTIFICATE >> $SSL_SOURCE/chain.pem
+        env:
+          DOPPLER_PROJECT: ${{ secrets.DOPPLER_PROJECT }}
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_VM }}
+          SSL_CERTIFICATE: ${{ secrets.SSL_CERTIFICATE }}
+          SSL_CERTIFICATE_KEY: ${{ secrets.SSL_CERTIFICATE_KEY }}
+          SSL_SOURCE: nginx/ssl/letsencrypt/${{ secrets.HOSTNAME }}
+          SSL_TRUSTED_CERTIFICATE: ${{ secrets.SSL_TRUSTED_CERTIFICATE }}
+      - id: setup-project-directory-vm
+        name: Setup project directory on VM
+        uses: fifsky/ssh-action@v0.0.6
+        with:
+          args: -tt
+          command: rm -rf opt/sneusers && mkdir -p opt/sneusers
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          user: ${{ secrets.SSH_USER }}
+      - id: ssh-env-doppler
+        name: Upload .env.doppler to VM
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          debug: true
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          rm: false
+          source: .env.doppler
+          target: opt/sneusers
+          username: ${{ secrets.SSH_USER }}
+      - id: ssh-docker-cloud
+        name: Upload docker-cloud.yml to VM
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          debug: true
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          rm: false
+          source: docker-cloud.yml
+          target: opt/sneusers
+          username: ${{ secrets.SSH_USER }}
+      - id: ssh-docker-compose
+        name: Upload docker-compose.yml to VM
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          debug: true
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          rm: false
+          source: docker-compose.yml
+          target: opt/sneusers
+          username: ${{ secrets.SSH_USER }}
+      - id: ssh-nginx-config
+        name: Upload nginx configuration to VM
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          debug: true
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          rm: false
+          source: nginx/*
+          target: opt/sneusers
+          username: ${{ secrets.SSH_USER }}

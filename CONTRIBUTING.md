@@ -138,9 +138,29 @@ Values should be stored in `.env.doppler`.
 
 #### GitHub Actions
 
-| name             | required | development | test               | production | release            |
-| ---------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
-| `GITHUB_ACTIONS` | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
+| name                      | required | development | test               | production | release            |
+| ------------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
+| `DOPPLER_CONFIG`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_ENVIRONMENT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_PROJECT`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_TEST`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_VM`        | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GITHUB_ACTIONS`          | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
+| `HOSTNAME`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `NODE_ENV`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `NPM_TOKEN_ADMIN`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_CPR_ADMIN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_GPR_ADMIN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_REPO_ADMIN`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_HOST`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_PRIVATE_KEY`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_USER`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSL_CERTIFICATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSL_CERTIFICATE`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSL_TRUSTED_CERTIFICATE` | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+
+Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 
 #### Yarn 2
 
@@ -186,6 +206,7 @@ Follow the steps below to autosource environment variables:
    DOPPLER_PROJECT=sneusers
    DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    DOPPLER_TOKEN_DEV=
+   DOPPLER_TOKEN_STG=
    DOPPLER_TOKEN_TEST=
    DOPPLER_TOKEN_PROD=
    ```
@@ -196,6 +217,7 @@ Follow the steps below to autosource environment variables:
    DOPPLER_PROJECT=sneusers
    DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    DOPPLER_TOKEN_DEV=dp.st.development.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   DOPPLER_TOKEN_STG=dp.st.stg.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    DOPPLER_TOKEN_TEST=dp.st.test.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    DOPPLER_TOKEN_PROD=dp.st.production.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    ```
