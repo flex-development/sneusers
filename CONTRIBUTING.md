@@ -110,6 +110,7 @@ Default values are located in `.env`.
 | ---------------------- | -------- | ------------------ | ---- | ------------------ | ------- |
 | `ADMINER_PORT`         | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `ADMINER_SERVER_NAME`  | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
+| `DOCKER_IMAGE_TAG`     | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `REDIS_COMMANDER_PORT` | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `REDIS_SERVER_NAME`    | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `SERVER_NAME`          | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
@@ -129,6 +130,7 @@ Default values are located in `.env`.
 | `DOPPLER_PROJECT`    | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN`      | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN_DEV`  | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_STG`  | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN_TEST` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN_PROD` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 

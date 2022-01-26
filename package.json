@@ -61,7 +61,9 @@
     "prepack": "doppler run -c=prod -- yarn build:app",
     "push:image:latest": "docker image rm -f flex-development/sneusers && yarn build:image:prod && docker tag flex-development/sneusers ghcr.io/flex-development/sneusers && docker push ghcr.io/flex-development/sneusers",
     "release": "doppler run -c=prod -- ts-node ./tools/cli/release",
+    "start": "doppler run -c=stg -- docker compose -f docker-cloud.yml up",
     "start:dev": "doppler run -- docker compose up --build",
+    "stop": "doppler run -c=stg -- docker compose -f docker-cloud.yml down",
     "stop:dev": "doppler run -- docker compose down",
     "test": "bash ./tools/scripts/mocha.sh",
     "test:coverage": "yarn test; serve ./coverage/lcov-report"

@@ -14,13 +14,11 @@ ENV GH_PAT $GH_PAT
 ENV NODE_ENV $NODE_ENV
 ENV NPM_TOKEN $NPM_TOKEN
 
-RUN mkdir /opt/sneusers && chown node:node /opt/sneusers
 WORKDIR /opt/sneusers
-USER node
-COPY --chown=node:node .yarn ./.yarn
-COPY --chown=node:node .yarnrc.yml ./.yarnrc.yml
-COPY --chown=node:node package.json ./package.json
-COPY --chown=node:node yarn.lock ./yarn.lock
+COPY .yarn ./.yarn
+COPY .yarnrc.yml ./.yarnrc.yml
+COPY package.json ./package.json
+COPY yarn.lock ./yarn.lock
 RUN yarn workspaces focus @flex-development/sneusers
 ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 
