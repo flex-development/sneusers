@@ -93,13 +93,10 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with:
           build-args: |
-            DOPPLER_CONFIG: ${{ secrets.DOPPLER_CONFIG }}
-            DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
             GH_PAT=${{ secrets.PAT_CPR_ADMIN }}
-            NODE_ENV=production
+            NODE_ENV=${{ secrets.NODE_ENV }}
             NPM_TOKEN=${{ secrets.NPM_TOKEN_ADMIN }}
-            PORT=8080
-            WEBPACK_LOG_SECRETS=false
+            PORT=${{ secrets.PORT }}
           context: .
           file: ./Dockerfile
           labels: ${{ steps.ghcr-meta.outputs.labels }}

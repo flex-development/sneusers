@@ -10,9 +10,6 @@ import { validateSync, ValidationError } from 'class-validator'
  * @see https://docs.nestjs.com/techniques/configuration
  */
 
-/** @property {string[]} ENV_FILE_PATH - Custom environment files */
-const ENV_FILE_PATH = [`${process.cwd()}/.env.local`, `${process.cwd()}/.env`]
-
 /**
  * Validates environment variables.
  *
@@ -148,4 +145,4 @@ const configuration = (): EnvironmentVariables => {
 /** @property {EnvironmentVariables} ENV - Application environment variables */
 const ENV: EnvironmentVariables = configuration()
 
-export { ENV, ENV_FILE_PATH, configuration as default, validate }
+export { ENV, configuration as default, validate }

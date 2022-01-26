@@ -32,7 +32,6 @@ services:
         NODE_ENV: ${NODE_ENV}
         NPM_TOKEN: ${NPM_TOKEN}
         PORT: ${PORT}
-        WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
       context: .
       dockerfile: ./Dockerfile
       target: runner
@@ -40,9 +39,6 @@ services:
       - adminer
       - redis
       - redis-commander
-    # NOTE: With the exception of build arguments (see list above) doubling as
-    # environment variables, the variables below do NOT need to be exposed.
-    # Exposing them enhances DX when inspecting the container in Docker Hub.
     environment:
       CACHE_MAX: ${CACHE_MAX}
       CACHE_TTL: ${CACHE_TTL}
@@ -69,7 +65,7 @@ services:
       JWT_SECRET_ACCESS: ${JWT_SECRET_ACCESS}
       JWT_SECRET_REFRESH: ${JWT_SECRET_REFRESH}
       JWT_SECRET_VERIFY: ${JWT_SECRET_VERIFY}
-      NEST_DEBUG: 1
+      NEST_DEBUG: ${NEST_DEBUG}
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
@@ -77,8 +73,6 @@ services:
       REDIS_PORT: ${REDIS_PORT}
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
-      WEBPACK_LOG_SECRETS: ${WEBPACK_LOG_SECRETS}
-      YARN_VERSION: 3.2.0-rc.8
     links:
       - redis:${REDIS_HOST}
     ports:
@@ -95,8 +89,6 @@ services:
       - ./tools/helpers:/opt/sneusers/tools/helpers
       - ./typings:/opt/sneusers/typings
       - ./views:/opt/sneusers/views
-      - ./.env:/opt/sneusers/.env
-      - ./.env.doppler:/opt/sneusers/.env.doppler
       - ./.yarnrc.yml:/opt/sneusers/.yarnrc.yml
       - ./nest-cli.json:/opt/sneusers/nest-cli.json
       - ./package.json:/opt/sneusers/package.json

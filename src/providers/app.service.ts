@@ -1,10 +1,6 @@
 import { HttpStatus, Injectable, NestApplicationOptions } from '@nestjs/common'
 import { ConfigModuleOptions, ConfigService } from '@nestjs/config'
-import configuration, {
-  ENV,
-  ENV_FILE_PATH as envFilePath,
-  validate
-} from '@sneusers/config/configuration'
+import configuration, { ENV, validate } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
 import pkg from 'read-pkg'
 
@@ -28,9 +24,9 @@ export default class AppService {
   static get configModuleOptions(): ConfigModuleOptions {
     return {
       cache: ENV.PROD,
-      envFilePath,
+      envFilePath: [],
       expandVariables: true,
-      ignoreEnvFile: ENV.PROD,
+      ignoreEnvFile: true,
       ignoreEnvVars: false,
       isGlobal: true,
       load: [configuration],

@@ -33,5 +33,4 @@
 # Project tools
 tools/helpers
 !tools/helpers/match-specifier.cjs
-!tools/helpers/secrets.ts
 !tools/helpers/tsconfig-paths.cjs
