@@ -69,6 +69,7 @@ const config: UserConfig = {
         'middleware',
         'models',
         'modules',
+        'nginx',
         'pipes',
         'providers',
         'release',
