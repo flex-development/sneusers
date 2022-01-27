@@ -125,14 +125,10 @@ Default values are located in `.env`.
 
 #### Doppler CLI
 
-| name                 | required | development        | test               | production | release            |
-| -------------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
-| `DOPPLER_PROJECT`    | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`      | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_DEV`  | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_STG`  | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_TEST` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_PROD` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| name              | required | development        | test               | production | release            |
+| ----------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
+| `DOPPLER_PROJECT` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`   | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
 
 Values should be stored in `.env.doppler`.
 
@@ -180,17 +176,7 @@ Follow the steps below to autosource environment variables:
    - [Doppler](#doppler) is used to manage and inject application-level
      environment variables
 
-2. Create an `.env.doppler` file in the project root. Add the following:
-
-   ```shell
-   DOPPLER_PROJECT=sneusers
-   DOPPLER_TOKEN=
-   DOPPLER_TOKEN_DEV=
-   DOPPLER_TOKEN_TEST=
-   DOPPLER_TOKEN_PROD=
-   ```
-
-3. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
+2. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
 
    ```yaml
    scoped:
@@ -200,45 +186,23 @@ Follow the steps below to autosource environment variables:
        token: secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    ```
 
-4. Store the value of `token` in `DOPPLER_TOKEN`:
-
-   ```shell
-   DOPPLER_PROJECT=sneusers
-   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-   DOPPLER_TOKEN_DEV=
-   DOPPLER_TOKEN_STG=
-   DOPPLER_TOKEN_TEST=
-   DOPPLER_TOKEN_PROD=
-   ```
-
-5. Retrieve the value of `DOPPLER_TOKEN` for each `sneusers` environment:
-
-   ```shell
-   DOPPLER_PROJECT=sneusers
-   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-   DOPPLER_TOKEN_DEV=dp.st.development.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   DOPPLER_TOKEN_STG=dp.st.stg.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   DOPPLER_TOKEN_TEST=dp.st.test.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   DOPPLER_TOKEN_PROD=dp.st.production.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   ```
-
-6. Open a shell startup file
+3. Open a shell startup file
 
    - e.g: `~/.bash_profile` `~/.bashrc`, `~/.profile`, `~/.zprofile`,
      `~/.zshenv`, `~/.zshrc`
 
-7. Add the following to your chosen shell startup file:
+4. Add the following to your chosen shell startup file:
 
    ```shell
-   [[ -f "$PWD/.env.doppler" ]] && . $PWD/.env.doppler
-   [[ -f "$PWD/.env" ]] && . $PWD/.env
-   [[ -f "$PWD/.env.local" ]] && . $PWD/.env.local
+   [ -f $PWD/.env ] && . $PWD/.env
+   [ -f $PWD/.env.local ] && . $PWD/.env.local
    
-   export GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    # github personal access token with at least read:packages scope
-   export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # npm auth token
+   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # doppler / scope token
+   GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx           # github personal access token with at least read:packages scope
+   NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        # npm auth token
    ```
 
-8. Save shell startup file and re-launch shell
+5. Save shell startup file and re-launch shell
 
 #### Adding New Environment Variables
 
@@ -247,12 +211,13 @@ Follow the steps below to add new environment variables:
 1. Add default values to [`.env`](.env) (if necessary)
 2. Add new variables to [Doppler](#doppler)
 3. Update [Environment Variables](#environment-variables) section in this guide
-4. Update `DefinePlugin` configuration in [Webpack config](webpack.config.ts)
-5. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
-6. Update app [configuration](src/config/configuration.ts)
-7. Update [`app` `environment`](docker-compose.yml) settings
+4. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
+5. Update app [configuration](src/config/configuration.ts)
+6. Update `docker-cloud.yml`: [`app` `environment`](docker-cloud.yml)
+7. Update `docker-compose.yml`: [`app` `environment`](docker-compose.yml)
 8. Restart Docker
    - if already running: `yarn stop:dev && yarn start:dev -d`
+     - or: `yarn stop && yarn start -d`
 
 ### Git Configuration
 
