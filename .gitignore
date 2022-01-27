@@ -59,7 +59,7 @@ jspm_packages/
 
 # Yarn v2 (Not using Zero-Installs)
 # See: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.yarn/*
+.yarn
 !.yarn/patches
 !.yarn/releases
 !.yarn/plugins
@@ -70,7 +70,6 @@ jspm_packages/
 ### Environment ###
 # Environment variables
 .env.*
-!.env.typescript
 
 ### Testing ###
 # General
@@ -98,18 +97,18 @@ dist
 # Exported database design
 docs/*.sql
 
-# MySQL
-mysql/
-
 # SQLite
-db/data/
+db/data/*
+!db/data/.gitkeep
 
 ### Nginx ###
-# Generated configs
-nginx/conf.d/
-
-# Directories
-nginx/run/
+# General
+nginx/conf.d/*
+nginx/run/*
+!nginx/logs
+!nginx/conf.d/.gitkeep
+!nginx/run/.gitkeep
 
 # letsencrypt
-nginx/ssl/letsencrypt/
+nginx/ssl/letsencrypt/*
+!nginx/ssl/letsencrypt/ssl-dhparams.pem

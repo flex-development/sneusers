@@ -83,6 +83,7 @@ const config: UserConfig = {
         'typescript',
         'users',
         'utils',
+        'vm',
         'vscode',
         'workflows',
         'yarn'
