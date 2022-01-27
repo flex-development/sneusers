@@ -143,7 +143,7 @@ jobs:
           args: -tt
           command: |
             ~/opt/sneusers
-            git pull --force https://github.com/flex-development/sneusers
+            sudo git pull https://github.com/flex-development/sneusers
           host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
