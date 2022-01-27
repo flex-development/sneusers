@@ -20,8 +20,8 @@ server {
   }
 
   # LOGGING
-  access_log logs/api.access.log main;
-  error_log logs/api.error.log warn;
+  access_log logs/${SERVER_NAME}.access.log main;
+  error_log logs/${SERVER_NAME}.error.log warn;
 
   # REVERSE PROXY
   location / {

@@ -12,8 +12,8 @@ server {
   include ssl-params.conf;
 
   # LOGGING
-  access_log logs/db.access.log main;
-  error_log logs/db.error.log warn;
+  access_log logs/${ADMINER_SERVER_NAME}.access.log main;
+  error_log logs/${ADMINER_SERVER_NAME}.error.log warn;
 
   # REVERSE PROXY
   location / {

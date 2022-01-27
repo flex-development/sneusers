@@ -8,7 +8,6 @@
 # - https://github.com/docker/metadata-action/tree/v3.6.2
 # - https://github.com/docker/build-push-action/tree/v2.7.0
 # - https://github.com/appleboy/scp-action/tree/v0.1.2
-# - https://github.com/fifsky/ssh-action/tree/v0.0.6
 
 ---
 name: continuous-integration-docker
@@ -137,27 +136,15 @@ jobs:
           SSL_CERTIFICATE_KEY: ${{ secrets.SSL_CERTIFICATE_KEY }}
           SSL_SOURCE: nginx/ssl/letsencrypt/${{ secrets.HOSTNAME }}
           SSL_TRUSTED_CERTIFICATE: ${{ secrets.SSL_TRUSTED_CERTIFICATE }}
-      - id: scp-secret-files
-        name: Upload secret files to VM
+      - id: scp-sync-docker-app-files
+        name: Upload docker app files to VM
         uses: appleboy/scp-action@v0.1.2
         with:
           debug: true
           host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          rm: false
-          source: nginx/ssl/letsencrypt/${{ secrets.HOSTNAME }}/*
+          rm: true
+          source: docker-cloud.yml,docker-compose.yml,db/*,nginx/*
           target: opt/sneusers
           username: ${{ secrets.SSH_USER }}
-      - id: sync-repo-on-vm
-        name: Sync repository on VM
-        uses: fifsky/ssh-action@v0.0.6
-        with:
-          args: -tt
-          command: |
-            ~/opt/sneusers
-            sudo git pull https://github.com/flex-development/sneusers
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          user: ${{ secrets.SSH_USER }}

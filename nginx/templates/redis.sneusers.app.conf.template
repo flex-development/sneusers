@@ -12,8 +12,8 @@ server {
   include ssl-params.conf;
 
   # LOGGING
-  access_log logs/redis.access.log main;
-  error_log logs/redis.error.log warn;
+  access_log logs/${REDIS_SERVER_NAME}.access.log main;
+  error_log logs/${REDIS_SERVER_NAME}.error.log warn;
 
   # REVERSE PROXY
   location / {

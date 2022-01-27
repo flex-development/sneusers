@@ -59,7 +59,7 @@ jspm_packages/
 
 # Yarn v2 (Not using Zero-Installs)
 # See: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.yarn
+.yarn/*
 !.yarn/patches
 !.yarn/releases
 !.yarn/plugins
@@ -102,13 +102,6 @@ db/data/*
 !db/data/.gitkeep
 
 ### Nginx ###
-# General
-nginx/conf.d/*
-nginx/run/*
-!nginx/logs
-!nginx/conf.d/.gitkeep
-!nginx/run/.gitkeep
-
 # letsencrypt
-nginx/ssl/letsencrypt/*
+nginx/ssl/letsencrypt/
 !nginx/ssl/letsencrypt/ssl-dhparams.pem
