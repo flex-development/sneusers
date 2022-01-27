@@ -140,7 +140,6 @@ Values should be stored in `.env.doppler`.
 | `DOPPLER_ENVIRONMENT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_PROJECT`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN_TEST`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_VM`        | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `GITHUB_ACTIONS`          | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
 | `HOSTNAME`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |

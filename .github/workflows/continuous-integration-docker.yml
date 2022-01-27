@@ -8,7 +8,6 @@
 # - https://github.com/docker/metadata-action/tree/v3.6.2
 # - https://github.com/docker/build-push-action/tree/v2.7.0
 # - https://github.com/fifsky/ssh-action/tree/v0.0.6
-# - https://github.com/appleboy/scp-action/tree/v0.1.2
 
 ---
 name: continuous-integration-docker
@@ -129,73 +128,23 @@ jobs:
         run: |
           mkdir -p $SSL_SOURCE
 
-          echo "DOPPLER_PROJECT=$DOPPLER_PROJECT" >> .env.doppler
-          echo "DOPPLER_TOKEN=$DOPPLER_TOKEN" >> .env.doppler
           echo $SSL_CERTIFICATE >> $SSL_SOURCE/fullchain.pem
           echo $SSL_CERTIFICATE_KEY >> $SSL_SOURCE/privkey.pem
           echo $SSL_TRUSTED_CERTIFICATE >> $SSL_SOURCE/chain.pem
         env:
-          DOPPLER_PROJECT: ${{ secrets.DOPPLER_PROJECT }}
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_VM }}
           SSL_CERTIFICATE: ${{ secrets.SSL_CERTIFICATE }}
           SSL_CERTIFICATE_KEY: ${{ secrets.SSL_CERTIFICATE_KEY }}
           SSL_SOURCE: nginx/ssl/letsencrypt/${{ secrets.HOSTNAME }}
           SSL_TRUSTED_CERTIFICATE: ${{ secrets.SSL_TRUSTED_CERTIFICATE }}
-      - id: setup-project-directory-vm
-        name: Setup project directory on VM
+      - id: sync-repo-on-vm
+        name: Sync repository on VM
         uses: fifsky/ssh-action@v0.0.6
         with:
           args: -tt
-          command: rm -rf opt/sneusers && mkdir -p opt/sneusers
+          command: |
+            ~/opt/sneusers
+            git pull --force https://github.com/flex-development/sneusers
           host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           user: ${{ secrets.SSH_USER }}
-      - id: ssh-env-doppler
-        name: Upload .env.doppler to VM
-        uses: appleboy/scp-action@v0.1.2
-        with:
-          debug: true
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          rm: false
-          source: .env.doppler
-          target: opt/sneusers
-          username: ${{ secrets.SSH_USER }}
-      - id: ssh-docker-cloud
-        name: Upload docker-cloud.yml to VM
-        uses: appleboy/scp-action@v0.1.2
-        with:
-          debug: true
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          rm: false
-          source: docker-cloud.yml
-          target: opt/sneusers
-          username: ${{ secrets.SSH_USER }}
-      - id: ssh-docker-compose
-        name: Upload docker-compose.yml to VM
-        uses: appleboy/scp-action@v0.1.2
-        with:
-          debug: true
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          rm: false
-          source: docker-compose.yml
-          target: opt/sneusers
-          username: ${{ secrets.SSH_USER }}
-      - id: ssh-nginx-config
-        name: Upload nginx configuration to VM
-        uses: appleboy/scp-action@v0.1.2
-        with:
-          debug: true
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          rm: false
-          source: nginx/*
-          target: opt/sneusers
-          username: ${{ secrets.SSH_USER }}
