@@ -34,7 +34,7 @@ module.exports = {
         '.husky/pre-push'
       ],
       options: {
-        functionNextLine: true,
+        functionNextLine: false,
         indent: 2,
         keepComments: true,
         keepPadding: false,

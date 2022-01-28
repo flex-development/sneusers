@@ -122,6 +122,9 @@ services:
       - ./nginx/security.conf:/etc/nginx/security.conf
       - ./nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
       - ./nginx/ssl.conf:/etc/nginx/ssl.conf
+      - /etc/letsencrypt/archive/${TLD}:/etc/letsencrypt/archive/${TLD}
+      - /etc/letsencrypt/live/${TLD}:/etc/letsencrypt/live/${TLD}
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
       - /etc/nginx/conf.d:/etc/nginx/conf.d
       - /etc/nginx/logs:/etc/nginx/logs
       - /etc/nginx/run:/etc/nginx/run

@@ -114,6 +114,7 @@ Default values are located in `.env`.
 | `REDIS_COMMANDER_PORT` | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `REDIS_SERVER_NAME`    | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 | `SERVER_NAME`          | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
+| `TLD`                  | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
 
 Default values are located in `.env`.
 
@@ -134,26 +135,23 @@ Values should be stored in `.env.doppler`.
 
 #### GitHub Actions
 
-| name                      | required | development | test               | production | release            |
-| ------------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
-| `DOPPLER_CONFIG`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_ENVIRONMENT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_PROJECT`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_TEST`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `GITHUB_ACTIONS`          | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
-| `HOSTNAME`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `NODE_ENV`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `NPM_TOKEN_ADMIN`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_CPR_ADMIN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_GPR_ADMIN`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_REPO_ADMIN`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_HOST`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_PRIVATE_KEY`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_USER`                | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSL_CERTIFICATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSL_CERTIFICATE`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSL_TRUSTED_CERTIFICATE` | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| name                  | required | development | test               | production | release            |
+| --------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
+| `DOPPLER_CONFIG`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_ENVIRONMENT` | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_PROJECT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_TEST`  | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GITHUB_ACTIONS`      | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
+| `HOSTNAME`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `NODE_ENV`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `NPM_TOKEN_ADMIN`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_CPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_GPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_REPO_ADMIN`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_HOST`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_PRIVATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_USER`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 
 Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 

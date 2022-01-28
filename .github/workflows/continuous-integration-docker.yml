@@ -123,19 +123,6 @@ jobs:
           push: true
           tags: ${{ steps.ghcr-meta.outputs.tags }}
           target: ecosystem
-      - id: create-secret-files
-        name: Create secret files
-        run: |
-          mkdir -p $SSL_SOURCE
-
-          echo $SSL_CERTIFICATE >> $SSL_SOURCE/fullchain.pem
-          echo $SSL_CERTIFICATE_KEY >> $SSL_SOURCE/privkey.pem
-          echo $SSL_TRUSTED_CERTIFICATE >> $SSL_SOURCE/chain.pem
-        env:
-          SSL_CERTIFICATE: ${{ secrets.SSL_CERTIFICATE }}
-          SSL_CERTIFICATE_KEY: ${{ secrets.SSL_CERTIFICATE_KEY }}
-          SSL_SOURCE: nginx/ssl/letsencrypt/${{ secrets.HOSTNAME }}
-          SSL_TRUSTED_CERTIFICATE: ${{ secrets.SSL_TRUSTED_CERTIFICATE }}
       - id: scp-sync-docker-app-files
         name: Upload docker app files to VM
         uses: appleboy/scp-action@v0.1.2
