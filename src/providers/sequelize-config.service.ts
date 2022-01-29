@@ -48,6 +48,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
     const host = this.config.get<string>('DB_HOST')
     const password = this.config.get<string>('DB_PASSWORD')
     const port = this.config.get<number>('DB_PORT')
+    const timezone = this.config.get<string>('DB_TIMEZONE')
     const username = this.config.get<string>('DB_USERNAME')
 
     const options: SequelizeModuleOptions = {
@@ -61,8 +62,8 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
         underscored: true,
         updatedAt: 'updated_at'
       },
-      dialect: 'sqlite',
-      dialectOptions: { mode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE },
+      dialect: 'postgres',
+      dialectOptions: { application_name: database },
       host,
       logQueryParameters: true,
       logging: sql => console.log(sequelizeLogger(sql)),
@@ -73,23 +74,30 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       repositoryMode: true,
       retryAttempts: 3,
       retryDelay: 0,
-      storage: `./db/data/${database}.db`,
       sync: { force: true },
       synchronize: autoLoadModels,
-      timezone: '+00:00',
+      timezone,
       transactionType: Transaction.TYPES.DEFERRED,
       typeValidation: true,
       username
     }
 
     if (this.config.get<boolean>('TEST')) {
-      delete options.timezone
+      const dialectOptions: NonNullable<typeof options['dialectOptions']> = {
+        readWriteMode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE
+      }
+
+      options.dialect = 'sqlite'
+      options.dialectOptions = dialectOptions
       options.logging = noop
+      options.storage = `./db/data/sqlite/${database}.db`
+
+      delete options.timezone
     }
 
     if (this.config.get<boolean>('PROD')) {
-      delete options.sync
       options.synchronize = false
+      delete options.sync
     }
 
     return options

@@ -1,17 +1,29 @@
-# USED FOR PRODUCTION ONLY.
+# USED FOR PRODUCTION AND STAGING ONLY.
 # SEE: https://github.com/BretFisher/node-docker-good-defaults
 
 version: '3.9'
 
 services:
   adminer:
-    extends:
-      file: docker-compose.yml
-      service: adminer
+    container_name: adminer
+    image: adminer
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: ${DB_HOST}
+      ADMINER_DESIGN: dracula
+      ADMINER_PLUGINS:
+        dump-alter dump-date dump-json edit-foreign email-table enum-option
+        enum-types file-upload foreign-system table-indexes-structure
+        table-structure tables-filter
+    ports:
+      - ${ADMINER_PORT}:8080
+    restart: always
   app:
     container_name: app
     image: ghcr.io/flex-development/sneusers:${DOCKER_IMAGE_TAG}
     depends_on:
+      - postgres
       - redis
     environment:
       CACHE_MAX: ${CACHE_MAX}
@@ -21,6 +33,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
+      DB_TIMEZONE: ${DB_TIMEZONE}
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
@@ -50,13 +63,12 @@ services:
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
     links:
+      - postgres:${DB_HOST}
       - redis:${REDIS_HOST}
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
     restart: always
-    volumes:
-      - ./db/data:/opt/sneusers/db/data
     working_dir: /opt/sneusers
   nginx:
     container_name: nginx
@@ -98,6 +110,12 @@ services:
       - /etc/nginx/conf.d:/etc/nginx/conf.d
       - /etc/nginx/logs:/etc/nginx/logs
       - /etc/nginx/run:/etc/nginx/run
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
   redis:
     extends:
       file: docker-compose.yml

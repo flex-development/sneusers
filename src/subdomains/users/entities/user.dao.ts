@@ -22,6 +22,7 @@ import {
   Unique,
   Validate
 } from 'sequelize-typescript'
+import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
 import isStrongPassword from 'validator/lib/isStrongPassword'
@@ -85,12 +86,13 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
       const isNewRecord = !instance.id && !instance.updated_at
 
       if (isNewRecord) {
+        const NOW = User.CURRENT_TIMESTAMP
+
         let created_at = instance.dataValues.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if (created_at?.toString() === User.CURRENT_TIMESTAMP) {
-          created_at = Date.now()
-        }
+
+        if ((NOW as Literal).val === created_at) created_at = Date.now()
 
         instance.dataValues.created_at = created_at || Date.now()
         instance.dataValues.updated_at = null
@@ -108,12 +110,12 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
 })
 class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @ApiProperty({ description: 'When user was created', type: Number })
-  @Comment('when user was created')
+  @Comment('when user was created (unix timestamp)')
   @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @AllowNull(false)
   @Index('created_at')
   @Default(User.CURRENT_TIMESTAMP)
-  @Column('TIMESTAMP')
+  @Column(DataType.BIGINT)
   declare created_at: IUser['created_at']
 
   @ApiProperty({
@@ -174,11 +176,11 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: Number
   })
-  @Comment('when user was last modified')
+  @Comment('when user was last modified (unix timestamp)')
   @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @Index('updated_at')
   @Default(null)
-  @Column('TIMESTAMP')
+  @Column(DataType.BIGINT)
   declare updated_at: IUser['updated_at']
 
   /**

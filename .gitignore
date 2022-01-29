@@ -97,11 +97,13 @@ dist
 # Exported database design
 docs/*.sql
 
-# SQLite
-db/data/*
-!db/data/.gitkeep
+# Data
+db/data/
 
-### Nginx ###
-# letsencrypt
+### Docker ###
+# Adminer
+adminer/plugins-enabled/0*.php
+
+# Nginx
 nginx/ssl/letsencrypt/
 !nginx/ssl/letsencrypt/ssl-dhparams.pem

@@ -16,6 +16,7 @@ import {
   Table,
   Validate
 } from 'sequelize-typescript'
+import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
 
 /**
@@ -51,12 +52,13 @@ import isDate from 'validator/lib/isDate'
       const isNewRecord = !instance.id
 
       if (isNewRecord) {
+        const NOW = Token.CURRENT_TIMESTAMP
+
         let created_at = instance.dataValues.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if (created_at?.toString() === Token.CURRENT_TIMESTAMP) {
-          created_at = Date.now()
-        }
+
+        if ((NOW as Literal).val === created_at) created_at = Date.now()
 
         instance.dataValues.created_at = created_at || Date.now()
       }
@@ -79,7 +81,7 @@ class Token
   @Comment('when user token created')
   @Validate({ isUnixTimestamp: Token.checkUnixTimestamp })
   @Default(Token.CURRENT_TIMESTAMP)
-  @Column('TIMESTAMP')
+  @Column(DataType.BIGINT)
   declare created_at: IToken['created_at']
 
   @Comment('revoked?')

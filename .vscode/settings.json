@@ -109,7 +109,7 @@
       "icon": "mock"
     },
     {
-      "extensions": ["__fixtures__", "dtos"],
+      "extensions": ["__fixtures__", "adminer", "dtos"],
       "format": "svg",
       "icon": "db"
     },

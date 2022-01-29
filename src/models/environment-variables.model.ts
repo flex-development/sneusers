@@ -78,11 +78,22 @@ class EnvironmentVariables {
   /**
    * Port of database to connect to.
    *
-   * @default 3306
+   * @default 5432
    */
   @IsNumber()
   @IsOptional()
   DB_PORT: number
+
+  /**
+   * Timezone used when converting a date from the database into a JavaScript
+   * {@link Date} object.
+   *
+   * @default '-05:00'
+   */
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  DB_TIMEZONE: string
 
   /**
    * Username used to authenticate against the database to connect to.

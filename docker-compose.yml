@@ -1,7 +1,6 @@
 # USED FOR LOCAL DEVELOPMENT ONLY.
 # SEE: https://github.com/BretFisher/node-docker-good-defaults
 # SEE: https://github.com/kyhsa93/nestjs-rest-cqrs-example
-# SEE: https://github.com/ArturKisov/nestjs-mysql-starter
 
 version: '3.9'
 
@@ -9,7 +8,10 @@ services:
   adminer:
     container_name: adminer
     image: adminer
+    depends_on:
+      - postgres
     environment:
+      ADMINER_DEFAULT_SERVER: ${DB_HOST}
       ADMINER_DESIGN: dracula
       ADMINER_PLUGINS:
         dump-alter dump-date dump-json edit-foreign email-table enum-option
@@ -17,11 +19,10 @@ services:
         table-structure tables-filter
     ports:
       - ${ADMINER_PORT}:8080
-    privileged: true
     restart: always
     volumes:
+      - ./adminer/plugins-enabled:/var/www/html/plugins-enabled
       - ./db/data:/db/data
-      - ./db/public/plugins-enabled/login-password-less.php:/var/www/html/plugins-enabled/login-password-less.php
   app:
     container_name: app
     # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
@@ -36,6 +37,7 @@ services:
       dockerfile: ./Dockerfile
       target: runner
     depends_on:
+      - postgres
       - redis
     environment:
       CACHE_MAX: ${CACHE_MAX}
@@ -45,6 +47,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
+      DB_TIMEZONE: ${DB_TIMEZONE}
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
@@ -72,6 +75,7 @@ services:
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
     links:
+      - postgres:${DB_HOST}
       - redis:${REDIS_HOST}
     ports:
       - ${PORT}:${PORT}
@@ -79,7 +83,6 @@ services:
     restart: always
     volumes:
       - ./db/config:/opt/sneusers/db/config
-      - ./db/data:/opt/sneusers/db/data
       - ./db/migrations:/opt/sneusers/db/migrations
       - ./db/seeders:/opt/sneusers/db/seeders
       - ./src:/opt/sneusers/src
@@ -128,6 +131,18 @@ services:
       - /etc/nginx/conf.d:/etc/nginx/conf.d
       - /etc/nginx/logs:/etc/nginx/logs
       - /etc/nginx/run:/etc/nginx/run
+  postgres:
+    container_name: ${DB_HOST}
+    image: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+    ports:
+      - ${DB_PORT}:5432
+    restart: always
+    volumes:
+      - ./db/data/postgresql:/var/lib/postgresql/data
   redis:
     container_name: ${REDIS_HOST}
     image: redis:alpine

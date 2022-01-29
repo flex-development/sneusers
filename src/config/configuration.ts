@@ -24,7 +24,8 @@ const validate = ({
   DB_HOST = 'localhost',
   DB_NAME,
   DB_PASSWORD,
-  DB_PORT = 3306,
+  DB_PORT = 5432,
+  DB_TIMEZONE = '-05:00',
   DB_USERNAME,
   EMAIL_CLIENT,
   EMAIL_HOST = 'smtp.gmail.com',
@@ -68,6 +69,7 @@ const validate = ({
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
+  env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = NODE_ENV === NodeEnv.DEV
   env.EMAIL_CLIENT = EMAIL_CLIENT
@@ -118,6 +120,7 @@ const configuration = (): EnvironmentVariables => {
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,
+    DB_TIMEZONE: process.env.DB_TIMEZONE,
     DB_USERNAME: process.env.DB_USERNAME,
     EMAIL_CLIENT: process.env.EMAIL_CLIENT,
     EMAIL_HOST: process.env.EMAIL_HOST,

@@ -1,5 +1,6 @@
 import type { NumberString, ObjectPlain } from '@flex-development/tutils'
 import { OrNull } from '@flex-development/tutils'
+import { ENV } from '@sneusers/config/configuration'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { LOCK, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
@@ -22,6 +23,7 @@ import {
   Unique,
   Validate
 } from 'sequelize-typescript'
+import type { Literal } from 'sequelize/types/lib/utils'
 
 /**
  * @file Models - BaseEntity
@@ -50,10 +52,12 @@ abstract class BaseEntity<
   /**
    * @static
    * @readonly
-   * @property {string} CURRENT_TIMESTAMP - Stringified `strftime` call
-   * @see https://www.w3resource.com/sqlite/sqlite-strftime.php
+   * @property {Literal | number} CURRENT_TIMESTAMP - Current unix timestamp
+   * @see https://www.w3resource.com/PostgreSQL/extract-function.php
    */
-  static readonly CURRENT_TIMESTAMP: string = "strftime('%s','now')"
+  static readonly CURRENT_TIMESTAMP: Literal | number = !ENV.TEST
+    ? Sequelize.literal('EXTRACT(epoch FROM now())')
+    : Date.now()
 
   /**
    * @protected
