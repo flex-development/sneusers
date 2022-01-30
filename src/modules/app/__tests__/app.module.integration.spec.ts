@@ -65,6 +65,7 @@ describe('integration:modules/AppModule', () => {
         { expected: 'boolean', variable: 'PROD' },
         { expected: 'boolean', variable: 'PROD_LOCAL' },
         { expected: 'string', variable: 'REDIS_HOST' },
+        { expected: 'string', variable: 'REDIS_PASSWORD' },
         { expected: 'number', variable: 'REDIS_PORT' },
         { expected: 'boolean', variable: 'TEST' },
         { expected: 'number', variable: 'THROTTLE_LIMIT' },

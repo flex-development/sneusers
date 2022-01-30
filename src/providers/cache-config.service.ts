@@ -44,6 +44,7 @@ export default class CacheConfigService
     return {
       host: this.config.get<string>('REDIS_HOST'),
       max: this.config.get<number>('CACHE_MAX'),
+      password: this.config.get<string>('REDIS_PASSWORD'),
       port: this.config.get<number>('REDIS_PORT'),
       store: this.config.get<boolean>('TEST') ? 'memory' : RedisCacheStore,
       ttl: this.config.get<number>('CACHE_TTL')

@@ -37,8 +37,6 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DEBUG: ${DEBUG}
       DEBUG_COLORS: ${DEBUG_COLORS}
-      DOPPLER_CONFIG: ${DOPPLER_CONFIG}
-      DOPPLER_TOKEN: ${DOPPLER_TOKEN}
       EMAIL_CLIENT: ${EMAIL_CLIENT}
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_PORT: ${EMAIL_PORT}
@@ -59,6 +57,7 @@ services:
       NPM_TOKEN: ${NPM_TOKEN}
       PORT: ${PORT}
       REDIS_HOST: ${REDIS_HOST}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
@@ -78,7 +77,7 @@ services:
       ADMINER_PORT: 8080
       ADMINER_SERVER_NAME: ${ADMINER_SERVER_NAME}
       PORT: ${PORT}
-      REDIS_PORT: 8081
+      REDIS_PORT: ${REDIS_COMMANDER_PORT}
       REDIS_SERVER_NAME: ${REDIS_SERVER_NAME}
       SERVER_NAME: ${SERVER_NAME}
     depends_on:
@@ -120,13 +119,23 @@ services:
     extends:
       file: docker-compose.yml
       service: redis
+    volumes:
+      - /var/lib/redis/data:/data
   redis-commander:
     container_name: redis-commander
     image: rediscommander/redis-commander:latest
     environment:
-      - REDIS_HOSTS=local:redis:${REDIS_PORT}
+      HTTP_USER: ${REDIS_USER}
+      HTTP_PASSWORD: ${REDIS_PASSWORD}
+      PORT: ${REDIS_COMMANDER_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_HOSTS: local:redis:${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
     depends_on:
       - redis
+    links:
+      - redis
     ports:
-      - ${REDIS_COMMANDER_PORT}:8081
+      - ${REDIS_COMMANDER_PORT}:${REDIS_COMMANDER_PORT}
     restart: always

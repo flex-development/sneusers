@@ -44,6 +44,7 @@ const validate = ({
   NODE_ENV = NodeEnv.DEV,
   PORT = 8080,
   REDIS_HOST = 'redis',
+  REDIS_PASSWORD,
   REDIS_PORT = 6379,
   THROTTLE_LIMIT = 10,
   THROTTLE_TTL = 60
@@ -86,6 +87,7 @@ const validate = ({
   env.JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
   env.JWT_SECRET_VERIFY = (env.PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
   env.REDIS_HOST = REDIS_HOST
+  env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString(), 10)
   env.TEST = NODE_ENV === NodeEnv.TEST
   env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString(), 10)
@@ -139,6 +141,7 @@ const configuration = (): EnvironmentVariables => {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
     REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_PORT: process.env.REDIS_PORT,
     THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,
     THROTTLE_TTL: process.env.THROTTLE_TTL

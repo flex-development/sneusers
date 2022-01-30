@@ -106,3 +106,6 @@ adminer/plugins-enabled/0*.php
 
 # Nginx
 letsencrypt/
+
+# Redis
+redis/

@@ -98,8 +98,9 @@ in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
 | `NEST_DEBUG`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `REDIS_HOST`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `REDIS_PORT`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `REDIS_HOST`          | `false`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
+| `REDIS_PASSWORD`      | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
+| `REDIS_PORT`          | `false`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
 | `THROTTLE_LIMIT`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `THROTTLE_TTL`        | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
@@ -150,6 +151,7 @@ Values should be stored in `.env.doppler`.
 | `PAT_CPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `PAT_GPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `PAT_REPO_ADMIN`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `REDIS_USER`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_HOST`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_PRIVATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_USER`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |

@@ -278,6 +278,13 @@ class EnvironmentVariables {
   REDIS_HOST: string
 
   /**
+   * Redis password.
+   */
+  @IsString()
+  @IsNotEmpty()
+  REDIS_PASSWORD: string
+
+  /**
    * Port to run [Redis][1] server on.
    *
    * [1]: https://redis.io
