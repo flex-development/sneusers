@@ -105,5 +105,4 @@ db/data/
 adminer/plugins-enabled/0*.php
 
 # Nginx
-nginx/ssl/letsencrypt/
-!nginx/ssl/letsencrypt/ssl-dhparams.pem
+letsencrypt/

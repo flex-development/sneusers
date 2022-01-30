@@ -39,6 +39,7 @@
     "build:dbdocs": "dbdocs build ./docs/DATABASE.dbml",
     "build:image:dev": "doppler run -- docker compose build",
     "build:image:prod": "doppler run -c=prod --command=\"docker build --build-arg GH_PAT=\\$GH_PAT --build-arg NODE_ENV=\\$NODE_ENV --build-arg NPM_TOKEN=\\$NPM_TOKEN --build-arg PORT=\\$PORT --tag flex-development/sneusers .\"",
+    "certbot:local": "zsh ./tools/scripts/certbot-local.sh",
     "check:ci": "yarn fix:cg && yarn check:types && yarn test",
     "check:dedupe": "yarn dedupe --check",
     "check:deps": "yarn dlx @yarnpkg/doctor .",

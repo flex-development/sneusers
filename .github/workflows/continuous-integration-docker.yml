@@ -20,6 +20,7 @@ on:
       - db/config/**
       - db/migrations/**
       - db/seeders/**
+      - nginx/**
       - src/**
       - tools/helpers/match-specifier.cjs
       - tools/helpers/tsconfig-paths.cjs
@@ -47,6 +48,7 @@ on:
       - db/config/**
       - db/migrations/**
       - db/seeders/**
+      - nginx/**
       - src/**
       - tools/helpers/match-specifier.cjs
       - tools/helpers/tsconfig-paths.cjs
