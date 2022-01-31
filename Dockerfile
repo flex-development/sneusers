@@ -20,19 +20,12 @@ COPY .yarnrc.yml ./.yarnrc.yml
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
 RUN yarn workspaces focus @flex-development/sneusers
+ENV NODE_OPTIONS -r ts-node/register
 ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 
 # builder
 # REBUILD SOURCE CODE ONLY WHEN NEEDED
-FROM node:14-alpine As builder
-
-ARG GH_PAT
-ARG NODE_ENV=production
-ARG NPM_TOKEN
-
-ENV GH_PAT $GH_PAT
-ENV NODE_ENV $NODE_ENV
-ENV NPM_TOKEN $NPM_TOKEN
+FROM deps As builder
 
 WORKDIR /opt/sneusers
 COPY db/config ./db/config
@@ -51,14 +44,11 @@ COPY --from=deps /opt/sneusers/node_modules ./node_modules
 COPY --from=deps /opt/sneusers/.yarnrc.yml ./.yarnrc.yml
 COPY --from=deps /opt/sneusers/package.json ./package.json
 COPY --from=deps /opt/sneusers/yarn.lock ./yarn.lock
-RUN yarn workspaces focus @flex-development/sneusers
-ENV NODE_OPTIONS -r ts-node/register
-ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 RUN nest build
 
 # runner
 # APPLICATION RUNNER
-FROM node:14-alpine As runner
+FROM builder As runner
 
 ARG PORT=8080
 
@@ -79,8 +69,6 @@ COPY --from=builder /opt/sneusers/tsconfig.json ./tsconfig.json
 COPY --from=builder /opt/sneusers/webpack.config.ts ./webpack.config.ts
 COPY --from=deps /opt/sneusers/node_modules ./node_modules
 COPY --from=deps /opt/sneusers/package.json ./package.json
-ENV NODE_OPTIONS -r ts-node/register
-ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 EXPOSE $PORT 9229
 CMD ["nest", "start", "-wd"]
 
