@@ -122,9 +122,9 @@ Default values are located in `.env`.
 
 #### Dbdocs
 
-| name            | required | development        | test | production | release            |
-| --------------- | -------- | ------------------ | ---- | ---------- | ------------------ |
-| `DB_DOCS_TOKEN` | `true`   | :white_check_mark: | :x:  | :x:        | :white_check_mark: |
+| name           | required | development        | test | production | release            |
+| -------------- | -------- | ------------------ | ---- | ---------- | ------------------ |
+| `DBDOCS_TOKEN` | `true`   | :white_check_mark: | :x:  | :x:        | :white_check_mark: |
 
 #### Doppler CLI
 
@@ -139,6 +139,7 @@ Values should be stored in `.env.doppler`.
 
 | name                  | required | development | test               | production | release            |
 | --------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
+| `DBDOCS_TOKEN`        | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_CONFIG`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_ENVIRONMENT` | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_PROJECT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |

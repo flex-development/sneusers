@@ -1,17 +1,17 @@
 // DATABASE ARCHITECTURE
 
 Project sneusers {
-  database_type: 'mysql'
+  database_type: 'postgresql'
   note: 'demo users system'
 }
 
 Table users {
-  created_at timestamp [default: `CURRENT_TIMESTAMP`, note: 'when user was created']
-  email varchar(254) [unique, note: 'user email address']
-  first_name text [note: 'first name of user']
-  id int [pk, increment, note: 'user id']
-  last_name text [note: 'last name of user']
-  updated_at timestamp [note: 'when user was last modified']
+  created_at bigint [not null, default: `EXTRACT(epoch FROM now())`]
+  email varchar(254) [unique, not null]
+  first_name text [not null]
+  id int [pk, increment]
+  last_name text [not null]
+  updated_at bigint [default: null]
 
   indexes {
     created_at [name: 'created_at']
@@ -23,4 +23,20 @@ Table users {
   }
 
   note: 'user info'
+}
+
+Table tokens {
+  created_at bigint [not null, default: `EXTRACT(epoch FROM now())`]
+  id int [pk, increment]
+  revoked boolean [not null, default: false]
+  ttl bigint [not null, default: 86400, note: 'time to live']
+  type token_type [not null, note: 'jwt type']
+  user int [ref: > users.id, not null, note: 'token owner']
+
+  note: 'authentication tokens'
+}
+
+enum token_type {
+  REFRESH
+  VERIFICATION
 }
