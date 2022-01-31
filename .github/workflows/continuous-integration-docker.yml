@@ -134,6 +134,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           rm: true
-          source: docker-cloud.yml,docker-compose.yml,db/*,nginx/*
+          source: db/*,nginx/*,docker-cloud.yml,docker-compose.yml
           target: opt/sneusers
           username: ${{ secrets.SSH_USER }}

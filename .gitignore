@@ -104,7 +104,7 @@ db/data/
 # Adminer
 adminer/plugins-enabled/0*.php
 
-# Nginx
+# Letsencrypt
 letsencrypt/
 
 # Redis

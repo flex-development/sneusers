@@ -67,6 +67,7 @@ services:
     ports:
       - ${PORT}:${PORT}
       - 9229:9229
+    pull_policy: always
     restart: always
     working_dir: /opt/sneusers
   nginx:
@@ -94,7 +95,6 @@ services:
     restart: always
     tty: true
     volumes:
-      - ./nginx/ssl:/etc/nginx/ssl
       - ./nginx/templates:/etc/nginx/templates
       - ./nginx/general.conf:/etc/nginx/general.conf
       - ./nginx/mime.types:/etc/nginx/mime.types
