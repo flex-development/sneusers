@@ -7,7 +7,7 @@
 # - https://github.com/DopplerHQ/cli-action
 
 ---
-name: continuous-integration
+name: ci
 on:
   pull_request:
   push:

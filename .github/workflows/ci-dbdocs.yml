@@ -7,7 +7,7 @@
 # - https://dbdocs.io/docs/ci-integration
 
 ---
-name: continuous-integration-dbdocs
+name: ci-dbdocs
 on:
   pull_request:
     paths:

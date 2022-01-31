@@ -10,7 +10,7 @@
 # - https://github.com/appleboy/scp-action/tree/v0.1.2
 
 ---
-name: continuous-integration-docker
+name: ci-docker
 on:
   pull_request:
     paths:
@@ -79,6 +79,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.1.1
         if: github.event_name != 'workflow_dispatch'
         with:
+          allowed-conclusions: success
           check-name: ci (${{ matrix.node }})
           ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}

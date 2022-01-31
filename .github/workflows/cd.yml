@@ -10,7 +10,7 @@
 # - https://github.com/dawidd6/action-delete-branch/tree/v3.1.0
 
 ---
-name: continuous-deployment
+name: cd
 on:
   pull_request:
     branches:
