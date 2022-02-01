@@ -86,7 +86,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       ]
     })
 
-    CsurfMiddleware.configure({ ignoreRoutes: ['/csrf-token'] })
+    CsurfMiddleware.configure({ ignoreRoutes: /csrf-token/ })
 
     ntapp.app.use(new CookieParserMiddleware().use)
     ntapp.app.use(new CsurfMiddleware().use)

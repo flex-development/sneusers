@@ -67,10 +67,17 @@ export default class CsurfMiddleware implements NestMiddleware {
     const xsrf_token = req.headers['xsrf-token'] as OrUndefined<string>
     const x_csrf_token = req.headers['x-csrf-token'] as OrUndefined<string>
     const x_xsrf_token = req.headers['x-xsrf-token'] as OrUndefined<string>
+
     const token = csrf_token || xsrf_token || x_csrf_token || x_xsrf_token
 
-    if (CsurfMiddleware.options.ignoreRoutes!.includes(route)) {
-      return token || req.csrfToken()
+    if (CsurfMiddleware.options.ignoreRoutes) {
+      const routes = CsurfMiddleware.options.ignoreRoutes
+      const array = Array.isArray(CsurfMiddleware.options.ignoreRoutes)
+
+      const array_ignore = array && (routes as string[]).includes(route)
+      const regex_ignore = !array && (routes as RegExp).test(route)
+
+      if (array_ignore || regex_ignore) return token || req.csrfToken()
     }
 
     return token
@@ -97,5 +104,5 @@ export default class CsurfMiddleware implements NestMiddleware {
 export type CsurfOptions = {
   cookie?: CookieOptions | boolean
   ignoreMethods?: string[]
-  ignoreRoutes?: string[]
+  ignoreRoutes?: RegExp | string[]
 }

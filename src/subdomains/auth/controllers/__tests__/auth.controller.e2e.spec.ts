@@ -94,7 +94,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
 
     CsurfMiddleware.configure({
       ignoreMethods: ['HEAD', 'OPTIONS'],
-      ignoreRoutes: ['/auth/register', '/csrf-token']
+      ignoreRoutes: /(auth\/register)|csrf-token/
     })
 
     ntapp.app.use(new CookieParserMiddleware().use)
