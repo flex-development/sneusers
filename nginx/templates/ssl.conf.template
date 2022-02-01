@@ -1,0 +1,3 @@
+ssl_certificate /etc/letsencrypt/live/${TLD}/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/${TLD}/privkey.pem;
+ssl_trusted_certificate /etc/letsencrypt/live/${TLD}/chain.pem;

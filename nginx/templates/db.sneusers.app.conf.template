@@ -8,7 +8,7 @@ server {
   server_name ${ADMINER_SERVER_NAME};
 
   # SSL
-  include ssl.conf;
+  include /etc/nginx/conf.d/ssl.conf;
   include ssl-params.conf;
 
   # LOGGING

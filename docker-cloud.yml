@@ -81,6 +81,7 @@ services:
       REDIS_PORT: ${REDIS_COMMANDER_PORT}
       REDIS_SERVER_NAME: ${REDIS_SERVER_NAME}
       SERVER_NAME: ${SERVER_NAME}
+      TLD: ${TLD}
     depends_on:
       - adminer
       - app
@@ -102,7 +103,6 @@ services:
       - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       - ./nginx/security.conf:/etc/nginx/security.conf
       - ./nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
-      - ./nginx/ssl.conf:/etc/nginx/ssl.conf
       - /etc/letsencrypt/archive/${TLD}:/etc/letsencrypt/archive/${TLD}
       - /etc/letsencrypt/live/${TLD}:/etc/letsencrypt/live/${TLD}
       - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
