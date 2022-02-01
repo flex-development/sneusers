@@ -1,7 +1,7 @@
 {
   "name": "@flex-development/sneusers",
   "version": "1.0.0-dev.0",
-  "description": "Demo users system built with Docker, NestJS, Nginx, SQL, Sequelize, and TypeScript.",
+  "description": "Demo users system built with Docker, NestJS, Nginx, PostgreSQL, Redis, Sequelize, and TypeScript.",
   "keywords": [
     "adminer",
     "certbot",
@@ -18,6 +18,7 @@
     "nginx-reverse-proxy",
     "postgres",
     "postgresql",
+    "redis",
     "sequelize",
     "sql",
     "sqlite",
