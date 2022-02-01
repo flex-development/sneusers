@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common'
+import { ApiEndpoint } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
@@ -9,8 +10,8 @@ import { UserDTO } from '@sneusers/subdomains/users/dtos'
  */
 
 export default {
-  controller: 'users',
-  tags: ['users'],
+  controller: ApiEndpoint.USERS,
+  tags: [ApiEndpoint.USERS],
   delete: {
     status: HttpStatus.OK,
     responses: {

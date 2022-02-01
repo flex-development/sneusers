@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common'
+import { ApiEndpoint } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import {
   LoginDTO,
@@ -14,8 +15,8 @@ import { UserDTO, UserEmailSentDTO } from '@sneusers/subdomains/users/dtos'
  */
 
 export default {
-  controller: 'auth',
-  tags: ['auth', 'users'],
+  controller: ApiEndpoint.AUTH,
+  tags: [ApiEndpoint.AUTH, ApiEndpoint.USERS],
   login: {
     path: 'login',
     status: HttpStatus.OK,

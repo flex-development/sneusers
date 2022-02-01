@@ -4,11 +4,12 @@
  */
 
 /**
- * Names of application endpoints.
+ * Names of top-level application endpoints.
  *
- * @enum {string}
+ * @enum {Lowercase<string>}
  */
 enum ApiEndpoint {
+  AUTH = 'auth',
   DOCS = 'docs',
   HEALTH = 'health',
   USERS = 'users'

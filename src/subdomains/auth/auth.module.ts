@@ -43,7 +43,7 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
 export default class AuthModule {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {
     CsurfMiddleware.configure({
-      ignoreRoutes: ['/auth/register', '/auth/verify', '/auth/verify/resend']
+      ignoreRoutes: /auth\/((verify\/resend)|register|verify)/g
     })
   }
 
