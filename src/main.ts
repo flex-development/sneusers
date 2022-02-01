@@ -35,7 +35,7 @@ async function bootstrap(options?: NestApplicationOptions): Promise<void> {
     const HOST = conf.get<string>('HOST')
     const NODE_ENV = conf.get<NodeEnv>('NODE_ENV')
 
-    return console.log(`[${NODE_ENV}] listening on ${HOST}`)
+    return console.log(`[${NODE_ENV}] listening at ${HOST}`)
   })
 }
 
