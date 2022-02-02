@@ -145,6 +145,7 @@ Values should be stored in `.env.doppler`.
 | `DOPPLER_PROJECT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN_TEST`  | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `DOPPLER_TOKEN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GCLOUD_PROJECT`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `GITHUB_ACTIONS`      | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
 | `HOSTNAME`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `NODE_ENV`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
@@ -154,6 +155,7 @@ Values should be stored in `.env.doppler`.
 | `PAT_REPO_ADMIN`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `REDIS_USER`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_HOST`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_HOST_STAGING`    | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_PRIVATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 | `SSH_USER`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
 

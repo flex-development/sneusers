@@ -14,7 +14,7 @@ name: ci-docker
 on:
   pull_request:
     paths:
-      - .github/workflows/continuous-integration-docker.yml
+      - .github/workflows/ci-docker.yml
       - .yarn/plugins/**
       - .yarn/releases/**
       - db/config/**
@@ -42,7 +42,7 @@ on:
     branches:
       - next
     paths:
-      - .github/workflows/continuous-integration-docker.yml
+      - .github/workflows/ci-docker.yml
       - .yarn/plugins/**
       - .yarn/releases/**
       - db/config/**
@@ -131,10 +131,10 @@ jobs:
         uses: appleboy/scp-action@v0.1.2
         with:
           debug: true
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST_STAGING }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           rm: true
           source: db/*,nginx/*,docker-cloud.yml,docker-compose.yml
-          target: opt/sneusers
+          target: opt/${{ secrets.GCLOUD_PROJECT }}
           username: ${{ secrets.SSH_USER }}
