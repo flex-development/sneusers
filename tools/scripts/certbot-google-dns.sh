@@ -25,9 +25,11 @@
 # Usage:
 #
 # $ chmod +x ./tools/scripts/certbot-google-dns.sh
-# $ CERTBOT_DOMAINS=<certbot-domains-list>
 # $ CERTBOT_EMAIL=<email>
+# $ GCLOUD_DOMAINS=<certbot-domains-list>
 # $ GCLOUD_PROJECT=<project-id>
+# $ GCLOUD_SA_CERTBOT=<certbot-service-account-email>
+# $ GCLOUD_SA_CERTBOT_PK=<path-to-cerbot-service-account-file>
 # $ ./tools/scripts/certbot-google-dns.sh
 #
 # References:
@@ -39,25 +41,18 @@
 # - http://andrewcmaxwell.com/2014/07/how-to-add-a-custom-subdomain-using-google-cloud-dns
 
 certbot_google_dns() {
-  # Domains list and letsencrypt account email
-  local DOMAINS=$CERTBOT_DOMAINS
+  local DOMAINS=$GCLOUD_DOMAINS
   local EMAIL=$CERTBOT_EMAIL
+  local PK=$GCLOUD_SA_CERTBOT_PK
+  local SA=$GCLOUD_SA_CERTBOT
 
-  # Service account email
-  local SA=certbot@$GCLOUD_PROJECT.iam.gserviceaccount.com
-  GCLOUD_SA_CERTBOT=$SA
-
-  # Path to private key file
-  local PK=~/.service-accounts/google/$GCLOUD_SA_CERTBOT.json
-  GCLOUD_SA_CERTBOT_PK=$PK
-
-  # 3. Create private key for service account
+  # 1. Create private key for service account
   [ ! -f $PK ] && gcloud iam service-accounts keys create $PK --iam-account=$SA
 
-  # 4. Create certificate(s)
+  # 2. Create certificate(s)
   sudo certbot certonly --dns-google --dns-google-credentials $PK -d $DOMAINS -m $EMAIL -v $@
 
-  # 5. Fix permissions
+  # 3. Fix permissions
   sudo chmod 0755 /etc/letsencrypt/{live,archive}
   sudo chgrp -R staff /etc/letsencrypt/live/$TLD/privkey.pem
   sudo chmod 0755 /etc/letsencrypt/live/$TLD/privkey.pem
