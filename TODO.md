@@ -51,6 +51,7 @@
     - [x] API
     - [x] Adminer
     - [x] Redis
+  - [x] [SSL QA][15]
 - [ ] QA - Documentation
   - [ ] `CONTRIBUTING`
   - [ ] [`DATABASE`](docs/DATABASE.dbml)
@@ -59,9 +60,9 @@
 
 ## v1.0.0
 
-- [ ] [Events][15]
-- [ ] [Handle CPU-intensive tasks with queues][16]
-- [ ] [Database Migrations][17]
+- [ ] [Events][16]
+- [ ] [Handle CPU-intensive tasks with queues][17]
+- [ ] [Database Migrations][18]
 - [ ] Docker Compose
   - [ ] `docker-cloud.yml` qa (production environment)
 - [ ] Virtual Machine - Production
@@ -70,6 +71,7 @@
     - [ ] API
     - [ ] Adminer
     - [ ] Redis
+  - [ ] [SSL QA][15]
 
 [1]: https://docs.nestjs.com/techniques/database#sequelize-integration
 [2]: https://sequelize.org/v7/manual/migrations.html#creating-the-first-seed
@@ -85,6 +87,7 @@
 [12]: https://docs.nestjs.com/techniques/versioning#uri-versioning-type
 [13]: https://docs.nestjs.com/recipes/terminus
 [14]: https://gist.github.com/unicornware/34d6f4678232ee4bd99cad861209577b
-[15]: https://docs.nestjs.com/techniques/events
-[16]: https://wanago.io/2021/05/03/api-nestjs-cpu-intensive-tasks-queues
-[17]: https://sequelize.org/v7/manual/migrations
+[15]: https://ssllabs.com/ssltest
+[16]: https://docs.nestjs.com/techniques/events
+[17]: https://wanago.io/2021/05/03/api-nestjs-cpu-intensive-tasks-queues
+[18]: https://sequelize.org/v7/manual/migrations

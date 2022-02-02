@@ -40,6 +40,9 @@ export default class HelmetMiddleware implements NestMiddleware {
    * @return {void} Nothing when complete
    */
   use(req: Request, res: Response, next: NextFunction): void {
+    // ! nginx reverse proxy handles Strict-Transport-Security header
+    HelmetMiddleware.options.hsts = false
+
     return helmet(HelmetMiddleware.options)(req, res, next)
   }
 }
