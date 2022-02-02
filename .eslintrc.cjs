@@ -67,6 +67,7 @@ module.exports = {
           'sneusers',
           'sql',
           'sqlite',
+          'ssl',
           'strftime',
           'stringified',
           'subclasses',

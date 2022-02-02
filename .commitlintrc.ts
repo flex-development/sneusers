@@ -76,6 +76,7 @@ const config: UserConfig = {
         'scripts',
         'security',
         'server',
+        'ssl',
         'subdomains',
         'tests',
         'tools',
