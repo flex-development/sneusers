@@ -22,7 +22,7 @@ Docker is used to manage project infrastructure: [Adminer][1], [Postgres][7],
 [`Dockerfile`](Dockerfile) was created to containerize the API. The serverless
 architecture found in [`neusers`][12] was replaced with a [Compute Engine][4]
 instance; an [Nginx][6] reverse proxy is in charge of handling web traffic.
-Rather than using the Firebase Realtime Database, a traditional [PostgreSQL][6]
+Rather than using the Firebase Realtime Database, a traditional [PostgreSQL][7]
 database was used for data persistence.
 
 ### Features
