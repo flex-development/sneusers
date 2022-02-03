@@ -24,30 +24,44 @@ project. This includes, but is not limited to:
 
 Frameworks, libraries, tools, and other integrations used in this project.
 
+#### Dbdocs
+
+[Dbdocs][1] is a tool for creating web-based database documentation using
+[database markup language (DBML)][2].
+
 #### Docker
 
-**TODO**: Update documentation.
+> Docker is an open platform for developing, shipping, and running applications.
+> Docker enables you to separate your applications from your infrastructure so
+> you can deliver software quickly. With Docker, you can manage your
+> infrastructure in the same ways you manage your applications.
+>
+> \- <https://docs.docker.com/get-started/overview>
+
+Docker containerizes each piece of `sneuser`'s infrastructure.
+
+See [`docker-compose.yml`](docker-compose.yml) for a list of related services.
+
+See [Get Docker][3] for help installing Docker on your platform.
 
 #### Doppler
 
-[Doppler][1] is a tool used for managing environment variables. The [CLI][2] is
+[Doppler][4] is a tool used for managing environment variables. The [CLI][5] is
 used to inject variables into `process.env`.
 
-See the [installation docs][3] to begin managing project secrets.
+Contact a maintainer to get added to the `sneusers` [Doppler][4] project.
+
+Afterwards, see the [installation docs][6] to begin managing project secrets.
 
 #### NestJS
 
-> Nest (NestJS) is a framework for building efficient, scalable [Node.js][4]
+> Nest (NestJS) is a framework for building efficient, scalable [Node.js][7]
 > server-side applications. It uses progressive JavaScript, is built with and
-> fully supports [TypeScript][5] (yet still enables developers to code in pure
+> fully supports [TypeScript][8] (yet still enables developers to code in pure
 > JavaScript) and combines elements of OOP (Object Oriented Programming), FP
 > (Functional Programming), and FRP (Functional Reactive Programming).
 >
-> _From_ <https://docs.nestjs.com>
-
-#### SQL
-
-**TODO**: Update documentation.
+> \- <https://docs.nestjs.com>
 
 #### TypeScript
 
@@ -56,128 +70,67 @@ See the [installation docs][3] to begin managing project secrets.
 > TypeScript is a strongly typed programming language that builds on JavaScript,
 > giving you better tooling at any scale.
 >
-> _From_ <https://typescriptlang.org>
+> \- <https://typescriptlang.org>
 
 #### Yarn
 
 This project uses Yarn 2. The Yarn configuration for this project can be found
-in [`.yarnrc.yml`](.yarnrc.yml). If you're already using Yarn globally, see the
-[Yarn 2 Migration docs][6].
+in [`.yarnrc.yml`](.yarnrc.yml).
+
+If you're already using Yarn globally, see the [Yarn 2 Migration docs][9].
 
 ### Environment Variables
 
-#### Application
-
-| name                  | required | development        | test               | production         | release            |
-| --------------------- | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
-| `CACHE_MAX`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `CACHE_TTL`           | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_AUTO_LOAD_MODELS` | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_HOST`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_NAME`             | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_PASSWORD`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_PORT`             | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DB_TIMEZONE`         | `false`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
-| `DB_USERNAME`         | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DEBUG_COLORS`        | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DEBUG`               | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_CLIENT`        | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_HOST`          | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_PORT`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_PRIVATE_KEY`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_SEND_AS`       | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `EMAIL_USER`          | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `HOST`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `HOSTNAME`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_EXP_ACCESS`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_EXP_REFRESH`     | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_EXP_VERIFY`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_SECRET_ACCESS`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_SECRET_REFRESH`  | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `JWT_SECRET_VERIFY`   | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `NEST_DEBUG`          | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `NODE_ENV`            | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `PORT`                | `false`  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `REDIS_HOST`          | `false`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
-| `REDIS_PASSWORD`      | `true`   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
-| `REDIS_PORT`          | `false`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: |
-| `THROTTLE_LIMIT`      | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `THROTTLE_TTL`        | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-
-Default values are located in `.env`.
-
 #### Docker Compose
 
-| name                   | required | development        | test | production         | release |
-| ---------------------- | -------- | ------------------ | ---- | ------------------ | ------- |
-| `ADMINER_PORT`         | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `ADMINER_SERVER_NAME`  | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `DOCKER_IMAGE_TAG`     | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `REDIS_COMMANDER_PORT` | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `REDIS_SERVER_NAME`    | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `SERVER_NAME`          | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-| `TLD`                  | `true`   | :white_check_mark: | :x:  | :white_check_mark: | :x:     |
-
 Default values are located in `.env`.
 
-#### Dbdocs
-
-| name           | required | development        | test | production | release            |
-| -------------- | -------- | ------------------ | ---- | ---------- | ------------------ |
-| `DBDOCS_TOKEN` | `true`   | :white_check_mark: | :x:  | :x:        | :white_check_mark: |
-
-#### Doppler CLI
-
-| name              | required | development        | test               | production | release            |
-| ----------------- | -------- | ------------------ | ------------------ | ---------- | ------------------ |
-| `DOPPLER_PROJECT` | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`   | `true`   | :white_check_mark: | :white_check_mark: | :x:        | :white_check_mark: |
-
-Values should be stored in `.env.doppler`.
+See [Environment Variables](README.md#environment-variables) in the `README` for
+more details.
 
 #### GitHub Actions
 
-| name                  | required | development | test               | production | release            |
-| --------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
-| `DBDOCS_TOKEN`        | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_CONFIG`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_ENVIRONMENT` | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_PROJECT`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_TEST`  | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `GCLOUD_PROJECT`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `GITHUB_ACTIONS`      | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
-| `HOSTNAME`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `NODE_ENV`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `NPM_TOKEN_ADMIN`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_CPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_GPR_ADMIN`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_REPO_ADMIN`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `REDIS_USER`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_HOST`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_HOST_STAGING`    | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_PRIVATE_KEY`     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_USER`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| name                       | required | development | test               | production | release            |
+| -------------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
+| `DBDOCS_TOKEN_ADMIN`**\*** | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_CONFIG`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_ENVIRONMENT`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_PROJECT`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN_TEST`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `DOPPLER_TOKEN`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GCLOUD_PROJECT`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `GITHUB_ACTIONS`           | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
+| `NODE_ENV`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `NPM_TOKEN_ADMIN`**\***    | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_CPR_ADMIN`**\***      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_GPR_ADMIN`**\***      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `PAT_REPO_ADMIN`**\***     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_HOST`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_HOST_STAGING`         | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_PRIVATE_KEY`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+| `SSH_USER`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
+
+**\*** GitHub organization secret
 
 Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 
-#### Yarn 2
+#### [`package.json`](package.json) scripts
 
-| name               | required | development        | test | production | release            |
-| ------------------ | -------- | ------------------ | ---- | ---------- | ------------------ |
-| `GH_PAT`           | `true`   | :white_check_mark: | :x:  | :x:        | :white_check_mark: |
-| `INIT_CWD`         | `true`   | :x:                | :x:  | :x:        | :white_check_mark: |
-| `NPM_TOKEN`        | `true`   | :white_check_mark: | :x:  | :x:        | :white_check_mark: |
-| `npm_package_name` | `true`   | :x:                | :x:  | :x:        | :white_check_mark: |
+| name               | required | development        | test               | production         | release            |
+| ------------------ | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
+| `DBDOCS_TOKEN`     | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `DOPPLER_PROJECT`  | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `DOPPLER_TOKEN`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `GH_PAT`           | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `INIT_CWD`         | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
+| `NPM_TOKEN`        | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
+| `npm_package_name` | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
 
 #### Sourcing Environment Variables
 
 Follow the steps below to autosource environment variables:
 
-1. Configure the [Doppler CLI][2]
-
-   - [Doppler](#doppler) is used to manage and inject application-level
-     environment variables
+1. Configure the [Doppler CLI][6]
 
 2. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
 
@@ -187,6 +140,16 @@ Follow the steps below to autosource environment variables:
        api-host: https://api.doppler.com
        dashboard-host: https://dashboard.doppler.com
        token: secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+   ```
+
+   or:
+
+   ```yaml
+   scoped:
+     /:
+       api-host: https://api.doppler.com
+       dashboard-host: https://dashboard.doppler.com
+       token: dp.ct.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
    ```
 
 3. Open a shell startup file
@@ -200,9 +163,9 @@ Follow the steps below to autosource environment variables:
    [ -f $PWD/.env ] && . $PWD/.env
    [ -f $PWD/.env.local ] && . $PWD/.env.local
    
-   DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # doppler / scope token
-   GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx           # github personal access token with at least read:packages scope
-   NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        # npm auth token
+   export DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # doppler / scope token
+   export GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx           # github personal access token with at least read:packages scope
+   export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        # npm registry auth token
    ```
 
 5. Save shell startup file and re-launch shell
@@ -213,14 +176,14 @@ Follow the steps below to add new environment variables:
 
 1. Add default values to [`.env`](.env) (if necessary)
 2. Add new variables to [Doppler](#doppler)
-3. Update [Environment Variables](#environment-variables) section in this guide
+3. Update [Usage - Environment Variables](README.md#environment-variables)
 4. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
 5. Update app [configuration](src/config/configuration.ts)
 6. Update `docker-cloud.yml`: [`app` `environment`](docker-cloud.yml)
 7. Update `docker-compose.yml`: [`app` `environment`](docker-compose.yml)
 8. Restart Docker
-   - if already running: `yarn stop:dev && yarn start:dev -d`
-     - or: `yarn stop && yarn start -d`
+   - `yarn restart:dev`, `yarn restart:dev -d`
+   - `yarn restart`, `yarn restart -d`
 
 ### Git Configuration
 
@@ -242,7 +205,7 @@ conflict with the project's Yarn configuration, or the Yarn 2 API.
 
 ## Contributing Code
 
-[Husky][7] is used to run Git hooks that locally enforce coding and commit
+[Husky][10] is used to run Git hooks that locally enforce coding and commit
 message standards, as well run tests associated with any files changed since the
 last commit.
 
@@ -283,8 +246,8 @@ will create a new branch titled `feat/4-authentication`.
 
 ### Commit Messages
 
-This project follows [Conventional Commit][8] standards and uses [commitlint][9]
-to enforce those standards.
+This project follows [Conventional Commit][11] standards and uses
+[commitlint][12] to enforce those standards.
 
 This means every commit must conform to the following format:
 
@@ -327,7 +290,7 @@ commit scopes and types.
 
 ### Code Style
 
-[Prettier][10] is used to format code, and [ESLint][11] to lint files.
+[Prettier][13] is used to format code, and [ESLint][14] to lint files.
 
 #### Prettier Configuration
 
@@ -346,24 +309,34 @@ Source code is located in [`src`](src) directory.
 The purpose of each file should be documented using the `@file` annotation,
 along with an accompanying `@module` annotation.
 
+See the [NestJS docs][15] for help developing NestJS application.
+
+#### Docker Compose Services
+
+- `adminer`: <https://hub.docker.com/_/adminer>
+- `nginx`: <https://hub.docker.com/_/nginx>
+- `postgres`: <https://hub.docker.com/_/postgres>
+- `redis`: <https://hub.docker.com/_/redis>
+- `redis-commander`: <https://github.com/joeferner/redis-commander#docker>
+
 ### Documentation
 
-- JavaScript & TypeScript: [JSDoc][12], linted with [`eslint-plugin-jsdoc`][13]
+- JavaScript & TypeScript: [JSDoc][16], linted with [`eslint-plugin-jsdoc`][17]
 
 Before making a pull request, be sure your code is well documented, as it will
 be part of your code review.
 
 ### Testing
 
-This project uses a [Mocha][14] x [Chai][15] testing workflow.
+This project uses a [Mocha][18] x [Chai][19] testing workflow.
 
 - run all test suites: `yarn test`
 
 Husky is configured to run tests before every push. If you need to create a new
 issue regarding a test, or need to make a `wip` commit, use Mocha's [inclusive
-tests feature][16] to mark your tests or suites as pending.
+tests feature][20] to mark your tests or suites as pending.
 
-For more details on testing NestJS applications, see [Testing docs][17].
+For more details on testing NestJS applications, see [Testing docs][21].
 
 ### Getting Help
 
@@ -460,7 +433,7 @@ This repository is configured to publish packages and releases when a
 
 > Note: Publishing is executed via the
 > [Continuous Deployment](./.github/workflows/continous-deployment.yml)
-> workflow. This is so invalid or malicious versions cannot be release without
+> workflow. This is so invalid or malicious versions cannot be released without
 > merging those changes into `next` first.
 
 Before releasing, the following steps must be completed:
@@ -474,7 +447,7 @@ Before releasing, the following steps must be completed:
      generate the correct build and publish commands
 3. Decide what version bump the release needs (major, minor, patch)
    - versioning
-     - `yarn release` (determines [bumps based on commits][18])
+     - `yarn release` (determines [bumps based on commits][22])
      - `yarn release --first-release`
      - `yarn release --release-as major`
      - `yarn release --release-as minor`
@@ -490,10 +463,11 @@ Before releasing, the following steps must be completed:
    - once the PR is merged, the deployment workflow will be triggered
    - the maintainer who approved the PR should check to make sure the workflow
      completes all jobs as expected. if successful, the workflow will:
-     - **TODO** push container image to the [GitHub Container Registry][19]
+     - **TODO** wait for [`ci`](.github/workflows/ci.yml) job to succeed
+     - **TODO** deploy database design doc to [dbdocs][1]
+     - **TODO** push container image to the [GitHub Container Registry][23]
      - **TODO** tag latest container image
-     - **TODO** deploy api
-     - **TODO** deploy database design doc to [dbdocs][20]
+     - **TODO** upload docker app files to [production vm instance][24]
      - update production branch (merge branch `next` into `main`)
      - publish previously drafted release
      - delete release branch
@@ -501,24 +475,28 @@ Before releasing, the following steps must be completed:
      - make sure all issues are closed and have the label `status:merged`
      - add the `status:released` label to all issues (and PRs)
 
-[1]: https://doppler.com
-[2]: https://docs.doppler.com/docs/install-cli#usage
-[3]: https://docs.doppler.com/docs/install-cli
-[4]: https://nodejs.org
-[5]: https://typescriptlang.org
-[6]: https://yarnpkg.com/getting-started/migration
-[7]: https://github.com/typicode/husky
-[8]: https://www.conventionalcommits.org
-[9]: https://github.com/conventional-changelog/commitlint
-[10]: https://prettier.io
-[11]: https://eslint.org
-[12]: https://jsdoc.app
-[13]: https://github.com/gajus/eslint-plugin-jsdoc
-[14]: https://mochajs.org
-[15]: https://www.chaijs.com
-[16]: https://mochajs.org/#inclusive-tests
-[17]: https://docs.nestjs.com/fundamentals/testing
-[18]: https://www.conventionalcommits.org/en/v1.0.0
-[19]:
+[1]: https://dbdocs.io
+[2]: https://dbml.org/docs
+[3]: https://docs.docker.com/get-docker
+[4]: https://doppler.com
+[5]: https://docs.doppler.com/docs/install-cli#usage
+[6]: https://docs.doppler.com/docs/install-cli
+[7]: https://nodejs.org
+[8]: https://typescriptlang.org
+[9]: https://yarnpkg.com/getting-started/migration
+[10]: https://github.com/typicode/husky
+[11]: https://www.conventionalcommits.org
+[12]: https://github.com/conventional-changelog/commitlint
+[13]: https://prettier.io
+[14]: https://eslint.org
+[15]: https://docs.nestjs.com
+[16]: https://jsdoc.app
+[17]: https://github.com/gajus/eslint-plugin-jsdoc
+[18]: https://mochajs.org
+[19]: https://www.chaijs.com
+[20]: https://mochajs.org/#inclusive-tests
+[21]: https://docs.nestjs.com/fundamentals/testing
+[22]: https://www.conventionalcommits.org/en/v1.0.0
+[23]:
   https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-[20]: https://dbdocs.io/docs
+[24]: https://cloud.google.com/compute

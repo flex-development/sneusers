@@ -53,9 +53,9 @@
     - [x] Redis
   - [x] [SSL QA][15]
 - [ ] QA - Documentation
-  - [ ] `CONTRIBUTING`
-  - [ ] [`DATABASE`](docs/DATABASE.dbml)
-  - [ ] `README`
+  - [x] `CONTRIBUTING`
+  - [x] [`DATABASE`](docs/DATABASE.dbml)
+  - [x] `README`
   - [ ] OpenAPI
 
 ## v1.0.0

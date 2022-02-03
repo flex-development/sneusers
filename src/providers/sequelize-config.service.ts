@@ -95,11 +95,6 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       delete options.timezone
     }
 
-    if (this.config.get<boolean>('PROD')) {
-      options.synchronize = false
-      delete options.sync
-    }
-
     return options
   }
 }

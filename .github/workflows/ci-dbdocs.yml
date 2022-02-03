@@ -11,11 +11,13 @@ name: ci-dbdocs
 on:
   pull_request:
     paths:
+      - .github/workflows/ci-dbdocs.yml
       - docs/DATABASE.dbml
   push:
     branches:
       - next
     paths:
+      - .github/workflows/ci-dbdocs.yml
       - docs/DATABASE.dbml
   workflow_dispatch:
 jobs:
@@ -34,4 +36,4 @@ jobs:
         name: Build dbdocs project
         run: dbdocs build ./docs/DATABASE.dbml
         env:
-          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN_ADMIN }}

@@ -63,7 +63,6 @@ describe('integration:modules/AppModule', () => {
         { expected: 'string', type: 'NodeEnv', variable: 'NODE_ENV' },
         { expected: 'number', variable: 'PORT' },
         { expected: 'boolean', variable: 'PROD' },
-        { expected: 'boolean', variable: 'PROD_LOCAL' },
         { expected: 'string', variable: 'REDIS_HOST' },
         { expected: 'string', variable: 'REDIS_PASSWORD' },
         { expected: 'number', variable: 'REDIS_PORT' },

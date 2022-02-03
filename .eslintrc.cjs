@@ -59,6 +59,7 @@ module.exports = {
           'passwordless',
           'plaintext',
           'poq',
+          'postgres',
           'readonly',
           'redis',
           'req',

@@ -28,7 +28,7 @@ class EnvironmentVariables {
   CACHE_MAX: number
 
   /**
-   * Amount of time in seconds that a response is cached before it is deleted.
+   * Amount of time a response is cached before it is deleted (in seconds).
    *
    * Subsequent requests will go to the route handler and refresh the cache.
    *
@@ -50,9 +50,9 @@ class EnvironmentVariables {
   DB_AUTO_LOAD_MODELS: boolean
 
   /**
-   * Host of database to connect to.
+   * Hostname of database to connect to.
    *
-   * @default 'localhost'
+   * @default 'postgres'
    */
   @IsString()
   @IsNotEmpty()
@@ -67,7 +67,7 @@ class EnvironmentVariables {
   DB_NAME: string
 
   /**
-   * Password used to authenticate against the database to connect to.
+   * Database password.
    */
   @IsString()
   @IsNotEmpty()
@@ -96,7 +96,7 @@ class EnvironmentVariables {
   DB_TIMEZONE: string
 
   /**
-   * Username used to authenticate against the database to connect to.
+   * Database user.
    */
   @IsString()
   @IsNotEmpty()
@@ -117,7 +117,7 @@ class EnvironmentVariables {
   EMAIL_CLIENT: string
 
   /**
-   * Email host server.
+   * Hostname of email server.
    *
    * @default 'smtp.gmail.com'
    */
@@ -158,9 +158,9 @@ class EnvironmentVariables {
   EMAIL_USER: string
 
   /**
-   * Application URL.
+   * Application URL (includes scheme and `PORT` if applicable).
    *
-   * @default `${'http'|'https'}://${HOSTNAME}:${PORT}`
+   * @default `http://${HOSTNAME}:${PORT}`
    */
   @IsString()
   @IsNotEmpty()
@@ -177,7 +177,7 @@ class EnvironmentVariables {
   HOSTNAME: string
 
   /**
-   * User access token expiration time.
+   * Access token expiration time (in seconds).
    *
    * @default 900
    */
@@ -186,7 +186,7 @@ class EnvironmentVariables {
   JWT_EXP_ACCESS: number
 
   /**
-   * User refresh token expiration time.
+   * Refresh token expiration time (in seconds).
    *
    * @default 86400
    */
@@ -195,7 +195,7 @@ class EnvironmentVariables {
   JWT_EXP_REFRESH: number
 
   /**
-   * User verification token expiration time.
+   * Verification token expiration time (in seconds).
    *
    * @default 86400
    */
@@ -204,34 +204,34 @@ class EnvironmentVariables {
   JWT_EXP_VERIFY: number
 
   /**
-   * JWT access token signing secret.
+   * Access token signing secret.
    *
-   * Defaults to `'JWT_SECRET'` in non-production environments.
+   * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
   @IsNotEmpty()
   JWT_SECRET_ACCESS: string
 
   /**
-   * JWT refresh token signing secret.
+   * Refresh token signing secret.
    *
-   * Defaults to `'JWT_SECRET'` in non-production environments.
+   * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
   @IsNotEmpty()
   JWT_SECRET_REFRESH: string
 
   /**
-   * JWT verification token signing secret.
+   * Verification token signing secret.
    *
-   * Defaults to `'JWT_SECRET'` in non-production environments.
+   * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
   @IsNotEmpty()
   JWT_SECRET_VERIFY: string
 
   /**
-   * Current Node environment.
+   * Node environment.
    *
    * @default NodeEnv.ENV
    */
@@ -257,15 +257,7 @@ class EnvironmentVariables {
   PROD: boolean
 
   /**
-   * Indicates if application is running in local `production` Node environment.
-   *
-   * **Note**: This value is computed by the application.
-   */
-  @IsBoolean()
-  PROD_LOCAL: boolean
-
-  /**
-   * IP address of the [Redis][1] server host.
+   * Hostname of [Redis][1] server.
    *
    * [1]: https://redis.io
    *
@@ -279,13 +271,15 @@ class EnvironmentVariables {
 
   /**
    * Redis password.
+   *
+   * Defaults to `'redis'` in `development` and `test` environments.
    */
   @IsString()
   @IsNotEmpty()
   REDIS_PASSWORD: string
 
   /**
-   * Port to run [Redis][1] server on.
+   * Port [Redis][1] server is running on.
    *
    * [1]: https://redis.io
    *
@@ -308,6 +302,8 @@ class EnvironmentVariables {
   /**
    * Maximum number of requests within the @see {@link THROTTLE_TTL} limit.
    *
+   * @see https://docs.nestjs.com/security/rate-limiting#configuration
+   *
    * @default 10
    */
   @IsNumber()
@@ -316,6 +312,8 @@ class EnvironmentVariables {
 
   /**
    * Number of seconds that each request will last in storage.
+   *
+   * @see https://docs.nestjs.com/security/rate-limiting#configuration
    *
    * @default 60
    */

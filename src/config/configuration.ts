@@ -21,7 +21,7 @@ const validate = ({
   CACHE_MAX = 100,
   CACHE_TTL = 5,
   DB_AUTO_LOAD_MODELS = 'true',
-  DB_HOST = 'localhost',
+  DB_HOST = 'postgres',
   DB_NAME,
   DB_PASSWORD,
   DB_PORT = 5432,
@@ -54,13 +54,18 @@ const validate = ({
   // Set Node environment
   env.NODE_ENV = NODE_ENV
 
-  // Check if running in local production mode or deployed production mode
-  env.PROD_LOCAL = env.NODE_ENV === NodeEnv.PROD && HOSTNAME === 'localhost'
-  env.PROD = env.NODE_ENV === NodeEnv.PROD && !env.PROD_LOCAL
+  // Check if running in production environment
+  env.PROD = env.NODE_ENV === NodeEnv.PROD
 
   // Set hostname and port to run application on
   env.HOSTNAME = HOSTNAME
   env.PORT = Number.parseInt(PORT.toString())
+
+  // Provide defaults in development and test environments
+  JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
+  JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
+  JWT_SECRET_VERIFY = (env.PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
+  REDIS_PASSWORD = (env.PROD && REDIS_PASSWORD) || 'redis'
 
   // Assign remaining environment variables
   env.CACHE_MAX = Number.parseInt(CACHE_MAX.toString())
@@ -83,9 +88,9 @@ const validate = ({
   env.JWT_EXP_ACCESS = Number.parseInt(JWT_EXP_ACCESS.toString(), 10)
   env.JWT_EXP_REFRESH = Number.parseInt(JWT_EXP_REFRESH.toString(), 10)
   env.JWT_EXP_VERIFY = Number.parseInt(JWT_EXP_VERIFY.toString(), 10)
-  env.JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
-  env.JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
-  env.JWT_SECRET_VERIFY = (env.PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
+  env.JWT_SECRET_ACCESS = JWT_SECRET_ACCESS
+  env.JWT_SECRET_REFRESH = JWT_SECRET_REFRESH
+  env.JWT_SECRET_VERIFY = JWT_SECRET_VERIFY
   env.REDIS_HOST = REDIS_HOST
   env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString(), 10)

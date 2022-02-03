@@ -24,12 +24,12 @@
 #
 # Usage:
 #
+# CERTBOT_EMAIL=<email>
+# GCLOUD_DOMAINS=<certbot-domains-list>
+# GCLOUD_PROJECT=<project-id>
+# GCLOUD_SA_CERTBOT=<certbot-service-account-email>
+# GCLOUD_SA_CERTBOT_PK=<path-to-cerbot-service-account-file>
 # $ chmod +x ./tools/scripts/certbot-google-dns.sh
-# $ CERTBOT_EMAIL=<email>
-# $ GCLOUD_DOMAINS=<certbot-domains-list>
-# $ GCLOUD_PROJECT=<project-id>
-# $ GCLOUD_SA_CERTBOT=<certbot-service-account-email>
-# $ GCLOUD_SA_CERTBOT_PK=<path-to-cerbot-service-account-file>
 # $ ./tools/scripts/certbot-google-dns.sh
 #
 # References:
