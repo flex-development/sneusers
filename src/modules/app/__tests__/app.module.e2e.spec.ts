@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common'
 import type { NestExpressApplication } from '@nestjs/platform-express'
-import { PACKAGE } from '@sneusers/config/constants.config'
+import { ENV } from '@sneusers/config/configuration'
+import { AppService } from '@sneusers/providers'
 import createApp from '@tests/utils/create-app.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
 import type { Response } from 'superagent'
@@ -31,6 +32,9 @@ describe('e2e:modules/AppModule', () => {
 
     describe('GET', () => {
       describe('200 OK', () => {
+        const APP_ENV = ENV.APP_ENV
+        const PACKAGE = AppService.package
+
         let res: Response
 
         before(async () => {
@@ -41,15 +45,15 @@ describe('e2e:modules/AppModule', () => {
           expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         })
 
-        it('should return response with project description', () => {
+        it('should return response with app description', () => {
           expect(res.body.info.description).to.equal(PACKAGE.description)
         })
 
-        it('should return response with project title', () => {
-          expect(res.body.info.title).to.equal(PACKAGE.name.split('/')[1])
+        it('should return response with app environment and name', () => {
+          expect(res.body.info.title).to.equal(`[${APP_ENV}] ${PACKAGE.app}`)
         })
 
-        it('should return response with project version', () => {
+        it('should return response with app version', () => {
           expect(res.body.info.version).to.equal(PACKAGE.version)
         })
       })

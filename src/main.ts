@@ -1,7 +1,7 @@
 import { NestApplicationOptions } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import type { NodeEnv } from '@sneusers/enums'
+import type { AppEnv } from '@sneusers/enums'
 import useGlobal from './hooks/use-global.hook'
 import type { EnvironmentVariables } from './models'
 import AppModule from './modules/app/app.module'
@@ -33,9 +33,9 @@ async function bootstrap(options?: NestApplicationOptions): Promise<void> {
   // Start application
   await app.listen(conf.get<number>('PORT'), () => {
     const HOST = conf.get<string>('HOST')
-    const NODE_ENV = conf.get<NodeEnv>('NODE_ENV')
+    const APP_ENV = conf.get<AppEnv>('APP_ENV')
 
-    return console.log(`[${NODE_ENV}] listening at ${HOST}`)
+    return console.log(`[${APP_ENV}] listening at ${HOST}`)
   })
 }
 

@@ -1,6 +1,7 @@
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { ENV } from '@sneusers/config/configuration'
 import { PaginatedDTO } from '@sneusers/dtos'
 import { QueryParams } from '@sneusers/models'
 import { AppService } from '@sneusers/providers'
@@ -37,7 +38,7 @@ const useSwagger = async (
   builder.setDescription(pkg.description)
   builder.setExternalDoc('GitHub Repository', pkg.homepage)
   builder.setLicense(pkg.license, undefined as unknown as string)
-  builder.setTitle(pkg.app)
+  builder.setTitle(`[${ENV.APP_ENV}] ${pkg.app}`)
   builder.setVersion(pkg.version)
 
   // Add security schemes
@@ -60,6 +61,11 @@ const useSwagger = async (
     description: 'NestJS Docs - Healthchecks (Terminus)',
     url: 'https://docs.nestjs.com/recipes/terminus'
   })
+
+  // Add servers
+  builder.addServer(ENV.SERVER_URL_PROD, ENV.SERVER_DESCRIP_PROD)
+  builder.addServer(ENV.SERVER_URL_STG, ENV.SERVER_DESCRIP_STG)
+  builder.addServer(ENV.SERVER_URL_DEV, ENV.SERVER_DESCRIP_DEV)
 
   // Get documentation options
   const options: SwaggerDocumentOptions = {

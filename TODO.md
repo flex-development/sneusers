@@ -52,11 +52,11 @@
     - [x] Adminer
     - [x] Redis
   - [x] [SSL QA][15]
-- [ ] QA - Documentation
+- [x] QA - Documentation
   - [x] `CONTRIBUTING`
   - [x] [`DATABASE`](docs/DATABASE.dbml)
   - [x] `README`
-  - [ ] OpenAPI
+  - [x] OpenAPI
 
 ## v1.0.0
 

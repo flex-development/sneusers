@@ -1,4 +1,4 @@
-import { NodeEnv } from '@sneusers/enums'
+import { AppEnv, NodeEnv } from '@sneusers/enums'
 import {
   IsBoolean,
   IsEnum,
@@ -18,6 +18,15 @@ import {
  * Environment variables used by this application.
  */
 class EnvironmentVariables {
+  /**
+   * Application environment.
+   *
+   * @default AppEnv.DEV
+   */
+  @IsEnum(AppEnv)
+  @IsOptional()
+  APP_ENV: AppEnv
+
   /**
    * Maximum number of responses to store in the cache.
    *
@@ -233,7 +242,7 @@ class EnvironmentVariables {
   /**
    * Node environment.
    *
-   * @default NodeEnv.ENV
+   * @default NodeEnv.DEV
    */
   @IsEnum(NodeEnv)
   @IsOptional()
@@ -292,6 +301,71 @@ class EnvironmentVariables {
   REDIS_PORT: number
 
   /**
+   * Development server description.
+   *
+   * @default 'Development server (local only)'
+   */
+  @IsString()
+  @IsOptional()
+  SERVER_DESCRIP_DEV: string
+
+  /**
+   * Production server description.
+   *
+   * @default 'Production server'
+   */
+  @IsString()
+  @IsOptional()
+  SERVER_DESCRIP_PROD: string
+
+  /**
+   * Staging server description.
+   *
+   * @default 'Staging server'
+   */
+  @IsString()
+  @IsOptional()
+  SERVER_DESCRIP_STG: string
+
+  /**
+   * Development server URL.
+   *
+   * @default `https://api.dev.${TLD}`
+   */
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  SERVER_URL_DEV: string
+
+  /**
+   * Production server URL.
+   *
+   * @default `https://api.${TLD}`
+   */
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  SERVER_URL_PROD: string
+
+  /**
+   * Staging server URL.
+   *
+   * @default `https://api.stg.${TLD}`
+   */
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  SERVER_URL_STG: string
+
+  /**
+   * Indicates if application is running in a staging environment.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsBoolean()
+  STG: boolean
+
+  /**
    * Indicates if application is running in `test` Node environment.
    *
    * **Note**: This value is computed by the application.
@@ -320,6 +394,13 @@ class EnvironmentVariables {
   @IsNumber()
   @IsOptional()
   THROTTLE_TTL: number
+
+  /**
+   * Top-level domain.
+   */
+  @IsString()
+  @IsNotEmpty()
+  TLD: string
 }
 
 export default EnvironmentVariables

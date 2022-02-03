@@ -26,6 +26,7 @@ services:
       - postgres
       - redis
     environment:
+      APP_ENV: ${APP_ENV}
       CACHE_MAX: ${CACHE_MAX}
       CACHE_TTL: ${CACHE_TTL}
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
@@ -59,8 +60,15 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
+      SERVER_DESCRIP_DEV: ${SERVER_DESCRIP_DEV}
+      SERVER_DESCRIP_PROD: ${SERVER_DESCRIP_PROD}
+      SERVER_DESCRIP_STG: ${SERVER_DESCRIP_STG}
+      SERVER_URL_DEV: ${SERVER_URL_DEV}
+      SERVER_URL_PROD: ${SERVER_URL_PROD}
+      SERVER_URL_STG: ${SERVER_URL_STG}
       THROTTLE_LIMIT: ${THROTTLE_LIMIT}
       THROTTLE_TTL: ${THROTTLE_TTL}
+      TLD: ${TLD}
     links:
       - postgres:${DB_HOST}
       - redis:${REDIS_HOST}

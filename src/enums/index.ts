@@ -19,6 +19,7 @@ export {
   ValidationErrorItemType
 } from 'sequelize'
 export { default as ApiEndpoint } from './api-endpoint.enum'
+export { default as AppEnv } from './app-env.enum'
 export { default as DatabaseTable } from './database-table.enum'
 export { default as LOCK } from './lock.enum'
 export { default as OrderDirection } from './order-direction.enum'

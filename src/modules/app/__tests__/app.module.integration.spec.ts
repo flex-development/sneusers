@@ -31,11 +31,12 @@ describe('integration:modules/AppModule', () => {
 
     describe('app.get(ConfigService).get', () => {
       type Case = Testcase<'boolean' | 'number' | 'string'> & {
-        type?: 'NodeEnv'
+        type?: 'AppEnv' | 'NodeEnv'
         variable: keyof EnvironmentVariables
       }
 
       const cases: Case[] = [
+        { expected: 'string', type: 'AppEnv', variable: 'APP_ENV' },
         { expected: 'number', variable: 'CACHE_MAX' },
         { expected: 'number', variable: 'CACHE_TTL' },
         { expected: 'boolean', variable: 'DB_AUTO_LOAD_MODELS' },
@@ -66,9 +67,16 @@ describe('integration:modules/AppModule', () => {
         { expected: 'string', variable: 'REDIS_HOST' },
         { expected: 'string', variable: 'REDIS_PASSWORD' },
         { expected: 'number', variable: 'REDIS_PORT' },
+        { expected: 'string', variable: 'SERVER_DESCRIP_DEV' },
+        { expected: 'string', variable: 'SERVER_DESCRIP_PROD' },
+        { expected: 'string', variable: 'SERVER_URL_DEV' },
+        { expected: 'string', variable: 'SERVER_URL_PROD' },
+        { expected: 'string', variable: 'SERVER_URL_STG' },
+        { expected: 'boolean', variable: 'STG' },
         { expected: 'boolean', variable: 'TEST' },
         { expected: 'number', variable: 'THROTTLE_LIMIT' },
-        { expected: 'number', variable: 'THROTTLE_TTL' }
+        { expected: 'number', variable: 'THROTTLE_TTL' },
+        { expected: 'string', variable: 'TLD' }
       ]
 
       cases.forEach(({ expected, type = expected, variable }) => {

@@ -131,7 +131,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.2
         with:
           debug: true
-          host: ${{ secrets.SSH_HOST_STAGING }}
+          host: ${{ secrets.SSH_HOST_STG }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           rm: true

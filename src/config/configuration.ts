@@ -1,5 +1,5 @@
 import { ObjectPlain } from '@flex-development/tutils'
-import { NodeEnv } from '@sneusers/enums'
+import { AppEnv, NodeEnv } from '@sneusers/enums'
 import { EnvironmentVariables } from '@sneusers/models'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
@@ -18,6 +18,7 @@ import { validateSync, ValidationError } from 'class-validator'
  * @throws {ValidationError[]}
  */
 const validate = ({
+  APP_ENV = AppEnv.DEV,
   CACHE_MAX = 100,
   CACHE_TTL = 5,
   DB_AUTO_LOAD_MODELS = 'true',
@@ -46,26 +47,37 @@ const validate = ({
   REDIS_HOST = 'redis',
   REDIS_PASSWORD,
   REDIS_PORT = 6379,
+  SERVER_DESCRIP_DEV = 'Development server (local only)',
+  SERVER_DESCRIP_PROD = 'Production server',
+  SERVER_DESCRIP_STG = 'Staging server',
+  SERVER_URL_DEV,
+  SERVER_URL_PROD,
+  SERVER_URL_STG,
   THROTTLE_LIMIT = 10,
-  THROTTLE_TTL = 60
+  THROTTLE_TTL = 60,
+  TLD
 }: ObjectPlain): EnvironmentVariables => {
   const env = new EnvironmentVariables()
 
-  // Set Node environment
+  // Set application and  Node environment
+  env.APP_ENV = APP_ENV
   env.NODE_ENV = NODE_ENV
 
-  // Check if running in production environment
-  env.PROD = env.NODE_ENV === NodeEnv.PROD
+  // Check if running in production or staging environment
+  env.PROD = env.APP_ENV === AppEnv.PROD && env.NODE_ENV === NodeEnv.PROD
+  env.STG = env.APP_ENV === AppEnv.STG
+  const STG_OR_PROD = env.STG || env.PROD
 
-  // Set hostname and port to run application on
+  // Set hostname, port to run application on, and top level domain
   env.HOSTNAME = HOSTNAME
   env.PORT = Number.parseInt(PORT.toString())
+  env.TLD = TLD
 
   // Provide defaults in development and test environments
-  JWT_SECRET_ACCESS = (env.PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
-  JWT_SECRET_REFRESH = (env.PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
-  JWT_SECRET_VERIFY = (env.PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
-  REDIS_PASSWORD = (env.PROD && REDIS_PASSWORD) || 'redis'
+  JWT_SECRET_ACCESS = (STG_OR_PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
+  JWT_SECRET_REFRESH = (STG_OR_PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
+  JWT_SECRET_VERIFY = (STG_OR_PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
+  REDIS_PASSWORD = (STG_OR_PROD && REDIS_PASSWORD) || 'redis'
 
   // Assign remaining environment variables
   env.CACHE_MAX = Number.parseInt(CACHE_MAX.toString())
@@ -77,7 +89,7 @@ const validate = ({
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
-  env.DEV = NODE_ENV === NodeEnv.DEV
+  env.DEV = env.APP_ENV === AppEnv.DEV && env.NODE_ENV === NodeEnv.DEV
   env.EMAIL_CLIENT = EMAIL_CLIENT
   env.EMAIL_HOST = EMAIL_HOST
   env.EMAIL_PORT = Number.parseInt(EMAIL_PORT.toString(), 10)
@@ -94,7 +106,13 @@ const validate = ({
   env.REDIS_HOST = REDIS_HOST
   env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString(), 10)
-  env.TEST = NODE_ENV === NodeEnv.TEST
+  env.SERVER_DESCRIP_DEV = SERVER_DESCRIP_DEV
+  env.SERVER_DESCRIP_PROD = SERVER_DESCRIP_PROD
+  env.SERVER_DESCRIP_STG = SERVER_DESCRIP_STG
+  env.SERVER_URL_DEV = SERVER_URL_DEV || `https://api.dev.${env.TLD}`
+  env.SERVER_URL_PROD = SERVER_URL_PROD || `https://api.${env.TLD}`
+  env.SERVER_URL_STG = SERVER_URL_STG || `https://api.stg.${env.TLD}`
+  env.TEST = env.APP_ENV === AppEnv.TEST && env.NODE_ENV === NodeEnv.TEST
   env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString(), 10)
   env.THROTTLE_TTL = Number.parseInt(THROTTLE_TTL.toString(), 10)
 
@@ -120,6 +138,7 @@ const validate = ({
  */
 const configuration = (): EnvironmentVariables => {
   return validate({
+    APP_ENV: process.env.APP_ENV,
     CACHE_MAX: process.env.CACHE_MAX,
     CACHE_TTL: process.env.CACHE_TTL,
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
@@ -148,8 +167,15 @@ const configuration = (): EnvironmentVariables => {
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_PORT: process.env.REDIS_PORT,
+    SERVER_DESCRIP_DEV: process.env.SERVER_DESCRIP_DEV,
+    SERVER_DESCRIP_PROD: process.env.SERVER_DESCRIP_PROD,
+    SERVER_DESCRIP_STG: process.env.SERVER_DESCRIP_STG,
+    SERVER_URL_DEV: process.env.SERVER_URL_DEV,
+    SERVER_URL_PROD: process.env.SERVER_URL_PROD,
+    SERVER_URL_STG: process.env.SERVER_URL_STG,
     THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,
-    THROTTLE_TTL: process.env.THROTTLE_TTL
+    THROTTLE_TTL: process.env.THROTTLE_TTL,
+    TLD: process.env.TLD
   })
 }
 
