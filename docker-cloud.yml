@@ -21,7 +21,7 @@ services:
     restart: always
   app:
     container_name: app
-    image: ghcr.io/flex-development/sneusers:${DOCKER_IMAGE_TAG}
+    image: ghcr.io/${DOCKER_IMAGE}:${DOCKER_IMAGE_TAG}
     depends_on:
       - postgres
       - redis

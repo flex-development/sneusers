@@ -92,7 +92,8 @@ See [Get Docker][14] for help installing Docker on your platform.
 | `DB_USERNAME`          | `'ubuntu'`                          | Database user                                                                          |
 | `DEBUG`                | `'http,sequelize:*'`                | Enables/disables specific debugging namespaces                                         |
 | `DEBUG_COLORS`         | `1`                                 | Whether or not to use colors in the debug output                                       |
-| `DOCKER_IMAGE_TAG`     | `edge`                              | `ghcr.io/flex-development/sneusers` image tag                                          |
+| `DOCKER_IMAGE`         | `flex-development/sneusers`         | Docker app image name                                                                  |
+| `DOCKER_IMAGE_TAG`     | `edge`                              | `ghcr.io/$DOCKER_IMAGE` image tag                                                      |
 | `EMAIL_CLIENT`         | -                                   | Google service account `client_id`                                                     |
 | `EMAIL_HOST`           | `'smtp.gmail.com'`                  | Hostname of email server                                                               |
 | `EMAIL_PORT`           | `465`                               | Port to send emails from                                                               |

@@ -26,7 +26,7 @@ services:
   app:
     container_name: app
     # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
-    image: flex-development/sneusers
+    image: ${DOCKER_IMAGE}
     build:
       args:
         GH_PAT: ${GH_PAT}
