@@ -23,9 +23,15 @@ const validate = ({
   CACHE_TTL = 5,
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'postgres',
+  DB_LOG_QUERY_PARAMS = true,
   DB_NAME,
   DB_PASSWORD,
   DB_PORT = 5432,
+  DB_RETRY_ATTEMPTS = 10,
+  DB_RETRY_DELAY = 3000,
+  DB_SYNC_ALTER = true,
+  DB_SYNC_FORCE = false,
+  DB_SYNCHRONIZE = true,
   DB_TIMEZONE = '-05:00',
   DB_USERNAME,
   EMAIL_CLIENT,
@@ -84,9 +90,15 @@ const validate = ({
   env.CACHE_TTL = Number.parseInt(CACHE_TTL.toString())
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
+  env.DB_LOG_QUERY_PARAMS = JSON.parse(DB_LOG_QUERY_PARAMS)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
   env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
+  env.DB_RETRY_ATTEMPTS = Number.parseInt(DB_RETRY_ATTEMPTS.toString(), 10)
+  env.DB_RETRY_DELAY = Number.parseInt(DB_RETRY_DELAY.toString(), 10)
+  env.DB_SYNC_ALTER = JSON.parse(DB_SYNC_ALTER)
+  env.DB_SYNC_FORCE = JSON.parse(DB_SYNC_FORCE)
+  env.DB_SYNCHRONIZE = JSON.parse(DB_SYNCHRONIZE)
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = env.APP_ENV === AppEnv.DEV && env.NODE_ENV === NodeEnv.DEV
@@ -143,9 +155,15 @@ const configuration = (): EnvironmentVariables => {
     CACHE_TTL: process.env.CACHE_TTL,
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
+    DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,
+    DB_RETRY_ATTEMPTS: process.env.DB_RETRY_ATTEMPTS,
+    DB_RETRY_DELAY: process.env.DB_RETRY_DELAY,
+    DB_SYNC_ALTER: process.env.DB_SYNC_ALTER,
+    DB_SYNC_FORCE: process.env.DB_SYNC_FORCE,
+    DB_SYNCHRONIZE: process.env.DB_SYNCHRONIZE,
     DB_TIMEZONE: process.env.DB_TIMEZONE,
     DB_USERNAME: process.env.DB_USERNAME,
     EMAIL_CLIENT: process.env.EMAIL_CLIENT,

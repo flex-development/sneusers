@@ -43,18 +43,12 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
    * @return {SequelizeModuleOptions} [`SequelizeModule#forRoot`][2] options
    */
   createSequelizeOptions(name?: string): SequelizeModuleOptions {
-    const autoLoadModels = this.config.get<boolean>('DB_AUTO_LOAD_MODELS')
-    const database = this.config.get<string>('DB_NAME')
-    const host = this.config.get<string>('DB_HOST')
-    const password = this.config.get<string>('DB_PASSWORD')
-    const port = this.config.get<number>('DB_PORT')
-    const timezone = this.config.get<string>('DB_TIMEZONE')
-    const username = this.config.get<string>('DB_USERNAME')
+    const DB_NAME = this.config.get<string>('DB_NAME')
 
     const options: SequelizeModuleOptions = {
-      autoLoadModels,
+      autoLoadModels: this.config.get<boolean>('DB_AUTO_LOAD_MODELS'),
       benchmark: true,
-      database,
+      database: DB_NAME,
       define: {
         createdAt: 'created_at',
         defaultScope: { order: [['id', OrderDirection.ASC]] },
@@ -63,23 +57,26 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
         updatedAt: 'updated_at'
       },
       dialect: 'postgres',
-      dialectOptions: { application_name: database },
-      host,
-      logQueryParameters: true,
+      dialectOptions: { application_name: DB_NAME },
+      host: this.config.get<string>('DB_HOST'),
+      logQueryParameters: this.config.get<boolean>('DB_LOG_QUERY_PARAMS'),
       logging: sql => console.log(sequelizeLogger(sql)),
       name,
       omitNull: false,
-      password,
-      port,
+      password: this.config.get<string>('DB_PASSWORD'),
+      port: this.config.get<number>('DB_PORT'),
       repositoryMode: true,
-      retryAttempts: 3,
-      retryDelay: 0,
-      sync: { force: true },
-      synchronize: autoLoadModels,
-      timezone,
+      retryAttempts: this.config.get<number>('DB_RETRY_ATTEMPTS'),
+      retryDelay: this.config.get<number>('DB_RETRY_DELAY'),
+      sync: {
+        alter: this.config.get<boolean>('DB_SYNC_ALTER') && { drop: false },
+        force: this.config.get<boolean>('DB_SYNC_FORCE')
+      },
+      synchronize: this.config.get<boolean>('DB_SYNCHRONIZE'),
+      timezone: this.config.get<string>('DB_TIMEZONE'),
       transactionType: Transaction.TYPES.DEFERRED,
       typeValidation: true,
-      username
+      username: this.config.get<string>('DB_USERNAME')
     }
 
     if (this.config.get<boolean>('TEST')) {
@@ -90,7 +87,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       options.dialect = 'sqlite'
       options.dialectOptions = dialectOptions
       options.logging = noop
-      options.storage = `./db/data/sqlite/${database}.db`
+      options.storage = `./db/data/sqlite/${DB_NAME}.db`
 
       delete options.timezone
     }

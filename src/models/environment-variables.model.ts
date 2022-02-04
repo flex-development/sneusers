@@ -69,6 +69,15 @@ class EnvironmentVariables {
   DB_HOST: string
 
   /**
+   * Show database bind parameters in log.
+   *
+   * @default true
+   */
+  @IsBoolean()
+  @IsOptional()
+  DB_LOG_QUERY_PARAMS: boolean
+
+  /**
    * Name of database to connect to.
    */
   @IsString()
@@ -94,7 +103,77 @@ class EnvironmentVariables {
   DB_PORT: number
 
   /**
-   * Timezone used when converting a date from the database into a JavaScript
+   * Number of attempts to connect to the database.
+   *
+   * @default 10
+   */
+  @IsNumber()
+  @IsOptional()
+  DB_RETRY_ATTEMPTS: number
+
+  /**
+   * Delay between database connection retry attempts (ms).
+   *
+   * @default 3000
+   */
+  @IsNumber()
+  @IsOptional()
+  DB_RETRY_DELAY: number
+
+  /**
+   * `ALTER` tables to fit database models during synchronization.
+   *
+   * Each data access object (DAO) will do `ALTER TABLE ... CHANGE ...`, but
+   * will **NOT** delete data in columns that were removed or had their type
+   * changed.
+   *
+   * Not recommended in `production` environments. Use [migrations][1] instead.
+   *
+   * [1]: https://sequelize.org/v7/manual/migrations
+   *
+   * @default true
+   */
+  @IsBoolean()
+  @IsOptional()
+  DB_SYNC_ALTER: boolean
+
+  /**
+   * `DROP` existing tables before creating new tables during synchronization.
+   *
+   * Each data access object (DAO) will do `DROP TABLE IF EXISTS ...` before the
+   * DAO tries to create its own table.
+   *
+   * Not recommended in `production` environments. Use [migrations][1] instead.
+   *
+   * [1]: https://sequelize.org/v7/manual/migrations
+   *
+   * @default false
+   */
+  @IsBoolean()
+  @IsOptional()
+  DB_SYNC_FORCE: boolean
+
+  /**
+   * Automatically synchronize database models.
+   *
+   * Requires `DB_AUTO_LOAD_MODELS=true`.
+   *
+   * Not recommended in `production` environments. Use [migrations][1] instead.
+   *
+   * [1]: https://sequelize.org/v7/manual/migrations
+   *
+   * @see {@link EnvironmentVariables.DB_AUTO_LOAD_MODELS}
+   *
+   * @see https://docs.nestjs.com/techniques/database#auto-load-models
+   *
+   * @default true
+   */
+  @IsBoolean()
+  @IsOptional()
+  DB_SYNCHRONIZE: boolean
+
+  /**
+   * Timezone to use when converting a date from the database into a JavaScript
    * {@link Date} object.
    *
    * @default '-05:00'
