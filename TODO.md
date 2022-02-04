@@ -28,8 +28,8 @@
   - [x] Register users
   - [x] [Refresh tokens][4]
   - [x] [Email verification][5]
-- [ ] Authorization
-  - [ ] Require user email to be verified before performing delete or patch
+- [x] Authorization
+  - [x] Require user email to be verified before performing `PATCH`
 - [x] Security
   - [x] [Helmet][6]
   - [x] [CORS][7]

@@ -20,8 +20,7 @@ class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   /**
    * Determines if a route will enforce JWT authentication.
    *
-   * @param {ExecutionContext} context - Object containing methods for accessing
-   * current route handler and the class about to be invoked
+   * @param {ExecutionContext} context - Get data from current request pipeline
    * @return {OrPromise<boolean> | Observable<boolean>} `true` if enforced
    */
   canActivate(

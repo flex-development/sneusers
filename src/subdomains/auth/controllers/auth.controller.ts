@@ -78,8 +78,8 @@ export default class AuthController {
     return await this.auth.login(user)
   }
 
-  @CsrfTokenAuth()
   @UserAuth()
+  @CsrfTokenAuth()
   @Post(OPENAPI.logout.path)
   @HttpCode(OPENAPI.logout.status)
   @ApiOkResponse(OPENAPI.logout.responses[200])
@@ -93,8 +93,8 @@ export default class AuthController {
     return user
   }
 
-  @CsrfTokenAuth()
   @UseGuards(JwtRefreshGuard)
+  @CsrfTokenAuth()
   @Get(OPENAPI.refresh.path)
   @HttpCode(OPENAPI.refresh.status)
   @ApiCookieAuth('Refresh')

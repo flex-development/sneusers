@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Query,
+  UseGuards,
   UseInterceptors,
   ValidationPipe
 } from '@nestjs/common'
@@ -31,6 +32,7 @@ import { CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
 import { UserAuth } from '@sneusers/subdomains/users/decorators'
 import { PatchUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
+import { EmailVerificationGuard } from '@sneusers/subdomains/users/guards'
 import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
@@ -53,8 +55,8 @@ export default class UsersController {
   constructor(protected readonly users: UsersService) {}
 
   @Delete(':uid')
-  @CsrfTokenAuth()
   @UserAuth()
+  @CsrfTokenAuth()
   @HttpCode(OPENAPI.delete.status)
   @ApiNoContentResponse(OPENAPI.delete.responses[204])
   @ApiNotFoundResponse(OPENAPI.delete.responses[404])
@@ -102,8 +104,9 @@ export default class UsersController {
   }
 
   @Patch(':uid')
-  @CsrfTokenAuth()
+  @UseGuards(EmailVerificationGuard)
   @UserAuth()
+  @CsrfTokenAuth()
   @HttpCode(OPENAPI.patch.status)
   @ApiCreatedResponse(OPENAPI.patch.responses[200])
   @ApiBadRequestResponse(OPENAPI.patch.responses[400])

@@ -64,6 +64,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   let users: UsersService
   let user_authed_1: MockAuthedUser
   let user_authed_2: MockAuthedUser
+  let user_authed_3: MockAuthedUser
 
   before(async () => {
     const ntapp = await createApp({
@@ -98,8 +99,9 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     users = ntapp.ref.get(UsersService)
     user_authed_1 = await createAuthedUser(auth, USERS.length + 1)
     user_authed_2 = await createAuthedUser(auth, user_authed_1.id + 1)
+    user_authed_3 = await createAuthedUser(auth, user_authed_2.id + 1)
 
-    USERS.push(user_authed_1, user_authed_2)
+    USERS.push(user_authed_1, user_authed_2, user_authed_3)
 
     table = await seedTable<User>(users.repository, USERS, {
       fields: ['email', 'first_name', 'last_name']
@@ -275,6 +277,16 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     })
 
     describe('PATCH', () => {
+      before(async () => {
+        const dto: PatchUserDTO<'internal'> = { email_verified: true }
+
+        await users.repository.update(dto, {
+          fields: ['email_verified'],
+          silent: true,
+          where: { id: user_authed_2.id }
+        })
+      })
+
       it('should send UserDTO if user was updated', async function (this) {
         // Arrange
         const dto: PatchUserDTO = {
@@ -335,27 +347,30 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.message).to.equal('Unauthorized')
       })
 
-      it('should send error if user is not found', async function (this) {
+      it('should send error if email is not verified', async function (this) {
         // Arrange
-        const uid = 'foofoobaby@email.com'
+        const { access_token, email, id } = user_authed_3
 
         // Act
         const res = await req
-          .patch([URL, uid].join('/'))
+          .patch([URL, id].join('/'))
           .send({
             password: this.faker.internet.password(MAGIC_NUMBER)
           } as PatchUserDTO)
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('x-csrf-token', csrf.csrf_token)
-          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
+          .set('Authorization', `Bearer ${access_token}`)
 
         // Expect
-        expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
+        expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.data.error).to.equal(SequelizeError.EmptyResult)
         expect(res.body.errors).to.be.an('array')
-        expect(res.body.message).to.match(new RegExp(uid))
+        expect(res.body.errors[0]).to.be.an('object')
+        expect(res.body.errors[0].email).to.equal(email.toLowerCase())
+        expect(res.body.data.user).to.be.an('object')
+        expect(res.body.data.user.id).to.equal(id)
+        expect(res.body.message).to.equal('Email not verified')
       })
     })
   })
