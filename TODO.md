@@ -35,9 +35,9 @@
   - [x] [CORS][7]
   - [x] [CSRF Protection][8]
   - [x] [Rate Limiting][9]
-- [ ] Performce Improvements
+- [x] Performce Improvements
   - [x] [Caching][10]
-  - [ ] [Compression][11]
+  - [x] [Compression][11]
   - [x] Database Indices
   - [x] Pagination
 - [ ] [API Versioning][12]
