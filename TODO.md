@@ -40,18 +40,17 @@
   - [x] [Compression][11]
   - [x] Database Indices
   - [x] Pagination
-- [ ] [API Versioning][12]
-- [x] [Healthchecks][13]
+- [x] [Healthchecks][12]
 - [x] Docker Compose
   - [x] `docker-compose.yml` qa
   - [x] Add `docker-cloud.yml` for staging environment
 - [x] Virtual Machine - Staging
-  - [x] [Setup][14]
+  - [x] [Setup][13]
   - [x] Deploy
     - [x] API
     - [x] Adminer
     - [x] Redis
-  - [x] [SSL QA][15]
+  - [x] [SSL QA][14]
 - [x] QA - Documentation
   - [x] `CONTRIBUTING`
   - [x] [`DATABASE`](docs/DATABASE.dbml)
@@ -60,13 +59,14 @@
 
 ## v1.0.0
 
-- [ ] [Events][16]
-- [ ] [Handle CPU-intensive tasks with queues][17]
-- [ ] [Database Migrations][18]
+- [ ] [Events][15]
+- [ ] [Handle CPU-intensive tasks with queues][16]
+- [ ] [Database Migrations][17]
+- [ ] [API Versioning][18]
 - [ ] Docker Compose
   - [ ] `docker-cloud.yml` qa (production environment)
 - [ ] Virtual Machine - Production
-  - [ ] [Setup][14]
+  - [ ] [Setup][13]
   - [ ] Deploy
     - [ ] API
     - [ ] Adminer
@@ -84,10 +84,10 @@
 [9]: https://docs.nestjs.com/security/rate-limiting
 [10]: https://docs.nestjs.com/techniques/caching
 [11]: https://docs.nestjs.com/techniques/compression
-[12]: https://docs.nestjs.com/techniques/versioning#uri-versioning-type
-[13]: https://docs.nestjs.com/recipes/terminus
-[14]: https://gist.github.com/unicornware/34d6f4678232ee4bd99cad861209577b
-[15]: https://ssllabs.com/ssltest
-[16]: https://docs.nestjs.com/techniques/events
-[17]: https://wanago.io/2021/05/03/api-nestjs-cpu-intensive-tasks-queues
-[18]: https://sequelize.org/v7/manual/migrations
+[12]: https://docs.nestjs.com/recipes/terminus
+[13]: https://gist.github.com/unicornware/34d6f4678232ee4bd99cad861209577b
+[14]: https://ssllabs.com/ssltest
+[15]: https://docs.nestjs.com/techniques/events
+[16]: https://wanago.io/2021/05/03/api-nestjs-cpu-intensive-tasks-queues
+[17]: https://sequelize.org/v7/manual/migrations
+[18]: https://docs.nestjs.com/techniques/versioning
