@@ -50,6 +50,7 @@ const config: UserConfig = {
         'cache',
         'config',
         'db',
+        'decorators',
         'deploy',
         'deps',
         'deps-dev',
