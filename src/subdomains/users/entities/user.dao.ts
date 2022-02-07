@@ -1,5 +1,5 @@
 import { NullishString, OrNull } from '@flex-development/tutils'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
 import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
@@ -66,8 +66,10 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
      */
     beforeSave(instance: User): void {
       instance.email = instance.email.toLowerCase().trim()
-      instance.first_name = instance.first_name.toLowerCase().trim()
-      instance.last_name = instance.last_name.toLowerCase().trim()
+      instance.first_name = instance.first_name?.toLowerCase().trim() ?? null
+      instance.last_name = instance.last_name?.toLowerCase().trim() ?? null
+
+      if (instance.id) instance.id = Number.parseInt(instance.id.toString())
 
       return
     },
@@ -140,23 +142,33 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @Column(DataType.BOOLEAN)
   declare email_verified: IUser['email_verified']
 
-  @ApiProperty({ description: 'First name', minLength: 1, type: String })
+  @ApiProperty({
+    description: 'First name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
   @Comment('first name of user')
-  @Validate({ len: [1, 255], notNull: true })
-  @AllowNull(false)
+  @Validate({ len: [1, 255] })
   @Index('first_name')
+  @Default(null)
   @Column(DataType.STRING)
   declare first_name: IUser['first_name']
 
-  @ApiProperty({ description: 'Last name', minLength: 1, type: String })
+  @ApiProperty({
+    description: 'Last name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
   @Comment('last name of user')
-  @Validate({ len: [1, 255], notNull: true })
-  @AllowNull(false)
+  @Validate({ len: [1, 255] })
   @Index('last_name')
+  @Default(null)
   @Column(DataType.STRING)
   declare last_name: IUser['last_name']
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Hashed password',
     nullable: true,
     type: String
@@ -186,12 +198,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   /**
    * Returns the user's full name.
    *
-   * @return {string} User's full name
+   * @return {NullishString} User's full name or `null`
    */
   @ApiProperty({ description: 'Full name (virtual property)' })
   @Column(DataType.VIRTUAL(DataType.STRING, ['first_name', 'last_name']))
-  get name(): string {
-    return `${this.first_name} ${this.last_name}`
+  get name(): IUser['name'] {
+    if (this.first_name === null && this.last_name === null) return null
+    return `${this.first_name || ''} ${this.last_name || ''}`.trim()
   }
 
   /**

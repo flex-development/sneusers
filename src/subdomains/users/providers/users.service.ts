@@ -1,4 +1,9 @@
-import { NullishString, ObjectPlain, OrNull } from '@flex-development/tutils'
+import {
+  NullishString,
+  NumberString,
+  ObjectPlain,
+  OrNull
+} from '@flex-development/tutils'
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
@@ -11,6 +16,7 @@ import { EmailService } from '@sneusers/modules/email/providers'
 import {
   CreateUserDTO,
   PatchUserDTO,
+  UpsertUserDTO,
   UserEmailSentDTO
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
@@ -28,7 +34,7 @@ import OPENAPI from '../controllers/openapi/users.openapi'
  */
 
 @Injectable()
-export default class UsersService {
+class UsersService {
   /**
    * @static
    * @readonly
@@ -76,13 +82,17 @@ export default class UsersService {
    *
    * If `dto.email` conflicts with an existing email, an error will be thrown.
    *
+   * If a password is supplied, it'll be hashed before being persisted.
+   *
    * @see {@link CreateUserDTO}
    *
    * @async
    * @param {CreateUserDTO} dto - Data to create new user
-   * @param {string} dto.email - User's email address
-   * @param {string} dto.first_name - User's first name
-   * @param {string} dto.last_name - User's last name
+   * @param {string} dto.email - Unique email address
+   * @param {NullishString} [dto.first_name] - First name
+   * @param {NumberString} [dto.id] - Unique id
+   * @param {NullishString} [dto.last_name] - Last name
+   * @param {NullishString} [dto.password] - Plaintext password
    * @return {Promise<User>} - Promise containing new user
    * @throws {Exception | UniqueEmailException}
    */
@@ -90,7 +100,7 @@ export default class UsersService {
     const user = await this.sequelize.transaction(async transaction => {
       try {
         const user = await this.repo.create(dto, {
-          fields: ['email', 'first_name', 'last_name', 'password'],
+          fields: ['email', 'first_name', 'id', 'last_name', 'password'],
           isNewRecord: true,
           raw: true,
           silent: true,
@@ -293,6 +303,21 @@ export default class UsersService {
   }
 
   /**
+   * Creates or updates a user.
+   *
+   * @async
+   * @param {UpsertUserDTO} [dto={}] - Data to create or update user
+   * @param {NumberString} [dto.id] - Id of new user or id of user to update
+   * @return {Promise<User>} - Promise containing new or updated user
+   */
+  async upsert(dto: UpsertUserDTO = {}): Promise<User> {
+    const id = dto.id
+
+    if (id && (await this.findOne(id))) return await this.patch(id, dto)
+    return await this.create(dto as CreateUserDTO)
+  }
+
+  /**
    * Marks a user as having had verified their email address.
    *
    * @async
@@ -303,3 +328,5 @@ export default class UsersService {
     return await this.patch<'internal'>(uid, { email_verified: true })
   }
 }
+
+export default UsersService

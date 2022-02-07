@@ -1,5 +1,5 @@
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
-import createUserDTO from './create-user-dto.util'
+import getCreateUserDTO from './get-create-user-dto.util'
 
 /**
  * @file Global Test Utilities - createUsers
@@ -15,7 +15,7 @@ import createUserDTO from './create-user-dto.util'
 const createUsers = (max: number = 5): CreateUserDTO[] => {
   const users: CreateUserDTO[] = []
 
-  for (let id = 0; id < max; id++) users.push(createUserDTO())
+  for (let id = 0; id < max; id++) users.push(getCreateUserDTO())
 
   return users
 }

@@ -1,5 +1,5 @@
 import { AuthService } from '@sneusers/subdomains/auth/providers'
-import createUserDTO from './create-user-dto.util'
+import getCreateUserDTO from './get-create-user-dto.util'
 import { MockAuthedUser } from './types'
 
 /**
@@ -19,10 +19,8 @@ const createAuthedUser = async (
   id: number
 ): Promise<MockAuthedUser> => {
   return {
-    ...createUserDTO(),
-    // @ts-expect-error Property 'tokens' is protected and only accessible
-    // within class 'AuthService' and its subclasses
-    access_token: await auth.tokens.createAccessToken({ id }),
+    ...getCreateUserDTO(),
+    access_token: await auth._tokens.createAccessToken({ id }),
     id
   }
 }

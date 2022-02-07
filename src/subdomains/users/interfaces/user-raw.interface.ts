@@ -16,9 +16,9 @@ interface IUserRaw {
   created_at: number
   email: Lowercase<string>
   email_verified: boolean
-  first_name: Lowercase<string>
+  first_name: NullishString
   id: number
-  last_name: Lowercase<string>
+  last_name: NullishString
   password: NullishString
   updated_at: NullishNumber
 }

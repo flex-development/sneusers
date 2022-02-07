@@ -11,15 +11,16 @@ import { CacheConfigService } from '@sneusers/providers'
 import { VerifType } from '@sneusers/subdomains/auth/enums'
 import type {
   CreateUserDTO,
-  PatchUserDTO
+  PatchUserDTO,
+  UpsertUserDTO
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import type { SequelizeError } from '@sneusers/types'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
-import createUserDTO from '@tests/utils/create-user-dto.util'
 import createUsers from '@tests/utils/create-users.util'
+import getCreateUserDTO from '@tests/utils/get-create-user-dto.util'
 import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
 import pick from 'lodash.pick'
@@ -62,11 +63,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#create', () => {
     it('should return User if user was created', async () => {
       // Arrange
-      const dto: CreateUserDTO = pick(createUserDTO(), [
-        'email',
-        'first_name',
-        'last_name'
-      ])
+      const dto = getCreateUserDTO()
 
       // Act
       const result = await subject.create(dto)
@@ -85,12 +82,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const dto: CreateUserDTO = pick(users[2], [
-        'email',
-        'first_name',
-        'last_name'
-      ])
-
+      const dto: CreateUserDTO = pick(users[2], ['email'])
       let exception: UniqueEmailException
 
       // Act
@@ -274,6 +266,47 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.email.envelope.to).to.have.deep.ordered.members([uid])
       expect(result.user).to.be.instanceOf(User)
       expect(result.user.email).to.equal(uid)
+    })
+  })
+
+  describe('#upsert', () => {
+    it('should return new User if user was created', async () => {
+      // Arrange
+      const dto = getCreateUserDTO()
+
+      // Act
+      const result = await subject.upsert(dto)
+
+      // Expect
+      expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
+      expect(result.email).to.equal(dto.email.toLowerCase())
+      expect(result.email_verified).to.be.false
+      expect(result.first_name).to.equal(dto.first_name.toLowerCase())
+      expect(result.id).to.be.a('number')
+      expect(result.last_name).to.equal(dto.last_name.toLowerCase())
+      expect(result.password).to.be.null
+      expect(result.updated_at).to.be.null
+    })
+
+    it('should return User if user was updated', async function (this) {
+      // Arrange
+      const id: User['id'] = users[users.length - 3].id
+      const dto: UpsertUserDTO = { email: this.faker.internet.email(), id }
+
+      // Act
+      const result = await subject.upsert(dto)
+
+      // Expect
+      expect(result).to.be.instanceOf(User)
+      expect(result.created_at).to.be.a('number')
+      expect(result.email).to.equal(dto.email!.toLowerCase())
+      expect(result.email_verified).to.be.false
+      expect(result.first_name).to.be.a('string')
+      expect(result.id).to.be.a('number')
+      expect(result.last_name).to.be.a('string')
+      expect(result.password).to.be.null
+      expect(result.updated_at).to.not.be.null
     })
   })
 

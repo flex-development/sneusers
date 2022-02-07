@@ -79,6 +79,7 @@ module.exports = {
           'tutils',
           'uid',
           'unix',
+          'upsert',
           'verif',
           'webpack',
           'xsrf',

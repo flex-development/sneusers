@@ -8,6 +8,7 @@ export type { default as MochaAssertionResult } from './mocha-assertion-result.t
 export type { default as MochaReport } from './mocha-report.type'
 export type { default as MochaTestResult } from './mocha-test-result.type'
 export type { default as MockAuthedUser } from './mock-authed-user.interface'
+export { default as MockCreateUserDTO } from './mock-create-user.dto'
 export type { default as MockCsrfToken } from './mock-csrf-token.type'
 export type { default as NestTestApp } from './nest-test-app.type'
 export type { default as TestcaseCalled } from './testcase-called.interface'

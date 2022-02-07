@@ -1,5 +1,6 @@
-import type { ObjectPlain } from '@flex-development/tutils'
+import type { NumberString } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Is } from '@sneusers/decorators'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import {
   IsEmail,
@@ -16,12 +17,12 @@ import {
  */
 
 /**
- * Data used to create a new user. A successful data transfer will insert a
- * {@link IUserRaw} object into the `DatabaseTable.USERS` table.
+ * Data used to create a new user.
  */
-export default class CreateUserDTO {
+class CreateUserDTO {
   @ApiProperty({
     description: 'Email address',
+    format: 'email',
     maxLength: 254,
     minLength: 3,
     type: String
@@ -31,17 +32,40 @@ export default class CreateUserDTO {
   @MaxLength(254)
   readonly email: IUserRaw['email']
 
-  @ApiProperty({ description: 'First name', minLength: 1, type: String })
+  @ApiPropertyOptional({
+    default: null,
+    description: 'First name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
   @IsString()
   @IsNotEmpty()
-  readonly first_name: IUserRaw['first_name']
-
-  @ApiProperty({ description: 'Last name', minLength: 1, type: String })
-  @IsString()
-  @IsNotEmpty()
-  readonly last_name: IUserRaw['last_name']
+  @IsOptional()
+  readonly first_name?: IUserRaw['first_name']
 
   @ApiPropertyOptional({
+    description: 'Unique id',
+    oneOf: [{ type: 'number' }, { type: 'string' }]
+  })
+  @Is({ types: ['number', 'string'] })
+  @IsOptional()
+  readonly id?: NumberString
+
+  @ApiPropertyOptional({
+    default: null,
+    description: 'Last name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  readonly last_name?: IUserRaw['last_name']
+
+  @ApiPropertyOptional({
+    default: null,
     description: 'Secure password',
     minLength: 8,
     nullable: true,
@@ -50,16 +74,6 @@ export default class CreateUserDTO {
   @IsString()
   @IsOptional()
   readonly password?: IUserRaw['password']
-
-  constructor({
-    email,
-    first_name,
-    last_name,
-    password = null
-  }: CreateUserDTO | ObjectPlain = {}) {
-    this.email = email
-    this.first_name = first_name
-    this.last_name = last_name
-    this.password = password
-  }
 }
+
+export default CreateUserDTO

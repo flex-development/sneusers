@@ -10,9 +10,9 @@ import { IUser } from '@sneusers/subdomains/users/interfaces'
 
 /**
  * @internal
- * @property {Type<Pick<User, keyof IUser>>} UserDTOBase - {@link UserDTO} base
+ * @property {Type<Pick<User, keyof IUser>>} UserDTOB - DTO base
  */
-const UserDTOBase: Type<Pick<User, keyof IUser>> = PickType(User, [
+const UserDTOB: Type<Pick<User, keyof IUser>> = PickType(User, [
   'created_at',
   'email',
   'first_name',
@@ -25,9 +25,11 @@ const UserDTOBase: Type<Pick<User, keyof IUser>> = PickType(User, [
 /**
  * {@link User} entity payload type.
  *
- * @extends PartialType(UserDTOBase)
+ * @extends PartialType(UserDTOB)
  */
-export default class UserDTO extends PartialType(UserDTOBase) {
+class UserDTO extends PartialType(UserDTOB) {
   @ApiProperty({ description: 'Unique identifier', type: Number })
   declare id: User['id']
 }
+
+export default UserDTO

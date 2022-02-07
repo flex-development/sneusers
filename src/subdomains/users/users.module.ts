@@ -1,8 +1,6 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CsurfMiddleware } from '@sneusers/middleware'
-import type { EnvironmentVariables } from '@sneusers/models'
 import { UsersController } from './controllers'
 import { User } from './entities'
 import { UsersService } from './providers'
@@ -18,9 +16,7 @@ import { UsersService } from './providers'
   imports: [SequelizeModule.forFeature([User])],
   providers: [UsersService]
 })
-export default class UsersModule {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
-
+export default class UsersModule implements NestModule {
   /**
    * Configures middleware.
    *
