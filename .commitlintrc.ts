@@ -49,6 +49,7 @@ const config: UserConfig = {
         'auth',
         'cache',
         'config',
+        'constraints',
         'db',
         'decorators',
         'deploy',
