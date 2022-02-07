@@ -5,3 +5,4 @@
  */
 
 export type { default as ExceptionJSON } from './exception-json.interface'
+export type { default as IsOptions } from './is-options.interface'

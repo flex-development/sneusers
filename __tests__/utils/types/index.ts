@@ -11,4 +11,8 @@ export type { default as MockAuthedUser } from './mock-authed-user.interface'
 export type { default as MockCsrfToken } from './mock-csrf-token.type'
 export type { default as NestTestApp } from './nest-test-app.type'
 export type { default as TestcaseCalled } from './testcase-called.interface'
+export type {
+  default as TestcaseDecoratorValidation,
+  IsOption
+} from './testcase-decorator-validation.interface'
 export type { default as Testcase } from './testcase.interface'
