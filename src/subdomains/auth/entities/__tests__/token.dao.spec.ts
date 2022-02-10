@@ -203,6 +203,7 @@ describe('unit:subdomains/auth/entities/Token', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.be.a('number')
+      expect(result!.display_name).to.be.null
       expect(result!.email).to.equal(payload.sub.toLowerCase())
       expect(result!.email_verified).to.be.false
       expect(result!.first_name).to.be.a('string')

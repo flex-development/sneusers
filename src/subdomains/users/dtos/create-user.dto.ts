@@ -20,6 +20,18 @@ import {
  * Data used to create a new user.
  */
 class CreateUserDTO {
+  @ApiPropertyOptional({
+    default: null,
+    description: 'Display name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  readonly display_name?: IUserRaw['display_name']
+
   @ApiProperty({
     description: 'Email address',
     format: 'email',

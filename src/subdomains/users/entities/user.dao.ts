@@ -58,13 +58,15 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
     },
 
     /**
-     * Trims string fields and forces a user's email, first name, and last name
-     * to be lowercased.
+     * Trims string fields and forces a user's display name, email, first name,
+     * and last name to be lowercased.
      *
      * @param {User} instance - Current user instance
      * @return {void} Nothing when complete
      */
     beforeSave(instance: User): void {
+      instance.display_name =
+        instance.display_name?.toLowerCase().trim() ?? null
       instance.email = instance.email.toLowerCase().trim()
       instance.first_name = instance.first_name?.toLowerCase().trim() ?? null
       instance.last_name = instance.last_name?.toLowerCase().trim() ?? null
@@ -119,6 +121,19 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @Default(User.CURRENT_TIMESTAMP)
   @Column(DataType.BIGINT)
   declare created_at: IUser['created_at']
+
+  @ApiProperty({
+    description: 'Display name',
+    minLength: 1,
+    nullable: true,
+    type: String
+  })
+  @Comment('display name')
+  @Validate({ len: [1, 255] })
+  @Index('display_name')
+  @Default(null)
+  @Column(DataType.STRING)
+  declare display_name: IUser['display_name']
 
   @ApiProperty({
     description: 'Email address',
@@ -202,7 +217,8 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
    */
   @ApiProperty({ description: 'Full name (virtual property)' })
   @Column(DataType.VIRTUAL(DataType.STRING, ['first_name', 'last_name']))
-  get name(): IUser['name'] {
+  get full_name(): IUser['full_name'] {
+    if (this.first_name === null && this.last_name === null) return null
     return `${this.first_name || ''} ${this.last_name || ''}`.trim()
   }
 
@@ -213,6 +229,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
    */
   static readonly RAW_KEYS: (keyof IUserRaw)[] = [
     'created_at',
+    'display_name',
     'email',
     'email_verified',
     'first_name',

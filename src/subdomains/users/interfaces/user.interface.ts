@@ -1,3 +1,4 @@
+import type { NullishString } from '@flex-development/tutils'
 import IUserRaw from './user-raw.interface'
 
 /**
@@ -14,7 +15,7 @@ import IUserRaw from './user-raw.interface'
  * @extends IUserRaw
  */
 interface IUser extends IUserRaw {
-  name: string
+  full_name: NullishString
 }
 
 export default IUser

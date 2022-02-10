@@ -74,6 +74,7 @@ class UsersService {
    *
    * @async
    * @param {CreateUserDTO} dto - Data to create new user
+   * @param {NullishString} [dto.display_name] - Display name
    * @param {string} dto.email - Unique email address
    * @param {NullishString} [dto.first_name] - First name
    * @param {NumberString} [dto.id] - Unique id
@@ -86,7 +87,14 @@ class UsersService {
     const user = await this.sequelize.transaction(async transaction => {
       try {
         return await this.repo.create(dto, {
-          fields: ['email', 'first_name', 'id', 'last_name', 'password'],
+          fields: [
+            'display_name',
+            'email',
+            'first_name',
+            'id',
+            'last_name',
+            'password'
+          ],
           isNewRecord: true,
           raw: true,
           silent: true,
@@ -202,6 +210,7 @@ class UsersService {
       try {
         return await user.update(dto, {
           fields: [
+            'display_name',
             'email',
             'email_verified',
             'first_name',

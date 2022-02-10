@@ -9,18 +9,19 @@ import { IUser } from '@sneusers/subdomains/users/interfaces'
  */
 
 /**
- * {@link User} entity payload type.
+ * {@link User} entity payload.
  *
  * @extends {Partial<Type<Omit<IUser, 'password'>>>}
  */
 class UserDTO extends PickType(User, [
   'created_at',
+  'display_name',
   'email',
   'email_verified',
   'first_name',
+  'full_name',
   'id',
   'last_name',
-  'name',
   'updated_at'
 ]) {
   @ApiProperty({ description: 'Unique identifier', type: Number })

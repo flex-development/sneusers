@@ -117,6 +117,7 @@ describe('unit:subdomains/users/entities/User', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.equal(user.created_at)
+      expect(result!.display_name).to.equal(user.display_name)
       expect(result!.email).to.equal(user.email)
       expect(result!.email_verified).to.equal(user.email_verified)
       expect(result!.first_name).to.equal(user.first_name)
@@ -168,6 +169,7 @@ describe('unit:subdomains/users/entities/User', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.equal(user.created_at)
+      expect(result!.display_name).to.equal(user.display_name)
       expect(result!.email).to.equal(user.email)
       expect(result!.email_verified).to.equal(user.email_verified)
       expect(result!.first_name).to.equal(user.first_name)
@@ -215,6 +217,7 @@ describe('unit:subdomains/users/entities/User', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.equal(user.created_at)
+      expect(result!.display_name).to.equal(user.display_name)
       expect(result!.email).to.equal(user.email)
       expect(result!.email_verified).to.equal(user.email_verified)
       expect(result!.first_name).to.equal(user.first_name)
@@ -234,6 +237,7 @@ describe('unit:subdomains/users/entities/User', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.equal(user.created_at)
+      expect(result!.display_name).to.equal(user.display_name)
       expect(result!.email).to.equal(user.email)
       expect(result!.email_verified).to.equal(user.email_verified)
       expect(result!.first_name).to.equal(user.first_name)

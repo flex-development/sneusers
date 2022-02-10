@@ -230,9 +230,11 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.be.a('string')
         expect(res.body.email_verified).to.be.false
         expect(res.body.first_name).to.be.a('string')
+        expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
@@ -329,6 +331,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.have.header('set-cookie', /csrf-token/)
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.equal(dto.email.toLowerCase())
         expect(res.body.email_verified).to.be.undefined
         expect(res.body.first_name).to.equal(dto.first_name.toLowerCase())

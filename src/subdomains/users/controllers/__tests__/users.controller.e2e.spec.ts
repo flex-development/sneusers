@@ -142,12 +142,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.OK)
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.equal(user.email.toLowerCase())
         expect(res.body.email_verified).to.be.false
         expect(res.body.first_name).to.equal(user.first_name.toLowerCase())
+        expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.equal(user.last_name.toLowerCase())
-        expect(res.body.name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
@@ -194,12 +195,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.equal(email)
         expect(res.body.email_verified).to.be.undefined
         expect(res.body.first_name).to.be.a('string')
+        expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
-        expect(res.body.name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
@@ -215,12 +217,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.be.a('string')
         expect(res.body.email_verified).to.be.undefined
         expect(res.body.first_name).to.be.a('string')
+        expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.equal(id)
         expect(res.body.last_name).to.be.a('string')
-        expect(res.body.name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
@@ -268,12 +271,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
         expect(res.body.email).to.equal(dto.email!.toLowerCase())
         expect(res.body.email_verified).to.be.true
         expect(res.body.first_name).to.be.a('string')
+        expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
-        expect(res.body.name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.a('number')
       })

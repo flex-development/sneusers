@@ -73,6 +73,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.equal(dto.email.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.equal(dto.first_name.toLowerCase())
@@ -125,6 +126,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.be.a('number')
+      expect(result!.display_name).to.be.null
       expect(result!.email).to.equal(uid.toLowerCase())
       expect(result!.email_verified).to.be.false
       expect(result!.first_name).to.be.a('string')
@@ -170,6 +172,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.equal(uid.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
@@ -225,6 +228,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.equal(uid.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
@@ -282,6 +286,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.equal(dto.email.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.equal(dto.first_name.toLowerCase())
@@ -302,6 +307,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.equal(dto.email!.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
@@ -323,6 +329,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
+      expect(result.display_name).to.be.null
       expect(result.email).to.be.a('string')
       expect(result.email_verified).to.be.true
       expect(result.first_name).to.be.a('string')
