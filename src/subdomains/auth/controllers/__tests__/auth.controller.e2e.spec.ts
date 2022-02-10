@@ -361,4 +361,42 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       })
     })
   })
+
+  describe('/auth/whoami', () => {
+    const URL = stubURLPath('auth/whoami')
+
+    describe('GET', () => {
+      it('should send current user and set csrf-token cookie', async () => {
+        // Act
+        const res = await req
+          .get(URL)
+          .set('Authorization', `Bearer ${user_authed.access_token}`)
+
+        // Expect
+        expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
+        expect(res).to.have.header('set-cookie', /csrf-token/)
+        expect(res.body).not.to.be.instanceOf(User)
+        expect(res.body.created_at).to.be.a('number')
+        expect(res.body.display_name).to.be.null
+        expect(res.body.email).to.be.a('string')
+        expect(res.body.email_verified).to.be.false
+        expect(res.body.first_name).to.be.a('string')
+        expect(res.body.full_name).to.be.a('string')
+        expect(res.body.id).to.be.a('number')
+        expect(res.body.last_name).to.be.a('string')
+        expect(res.body.password).to.be.undefined
+        expect(res.body.updated_at).to.be.null
+      })
+
+      it('should send anon response if user is not authenticated', async () => {
+        // Act
+        const res = await req.get(URL)
+
+        // Expect
+        expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
+        expect(res).to.not.have.header('set-cookie', /csrf-token/)
+        expect(res.body).to.be.empty
+      })
+    })
+  })
 })

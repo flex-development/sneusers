@@ -4,7 +4,8 @@ import { Exception } from '@sneusers/exceptions'
 import {
   LoginDTO,
   RegisterUserDTO,
-  RequestLoginDTO
+  RequestLoginDTO,
+  WhoamiDTO
 } from '@sneusers/subdomains/auth/dtos'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
 
@@ -48,6 +49,13 @@ export default {
       201: { description: 'Registered new user', type: UserDTO },
       409: { description: 'Email address is not unique', type: Exception },
       422: { description: 'Password hashing failure', type: Exception }
+    }
+  },
+  whoami: {
+    path: 'whoami',
+    status: HttpStatus.OK,
+    responses: {
+      200: { description: 'Completed identification request', type: WhoamiDTO }
     }
   }
 }

@@ -22,11 +22,16 @@ import type { EntityDTO } from '@sneusers/dtos'
 import { CookieType } from '@sneusers/enums'
 import { CookieOptionsFactory } from '@sneusers/factories'
 import { EntitySerializer } from '@sneusers/interceptors'
-import { LoginDTO, RegisterUserDTO } from '@sneusers/subdomains/auth/dtos'
+import {
+  LoginDTO,
+  RegisterUserDTO,
+  WhoamiDTO
+} from '@sneusers/subdomains/auth/dtos'
 import {
   JwtAuthGuard,
   JwtRefreshGuard,
-  LocalAuthGuard
+  LocalAuthGuard,
+  WhoamiGuard
 } from '@sneusers/subdomains/auth/guards'
 import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
@@ -44,7 +49,7 @@ import OPENAPI from './openapi/auth.openapi'
  */
 
 type Serialized = EntityDTO<IUser> | ILoginDTO
-type Payload = ILoginDTO | UserDTO
+type Payload = ILoginDTO | UserDTO | WhoamiDTO
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
@@ -106,5 +111,23 @@ export default class AuthController {
   ): Promise<UserDTO> {
     res.cookie('csrf-token', cookie, this.cookie.createOptions(CookieType.CSRF))
     return await this.auth.register(dto)
+  }
+
+  @UseGuards(WhoamiGuard)
+  @Get(OPENAPI.whoami.path)
+  @HttpCode(OPENAPI.whoami.status)
+  @ApiBearerAuth()
+  @ApiResponses(OPENAPI.whoami.responses)
+  async whoami(
+    @CurrentUser() user: OrNull<User>,
+    @CsrfToken('create') cookie: string,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<WhoamiDTO> {
+    if (user) {
+      const cookie_options = this.cookie.createOptions(CookieType.CSRF)
+      res.cookie('csrf-token', cookie, cookie_options)
+    }
+
+    return user || {}
   }
 }
