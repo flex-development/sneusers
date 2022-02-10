@@ -1,20 +1,32 @@
-import { OrNull } from '@flex-development/tutils'
+import { NullishString, OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/sequelize'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { PaginatedDTO } from '@sneusers/dtos'
 import { ExceptionCode, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import type { EnvironmentVariables } from '@sneusers/models'
 import {
   CreateTokenDTO,
-  JwtPayloadToken,
-  PatchTokenDTO
+  JwtPayload,
+  JwtPayloadAccess,
+  JwtPayloadRefresh,
+  JwtPayloadVerif,
+  PatchTokenDTO,
+  ResolvedToken
 } from '@sneusers/subdomains/auth/dtos'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import { TokenType } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
+import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import { UsersService } from '@sneusers/subdomains/users/providers'
+import { UserUid } from '@sneusers/subdomains/users/types'
 import type { SequelizeError } from '@sneusers/types'
 import { SearchOptions } from '@sneusers/types'
+import type { TokenExpiredError } from 'jsonwebtoken'
+import { JsonWebTokenError } from 'jsonwebtoken'
 import { Sequelize } from 'sequelize-typescript'
 
 /**
@@ -26,7 +38,10 @@ import { Sequelize } from 'sequelize-typescript'
 export default class TokensService {
   constructor(
     @InjectModel(Token) protected readonly repo: typeof Token,
-    protected readonly sequelize: Sequelize
+    protected readonly sequelize: Sequelize,
+    protected readonly users: UsersService,
+    protected readonly jwt: JwtService,
+    protected readonly config: ConfigService<EnvironmentVariables, true>
   ) {}
 
   /**
@@ -71,6 +86,92 @@ export default class TokensService {
   }
 
   /**
+   * Generates an access token.
+   *
+   * @async
+   * @param {Pick<IUserRaw, 'id'>} user - User to create access token for
+   * @return {Promise<string>} Promise containing access token
+   */
+  async createAccessToken(user: Pick<IUserRaw, 'id'>): Promise<string> {
+    const host = this.config.get<string>('HOST')
+    const ttl = this.config.get<number>('JWT_EXP_ACCESS')
+
+    const payload = { type: TokenType.ACCESS }
+    const token = await this.create({
+      ttl,
+      type: payload.type,
+      user: user.id
+    })
+
+    return await this.jwt.signAsync(payload, {
+      audience: host,
+      expiresIn: ttl,
+      issuer: host,
+      jwtid: token.id.toString(),
+      secret: this.config.get<string>('JWT_SECRET_ACCESS'),
+      subject: token.user.toString()
+    })
+  }
+
+  /**
+   * Generates a raw refresh token.
+   *
+   * @async
+   * @param {Pick<IUserRaw, 'id'>} user - User to create token for
+   * @return {Promise<string>} Promise containing refresh token
+   */
+  async createRefreshToken(user: Pick<IUserRaw, 'id'>): Promise<string> {
+    const host = this.config.get<string>('HOST')
+    const ttl = this.config.get<number>('JWT_EXP_REFRESH')
+
+    const payload = { type: TokenType.REFRESH }
+    const token = await this.create({
+      ttl,
+      type: payload.type,
+      user: user.id
+    })
+
+    return await this.jwt.signAsync(payload, {
+      audience: host,
+      expiresIn: ttl,
+      issuer: host,
+      jwtid: token.id.toString(),
+      secret: this.config.get<string>('JWT_SECRET_REFRESH'),
+      subject: token.user.toString()
+    })
+  }
+
+  /**
+   * Generates a raw verification token.
+   *
+   * @async
+   * @param {Pick<IUserRaw, 'email' | 'id'>} user - User to create token for
+   * @return {Promise<string>} Promise containing verification token
+   */
+  async createVerificationToken(
+    user: Pick<IUserRaw, 'email' | 'id'>
+  ): Promise<string> {
+    const host = this.config.get<string>('HOST')
+    const ttl = this.config.get<number>('JWT_EXP_VERIFICATION')
+
+    const payload = { type: TokenType.VERIFICATION }
+    const token = await this.create({
+      ttl,
+      type: TokenType.VERIFICATION,
+      user: user.id
+    })
+
+    return await this.jwt.signAsync(payload, {
+      audience: host,
+      expiresIn: ttl,
+      issuer: host,
+      jwtid: token.id.toString(),
+      secret: this.config.get<string>('JWT_SECRET_VERIFICATION'),
+      subject: user.email
+    })
+  }
+
+  /**
    * Executes a {@link Token} search.
    *
    * @see {@link SearchOptions}
@@ -105,19 +206,19 @@ export default class TokensService {
    * If a token isn't found, `null` will be returned. To force the function to
    * throw an {@link Exception} instead, set `options.rejectOnEmpty=true`.
    *
-   * @see {@link JwtPayloadToken}
+   * @see {@link JwtPayload}
    * @see {@link SearchOptions}
    *
    * @async
-   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {JwtPayload} payload - JWT payload
    * @param {number} payload.jti - Id of assigned `Token`
    * @param {string} payload.sub - Id or email of `User` who token was issued to
    * @param {TokenType} payload.type - Token type
    * @param {SearchOptions<Token>} [options={}] - Search options
-   * @return {Promise<OrNull<Token>>} - Promise containing token
+   * @return {Promise<OrNull<Token>>} - Promise containing token or `null`
    */
   async findByPayload(
-    payload: JwtPayloadToken,
+    payload: JwtPayload,
     options: SearchOptions<Token> = {}
   ): Promise<OrNull<Token>> {
     return await this.repo.findByPayload(payload, options)
@@ -146,18 +247,18 @@ export default class TokensService {
   }
 
   /**
-   * Finds a token owner via payload.
+   * Finds a token owner via `payload`.
    *
    * If an owner is found, but doesn't match user identified by `payload`, an
    * {@link Exception} will be thrown.
    *
-   * @see {@link JwtPayloadToken}
+   * @see {@link JwtPayload}
    * @see {@link SearchOptions}
    * @see {@link TokenType}
    * @see {@link User}
    *
    * @async
-   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {JwtPayload} payload - JWT payload
    * @param {number} payload.jti - Id of assigned `Token`
    * @param {string} payload.sub - Id or email of `User` who token was issued to
    * @param {TokenType} payload.type - Token type
@@ -165,7 +266,7 @@ export default class TokensService {
    * @return {Promise<User>} - Promise containing token owner
    */
   async findOwnerByPayload(
-    payload: JwtPayloadToken,
+    payload: JwtPayload,
     options: SearchOptions<User> = {}
   ): Promise<User> {
     return await this.repo.findOwnerByPayload(payload, options)
@@ -225,12 +326,29 @@ export default class TokensService {
   }
 
   /**
-   * Retrieves the service repository instance.
+   * Retrieves a token instance and token owner.
    *
-   * @return {typeof Token} Entity dao class
+   * @async
+   * @param {TokenType} type - Token type
+   * @param {NullishString} auth_token - Token to resolve
+   * @return {Promise<ResolvedToken>} Promise containing token and owner
    */
-  get repository(): typeof Token {
-    return this.repo
+  async resolve(
+    type: TokenType,
+    auth_token: NullishString = null
+  ): Promise<ResolvedToken> {
+    const payload = await this.verify(type, auth_token)
+    const token = (await this.findByPayload(payload, {
+      rejectOnEmpty: true
+    }))!
+
+    if (token.revoked) {
+      throw new Exception(ExceptionCode.UNPROCESSABLE_ENTITY, 'Token revoked', {
+        payload
+      })
+    }
+
+    return { token, user: await this.findOwnerByPayload(payload) }
   }
 
   /**
@@ -242,5 +360,79 @@ export default class TokensService {
    */
   async revoke(id: number): Promise<Token> {
     return await this.patch(id, { revoked: true })
+  }
+
+  /**
+   * Resolves `token` and verifies the owner.
+   *
+   * @async
+   * @param {TokenType} type - Token type
+   * @param {NullishString} token - Token to resolve
+   * @param {UserUid} uid - Token owner email or id
+   * @return {Promise<ResolvedToken>} Promise containing token and owner
+   * @throws {Exception}
+   */
+  async validate(
+    type: TokenType,
+    token: NullishString,
+    uid: UserUid
+  ): Promise<ResolvedToken> {
+    const resolved = await this.resolve(type, token)
+    const user = await this.users.findOne(uid, { rejectOnEmpty: false })
+
+    if (resolved.user.id === user?.id) return resolved
+    throw new Exception(ExceptionCode.UNAUTHORIZED, 'Unauthorized')
+  }
+
+  /**
+   * Decodes a JSON web token.
+   *
+   * @param {TokenType} type - Token type
+   * @param {NullishString} token - Token to verify
+   * @return {Promise<JwtPayload>} Promise containing token payload
+   */
+  async verify(
+    type: TokenType,
+    token: NullishString
+  ): Promise<
+    {
+      [TokenType.ACCESS]: JwtPayloadAccess
+      [TokenType.REFRESH]: JwtPayloadRefresh
+      [TokenType.VERIFICATION]: JwtPayloadVerif
+    }[typeof type]
+  > {
+    try {
+      if (!token) throw new JsonWebTokenError('jwt malformed')
+
+      return this.jwt.verifyAsync(token, {
+        secret: this.config.get<string>(`JWT_SECRET_${type}`)
+      })
+    } catch (e) {
+      const error = e as JsonWebTokenError & TokenExpiredError
+      const data: ExceptionDataDTO<JsonWebTokenError> = {
+        errors: [error],
+        message: 'Token malformed',
+        token,
+        type
+      }
+
+      if (error.expiredAt) data.message = 'Token expired'
+
+      throw new Exception(
+        ExceptionCode.UNPROCESSABLE_ENTITY,
+        error.message,
+        data,
+        error.stack
+      )
+    }
+  }
+
+  /**
+   * Retrieves the service repository instance.
+   *
+   * @return {typeof Token} Entity dao class
+   */
+  get repository(): typeof Token {
+    return this.repo
   }
 }

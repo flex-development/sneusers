@@ -1,6 +1,9 @@
 import { AuthService } from '@sneusers/subdomains/auth/providers'
+import USER_PASSWORD from '@tests/fixtures/user-password.fixture'
+import pick from 'lodash.pick'
+import { QueryInterface } from 'sequelize'
 import getCreateUserDTO from './get-create-user-dto.util'
-import { MockAuthedUser } from './types'
+import { AuthedUser } from './types'
 
 /**
  * @file Global Test Utilities - createAuthedUser
@@ -10,19 +13,34 @@ import { MockAuthedUser } from './types'
 /**
  * Generates a mock authenticated user.
  *
+ * @async
+ * @param {QueryInterface} qi - Current queryInterface
  * @param {AuthService} auth - Current auth service
  * @param {number} id - Id of authenticated user
- * @return {Promise<MockAuthedUser>} Promise containing mock authenticated user
+ * @return {Promise<AuthedUser>} Promise containing mock authenticated user
  */
 const createAuthedUser = async (
+  qi: QueryInterface,
   auth: AuthService,
   id: number
-): Promise<MockAuthedUser> => {
+): Promise<AuthedUser> => {
+  // @ts-expect-error Property 'users' is protected and only accessible within
+  // class 'AuthService' and its subclasses ts(2445)
+  const users = auth.users.repository
+
+  const dto = { ...getCreateUserDTO(id), password: USER_PASSWORD }
+  const entity = await users.create(dto, { isNewRecord: true, silent: true })
+  const user = pick({ ...entity.toJSON(), updated_at: null }, users.RAW_KEYS)
+
+  await qi.insert(null, users.tableName, user)
+
   return {
-    ...getCreateUserDTO(),
-    access_token: await auth._tokens.createAccessToken({ id }),
-    id
-  }
+    ...user,
+    // @ts-expect-error Property 'tokens' is protected and only accessible
+    // within class 'AuthService' and its subclasses ts(2445)
+    access_token: await auth.tokens.createAccessToken(user),
+    password: USER_PASSWORD
+  } as AuthedUser
 }
 
 export default createAuthedUser

@@ -6,7 +6,7 @@ import { IsEnum, IsOptional, IsString } from 'class-validator'
 
 /**
  * @file Auth Subdomain DTOs - RequestVerifDTO
- * @module sneusers/subdomains/auth/models/RequestVerifDTO
+ * @module sneusers/subdomains/auth/dtos/RequestVerifDTO
  */
 
 /**

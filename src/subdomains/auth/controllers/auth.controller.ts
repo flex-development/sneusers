@@ -1,46 +1,37 @@
+import { OrNull } from '@flex-development/tutils'
 import {
   Body,
   Controller,
   Get,
   HttpCode,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
   UseInterceptors,
   ValidationPipe
 } from '@nestjs/common'
+import { ApiBearerAuth, ApiBody, ApiCookieAuth, ApiTags } from '@nestjs/swagger'
 import {
-  ApiBadGatewayResponse,
-  ApiBody,
-  ApiConflictResponse,
-  ApiCookieAuth,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-  ApiUnprocessableEntityResponse
-} from '@nestjs/swagger'
+  ApiCsrfProtection,
+  ApiResponses,
+  ApiTokenAuth,
+  CsrfToken
+} from '@sneusers/decorators'
 import type { EntityDTO } from '@sneusers/dtos'
+import { CookieType } from '@sneusers/enums'
+import { CookieOptionsFactory } from '@sneusers/factories'
 import { EntitySerializer } from '@sneusers/interceptors'
-import { CsurfMiddleware } from '@sneusers/middleware'
-import { CsrfToken, CsrfTokenAuth } from '@sneusers/subdomains/auth/decorators'
+import { LoginDTO, RegisterUserDTO } from '@sneusers/subdomains/auth/dtos'
 import {
-  LoginDTO,
-  RequestVerifDTO,
-  RequestVerifResendDTO,
-  VerifEmailSentDTO
-} from '@sneusers/subdomains/auth/dtos'
-import {
+  JwtAuthGuard,
   JwtRefreshGuard,
   LocalAuthGuard
 } from '@sneusers/subdomains/auth/guards'
+import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
-import { AuthedUser, UserAuth } from '@sneusers/subdomains/users/decorators'
-import { CreateUserDTO, UserDTO } from '@sneusers/subdomains/users/dtos'
+import { CurrentUser } from '@sneusers/subdomains/users/decorators'
+import { UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import type { IUser, UserRequest } from '@sneusers/subdomains/users/interfaces'
@@ -52,100 +43,68 @@ import OPENAPI from './openapi/auth.openapi'
  * @module sneusers/subdomains/auth/controllers/AuthController
  */
 
-type Serialized = EntityDTO<IUser>
+type Serialized = EntityDTO<IUser> | ILoginDTO
+type Payload = ILoginDTO | UserDTO
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
-@UseInterceptors(new EntitySerializer<User, EntityDTO<IUser>>())
-@UseInterceptors(new UserInterceptor<Serialized, UserDTO>())
+@UseInterceptors(new EntitySerializer<User, User | LoginDTO, Serialized>())
+@UseInterceptors(new UserInterceptor<Serialized, Payload>())
 export default class AuthController {
-  constructor(protected readonly auth: AuthService) {}
+  constructor(
+    protected readonly auth: AuthService,
+    protected readonly cookie: CookieOptionsFactory
+  ) {}
 
   @UseGuards(LocalAuthGuard)
-  @CsrfTokenAuth()
   @Post(OPENAPI.login.path)
   @HttpCode(OPENAPI.login.status)
+  @ApiCsrfProtection()
   @ApiBody(OPENAPI.login.body)
-  @ApiOkResponse(OPENAPI.login.responses[200])
-  @ApiUnauthorizedResponse(OPENAPI.login.responses[401])
-  @ApiInternalServerErrorResponse(OPENAPI.login.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.login.responses[502])
+  @ApiResponses(OPENAPI.login.responses)
   async login(
-    @AuthedUser() user: User,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginDTO> {
-    res.setHeader('Set-Cookie', await this.auth.cookieWithRefreshToken(user))
-    return await this.auth.login(user)
+    const [login, cookie] = await this.auth.login(user)
+
+    res.cookie('Refresh', cookie, this.cookie.createOptions(CookieType.REFRESH))
+    return login
   }
 
-  @UserAuth()
-  @CsrfTokenAuth()
+  @UseGuards(JwtAuthGuard)
   @Post(OPENAPI.logout.path)
   @HttpCode(OPENAPI.logout.status)
-  @ApiOkResponse(OPENAPI.logout.responses[200])
-  @ApiInternalServerErrorResponse(OPENAPI.logout.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.logout.responses[502])
+  @ApiTokenAuth()
+  @ApiResponses(OPENAPI.logout.responses)
   async logout(
-    @AuthedUser() user: User,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) res: Response
   ): Promise<UserDTO> {
-    res.setHeader('Set-Cookie', this.auth.cookiesForLogout())
+    res.clearCookie('Refresh', this.cookie.createOptions(CookieType.LOGOUT))
     return user
   }
 
   @UseGuards(JwtRefreshGuard)
-  @CsrfTokenAuth()
-  @Get(OPENAPI.refresh.path)
+  @Post(OPENAPI.refresh.path)
   @HttpCode(OPENAPI.refresh.status)
+  @ApiCsrfProtection()
   @ApiCookieAuth('Refresh')
-  @ApiOkResponse(OPENAPI.refresh.responses[200])
-  @ApiUnauthorizedResponse(OPENAPI.refresh.responses[401])
-  @ApiInternalServerErrorResponse(OPENAPI.refresh.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.refresh.responses[502])
+  @ApiResponses(OPENAPI.refresh.responses)
   async refresh(@Req() req: UserRequest): Promise<LoginDTO> {
-    return await this.auth.refresh(req?.cookies?.Refresh ?? null)
+    return await this.auth.refresh(req.cookies.Refresh)
   }
 
   @Post(OPENAPI.register.path)
   @HttpCode(OPENAPI.register.status)
-  @ApiCreatedResponse(OPENAPI.register.responses[201])
-  @ApiConflictResponse(OPENAPI.register.responses[409])
-  @ApiUnprocessableEntityResponse(OPENAPI.register.responses[422])
-  @ApiInternalServerErrorResponse(OPENAPI.register.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.register.responses[502])
+  @ApiBody(OPENAPI.register.body)
+  @ApiResponses(OPENAPI.register.responses)
   async register(
-    @Body(new ValidationPipe({ transform: true })) dto: CreateUserDTO,
-    @Res({ passthrough: true }) res: Response,
-    @CsrfToken('create') csrf_token: string
+    @Body(new ValidationPipe({ transform: true })) dto: RegisterUserDTO,
+    @CsrfToken('create') cookie: string,
+    @Res({ passthrough: true }) res: Response
   ): Promise<UserDTO> {
-    res.cookie('csrf-token', csrf_token, CsurfMiddleware.cookie())
+    res.cookie('csrf-token', cookie, this.cookie.createOptions(CookieType.CSRF))
     return await this.auth.register(dto)
-  }
-
-  @UserAuth()
-  @Post(OPENAPI.resendVerification.path)
-  @HttpCode(OPENAPI.resendVerification.status)
-  @ApiOkResponse(OPENAPI.resendVerification.responses[200])
-  @ApiForbiddenResponse(OPENAPI.resendVerification.responses[403])
-  @ApiInternalServerErrorResponse(OPENAPI.resendVerification.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.resendVerification.responses[502])
-  async resendVerification(
-    @AuthedUser() user: User,
-    @Query(new ValidationPipe({ transform: true })) query: RequestVerifResendDTO
-  ): Promise<VerifEmailSentDTO> {
-    return await this.auth.resendVerification(user.id, query)
-  }
-
-  @Get(OPENAPI.verify.path)
-  @HttpCode(OPENAPI.verify.status)
-  @ApiOkResponse(OPENAPI.verify.responses[200])
-  @ApiUnauthorizedResponse(OPENAPI.verify.responses[401])
-  @ApiForbiddenResponse(OPENAPI.verify.responses[403])
-  @ApiInternalServerErrorResponse(OPENAPI.verify.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.verify.responses[502])
-  async verify(
-    @Query(new ValidationPipe({ transform: true })) query: RequestVerifDTO
-  ): Promise<UserDTO> {
-    return await this.auth.verify(query)
   }
 }

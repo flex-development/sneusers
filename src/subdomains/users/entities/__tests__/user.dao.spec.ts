@@ -50,66 +50,6 @@ describe('unit:subdomains/users/entities/User', () => {
     await app.close()
   })
 
-  describe('.authenticate', () => {
-    it('should return User if login credentials are valid', async () => {
-      // Arrange
-      const user = users[0]
-
-      // Act
-      const result = await Subject.authenticate(user.email, user.password)
-
-      // Expect
-      expect(result).to.be.instanceOf(User)
-      expect(result.created_at).to.equal(user.created_at)
-      expect(result.email).to.equal(user.email)
-      expect(result.email_verified).to.equal(user.email_verified)
-      expect(result.first_name).to.equal(user.first_name)
-      expect(result.id).to.equal(user.id)
-      expect(result.last_name).to.equal(user.last_name)
-      expect(result.password).to.equal(user.password)
-      expect(result.updated_at).to.equal(user.updated_at)
-    })
-
-    it('should throw if user is not found', async function (this) {
-      // Arrange
-      let exception: Exception
-
-      // Act
-      try {
-        await Subject.authenticate(this.faker.internet.exampleEmail())
-      } catch (error) {
-        exception = error as typeof exception
-      }
-
-      // Expect
-      expect(exception!).to.be.instanceOf(Exception)
-      expect(exception!.code).to.equal(ExceptionCode.NOT_FOUND)
-    })
-
-    it('should throw if login credentials are invalid', async () => {
-      // Arrange
-      const user = users[0]
-      const password: NonNullable<User['password']> = 'user.password'
-      let exception: Exception
-
-      // Act
-      try {
-        await Subject.authenticate(user.id, password)
-      } catch (error) {
-        exception = error as typeof exception
-      }
-
-      // Expect
-      expect(exception!).to.be.instanceOf(Exception)
-      expect(exception!.code).to.equal(ExceptionCode.UNAUTHORIZED)
-      expect(exception!.data.credential).to.be.undefined
-      expect(exception!.data.user.email).to.be.a('string')
-      expect(exception!.data.user.id).to.equal(user.id)
-      expect(exception!.data.user.password).to.equal(password)
-      expect(exception!.message).to.equal('Invalid login credentials')
-    })
-  })
-
   describe('.checkPasswordStrength', () => {
     it('should return password if password is strong', () => {
       expect(Subject.checkPasswordStrength('password')).to.be.a('string')

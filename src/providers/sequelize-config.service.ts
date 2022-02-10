@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { SequelizeOptionsFactory } from '@nestjs/sequelize'
 import {
-  SequelizeModuleAsyncOptions as SequelizeAsyncOptions,
+  SequelizeModuleAsyncOptions,
   SequelizeModuleOptions
 } from '@nestjs/sequelize'
 import { OrderDirection } from '@sneusers/enums'
@@ -22,25 +22,22 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Returns the application [`SequelizeModule`][1] configuration options.
-   *
-   * [1]: https://docs.nestjs.com/techniques/database#sequelize-integration
+   * Get `SequelizeModule` configuration options.
    *
    * @static
-   * @return {SequelizeAsyncOptions} Module config options
+   * @return {SequelizeModuleAsyncOptions} Module options
    */
-  static get moduleOptions(): SequelizeAsyncOptions {
+  static get moduleOptions(): SequelizeModuleAsyncOptions {
     return { useClass: SequelizeConfigService }
   }
 
   /**
-   * Returns the application [`Sequelize`][1] options.
+   * Get [`Sequelize`][1] options.
    *
    * [1]: https://sequelize.org/v7
-   * [2]: https://docs.nestjs.com/techniques/database#sequelize-integration
    *
    * @param {string} [name] - Name of database connection
-   * @return {SequelizeModuleOptions} [`SequelizeModule#forRoot`][2] options
+   * @return {SequelizeModuleOptions} Sequelize configuration options
    */
   createSequelizeOptions(name?: string): SequelizeModuleOptions {
     const DB_NAME = this.config.get<string>('DB_NAME')
@@ -87,7 +84,7 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
       options.dialect = 'sqlite'
       options.dialectOptions = dialectOptions
       options.logging = noop
-      options.storage = `./db/data/sqlite/${DB_NAME}.db`
+      options.storage = `./db/data/${DB_NAME}.db`
 
       delete options.timezone
     }

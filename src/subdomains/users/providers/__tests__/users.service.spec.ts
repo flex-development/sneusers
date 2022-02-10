@@ -7,6 +7,7 @@ import {
   SequelizeErrorName
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import EmailModule from '@sneusers/modules/email/email.module'
 import { CacheConfigService } from '@sneusers/providers'
 import { VerifType } from '@sneusers/subdomains/auth/enums'
 import type {
@@ -43,6 +44,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
     const ntapp = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        EmailModule,
         SequelizeModule.forFeature([User])
       ],
       providers: [TestSubject]

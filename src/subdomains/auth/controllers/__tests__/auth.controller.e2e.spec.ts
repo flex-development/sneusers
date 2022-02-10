@@ -17,15 +17,24 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
+import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import {
+  CookieOptionsProvider,
+  CsurfOptionsProvider
+} from '@sneusers/modules/middleware/providers'
 import { CacheConfigService } from '@sneusers/providers'
-import type { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
+import type {
+  RegisterUserDTO,
+  RequestLoginDTO
+} from '@sneusers/subdomains/auth/dtos'
 import { LoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
-  AuthTokensService,
   JwtConfigService,
-  TokensService
+  Strategist,
+  TokensService,
+  VerificationService
 } from '@sneusers/subdomains/auth/providers'
 import {
   JwtRefreshStrategy,
@@ -35,18 +44,23 @@ import {
 import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
+import { UsersService } from '@sneusers/subdomains/users/providers'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createAuthedUser from '@tests/utils/create-authed-user.util'
-import createUserDTO from '@tests/utils/create-user-dto.util'
 import createUsers from '@tests/utils/create-users.util'
+import getCreateUserDTO from '@tests/utils/get-create-user-dto.util'
 import getCsrfToken from '@tests/utils/get-csrf-token.util'
 import resetSequence from '@tests/utils/reset-sequence.util'
 import seedTable from '@tests/utils/seed-table.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
-import type { MockAuthedUser, MockCsrfToken } from '@tests/utils/types'
+import type {
+  AuthedUser,
+  MockCreateUserDTO,
+  MockCsrfToken
+} from '@tests/utils/types'
 import cookie from 'cookie'
 import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -63,61 +77,52 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
   let app: NestExpressApplication
   let auth: AuthService
   let csrf: MockCsrfToken
-  let queryInterface: QueryInterface
+  let qi: QueryInterface
   let req: ChaiHttp.Agent
   let table: CreateUserDTO[]
-  let user_authed: MockAuthedUser
+  let user_authed: AuthedUser
 
   before(async () => {
     const ntapp = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        CryptoModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
         SequelizeModule.forFeature([Token]),
         UsersModule
       ],
+      middlewares: [CookieParserMiddleware, CsurfMiddleware],
       providers: [
         AuthService,
-        AuthTokensService,
-        ErrorFilter.PROVIDER,
-        ExceptionClassFilter.PROVIDER,
-        HttpExceptionFilter.PROVIDER,
-        JwtConfigService,
+        CookieOptionsProvider(),
+        CsurfOptionsProvider(),
+        ErrorFilter.createProvider(),
+        ExceptionClassFilter.createProvider(),
+        HttpExceptionFilter.createProvider(),
         JwtRefreshStrategy,
         JwtStrategy,
         LocalStrategy,
-        TokensService
+        Strategist,
+        TokensService,
+        VerificationService
       ]
     })
 
-    CsurfMiddleware.configure({
-      ignoreMethods: ['HEAD', 'OPTIONS'],
-      ignoreRoutes: /(auth\/register)|csrf-token/
-    })
-
-    ntapp.app.use(new CookieParserMiddleware().use)
-    ntapp.app.use(new CsurfMiddleware().use)
-
     app = await ntapp.app.init()
     auth = ntapp.ref.get(AuthService)
-    queryInterface = ntapp.ref.get(Sequelize).getQueryInterface()
+    qi = ntapp.ref.get(Sequelize).getQueryInterface()
     req = chai.request.agent(app.getHttpServer())
-    user_authed = await createAuthedUser(auth, USERS.length + 1)
-    user_authed.password = 'password'
+    user_authed = await createAuthedUser(qi, auth, USERS.length + 1)
 
-    USERS.push(user_authed)
-
-    table = await seedTable<User>(auth._users.repository, USERS, {
-      fields: ['email', 'first_name', 'last_name', 'password']
-    })
-
+    table = await seedTable<User>(ntapp.ref.get(UsersService).repository, USERS)
     csrf = await getCsrfToken(req)
   })
 
   after(async () => {
-    await resetSequence(queryInterface, DatabaseTable.USERS)
+    await resetSequence(qi, DatabaseTable.TOKENS)
+    await resetSequence(qi, DatabaseTable.USERS)
     await app.close()
   })
 
@@ -125,21 +130,20 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const URL = stubURLPath('auth/login')
 
     describe('POST', () => {
-      it('should send LoginDTO if user was logged in', async () => {
+      it('should send access token and set refresh cookie', async () => {
         // Act
         const res = await req
           .post(URL)
           .send({ email: user_authed.email, password: user_authed.password })
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('csrf-token', csrf.csrf_token)
+        const cookies = res.header['set-cookie'].join(';')
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
-        expect(res).to.have.header('set-cookie', /(^| )Refresh([^;]+)/)
         expect(res.body).not.to.be.instanceOf(LoginDTO)
-        expect(res.body).to.have.keys(['access_token', 'id'])
         expect(res.body.access_token).to.be.a('string')
-        expect(res.body.id).to.be.a('number')
+        expect(cookie.parse(cookies).Refresh).not.to.be.empty
       })
 
       it('should send error if csrf token is invalid', async () => {
@@ -160,7 +164,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(ExceptionCode.FORBIDDEN, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('invalid csrf token')
       })
 
@@ -183,7 +186,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.data.error).to.equal(SequelizeError.EmptyResult)
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.match(new RegExp(dto.email))
       })
 
@@ -208,7 +210,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body.data.user.email).to.be.a('string')
         expect(res.body.data.user.id).to.be.a('number')
         expect(res.body.data.user.password).to.equal(dto.password)
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('Invalid login credentials')
       })
     })
@@ -218,57 +219,37 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const URL = stubURLPath('auth/logout')
 
     describe('POST', () => {
-      it('should set logout cookies if user was logged out', async () => {
+      it('should send logged out user and set refresh cookie', async () => {
         // Act
         const res = await req
           .post(URL)
-          .set('Cookie', `_csrf=${csrf._csrf}`)
-          .set('xsrf-token', csrf.csrf_token)
           .set('Authorization', `Bearer ${user_authed.access_token}`)
+        const cookies = res.header['set-cookie'].join(';')
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
-        expect(res).to.have.header('set-cookie', /(^| )Refresh([^;]+)/)
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
         expect(res.body.email).to.be.a('string')
+        expect(res.body.email_verified).to.be.false
         expect(res.body.first_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.updated_at).to.be.null
-      })
-
-      it('should send error if csrf token is invalid', async () => {
-        // Act
-        const res = await req
-          .post(URL)
-          .set('Cookie', '_csrf=secret')
-          .set('csrf-token', csrf.csrf_token)
-          .set('Authorization', `Bearer ${user_authed.access_token}`)
-
-        // Expect
-        expect(res).to.be.jsonResponse(ExceptionCode.FORBIDDEN, 'object')
-        expect(res.body).not.to.be.instanceOf(Exception)
-        expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.errors).to.be.an('array')
-        expect(res.body.message).to.equal('invalid csrf token')
+        expect(cookie.parse(cookies).Refresh).to.be.empty
       })
 
       it('should send error if access token is invalid', async () => {
         // Act
         const res = await req
           .post(URL)
-          .set('Cookie', `_csrf=${csrf._csrf}`)
-          .set('csrf-token', csrf.csrf_token)
           .set('Authorization', 'Bearer access_token')
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.errors).to.be.an('array')
-        expect(res.body.message).to.equal('Unauthorized')
       })
     })
   })
@@ -276,7 +257,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
   describe('/auth/refresh', () => {
     const URL = stubURLPath('auth/refresh')
 
-    describe('GET', () => {
+    describe('POST', () => {
       it('should send new user access token', async () => {
         // Arrange
         const { header: login } = await req
@@ -284,26 +265,25 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
           .send({ email: user_authed.email, password: user_authed.password })
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('csrf-token', csrf.csrf_token)
-        const refresh_token = cookie.parse(login['set-cookie'][0]).Refresh
+        const cookies = login['set-cookie'].join(';')
+        const refresh_token = cookie.parse(cookies).Refresh
 
         // Act
         const res = await req
-          .get(URL)
+          .post(URL)
           .set('Cookie', `_csrf=${csrf._csrf}; Refresh=${refresh_token}`)
           .set('csrf-token', csrf.csrf_token)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(LoginDTO)
-        expect(res.body).to.have.keys(['access_token', 'id'])
         expect(res.body.access_token).to.be.a('string')
-        expect(res.body.id).to.be.a('number')
       })
 
       it('should send error if csrf token is invalid', async () => {
         // Act
         const res = await req
-          .get(URL)
+          .post(URL)
           .set('Cookie', `_csrf=${csrf._csrf}`)
           .set('csrf-token', 'token-from-cookie')
 
@@ -311,14 +291,13 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(ExceptionCode.FORBIDDEN, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('invalid csrf token')
       })
 
       it('should send error if refresh token is invalid', async () => {
         // Act
         const res = await req
-          .get(URL)
+          .post(URL)
           .set('Cookie', `_csrf=${csrf._csrf}; Refresh=`)
           .set('x-xsrf-token', csrf.csrf_token)
 
@@ -326,7 +305,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.equal('Unauthorized')
       })
     })
@@ -336,10 +314,10 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
     const URL = stubURLPath('auth/register')
 
     describe('POST', () => {
-      it('should send UserDTO if new user was registered', async () => {
+      it('should send UserDTO and set csrf-token cookie', async () => {
         // Arrange
-        const dto: CreateUserDTO = {
-          ...createUserDTO(),
+        const dto: RegisterUserDTO & MockCreateUserDTO = {
+          ...getCreateUserDTO(),
           password: user_authed.password
         }
 
@@ -350,15 +328,23 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(HttpStatus.CREATED, 'object')
         expect(res).to.have.header('set-cookie', /csrf-token/)
         expect(res.body).not.to.be.instanceOf(User)
+        expect(res.body.created_at).to.be.a('number')
         expect(res.body.email).to.equal(dto.email.toLowerCase())
+        expect(res.body.email_verified).to.be.undefined
         expect(res.body.first_name).to.equal(dto.first_name.toLowerCase())
+        expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.equal(dto.last_name.toLowerCase())
         expect(res.body.password).to.be.undefined
+        expect(res.body.updated_at).to.be.null
       })
 
       it('should send error if user email is not unique', async () => {
         // Arrange
-        const dto: CreateUserDTO = { ...createUserDTO(), email: table[0].email }
+        const dto: RegisterUserDTO & MockCreateUserDTO = {
+          ...getCreateUserDTO(),
+          email: table[0].email,
+          password: user_authed.password
+        }
 
         // Act
         const res = await req.post(URL).send(dto)
@@ -368,7 +354,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body).not.to.be.instanceOf(UniqueEmailException)
         expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.data.error).to.equal(SequelizeError.UniqueConstraint)
-        expect(res.body.errors).to.be.an('array')
         expect(res.body.message).to.match(/already exists/)
       })
     })

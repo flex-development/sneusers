@@ -1,3 +1,5 @@
+import { CacheModule } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
@@ -6,13 +8,17 @@ import {
   SequelizeErrorName
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import EmailModule from '@sneusers/modules/email/email.module'
+import { CacheConfigService } from '@sneusers/providers'
 import type {
   CreateTokenDTO,
   PatchTokenDTO
 } from '@sneusers/subdomains/auth/dtos'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import { TokenType } from '@sneusers/subdomains/auth/enums'
+import { JwtConfigService } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
+import { UsersService } from '@sneusers/subdomains/users/providers'
 import type { SequelizeError } from '@sneusers/types'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
@@ -38,8 +44,13 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
 
   before(async () => {
     const ntapp = await createApp({
-      imports: [SequelizeModule.forFeature([Token])],
-      providers: [TestSubject]
+      imports: [
+        CacheModule.registerAsync(CacheConfigService.moduleOptions),
+        EmailModule,
+        JwtModule.registerAsync(JwtConfigService.moduleOptions),
+        SequelizeModule.forFeature([Token, User])
+      ],
+      providers: [TestSubject, UsersService]
     })
 
     app = await ntapp.app.init()
@@ -101,6 +112,24 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
     })
   })
 
+  describe('#createAccessToken', () => {
+    it.skip('should return raw access token', () => {
+      //
+    })
+  })
+
+  describe('#createRefreshToken', () => {
+    it.skip('should return raw refresh token', () => {
+      //
+    })
+  })
+
+  describe('#createVerificationToken', () => {
+    it.skip('should return raw verification token', () => {
+      //
+    })
+  })
+
   describe('#find', () => {
     it('should return PaginatedDTO<Token>', async () => {
       // Act
@@ -113,6 +142,24 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
       expect(result.offset).to.equal(0)
       expect(result.results).each(user => user.to.be.instanceOf(Token))
       expect(result.total).to.be.a('number')
+    })
+  })
+
+  describe('#findByPayload', () => {
+    it.skip('should return Token given valid JwtPayload', async () => {
+      //
+    })
+
+    it.skip('should throw if payload.jti is invalid', async () => {
+      //
+    })
+
+    it.skip('should throw if token is not found', async () => {
+      //
+    })
+
+    it.skip('should throw if token does not match requested type', async () => {
+      //
     })
   })
 
@@ -146,6 +193,24 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
       expect(exception!.data.error).to.equal(SequelizeErrorName.EmptyResult)
       expect(exception!.data.id).to.equal(id)
       expect(exception!.message).to.match(new RegExp(id.toString()))
+    })
+  })
+
+  describe('#findOwnerByPayload', () => {
+    it.skip('should return User given valid JwtPayload', async () => {
+      //
+    })
+
+    it.skip('should throw if payload.sub is invalid', async () => {
+      //
+    })
+
+    it.skip('should throw if token is not found', async () => {
+      //
+    })
+
+    it.skip('should throw if token owners do not match', async () => {
+      //
     })
   })
 
@@ -228,6 +293,16 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
     })
   })
 
+  describe('#resolve', () => {
+    it.skip('should return User and Token', async () => {
+      //
+    })
+
+    it.skip('should throw if Token is revoked', async () => {
+      //
+    })
+  })
+
   describe('#revoke', () => {
     it('should return revoked Token', async () => {
       // Arrange
@@ -239,6 +314,30 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
       // Expect
       expect(result).to.be.instanceOf(Token)
       expect(result.revoked).to.be.true
+    })
+  })
+
+  describe('#validate', () => {
+    it.skip('should return User and Token', async () => {
+      //
+    })
+
+    it.skip('should throw if token owners do not match', async () => {
+      //
+    })
+  })
+
+  describe('#verify', () => {
+    it.skip('should return raw jwt', async () => {
+      //
+    })
+
+    it.skip('should throw if token is expired', async () => {
+      //
+    })
+
+    it.skip('should throw if token is malformed', async () => {
+      //
     })
   })
 })

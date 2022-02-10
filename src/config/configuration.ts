@@ -21,6 +21,8 @@ const validate = ({
   APP_ENV = AppEnv.DEV,
   CACHE_MAX = 100,
   CACHE_TTL = 5,
+  COOKIE_SECRET,
+  CSURF_COOKIE_MAX_AGE = 60_000,
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'postgres',
   DB_LOG_QUERY_PARAMS = true,
@@ -44,10 +46,10 @@ const validate = ({
   HOSTNAME = 'localhost',
   JWT_EXP_ACCESS = 900,
   JWT_EXP_REFRESH = 86_400,
-  JWT_EXP_VERIFY = 86_400,
+  JWT_EXP_VERIFICATION = 86_400,
   JWT_SECRET_ACCESS,
   JWT_SECRET_REFRESH,
-  JWT_SECRET_VERIFY,
+  JWT_SECRET_VERIFICATION,
   NODE_ENV = NodeEnv.DEV,
   PORT = 8080,
   REDIS_HOST = 'redis',
@@ -72,30 +74,43 @@ const validate = ({
   // Check if running in production or staging environment
   env.PROD = env.APP_ENV === AppEnv.PROD && env.NODE_ENV === NodeEnv.PROD
   env.STG = env.APP_ENV === AppEnv.STG
-  const STG_OR_PROD = env.STG || env.PROD
+  const STGPROD = env.STG || env.PROD
 
   // Set hostname, port to run application on, and top level domain
   env.HOSTNAME = HOSTNAME
   env.PORT = Number.parseInt(PORT.toString())
   env.TLD = TLD
 
+  // Set server URLs
+  env.SERVER_URL_DEV = SERVER_URL_DEV || `https://api.dev.${env.TLD}`
+  env.SERVER_URL_PROD = SERVER_URL_PROD || `https://api.${env.TLD}`
+  env.SERVER_URL_STG = SERVER_URL_STG || `https://api.stg.${env.TLD}`
+  env.SERVER_URL = ((): EnvironmentVariables['SERVER_URL'] => {
+    if (env.APP_ENV === AppEnv.STG) return env.SERVER_URL_STG
+    if (env.APP_ENV === AppEnv.PROD) return env.SERVER_URL_PROD
+    return env.SERVER_URL_DEV
+  })()
+
   // Provide defaults in development and test environments
-  JWT_SECRET_ACCESS = (STG_OR_PROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
-  JWT_SECRET_REFRESH = (STG_OR_PROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
-  JWT_SECRET_VERIFY = (STG_OR_PROD && JWT_SECRET_VERIFY) || 'JWT_SECRET'
-  REDIS_PASSWORD = (STG_OR_PROD && REDIS_PASSWORD) || 'redis'
+  COOKIE_SECRET = (STGPROD && COOKIE_SECRET) || 'COOKIE_SECRET'
+  JWT_SECRET_ACCESS = (STGPROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
+  JWT_SECRET_REFRESH = (STGPROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
+  JWT_SECRET_VERIFICATION = (STGPROD && JWT_SECRET_VERIFICATION) || 'JWT_SECRET'
+  REDIS_PASSWORD = (STGPROD && REDIS_PASSWORD) || 'redis'
 
   // Assign remaining environment variables
-  env.CACHE_MAX = Number.parseInt(CACHE_MAX.toString())
-  env.CACHE_TTL = Number.parseInt(CACHE_TTL.toString())
+  env.CACHE_MAX = Number.parseInt(`${CACHE_MAX}`)
+  env.CACHE_TTL = Number.parseInt(`${CACHE_TTL}`)
+  env.COOKIE_SECRET = COOKIE_SECRET
+  env.CSURF_COOKIE_MAX_AGE = Number.parseInt(`${CSURF_COOKIE_MAX_AGE}`)
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
   env.DB_LOG_QUERY_PARAMS = JSON.parse(DB_LOG_QUERY_PARAMS)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
-  env.DB_PORT = Number.parseInt(DB_PORT.toString(), 10)
-  env.DB_RETRY_ATTEMPTS = Number.parseInt(DB_RETRY_ATTEMPTS.toString(), 10)
-  env.DB_RETRY_DELAY = Number.parseInt(DB_RETRY_DELAY.toString(), 10)
+  env.DB_PORT = Number.parseInt(`${DB_PORT}`)
+  env.DB_RETRY_ATTEMPTS = Number.parseInt(`${DB_RETRY_ATTEMPTS}`)
+  env.DB_RETRY_DELAY = Number.parseInt(`${DB_RETRY_DELAY}`)
   env.DB_SYNC_ALTER = JSON.parse(DB_SYNC_ALTER)
   env.DB_SYNC_FORCE = JSON.parse(DB_SYNC_FORCE)
   env.DB_SYNCHRONIZE = JSON.parse(DB_SYNCHRONIZE)
@@ -104,29 +119,26 @@ const validate = ({
   env.DEV = env.APP_ENV === AppEnv.DEV && env.NODE_ENV === NodeEnv.DEV
   env.EMAIL_CLIENT = EMAIL_CLIENT
   env.EMAIL_HOST = EMAIL_HOST
-  env.EMAIL_PORT = Number.parseInt(EMAIL_PORT.toString(), 10)
+  env.EMAIL_PORT = Number.parseInt(`${EMAIL_PORT}`)
   env.EMAIL_PRIVATE_KEY = EMAIL_PRIVATE_KEY!.replace(/\\n/g, '\n')
   env.EMAIL_SEND_AS = EMAIL_SEND_AS
   env.EMAIL_USER = EMAIL_USER
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
-  env.JWT_EXP_ACCESS = Number.parseInt(JWT_EXP_ACCESS.toString(), 10)
-  env.JWT_EXP_REFRESH = Number.parseInt(JWT_EXP_REFRESH.toString(), 10)
-  env.JWT_EXP_VERIFY = Number.parseInt(JWT_EXP_VERIFY.toString(), 10)
+  env.JWT_EXP_ACCESS = Number.parseInt(`${JWT_EXP_ACCESS}`)
+  env.JWT_EXP_REFRESH = Number.parseInt(`${JWT_EXP_REFRESH}`)
+  env.JWT_EXP_VERIFICATION = Number.parseInt(`${JWT_EXP_VERIFICATION}`)
   env.JWT_SECRET_ACCESS = JWT_SECRET_ACCESS
   env.JWT_SECRET_REFRESH = JWT_SECRET_REFRESH
-  env.JWT_SECRET_VERIFY = JWT_SECRET_VERIFY
+  env.JWT_SECRET_VERIFICATION = JWT_SECRET_VERIFICATION
   env.REDIS_HOST = REDIS_HOST
   env.REDIS_PASSWORD = REDIS_PASSWORD
-  env.REDIS_PORT = Number.parseInt(REDIS_PORT.toString(), 10)
+  env.REDIS_PORT = Number.parseInt(`${REDIS_PORT}`)
   env.SERVER_DESCRIP_DEV = SERVER_DESCRIP_DEV
   env.SERVER_DESCRIP_PROD = SERVER_DESCRIP_PROD
   env.SERVER_DESCRIP_STG = SERVER_DESCRIP_STG
-  env.SERVER_URL_DEV = SERVER_URL_DEV || `https://api.dev.${env.TLD}`
-  env.SERVER_URL_PROD = SERVER_URL_PROD || `https://api.${env.TLD}`
-  env.SERVER_URL_STG = SERVER_URL_STG || `https://api.stg.${env.TLD}`
-  env.TEST = env.APP_ENV === AppEnv.TEST && env.NODE_ENV === NodeEnv.TEST
-  env.THROTTLE_LIMIT = Number.parseInt(THROTTLE_LIMIT.toString(), 10)
-  env.THROTTLE_TTL = Number.parseInt(THROTTLE_TTL.toString(), 10)
+  env.TEST = env.APP_ENV === AppEnv.TEST || env.NODE_ENV === NodeEnv.TEST
+  env.THROTTLE_LIMIT = Number.parseInt(`${THROTTLE_LIMIT}`)
+  env.THROTTLE_TTL = Number.parseInt(`${THROTTLE_TTL}`)
 
   // Validate environment variables
   const errors: ValidationError[] = validateSync(env, {
@@ -153,6 +165,8 @@ const configuration = (): EnvironmentVariables => {
     APP_ENV: process.env.APP_ENV,
     CACHE_MAX: process.env.CACHE_MAX,
     CACHE_TTL: process.env.CACHE_TTL,
+    COOKIE_SECRET: process.env.COOKIE_SECRET,
+    CSURF_COOKIE_MAX_AGE: process.env.CSURF_COOKIE_MAX_AGE,
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
     DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
@@ -176,10 +190,10 @@ const configuration = (): EnvironmentVariables => {
     HOSTNAME: process.env.HOSTNAME,
     JWT_EXP_ACCESS: process.env.JWT_EXP_ACCESS,
     JWT_EXP_REFRESH: process.env.JWT_EXP_REFRESH,
-    JWT_EXP_VERIFY: process.env.JWT_EXP_VERIFY,
+    JWT_EXP_VERIFICATION: process.env.JWT_EXP_VERIFICATION,
     JWT_SECRET_ACCESS: process.env.JWT_SECRET_ACCESS,
     JWT_SECRET_REFRESH: process.env.JWT_SECRET_REFRESH,
-    JWT_SECRET_VERIFY: process.env.JWT_SECRET_VERIFY,
+    JWT_SECRET_VERIFICATION: process.env.JWT_SECRET_VERIFICATION,
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
     REDIS_HOST: process.env.REDIS_HOST,

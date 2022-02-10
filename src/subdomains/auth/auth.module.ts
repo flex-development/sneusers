@@ -1,18 +1,18 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { CsurfMiddleware } from '@sneusers/middleware'
-import type { EnvironmentVariables } from '@sneusers/models'
+import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import { CookieOptionsProvider } from '@sneusers/modules/middleware/providers'
 import UsersModule from '@sneusers/subdomains/users/users.module'
-import { AuthController } from './controllers'
+import { AuthController, VerificationController } from './controllers'
 import { Token } from './entities'
 import {
   AuthService,
-  AuthTokensService,
   JwtConfigService,
-  TokensService
+  Strategist,
+  TokensService,
+  VerificationService
 } from './providers'
 import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
 
@@ -22,9 +22,9 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
  */
 
 @Module({
-  controllers: [AuthController],
-  exports: [AuthService],
+  controllers: [AuthController, VerificationController],
   imports: [
+    CryptoModule,
     JwtModule.registerAsync(JwtConfigService.moduleOptions),
     PassportModule,
     SequelizeModule.forFeature([Token]),
@@ -32,29 +32,14 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   ],
   providers: [
     AuthService,
-    AuthTokensService,
+    CookieOptionsProvider(),
     JwtConfigService,
     JwtRefreshStrategy,
     JwtStrategy,
     LocalStrategy,
-    TokensService
+    Strategist,
+    TokensService,
+    VerificationService
   ]
 })
-export default class AuthModule {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {
-    CsurfMiddleware.configure({
-      ignoreRoutes: /auth\/((verify\/resend)|register|verify)/g
-    })
-  }
-
-  /**
-   * Configures middleware.
-   *
-   * @param {MiddlewareConsumer} consumer - Applies middleware to routes
-   * @return {void} Nothing when complete
-   */
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CsurfMiddleware).forRoutes('*')
-    return
-  }
-}
+export default class AuthModule {}

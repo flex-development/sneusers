@@ -60,7 +60,7 @@ describe('unit:subdomains/auth/entities/Token', () => {
   describe('.findByPayload', () => {
     const type = TokenType.REFRESH
 
-    it('should return Token given valid JwtPayloadToken', async () => {
+    it('should return Token given valid JwtPayload', async () => {
       // Arrange
       const { id, user } = tokens.find(t => t.type === type)!
       const payload: JwtPayloadRefresh = { jti: `${id}`, sub: `${user}`, type }
@@ -188,7 +188,7 @@ describe('unit:subdomains/auth/entities/Token', () => {
   describe('.findOwnerByPayload', () => {
     const type = TokenType.VERIFICATION
 
-    it('should return User given valid JwtPayloadToken', async () => {
+    it('should return User given valid JwtPayload', async () => {
       // Arrange
       const { id, user } = tokens.find(t => t.type === type)!
       const payload: JwtPayloadVerif = {

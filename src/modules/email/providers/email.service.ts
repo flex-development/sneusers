@@ -8,7 +8,7 @@ import { CreateEmailDTO, EmailSentDTO } from '@sneusers/modules/email/dtos'
  */
 
 @Injectable()
-export default class EmailService implements OnModuleInit {
+class EmailService implements OnModuleInit {
   constructor(protected readonly mailer: MailerService) {}
 
   /**
@@ -42,3 +42,4 @@ export default class EmailService implements OnModuleInit {
     })
   }
 }
+export default EmailService

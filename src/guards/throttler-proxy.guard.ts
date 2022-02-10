@@ -11,7 +11,7 @@ import { Request } from 'express'
 @Injectable()
 class ThrottlerProxyGuard extends ThrottlerGuard implements CanActivate {
   /**
-   * Returns a global-scoped application guard.
+   * Creates a globally-scoped class provider.
    *
    * Use this custom provider instead of `useGlobalGuards` to enable depedency
    * injection for this class.
@@ -21,12 +21,12 @@ class ThrottlerProxyGuard extends ThrottlerGuard implements CanActivate {
    * @static
    * @return {ClassProvider<ThrottlerProxyGuard>} Application guard
    */
-  static get PROVIDER(): ClassProvider<ThrottlerProxyGuard> {
+  static createProvider(): ClassProvider<ThrottlerProxyGuard> {
     return { provide: APP_GUARD, useClass: ThrottlerProxyGuard }
   }
 
   /**
-   * Gets a user ip address from an `X-Forward-For` header value or `req.ip`.
+   * Gets a user's ip address from an `X-Forward-For` header value or `req.ip`.
    *
    * @see https://docs.nestjs.com/security/rate-limiting#proxies
    * @see http://expressjs.com/guide/behind-proxies.html

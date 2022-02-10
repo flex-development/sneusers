@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common'
-import { ApiProperty, PartialType, PickType } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import User from '@sneusers/subdomains/users/entities/user.dao'
 import { IUser } from '@sneusers/subdomains/users/interfaces'
 
@@ -9,25 +9,20 @@ import { IUser } from '@sneusers/subdomains/users/interfaces'
  */
 
 /**
- * @internal
- * @property {Type<Pick<User, keyof IUser>>} UserDTOB - DTO base
+ * {@link User} entity payload type.
+ *
+ * @extends {Partial<Type<Omit<IUser, 'password'>>>}
  */
-const UserDTOB: Type<Pick<User, keyof IUser>> = PickType(User, [
+class UserDTO extends PickType(User, [
   'created_at',
   'email',
+  'email_verified',
   'first_name',
   'id',
   'last_name',
   'name',
   'updated_at'
-] as (keyof IUser)[])
-
-/**
- * {@link User} entity payload type.
- *
- * @extends PartialType(UserDTOB)
- */
-class UserDTO extends PartialType(UserDTOB) {
+]) {
   @ApiProperty({ description: 'Unique identifier', type: Number })
   declare id: User['id']
 }

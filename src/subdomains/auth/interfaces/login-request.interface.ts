@@ -1,7 +1,7 @@
-import type { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
-import type { UserDTO } from '@sneusers/subdomains/users/dtos'
-import type { User } from '@sneusers/subdomains/users/entities'
-import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
+import { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
+import { UserDTO } from '@sneusers/subdomains/users/dtos'
+import { User } from '@sneusers/subdomains/users/entities'
+import { UserRequest } from '@sneusers/subdomains/users/interfaces'
 
 /**
  * @file Auth Subdomain Interfaces - LoginRequest

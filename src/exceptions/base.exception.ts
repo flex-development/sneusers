@@ -121,11 +121,11 @@ export default class Exception<T = any> {
   ) {
     this.code = data.code || Exception.formatCode(code)
     this.errors = [data.errors || []].flat() as ExceptionErrors<T>
-    this.id = Exception.idByCode(code)
+    this.id = Exception.idByCode(this.code)
     this.message = data.message || message || Exception.DEFAULT_MESSAGE
     this.stack = stack
     this.className = ExceptionClassName[this.id]
-    this.data = omit(data, ['errors', 'message'])
+    this.data = omit(data, ['code', 'errors', 'message'])
 
     // If data is actually ExceptionJSON, override previously set properties
     if (isExceptionJSON(data)) {
@@ -139,37 +139,6 @@ export default class Exception<T = any> {
   }
 
   /**
-   * Returns the exception status {@link code}.
-   *
-   * @return {ExceptionCode} HTTP error response status code
-   */
-  get status(): ExceptionCode {
-    return this.code
-  }
-
-  /**
-   * Returns a JSON object representing the current Exception.
-   *
-   * To help identify JSON representations of {@link Exception} class objects,
-   * the {@link data}  will have an `isExceptionJSON` property added.
-   *
-   * @return {ExceptionJSON<T>} JSON representation of exception
-   */
-  toJSON(): ExceptionJSON<T> {
-    const json = {} as ExceptionJSON<T>
-
-    Object.assign(json, { name: this.id })
-    Object.assign(json, { message: this.message })
-    Object.assign(json, { code: this.code })
-    Object.assign(json, { className: this.className })
-    Object.assign(json, { data: { ...this.data, isExceptionJSON: true } })
-    Object.assign(json, { errors: Object.freeze(this.errors) })
-    Object.assign(json, { stack: this.stack })
-
-    return json
-  }
-
-  /**
    * Returns {@link ExceptionCode.INTERNAL_SERVER_ERROR} if `code` is not a
    * valid {@link ExceptionCode}.
    *
@@ -178,20 +147,6 @@ export default class Exception<T = any> {
    */
   static formatCode(code?: any): ExceptionCode {
     return isExceptionCode(code) ? code : ExceptionCode.INTERNAL_SERVER_ERROR
-  }
-
-  /**
-   * Finds a HTTP error response status type by status code. If a type isn't
-   * found, {@link ExceptionId.INTERNAL_SERVER_ERROR} will be returned.
-   *
-   * @param {ExceptionCode} code - HTTP error response status code
-   * @return {ExceptionId} - HTTP exception type
-   */
-  static idByCode(code: ExceptionCode): ExceptionId {
-    const id = ExceptionId.INTERNAL_SERVER_ERROR
-    const ids = Object.keys(ExceptionId) as ExceptionId[]
-
-    return ids.find(id => ExceptionCode[id] === code) || id
   }
 
   /**
@@ -222,5 +177,50 @@ export default class Exception<T = any> {
       data,
       error.stack
     )
+  }
+
+  /**
+   * Finds a HTTP error response status type by status code. If a type isn't
+   * found, {@link ExceptionId.INTERNAL_SERVER_ERROR} will be returned.
+   *
+   * @param {ExceptionCode} code - HTTP error response status code
+   * @return {ExceptionId} - HTTP exception type
+   */
+  static idByCode(code: ExceptionCode): ExceptionId {
+    const id = ExceptionId.INTERNAL_SERVER_ERROR
+    const ids = Object.keys(ExceptionId) as ExceptionId[]
+
+    return ids.find(id => ExceptionCode[id] === code) || id
+  }
+
+  /**
+   * Returns a JSON object representing the current Exception.
+   *
+   * To help identify JSON representations of {@link Exception} class objects,
+   * the {@link data}  will have an `isExceptionJSON` property added.
+   *
+   * @return {ExceptionJSON<T>} JSON representation of exception
+   */
+  toJSON(): ExceptionJSON<T> {
+    const json = {} as ExceptionJSON<T>
+
+    Object.assign(json, { name: this.id })
+    Object.assign(json, { message: this.message })
+    Object.assign(json, { code: this.code })
+    Object.assign(json, { className: this.className })
+    Object.assign(json, { data: { ...this.data, isExceptionJSON: true } })
+    Object.assign(json, { errors: Object.freeze(this.errors) })
+    Object.assign(json, { stack: this.stack })
+
+    return json
+  }
+
+  /**
+   * Returns the exception status {@link code}.
+   *
+   * @return {ExceptionCode} HTTP error response status code
+   */
+  get status(): ExceptionCode {
+    return this.code
   }
 }

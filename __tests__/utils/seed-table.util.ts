@@ -26,7 +26,9 @@ async function seedTable<
   C extends M['_creationAttributes'] = M['_creationAttributes'],
   O extends CreateOptions<A> = CreateOptions<A>
 >(model: ModelStatic<M>, values: C[] = [], options: O = {} as O): Promise<M[]> {
+  options.ignoreDuplicates = true
   options.isNewRecord = true
+  options.returning = true
   options.silent = true
 
   const repo = model as typeof Model & ModelStatic<M>

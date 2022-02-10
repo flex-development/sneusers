@@ -8,7 +8,7 @@ import {
   Inject,
   Injectable
 } from '@nestjs/common'
-import { AXIOS_INSTANCE } from '@sneusers/config/constants.config'
+import { AXIOS_INSTANCE } from '@sneusers/config/provider-tokens.config'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
@@ -29,12 +29,10 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
   }
 
   /**
-   * Returns the application [`HttpModule`][1] configuration options.
-   *
-   * [1]: https://github.com/nestjs/axios
+   * Get `HttpModule` configuration options.
    *
    * @static
-   * @return {HttpModuleAsyncOptions} Module config options
+   * @return {HttpModuleAsyncOptions} Module options
    */
   static get moduleOptions(): HttpModuleAsyncOptions {
     return { useClass: HttpConfigService }
@@ -145,12 +143,7 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
   }
 
   /**
-   * Returns the application [http client configuration][1].
-   *
-   * [1]: https://github.com/nestjs/axios
-   *
-   * @see https://github.com/axios/axios#request-config
-   * @see https://github.com/axios/axios#interceptors
+   * Get http client configuration options.
    *
    * @return {HttpModuleOptions} HTTP client options
    */
@@ -164,7 +157,7 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
        * @return {boolean} `true` to resolve, `false` to reject
        */
       validateStatus(status: number): boolean {
-        return Object.values(ExceptionCode).includes(status)
+        return !Object.values(ExceptionCode).includes(status)
       },
       xsrfCookieName: 'CSRF-TOKEN',
       xsrfHeaderName: 'X-CSRF-TOKEN'

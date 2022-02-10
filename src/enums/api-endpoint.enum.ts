@@ -12,7 +12,8 @@ enum ApiEndpoint {
   AUTH = 'auth',
   DOCS = 'docs',
   HEALTH = 'health',
-  USERS = 'users'
+  USERS = 'users',
+  VERIFY = 'verify'
 }
 
 export default ApiEndpoint

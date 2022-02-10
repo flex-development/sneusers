@@ -1,5 +1,7 @@
-import { CanActivate, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
+import { AuthStrategy } from '@sneusers/subdomains/auth/enums'
+import { AuthenticateOptions } from 'passport'
 
 /**
  * @file Auth Subdomain Guards - JwtRefreshGuard
@@ -7,14 +9,17 @@ import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
  */
 
 @Injectable()
-class JwtRefreshGuard extends AuthGuard('jwt-refresh') implements CanActivate {
+class JwtRefreshGuard extends AuthGuard(AuthStrategy.JWT_REFRESH) {
   /**
-   * Returns an object containing jwt authentication options.
+   * Returns authentication options.
    *
-   * @return {IAuthModuleOptions} JWT authentication options
+   * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
    */
-  getAuthenticateOptions(): IAuthModuleOptions {
-    return { defaultStrategy: 'jwt-refresh', property: 'user', session: false }
+  getAuthenticateOptions(): IAuthModuleOptions & AuthenticateOptions {
+    return {
+      property: 'user',
+      session: false
+    }
   }
 }
 

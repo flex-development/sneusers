@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { PassportStrategy } from '@nestjs/passport'
-import { ENV } from '@sneusers/config/configuration'
+import { ConfigService } from '@nestjs/config'
+import { AbstractStrategy, PassportStrategy } from '@nestjs/passport'
+import { EnvironmentVariables } from '@sneusers/models'
 import { JwtPayloadAccess } from '@sneusers/subdomains/auth/dtos'
+import { AuthStrategy, TokenType } from '@sneusers/subdomains/auth/enums'
+import { Strategist } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
-import { UsersService } from '@sneusers/subdomains/users/providers'
 import type { StrategyOptions } from 'passport-jwt'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
@@ -13,36 +15,35 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
  */
 
 @Injectable()
-class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly users: UsersService) {
+class JwtStrategy
+  extends PassportStrategy(Strategy, AuthStrategy.JWT)
+  implements AbstractStrategy
+{
+  constructor(
+    protected readonly strategist: Strategist,
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {
     super({
       ignoreExpiration: false,
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken()
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       passReqToCallback: false,
-      secretOrKey: ENV.JWT_SECRET_ACCESS
+      secretOrKey: config.get<string>('JWT_SECRET_ACCESS')
     } as StrategyOptions)
   }
 
   /**
-   * Returns an authenticated user.
+   * Authenticates a user.
    *
-   * > Passport will build a `user` object based on the return value of our
-   * > `validate()` method, and attach it as a property on the `Request` object.
-   *
-   * @see https://docs.nestjs.com/security/authentication#implementing-passport-jwt
+   * Once authenticated, a `user` property will be added to the current request.
    *
    * @async
    * @param {JwtPayloadAccess} payload - Access token payload
-   * @param {string} payload.email - User's email address
-   * @param {string} payload.first_name - User's first name
-   * @param {number} payload.id - User's id
-   * @param {string} payload.last_name - User's last name
+   * @param {string} payload.sub - User id
+   * @param {TokenType.ACCESS} payload.type - Token type
    * @return {Promise<User>} Promise containing authenticated user
    */
   async validate(payload: JwtPayloadAccess): Promise<User> {
-    return (await this.users.findOne(payload.sub)) as User
+    return await this.strategist.validatePayload(payload)
   }
 }
 

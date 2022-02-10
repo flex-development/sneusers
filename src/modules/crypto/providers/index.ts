@@ -3,4 +3,4 @@
  * @module sneusers/modules/crypto/providers
  */
 
-export { default as HashService } from './hash.service'
+export { default as ScryptService } from './scrypt.service'

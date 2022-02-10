@@ -17,11 +17,11 @@ import cookie from 'cookie'
 const getCsrfToken = async (
   req: ChaiHttp.Agent
 ): Promise<{ _csrf: string; csrf_token: string }> => {
-  const res = await req.post('/csrf-token')
+  const res = await req.get('/csrf-token')
 
   return {
     _csrf: cookie.parse(res.header['set-cookie'][0])._csrf,
-    csrf_token: res.body.csrf_token
+    csrf_token: res.text
   }
 }
 

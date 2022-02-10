@@ -1,10 +1,14 @@
-import { OrPromise } from '@flex-development/tutils'
+import { OrNull } from '@flex-development/tutils'
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
-import { UsersMetadataKey } from '@sneusers/subdomains/users/enums'
+import { ExceptionCode } from '@sneusers/enums'
+import { Exception } from '@sneusers/exceptions'
+import { AuthMetadataKey, AuthStrategy } from '@sneusers/subdomains/auth/enums'
+import { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
-import { Observable } from 'rxjs'
+import { AuthenticateOptions } from 'passport'
+import { ExtractJwt } from 'passport-jwt'
 
 /**
  * @file Auth Subdomain Guards - JwtAuthGuard
@@ -12,39 +16,77 @@ import { Observable } from 'rxjs'
  */
 
 @Injectable()
-class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(private reflector: Reflector) {
+class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) implements CanActivate {
+  constructor(protected readonly reflector: Reflector) {
     super()
   }
 
   /**
-   * Determines if a route will enforce JWT authentication.
+   * Determines if a route will require an access token.
+   *
+   * If an access token is optional, but provided anyway, it'll be verified.
    *
    * @param {ExecutionContext} context - Get data from current request pipeline
-   * @return {OrPromise<boolean> | Observable<boolean>} `true` if enforced
+   * @return {boolean} `true` if anon requests are allowed, `false` otherwise
    */
-  canActivate(
-    context: ExecutionContext
-  ): OrPromise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>()
-    const key = UsersMetadataKey.AUTH_OPTIONAL
-    const targets = [context.getHandler(), context.getClass()]
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req)
 
-    const access_token = req.headers['authorization']
-    const optional = this.reflector.getAllAndOverride<boolean>(key, targets)
+    const SKIP_TOKEN = this.reflector.getAllAndOverride<boolean>(
+      AuthMetadataKey.JWT_OPTIONAL,
+      [context.getHandler(), context.getClass()]
+    )
 
-    if (optional && !access_token) return true
-
-    return super.canActivate(context)
+    return SKIP_TOKEN && !token ? true : (super.canActivate(context) as boolean)
   }
 
   /**
-   * Returns an object containing jwt authentication options.
+   * Returns authentication options.
    *
-   * @return {IAuthModuleOptions} JWT authentication options
+   * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
    */
-  getAuthenticateOptions(): IAuthModuleOptions {
-    return { defaultStrategy: 'jwt', property: 'user', session: false }
+  getAuthenticateOptions(): IAuthModuleOptions & AuthenticateOptions {
+    return {
+      authInfo: true,
+      property: 'user',
+      session: false
+    }
+  }
+
+  /**
+   * Intercepts authentication attempts.
+   *
+   * @template TUser - User entity
+   *
+   * @param {OrNull<Error>} err - Error thrown, if any
+   * @param {TUser | false} user - Authenticated user if attempt was successful
+   * @param {OrNull<Error>} info - Error info
+   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {ExceptionCode} [status] - HTTP status if error occurred
+   * @return {TUser} Authenticated user
+   * @throws {Exception}
+   */
+  handleRequest<TUser extends User>(
+    err: OrNull<Error>,
+    user: TUser | false,
+    info: OrNull<Error>,
+    context: ExecutionContext,
+    status?: ExceptionCode
+  ): TUser {
+    if (err || info || !user) {
+      const error = err || info
+      const data = { code: status, errors: error ? [error] : [] }
+
+      throw new Exception<Error>(
+        ExceptionCode.UNAUTHORIZED,
+        error?.message ?? 'Unauthorized',
+        data,
+        error?.stack
+      )
+    }
+
+    return super.handleRequest(err, user, info, context, status)
   }
 }
 

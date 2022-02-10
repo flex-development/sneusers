@@ -7,11 +7,10 @@ import {
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { SequelizeErrorName } from '@sneusers/enums'
+import { ApiEndpoint, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
-import { EMAIL_SERVICE } from '@sneusers/modules/email/email.module.constants'
 import { EmailService } from '@sneusers/modules/email/providers'
 import {
   CreateUserDTO,
@@ -26,7 +25,6 @@ import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { Cache } from 'cache-manager'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import OPENAPI from '../controllers/openapi/users.openapi'
 
 /**
  * @file Users Subdomain Providers - UsersService
@@ -40,26 +38,14 @@ class UsersService {
    * @readonly
    * @property {string} CACHE_KEY - Cache key
    */
-  static readonly CACHE_KEY: string = ['/', OPENAPI.controller].join('')
+  static readonly CACHE_KEY: string = ['/', ApiEndpoint.USERS].join('')
 
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,
     @Inject(Sequelize) protected readonly sequelize: Sequelize,
-    @Inject(EMAIL_SERVICE) protected readonly email: EmailService,
-    @Inject(CACHE_MANAGER) protected readonly cache: Cache
+    @Inject(CACHE_MANAGER) protected readonly cache: Cache,
+    @Inject(EmailService) protected readonly email: EmailService
   ) {}
-
-  /**
-   * Verifies a user's login credentials.
-   *
-   * @async
-   * @param {UserUid} uid - User email or id
-   * @param {NullishString} [password=null] - User password
-   * @return {Promise<User>} Promise containing authenticated user
-   */
-  async authenticate(uid: UserUid, password: User['password']): Promise<User> {
-    return await this.repo.authenticate(uid, password)
-  }
 
   /**
    * Removes all cached items under {@link UsersService.CACHE_KEY}.
@@ -99,7 +85,7 @@ class UsersService {
   async create(dto: CreateUserDTO): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
       try {
-        const user = await this.repo.create(dto, {
+        return await this.repo.create(dto, {
           fields: ['email', 'first_name', 'id', 'last_name', 'password'],
           isNewRecord: true,
           raw: true,
@@ -107,8 +93,6 @@ class UsersService {
           transaction,
           validate: true
         })
-
-        return user
       } catch (e) {
         const error = e as SequelizeError
         const data: ObjectPlain = { dto }

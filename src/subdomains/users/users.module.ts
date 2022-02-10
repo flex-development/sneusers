@@ -1,6 +1,6 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { CsurfMiddleware } from '@sneusers/middleware'
+import EmailModule from '@sneusers/modules/email/email.module'
 import { UsersController } from './controllers'
 import { User } from './entities'
 import { UsersService } from './providers'
@@ -13,18 +13,7 @@ import { UsersService } from './providers'
 @Module({
   controllers: [UsersController],
   exports: [SequelizeModule, UsersService],
-  imports: [SequelizeModule.forFeature([User])],
+  imports: [EmailModule, SequelizeModule.forFeature([User])],
   providers: [UsersService]
 })
-export default class UsersModule implements NestModule {
-  /**
-   * Configures middleware.
-   *
-   * @param {MiddlewareConsumer} consumer - Applies middleware to routes
-   * @return {void} Nothing when complete
-   */
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CsurfMiddleware).forRoutes(UsersController)
-    return
-  }
-}
+export default class UsersModule {}

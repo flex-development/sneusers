@@ -64,6 +64,7 @@ module.exports = {
           'redis',
           'req',
           'sequelize',
+          'scrypt',
           'smtp',
           'sneusers',
           'sql',
@@ -82,6 +83,7 @@ module.exports = {
           'upsert',
           'verif',
           'webpack',
+          'whoami',
           'xsrf',
           'zerollup'
         ]
@@ -107,6 +109,12 @@ module.exports = {
       }
     },
     {
+      files: ['__tests__/utils/create-app.util.ts'],
+      rules: {
+        'unicorn/prefer-module': 0
+      }
+    },
+    {
       files: [
         'src/middleware/http-logger.middleware.ts',
         'tools/helpers/secrets.ts',
@@ -124,15 +132,24 @@ module.exports = {
       }
     },
     {
-      files: ['src/subdomains/auth/entities/token.dao.ts'],
+      files: ['src/modules/middleware/middleware.module.ts'],
       rules: {
-        eqeqeq: 0
+        '@typescript-eslint/ban-types': 0
       }
     },
     {
-      files: ['src/subdomains/users/dtos/create-user.dto.ts'],
+      files: [
+        'src/modules/redis/interfaces/module-options.interface.ts',
+        'src/subdomains/users/dtos/create-user.dto.ts'
+      ],
       rules: {
         '@typescript-eslint/no-empty-interface': 0
+      }
+    },
+    {
+      files: ['src/subdomains/auth/entities/token.dao.ts'],
+      rules: {
+        eqeqeq: 0
       }
     },
     {

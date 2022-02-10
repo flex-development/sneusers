@@ -31,7 +31,7 @@ export default class ExceptionClassFilter implements ExceptionFilter {
    * @static
    * @return {ClassProvider<ExceptionClassFilter>} Application filter
    */
-  static get PROVIDER(): ClassProvider<ExceptionClassFilter> {
+  static createProvider(): ClassProvider<ExceptionClassFilter> {
     return { provide: APP_FILTER, useClass: ExceptionClassFilter }
   }
 

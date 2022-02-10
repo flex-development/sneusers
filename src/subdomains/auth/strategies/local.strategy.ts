@@ -1,9 +1,10 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
-import { PassportStrategy } from '@nestjs/passport'
-import { AuthService } from '@sneusers/subdomains/auth/providers'
+import { AbstractStrategy, PassportStrategy } from '@nestjs/passport'
+import { AuthStrategy } from '@sneusers/subdomains/auth/enums'
+import { Strategist } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
-import type { IStrategyOptionsWithRequest } from 'passport-local'
+import type { IStrategyOptions } from 'passport-local'
 import { Strategy } from 'passport-local'
 
 /**
@@ -12,17 +13,23 @@ import { Strategy } from 'passport-local'
  */
 
 @Injectable()
-class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly auth: AuthService) {
+class LocalStrategy
+  extends PassportStrategy(Strategy, AuthStrategy.LOCAL)
+  implements AbstractStrategy
+{
+  constructor(protected readonly strategist: Strategist) {
     super({
       passReqToCallback: false,
+      passwordField: 'password',
       session: false,
       usernameField: 'email'
-    } as IStrategyOptionsWithRequest & { passReqToCallback: false })
+    } as IStrategyOptions)
   }
 
   /**
    * Authenticates a user.
+   *
+   * Once authenticated, a `user` property will be added to the current request.
    *
    * @async
    * @param {string} email - User email
@@ -33,7 +40,7 @@ class LocalStrategy extends PassportStrategy(Strategy) {
     email: User['email'],
     password: User['password']
   ): Promise<User> {
-    return await this.auth.authenticate(email, password)
+    return await this.strategist.validateLocal(email, password)
   }
 }
 

@@ -17,21 +17,17 @@ export default class ThrottlerConfigService implements ThrottlerOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Returns the application [`ThrottlerModule`][1] configuration options.
-   *
-   * [1]: https://docs.nestjs.com/security/rate-limiting
+   * Get `ThrottlerModule` configuration options.
    *
    * @static
-   * @return {ThrottlerAsyncOptions} Module config options
+   * @return {ThrottlerAsyncOptions} Module options
    */
   static get moduleOptions(): ThrottlerAsyncOptions {
     return { useClass: ThrottlerConfigService }
   }
 
   /**
-   * Returns the application [rate limiting configuration][1].
-   *
-   * [1]: https://docs.nestjs.com/security/rate-limiting#configuration
+   * Get rate limiting options.
    *
    * @return {ThrottlerModuleOptions} Rate limiting configuration options
    */

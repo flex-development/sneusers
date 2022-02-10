@@ -1,4 +1,4 @@
-import type ITokenRaw from './token-raw.interface'
+import ITokenRaw from './token-raw.interface'
 
 /**
  * @file Auth Subdomain Interfaces - IToken

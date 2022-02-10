@@ -1,10 +1,6 @@
 import { Controller, Get, HttpCode } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-  ApiBadGatewayResponse,
-  ApiInternalServerErrorResponse,
-  ApiTags
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import type { SequelizePingCheckSettings } from '@nestjs/terminus'
 import {
   HealthCheck,
@@ -12,6 +8,7 @@ import {
   HttpHealthIndicator,
   SequelizeHealthIndicator
 } from '@nestjs/terminus'
+import { ApiResponses } from '@sneusers/decorators'
 import { HealthCheckDTO } from '@sneusers/dtos'
 import { ApiEndpoint } from '@sneusers/enums'
 import type { EnvironmentVariables } from '@sneusers/models'
@@ -27,17 +24,16 @@ import OPENAPI from './openapi/health.openapi'
 @ApiTags(...OPENAPI.tags)
 export default class HealthController {
   constructor(
-    private readonly config: ConfigService<EnvironmentVariables, true>,
-    private readonly db: SequelizeHealthIndicator,
-    private readonly health: HealthCheckService,
-    private readonly http: HttpHealthIndicator
+    protected readonly config: ConfigService<EnvironmentVariables, true>,
+    protected readonly db: SequelizeHealthIndicator,
+    protected readonly health: HealthCheckService,
+    protected readonly http: HttpHealthIndicator
   ) {}
 
-  @Get()
-  @HttpCode(OPENAPI.get.status)
   @HealthCheck()
-  @ApiInternalServerErrorResponse(OPENAPI.get.responses[500])
-  @ApiBadGatewayResponse(OPENAPI.get.responses[502])
+  @Get(OPENAPI.get.path)
+  @HttpCode(OPENAPI.get.status)
+  @ApiResponses(OPENAPI.get.responses)
   async get(): Promise<HealthCheckDTO> {
     const HOST = this.config.get<string>('HOST')
 

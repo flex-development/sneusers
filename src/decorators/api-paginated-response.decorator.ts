@@ -13,16 +13,16 @@ import { PaginatedDTO } from '@sneusers/dtos'
  */
 
 /**
- * Documents a paginated response in OpenAPI format.
+ * Documents a paginated response.
  *
- * @template TModel - Data model class type
+ * @template T - Data model type
  *
- * @param {TModel} Model - Result data model class
+ * @param {T} Model - Data model
  * @param {ApiResponseMetadata} [metadata={}] - Response metadata
  * @return {ReturnType<typeof applyDecorators>} Decorator function
  */
-function ApiPaginatedResponse<TModel extends Type<any>>(
-  Model: TModel,
+function ApiPaginatedResponse<T extends Type<any>>(
+  Model: T,
   metadata: ApiResponseMetadata = {}
 ): ReturnType<typeof applyDecorators> {
   return applyDecorators(

@@ -1,6 +1,5 @@
 import { HttpStatus } from '@nestjs/common'
 import { ExceptionCode } from '@sneusers/enums'
-import type { Response } from 'superagent'
 
 /**
  * @file Custom Matchers - jsonResponse
@@ -8,10 +7,10 @@ import type { Response } from 'superagent'
  */
 
 /**
- * Checks if a {@link Response} contains JSON content.
+ * Checks if a {@link ChaiHttp.Response} contains JSON content.
  *
- * The {@link Response#body} type and {@link Response#status} can be verified as
- * well. Response bodies are expected to be an array or object.
+ * The response body type and status can be verified as well. Response bodies
+ * are expected to be an array or object.
  *
  * [1]: https://www.chaijs.com/api
  * [2]: https://www.chaijs.com/api/plugins
@@ -32,7 +31,7 @@ const jsonResponse = (chai: Chai.ChaiStatic, utils: Chai.ChaiUtils): void => {
       estatus: HttpStatus | ExceptionCode = HttpStatus.OK,
       ebody?: 'array' | 'object'
     ): Chai.Assertion {
-      const res: Response = utils.flag(this, 'object')
+      const res: ChaiHttp.Response = utils.flag(this, 'object')
       const message_body = `expected response body to be an ${ebody}`
 
       new chai.Assertion(res).to.have.status(estatus)

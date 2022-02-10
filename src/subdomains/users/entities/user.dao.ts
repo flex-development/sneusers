@@ -52,7 +52,7 @@ import isStrongPassword from 'validator/lib/isStrongPassword'
      */
     async beforeCreate(instance: User): Promise<void> {
       if (!instance.password) return
-      instance.password = await User.secrets.hash(instance.password)
+      instance.password = await User.scrypt.hash(instance.password)
 
       return
     },
@@ -203,7 +203,6 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @ApiProperty({ description: 'Full name (virtual property)' })
   @Column(DataType.VIRTUAL(DataType.STRING, ['first_name', 'last_name']))
   get name(): IUser['name'] {
-    if (this.first_name === null && this.last_name === null) return null
     return `${this.first_name || ''} ${this.last_name || ''}`.trim()
   }
 
@@ -222,43 +221,6 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     'password',
     'updated_at'
   ]
-
-  /**
-   * Verifies a user's login credentials.
-   *
-   * @static
-   * @async
-   * @param {UserUid} uid - User email or id
-   * @param {NullishString} [password=null] - User password
-   * @return {Promise<User>} Promise containing authenticated user
-   * @throws {Exception}
-   */
-  static async authenticate(
-    uid: UserUid,
-    password: User['password'] = null
-  ): Promise<User> {
-    const user = (await this.findByUid(uid, { rejectOnEmpty: true })) as User
-
-    if (user.password === null && password === null) return user
-
-    try {
-      await this.secrets.verify(user.password, password)
-    } catch (error) {
-      const exception = error as Exception
-
-      Object.assign(exception, {
-        data: { user: { email: user.email, id: user.id, password } }
-      })
-
-      if (exception.message === 'Invalid credential') {
-        Object.assign(exception, { message: 'Invalid login credentials' })
-      }
-
-      throw exception
-    }
-
-    return user
-  }
 
   /**
    * Checks a user's password strength.

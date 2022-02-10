@@ -6,7 +6,7 @@
 /**
  * Possible options for row locking. Used in conjunction with `find` calls.
  *
- * @enum {string}
+ * @enum {Uppercase<string>}
  */
 enum LOCK {
   KEY_SHARE = 'KEY SHARE',

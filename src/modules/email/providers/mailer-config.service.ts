@@ -13,7 +13,7 @@ import path from 'path'
  */
 
 @Injectable()
-export default class MailerConfigService implements MailerOptionsFactory {
+class MailerConfigService implements MailerOptionsFactory {
   constructor(protected readonly config: ConfigService<EnvVars, true>) {}
 
   /**
@@ -77,7 +77,6 @@ export default class MailerConfigService implements MailerOptionsFactory {
           user: this.config.get<string>('EMAIL_USER')
         },
         debug: true,
-
         host: this.config.get<string>('EMAIL_HOST'),
         logger: !this.config.get<boolean>('TEST'),
         port: this.config.get<number>('EMAIL_PORT'),
@@ -87,3 +86,5 @@ export default class MailerConfigService implements MailerOptionsFactory {
     }
   }
 }
+
+export default MailerConfigService

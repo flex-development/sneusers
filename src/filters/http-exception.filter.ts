@@ -33,7 +33,7 @@ export default class HttpExceptionFilter implements ExceptionFilter {
    * @static
    * @return {ClassProvider<HttpExceptionFilter>} Application filter
    */
-  static get PROVIDER(): ClassProvider<HttpExceptionFilter> {
+  static createProvider(): ClassProvider<HttpExceptionFilter> {
     return { provide: APP_FILTER, useClass: HttpExceptionFilter }
   }
 

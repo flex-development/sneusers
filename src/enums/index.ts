@@ -9,7 +9,7 @@ export {
   ExceptionCode,
   ExceptionId
 } from '@flex-development/exceptions/enums'
-export { NodeEnv } from '@flex-development/tutils/enums'
+export { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
 export {
   IndexHints,
   Op,
@@ -19,7 +19,7 @@ export {
   ValidationErrorItemType
 } from 'sequelize'
 export { default as ApiEndpoint } from './api-endpoint.enum'
-export { default as AppEnv } from './app-env.enum'
+export { default as CookieType } from './cookie-type.enum'
 export { default as DatabaseTable } from './database-table.enum'
 export { default as LOCK } from './lock.enum'
 export { default as OrderDirection } from './order-direction.enum'

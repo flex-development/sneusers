@@ -1,33 +1,16 @@
-import { Injectable, NestMiddleware } from '@nestjs/common'
+import { Injectable, NestMiddleware, Optional } from '@nestjs/common'
+import { HelmetOptionsFactory } from '@sneusers/factories'
 import { NextFunction, Request, Response } from 'express'
-import helmet, { HelmetOptions } from 'helmet'
+import helmet from 'helmet'
 
 /**
  * @file Middleware - HelmetMiddleware
  * @module sneusers/middleware/HelmetMiddleware
- * @see https://github.com/helmetjs/helmet
  */
 
 @Injectable()
 export default class HelmetMiddleware implements NestMiddleware {
-  /**
-   * @static
-   * @readonly
-   * @property {HelmetOptions} options - `helmet` options
-   */
-  static readonly options: HelmetOptions = {}
-
-  /**
-   * Sets configuration options.
-   *
-   * @see https://github.com/helmetjs/helmet#reference
-   *
-   * @param {HelmetOptions} [options={}] - Configuration options
-   * @return {typeof HelmetMiddleware} Updated middleware class
-   */
-  static configure(options: HelmetOptions = {}): typeof HelmetMiddleware {
-    return Object.assign(this, { options })
-  }
+  constructor(@Optional() protected readonly factory?: HelmetOptionsFactory) {}
 
   /**
    * Enables [`helmet`][1].
@@ -37,12 +20,9 @@ export default class HelmetMiddleware implements NestMiddleware {
    * @param {Request} req - Incoming request
    * @param {Response} res - Server response
    * @param {NextFunction} next - Function to invoke next middleware function
-   * @return {void} Nothing when complete
+   * @return {void} Empty promise when complete
    */
   use(req: Request, res: Response, next: NextFunction): void {
-    // ! nginx reverse proxy handles Strict-Transport-Security header
-    HelmetMiddleware.options.hsts = false
-
-    return helmet(HelmetMiddleware.options)(req, res, next)
+    return helmet(this.factory?.createHelmetOptions())(req, res, next)
   }
 }

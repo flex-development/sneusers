@@ -3,6 +3,7 @@ import type { SwaggerDocumentOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ENV } from '@sneusers/config/configuration'
 import { PaginatedDTO } from '@sneusers/dtos'
+import { ApiEndpoint } from '@sneusers/enums'
 import { QueryParams } from '@sneusers/models'
 import { AppService } from '@sneusers/providers'
 import type { Request, Response } from 'express'
@@ -55,9 +56,9 @@ const useSwagger = async (
   })
 
   // Add tags
-  builder.addTag('auth', 'Register and login users')
-  builder.addTag('users', 'Find, update, and remove users')
-  builder.addTag('health', 'Healthchecks', {
+  builder.addTag(ApiEndpoint.AUTH, 'User authentication')
+  builder.addTag(ApiEndpoint.USERS, 'Create, find, update, and remove users')
+  builder.addTag(ApiEndpoint.HEALTH, 'Healthchecks', {
     description: 'NestJS Docs - Healthchecks (Terminus)',
     url: 'https://docs.nestjs.com/recipes/terminus'
   })

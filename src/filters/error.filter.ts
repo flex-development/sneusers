@@ -33,7 +33,7 @@ export default class ErrorFilter implements ExceptionFilter {
    * @static
    * @return {ClassProvider<ErrorFilter>} Application filter
    */
-  static get PROVIDER(): ClassProvider<ErrorFilter> {
+  static createProvider(): ClassProvider<ErrorFilter> {
     return { provide: APP_FILTER, useClass: ErrorFilter }
   }
 

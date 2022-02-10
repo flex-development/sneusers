@@ -26,4 +26,10 @@ describe('unit:entities/BaseEntity', () => {
       expect(error!.message).to.equal('Must be a unix timestamp')
     })
   })
+
+  describe('.getSearchOptions', () => {
+    it.skip('should convert QueryParams into SearchOptions', () => {
+      //
+    })
+  })
 })

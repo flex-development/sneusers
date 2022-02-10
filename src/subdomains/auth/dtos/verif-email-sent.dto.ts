@@ -4,7 +4,7 @@ import type { User } from '@sneusers/subdomains/users/entities'
 
 /**
  * @file Auth Subdomain DTOs - VerifEmailSentDTO
- * @module sneusers/subdomains/auth/models/VerifEmailSentDTO
+ * @module sneusers/subdomains/auth/dtos/VerifEmailSentDTO
  */
 
 /**

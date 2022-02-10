@@ -2,14 +2,14 @@ import { NestApplicationOptions } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import type { AppEnv } from '@sneusers/enums'
+import AppModule from './app.module'
 import useGlobal from './hooks/use-global.hook'
 import type { EnvironmentVariables } from './models'
-import AppModule from './modules/app/app.module'
 import AppService from './providers/app.service'
 import { runInCluster } from './utils'
 
 /**
- * @file Server Entry Point
+ * @file Main
  * @module sneusers/main
  */
 
@@ -24,21 +24,17 @@ import { runInCluster } from './utils'
  * @return {Promise<void>} Empty promise when complete
  */
 async function bootstrap(options?: NestApplicationOptions): Promise<void> {
-  // Create Nest application and apply global configurations
   const app = await useGlobal(await NestFactory.create(AppModule, options))
-
-  // Get configuration service
   const conf: ConfigService<EnvironmentVariables, true> = app.get(ConfigService)
 
-  // Start application
-  await app.listen(conf.get<number>('PORT'), () => {
-    const HOST = conf.get<string>('HOST')
-    const APP_ENV = conf.get<AppEnv>('APP_ENV')
+  const APP_ENV = conf.get<AppEnv>('APP_ENV')
+  const HOST = conf.get<string>('HOST')
+  const PORT = conf.get<number>('PORT')
 
+  await app.listen(PORT, () => {
     return console.log(`[${APP_ENV}] listening at ${HOST}`)
   })
 }
 
 // ! Run application
-/** @see {@link runInCluster} */
 runInCluster(bootstrap, AppService.options)

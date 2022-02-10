@@ -13,7 +13,7 @@ class EmailVerificationGuard implements CanActivate {
   /**
    * Checks if a user has verified their email address.
    *
-   * @param {ExecutionContext} context - Get data from current request pipeline
+   * @param {ExecutionContext} context - Details about current request pipeline
    * @return {true} `true` if user verified email address
    * @throws {Exception}
    */

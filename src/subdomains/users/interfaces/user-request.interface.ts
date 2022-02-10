@@ -1,8 +1,9 @@
-import type { ObjectPlain, OneOrMany } from '@flex-development/tutils'
+import type { ObjectPlain } from '@flex-development/tutils'
 import type { QueryParams } from '@sneusers/models'
 import type { UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
-import type { Request } from 'express'
+import type { OrPaginated } from '@sneusers/types'
+import { Request } from 'express'
 
 /**
  * @file Users Subdomain Interfaces - UserRequest
@@ -20,7 +21,7 @@ import type { Request } from 'express'
  * @extends Request
  */
 interface UserRequest<
-  ResBody extends OneOrMany<UserDTO> = OneOrMany<UserDTO>,
+  ResBody extends OrPaginated<UserDTO> = OrPaginated<UserDTO>,
   ReqQuery extends QueryParams<User> = QueryParams<User>,
   ReqBody = any,
   Params extends ObjectPlain = ObjectPlain

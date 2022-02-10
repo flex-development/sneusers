@@ -110,13 +110,45 @@ describe('unit:exceptions/Exception', () => {
     })
   })
 
-  describe('get status', () => {
-    it('should return current ExceptionCode', () => {
-      // Arrange
-      const expected = ExceptionCode.INTERNAL_SERVER_ERROR
+  describe('.formatCode', () => {
+    type Case = Testcase<ExceptionCode> & { code: any }
 
-      // Act + Expect
-      expect(new TestSubject().status).to.equal(expected)
+    const cases: Case[] = [
+      { code: -1, expected: ExceptionCode.INTERNAL_SERVER_ERROR },
+      ...Object.keys(ExceptionId).map(id => ({
+        code: ExceptionCode[id],
+        expected: ExceptionCode[id] as ExceptionCode
+      }))
+    ]
+
+    cases.forEach(({ code, expected }) => {
+      it(`should return ${expected} given [${code}]`, () => {
+        expect(TestSubject.formatCode(code)).equal(expected)
+      })
+    })
+  })
+
+  describe('.fromSequelizeError', () => {
+    it.skip('should convert SequelizeError into Exception', () => {
+      //
+    })
+  })
+
+  describe('.idByCode', () => {
+    type Case = Testcase<ExceptionId> & { code: any }
+
+    const cases: Case[] = [
+      { code: -1, expected: ExceptionId.INTERNAL_SERVER_ERROR },
+      ...Object.keys(ExceptionId).map(id => ({
+        code: ExceptionCode[id],
+        expected: id as unknown as ExceptionId
+      }))
+    ]
+
+    cases.forEach(({ code, expected }) => {
+      it(`should return '${expected}' given [${code}]`, () => {
+        expect(TestSubject.idByCode(code)).equal(expected)
+      })
     })
   })
 
@@ -140,39 +172,13 @@ describe('unit:exceptions/Exception', () => {
     })
   })
 
-  describe('.formatCode', () => {
-    type Case = Testcase<ExceptionCode> & { code: any }
+  describe('get status', () => {
+    it('should return current ExceptionCode', () => {
+      // Arrange
+      const expected = ExceptionCode.INTERNAL_SERVER_ERROR
 
-    const cases: Case[] = [
-      { code: -1, expected: ExceptionCode.INTERNAL_SERVER_ERROR },
-      ...Object.keys(ExceptionId).map(id => ({
-        code: ExceptionCode[id],
-        expected: ExceptionCode[id] as ExceptionCode
-      }))
-    ]
-
-    cases.forEach(({ code, expected }) => {
-      it(`should return ${expected} given [${code}]`, () => {
-        expect(TestSubject.formatCode(code)).equal(expected)
-      })
-    })
-  })
-
-  describe('.idByCode', () => {
-    type Case = Testcase<ExceptionId> & { code: any }
-
-    const cases: Case[] = [
-      { code: -1, expected: ExceptionId.INTERNAL_SERVER_ERROR },
-      ...Object.keys(ExceptionId).map(id => ({
-        code: ExceptionCode[id],
-        expected: id as unknown as ExceptionId
-      }))
-    ]
-
-    cases.forEach(({ code, expected }) => {
-      it(`should return '${expected}' given [${code}]`, () => {
-        expect(TestSubject.idByCode(code)).equal(expected)
-      })
+      // Act + Expect
+      expect(new TestSubject().status).to.equal(expected)
     })
   })
 })

@@ -4,9 +4,9 @@ import {
   Injectable,
   NestInterceptor
 } from '@nestjs/common'
-import type { ResBodyEntity } from '@sneusers/dtos'
 import { PaginatedDTO } from '@sneusers/dtos'
 import { BaseEntity } from '@sneusers/entities'
+import type { OutputEntity, StreamEntity } from '@sneusers/types'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
@@ -17,14 +17,16 @@ import { map } from 'rxjs/operators'
 
 /**
  * @template E - Entity (dao) class type
- * @template R - Interceptor output type(s)
  * @template T - Pre-intercepted response type(s)
+ * @template R - Interceptor output type(s)
+ *
+ * @implements {NestInterceptor<T, R>}
  */
 @Injectable()
 class EntitySerializer<
   E extends BaseEntity = BaseEntity,
-  R extends ResBodyEntity<E['_attributes']> = ResBodyEntity<E['_attributes']>,
-  T extends E | PaginatedDTO<E> = E | PaginatedDTO<E>
+  T extends StreamEntity<E> = StreamEntity<E>,
+  R extends OutputEntity<E> = OutputEntity<E>
 > implements NestInterceptor<T, R>
 {
   /**
@@ -34,10 +36,8 @@ class EntitySerializer<
    *
    * @see {@link ResBodyEntity}
    *
-   * @param {ExecutionContext} context - Object containing methods for accessing
-   * the route handler and the class about to be invoked
-   * @param {CallHandler<T>} next - Object providing access to an
-   * {@link Observable} representing the response stream from the route handler
+   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {CallHandler<T>} next - Object providing access to response stream
    * @return {Observable<R>} {@link Observable} containing {@link Payload}
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
@@ -45,10 +45,10 @@ class EntitySerializer<
   }
 
   /**
-   * Creates JSON representations of {@link BaseEntity} instances.
+   * Creates a JSON representations of `payload`.
    *
-   * @param {T} payload - Entity or array of entities to transform
-   * @return {R} Serialized entity or array of serialized entities
+   * @param {T} payload - Pre-intercepted response payload
+   * @return {R} Serialized payload
    */
   serialize(payload: T): R {
     if (payload instanceof PaginatedDTO) {
@@ -60,10 +60,11 @@ class EntitySerializer<
       return payload as unknown as R
     }
 
-    return {
-      ...(payload instanceof BaseEntity ? payload.toJSON() : payload),
-      id: payload.id
-    } as R
+    if (payload instanceof BaseEntity) {
+      return { ...payload.toJSON(), id: payload.id }
+    }
+
+    return (payload.toJSON ? payload.toJSON() : payload) as unknown as R
   }
 }
 

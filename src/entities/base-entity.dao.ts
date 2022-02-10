@@ -1,15 +1,16 @@
 import type { NumberString, ObjectPlain } from '@flex-development/tutils'
 import { OrNull } from '@flex-development/tutils'
+import { isUnixTimestamp } from '@flex-development/tutils/guards'
 import { ENV } from '@sneusers/config/configuration'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { LOCK, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
-import { HashService } from '@sneusers/modules/crypto/providers'
+import { ScryptService } from '@sneusers/modules/crypto/providers'
 import type { ModelAttributes, SequelizeError } from '@sneusers/types'
 import { SearchOptions } from '@sneusers/types'
-import { isUnixTimestamp } from '@sneusers/utils'
 import isPlainObject from 'lodash.isplainobject'
+import { Sequelize } from 'sequelize'
 import {
   AllowNull,
   AutoIncrement,
@@ -19,7 +20,6 @@ import {
   Model,
   ModelStatic,
   PrimaryKey,
-  Sequelize,
   Unique,
   Validate
 } from 'sequelize-typescript'
@@ -60,12 +60,11 @@ abstract class BaseEntity<
     : Date.now()
 
   /**
-   * @protected
    * @static
    * @readonly
-   * @property {HashService} secrets - Hashing service
+   * @property {ScryptService} scrypt - {@link ScryptService} instance
    */
-  protected static readonly secrets: HashService = new HashService()
+  static readonly scrypt: ScryptService = new ScryptService()
 
   /**
    * Virtual attributes helper.

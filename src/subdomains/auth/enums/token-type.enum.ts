@@ -4,11 +4,12 @@
  */
 
 /**
- * Types of JWTs stored in the database.
+ * Types of JWTs issued.
  *
  * @enum {Uppercase<string>}
  */
 enum TokenType {
+  ACCESS = 'ACCESS',
   REFRESH = 'REFRESH',
   VERIFICATION = 'VERIFICATION'
 }

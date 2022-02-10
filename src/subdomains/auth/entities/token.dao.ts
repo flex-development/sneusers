@@ -2,7 +2,7 @@ import { OrNull } from '@flex-development/tutils'
 import { BaseEntity } from '@sneusers/entities'
 import { DatabaseTable, ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { CreateTokenDTO, JwtPayloadToken } from '@sneusers/subdomains/auth/dtos'
+import { CreateTokenDTO, JwtPayload } from '@sneusers/subdomains/auth/dtos'
 import { TokenType } from '@sneusers/subdomains/auth/enums'
 import { IToken, ITokenRaw } from '@sneusers/subdomains/auth/interfaces'
 import { User } from '@sneusers/subdomains/users/entities'
@@ -151,16 +151,16 @@ class Token
    *
    * @static
    * @async
-   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {JwtPayload} payload - JWT payload
    * @param {number} payload.jti - Id of assigned `Token`
    * @param {string} payload.sub - Id or email of `User` who token was issued to
    * @param {TokenType} payload.type - Token type
    * @param {SearchOptions<Token>} [options={}] - Search options
-   * @return {Promise<OrNull<Token>>} - Promise containing token
+   * @return {Promise<OrNull<Token>>} - Promise containing token or `null`
    * @throws {Exception}
    */
   static async findByPayload(
-    payload: JwtPayloadToken,
+    payload: JwtPayload,
     options: SearchOptions<Token> = {}
   ): Promise<OrNull<Token>> {
     const id = Number.parseInt(payload.jti)
@@ -183,14 +183,14 @@ class Token
   }
 
   /**
-   * Finds a token owner via payload.
+   * Finds a token owner via `payload`.
    *
-   * If an owner is found, but doesn't match user identified by `payload`, an
-   * {@link Exception} will be thrown.
+   * If an owner is found, but doesn't match the user identified by `payload`,
+   * an {@link Exception} will be thrown.
    *
    * @static
    * @async
-   * @param {JwtPayloadToken} payload - JWT payload
+   * @param {JwtPayload} payload - JWT payload
    * @param {number} payload.jti - Id of assigned `Token`
    * @param {string} payload.sub - Id or email of `User` who token was issued to
    * @param {TokenType} payload.type - Token type
@@ -199,7 +199,7 @@ class Token
    * @throws {Exception}
    */
   static async findOwnerByPayload(
-    payload: JwtPayloadToken,
+    payload: JwtPayload,
     options: SearchOptions<User> = {}
   ): Promise<User> {
     const sub = payload.sub
@@ -214,10 +214,10 @@ class Token
     const user = (await this.User.findByPk(token.user, options))!
 
     // @ts-expect-error types 'string' and 'number' have no overlap
-    const mismatch_refresh = type === TokenType.REFRESH && sub != user.id
-    const mismatch_verif = type === TokenType.VERIFICATION && sub !== user.email
+    const mismatch_id = type !== TokenType.VERIFICATION && sub != user.id
+    const mismatch_email = type === TokenType.VERIFICATION && sub !== user.email
 
-    if (mismatch_refresh || mismatch_verif) {
+    if (mismatch_id || mismatch_email) {
       throw new Exception(ExceptionCode.UNAUTHORIZED, 'Token owner mismatch', {
         payload,
         token: token.toJSON(),

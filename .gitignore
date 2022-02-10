@@ -109,3 +109,4 @@ letsencrypt/
 
 # Redis
 redis/
+!src/modules/redis/

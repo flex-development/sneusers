@@ -1,9 +1,11 @@
 import { OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
-import { PassportStrategy } from '@nestjs/passport'
-import { ENV } from '@sneusers/config/configuration'
+import { ConfigService } from '@nestjs/config'
+import { AbstractStrategy, PassportStrategy } from '@nestjs/passport'
+import { EnvironmentVariables } from '@sneusers/models'
 import { JwtPayloadRefresh } from '@sneusers/subdomains/auth/dtos'
-import { AuthService } from '@sneusers/subdomains/auth/providers'
+import { AuthStrategy, TokenType } from '@sneusers/subdomains/auth/enums'
+import { Strategist } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
 import type { StrategyOptions } from 'passport-jwt'
@@ -15,13 +17,19 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
  */
 
 @Injectable()
-class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
-  constructor(private readonly auth: AuthService) {
+class JwtRefreshStrategy
+  extends PassportStrategy(Strategy, AuthStrategy.JWT_REFRESH)
+  implements AbstractStrategy
+{
+  constructor(
+    protected readonly strategist: Strategist,
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {
     super({
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromExtractors([JwtRefreshStrategy.extract]),
       passReqToCallback: true,
-      secretOrKey: ENV.JWT_SECRET_REFRESH
+      secretOrKey: config.get<string>('JWT_SECRET_REFRESH')
     } as StrategyOptions)
   }
 
@@ -36,28 +44,26 @@ class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   /**
-   * Returns an authenticated user.
+   * Authenticates a user.
    *
-   * > Passport will build a `user` object based on the return value of our
-   * > `validate()` method, and attach it as a property on the `Request` object.
-   *
-   * @see https://docs.nestjs.com/security/authentication#implementing-passport-jwt
+   * Once authenticated, a `user` property will be added to the current request.
    *
    * @async
    * @param {Request} req - Incoming request
    * @param {JwtPayloadRefresh} payload - Refresh token payload
-   * @param {string} payload.email - User's email address
-   * @param {string} payload.first_name - User's first name
-   * @param {number} payload.id - User's id
-   * @param {string} payload.last_name - User's last name
+   * @param {string} payload.jti - Refresh token id
+   * @param {string} payload.sub - Token owner id
+   * @param {TokenType.REFRESH} payload.type - Token type
    * @return {Promise<User>} Promise containing authenticated user
    */
   async validate(req: Request, payload: JwtPayloadRefresh): Promise<User> {
-    return await this.auth.authenticate(
-      payload.sub,
-      null,
-      JwtRefreshStrategy.extract(req)
+    const validated = await this.strategist.validateToken(
+      TokenType.REFRESH,
+      JwtRefreshStrategy.extract(req),
+      payload.sub
     )
+
+    return validated.user
   }
 }
 

@@ -2,8 +2,8 @@ import type { ExceptionJSON as EJSON } from '@flex-development/exceptions/interf
 import type { ExceptionData } from '@sneusers/types'
 
 /**
- * @file Type Definitions - ExceptionJSON
- * @module sneusers/types/ExceptionJSON
+ * @file Interfaces - ExceptionJSON
+ * @module sneusers/interfaces/ExceptionJSON
  */
 
 /**

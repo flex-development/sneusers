@@ -76,65 +76,67 @@ See [Get Docker][14] for help installing Docker on your platform.
 
 ### Environment Variables
 
-| name                   | default                             | description                                                                                |
-| ---------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
-| `ADMINER_PORT`         | `4000`                              | Port to expose `adminer` service on                                                        |
-| `ADMINER_SERVER_NAME`  | `db.dev.$TLD`                       | Nginx `server_name` for `adminer` service                                                  |
-| `APP_ENV`              | `AppEnv.DEV`                        | Application environment (`'development' \| 'production' \| 'staging' \| 'test'`)           |
-| `CACHE_MAX`            | `100`                               | Maximum number of responses to store in the cache                                          |
-| `CACHE_TTL`            | `5`                                 | Amount of time a response is cached before it is deleted (s)                               |
-| `DB_AUTO_LOAD_MODELS`  | `true`                              | Automatically load database models                                                         |
-| `DB_HOST`              | `'postgres'`                        | Hostname of database to connect to                                                         |
-| `DB_LOG_QUERY_PARAMS`  | `true`                              | Show database bind parameters in log                                                       |
-| `DB_NAME`              | -                                   | Name of database to connect to                                                             |
-| `DB_PASSWORD`          | -                                   | Database password                                                                          |
-| `DB_PORT`              | `5432`                              | Port of database to connect to                                                             |
-| `DB_RETRY_ATTEMPTS`    | `10`                                | Number of attempts to connect to the database                                              |
-| `DB_RETRY_DELAY`       | `3000`                              | Delay between database connection retry attempts (ms)                                      |
-| `DB_SYNC_ALTER`        | `true`                              | `ALTER` tables to fit database models during synchronization. Does **not** delete any data |
-| `DB_SYNC_FORCE`        | `false`                             | `DROP` existing tables before creating new tables during synchronization                   |
-| `DB_SYNCHRONIZE`       | `true`                              | Automatically synchronize database models (requires `$DB_AUTO_LOAD_MODELS=true`)           |
-| `DB_TIMEZONE`          | `'-05:00'`                          | Timezone to use when converting a date from the database into a JavaScript `Date` object   |
-| `DB_USERNAME`          | `'ubuntu'`                          | Database user                                                                              |
-| `DEBUG`                | `'http,sequelize:*'`                | Enables/disables specific debugging namespaces                                             |
-| `DEBUG_COLORS`         | `1`                                 | Whether or not to use colors in the debug output                                           |
-| `DOCKER_IMAGE`         | `flex-development/sneusers`         | Docker app image name                                                                      |
-| `DOCKER_IMAGE_TAG`     | `edge`                              | `ghcr.io/$DOCKER_IMAGE` image tag                                                          |
-| `EMAIL_CLIENT`         | -                                   | Google service account `client_id`                                                         |
-| `EMAIL_HOST`           | `'smtp.gmail.com'`                  | Hostname of email server                                                                   |
-| `EMAIL_PORT`           | `465`                               | Port to send emails from                                                                   |
-| `EMAIL_PRIVATE_KEY`    | -                                   | Google service account `private_key`                                                       |
-| `EMAIL_SEND_AS`        | -                                   | Email address to send emails from                                                          |
-| `EMAIL_USER`           | -                                   | Email address used to authenticate with Google APIs                                        |
-| `GH_PAT`               | -                                   | GitHub personal access token with at least `read:packages` scope                           |
-| `HOST`                 | `http://${HOSTNAME}:${PORT}`        | Application URL (includes scheme and `PORT` if applicable)                                 |
-| `HOSTNAME`             | `'localhost'`                       | Application hostname                                                                       |
-| `JWT_EXP_ACCESS`       | `900`                               | Access token expiration time (s)                                                           |
-| `JWT_EXP_REFRESH`      | `86400`                             | Refresh token expiration time (s)                                                          |
-| `JWT_EXP_VERIFY`       | `86400`                             | Verification token expiration time (s)                                                     |
-| `JWT_SECRET_ACCESS`    | `'JWT_SECRET'`                      | Access token signing secret                                                                |
-| `JWT_SECRET_REFRESH`   | `'JWT_SECRET'`                      | Refresh token signing secret                                                               |
-| `JWT_SECRET_VERIFY`    | `'JWT_SECRET'`                      | Verification token signing secret                                                          |
-| `NEST_DEBUG`           | `1`                                 | Enable NestJS dependency resolution logs                                                   |
-| `NODE_ENV`             | `NodeEnv.DEV`                       | Node environment (`'development' \| 'production' \| 'test'`)                               |
-| `NPM_TOKEN`            | -                                   | NPM registry auth token                                                                    |
-| `PORT`                 | `8080`                              | Port to run application on (and expose `app` service on)                                   |
-| `REDIS_COMMANDER_PORT` | `8081`                              | Port to run and expose `redis-commander` service on                                        |
-| `REDIS_HOST`           | `'redis'`                           | Hostname of Redis server                                                                   |
-| `REDIS_PASSWORD`       | `'redis'`                           | Redis server password                                                                      |
-| `REDIS_PORT`           | `6379`                              | Port Redis server is running on                                                            |
-| `REDIS_SERVER_NAME`    | `redis.dev.$TLD`                    | Nginx `server_name` for `redis-commander` service                                          |
-| `REDIS_USER`           | `'ubuntu'`                          | Redis server username                                                                      |
-| `SERVER_DESCRIP_DEV`   | `'Development server (local only)'` | Development server description                                                             |
-| `SERVER_DESCRIP_PROD`  | `'Production server'`               | Production server description                                                              |
-| `SERVER_DESCRIP_STG`   | `'Staging server'`                  | Staging server description                                                                 |
-| `SERVER_NAME`          | `api.dev.$TLD`                      | Nginx `server_name` for `app` service                                                      |
-| `SERVER_URL_DEV`       | `api.dev.$TLD`                      | Development server description                                                             |
-| `SERVER_URL_PROD`      | `api.$TLD`                          | Production server description                                                              |
-| `SERVER_URL_STG`       | `api.stg.$TLD`                      | Staging server description                                                                 |
-| `THROTTLE_LIMIT`       | `10`                                | Maximum number of requests within the `THROTTLE_TTL` limit                                 |
-| `THROTTLE_TTL`         | `60`                                | Number of seconds that each request will last in storage                                   |
-| `TLD`                  | -                                   | Top level domain                                                                           |
+| name                      | default                             | description                                                                                |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `ADMINER_PORT`            | `4000`                              | Port to expose `adminer` service on                                                        |
+| `ADMINER_SERVER_NAME`     | `db.dev.$TLD`                       | Nginx `server_name` for `adminer` service                                                  |
+| `APP_ENV`                 | `AppEnv.DEV`                        | Application environment (`'development' \| 'production' \| 'staging' \| 'test'`)           |
+| `CACHE_MAX`               | `100`                               | Maximum number of responses to store in the cache                                          |
+| `CACHE_TTL`               | `5`                                 | Amount of time a response is cached before it is deleted (s)                               |
+| `COOKIE_SECRET`           | `'COOKIE_SECRET'`                   | Cookie signing secret                                                                      |
+| `CSURF_COOKIE_MAX_AGE`    | `60000`                             | Number to use when calculating `Expires` `Set-Cookie` attribute (ms)                       |
+| `DB_AUTO_LOAD_MODELS`     | `true`                              | Automatically load database models                                                         |
+| `DB_HOST`                 | `'postgres'`                        | Hostname of database to connect to                                                         |
+| `DB_LOG_QUERY_PARAMS`     | `true`                              | Show database bind parameters in log                                                       |
+| `DB_NAME`                 | -                                   | Name of database to connect to                                                             |
+| `DB_PASSWORD`             | -                                   | Database password                                                                          |
+| `DB_PORT`                 | `5432`                              | Port of database to connect to                                                             |
+| `DB_RETRY_ATTEMPTS`       | `10`                                | Number of attempts to connect to the database                                              |
+| `DB_RETRY_DELAY`          | `3000`                              | Delay between database connection retry attempts (ms)                                      |
+| `DB_SYNC_ALTER`           | `true`                              | `ALTER` tables to fit database models during synchronization. Does **not** delete any data |
+| `DB_SYNC_FORCE`           | `false`                             | `DROP` existing tables before creating new tables during synchronization                   |
+| `DB_SYNCHRONIZE`          | `true`                              | Automatically synchronize database models (requires `$DB_AUTO_LOAD_MODELS=true`)           |
+| `DB_TIMEZONE`             | `'-05:00'`                          | Timezone to use when converting a date from the database into a JavaScript `Date` object   |
+| `DB_USERNAME`             | `'ubuntu'`                          | Database user                                                                              |
+| `DEBUG`                   | `'http,sequelize:*'`                | Enables/disables specific debugging namespaces                                             |
+| `DEBUG_COLORS`            | `1`                                 | Whether or not to use colors in the debug output                                           |
+| `DOCKER_IMAGE`            | `flex-development/sneusers`         | Docker app image name                                                                      |
+| `DOCKER_IMAGE_TAG`        | `edge`                              | `ghcr.io/$DOCKER_IMAGE` image tag                                                          |
+| `EMAIL_CLIENT`            | -                                   | Google service account `client_id`                                                         |
+| `EMAIL_HOST`              | `'smtp.gmail.com'`                  | Hostname of email server                                                                   |
+| `EMAIL_PORT`              | `465`                               | Port to send emails from                                                                   |
+| `EMAIL_PRIVATE_KEY`       | -                                   | Google service account `private_key`                                                       |
+| `EMAIL_SEND_AS`           | -                                   | Email address to send emails from                                                          |
+| `EMAIL_USER`              | -                                   | Email address used to authenticate with Google APIs                                        |
+| `GH_PAT`                  | -                                   | GitHub personal access token with at least `read:packages` scope                           |
+| `HOST`                    | `http://${HOSTNAME}:${PORT}`        | Application URL (includes scheme and `PORT` if applicable)                                 |
+| `HOSTNAME`                | `'localhost'`                       | Application hostname                                                                       |
+| `JWT_EXP_ACCESS`          | `900`                               | Access token expiration time (s)                                                           |
+| `JWT_EXP_REFRESH`         | `86400`                             | Refresh token expiration time (s)                                                          |
+| `JWT_EXP_VERIFICATION`    | `86400`                             | Verification token expiration time (s)                                                     |
+| `JWT_SECRET_ACCESS`       | `'JWT_SECRET'`                      | Access token signing secret                                                                |
+| `JWT_SECRET_REFRESH`      | `'JWT_SECRET'`                      | Refresh token signing secret                                                               |
+| `JWT_SECRET_VERIFICATION` | `'JWT_SECRET'`                      | Verification token signing secret                                                          |
+| `NEST_DEBUG`              | `1`                                 | Enable NestJS dependency resolution logs                                                   |
+| `NODE_ENV`                | `NodeEnv.DEV`                       | Node environment (`'development' \| 'production' \| 'test'`)                               |
+| `NPM_TOKEN`               | -                                   | NPM registry auth token                                                                    |
+| `PORT`                    | `8080`                              | Port to run application on (and expose `app` service on)                                   |
+| `REDIS_COMMANDER_PORT`    | `8081`                              | Port to run and expose `redis-commander` service on                                        |
+| `REDIS_HOST`              | `'redis'`                           | Hostname of Redis server                                                                   |
+| `REDIS_PASSWORD`          | `'redis'`                           | Redis server password                                                                      |
+| `REDIS_PORT`              | `6379`                              | Port Redis server is running on                                                            |
+| `REDIS_SERVER_NAME`       | `redis.dev.$TLD`                    | Nginx `server_name` for `redis-commander` service                                          |
+| `REDIS_USER`              | `'ubuntu'`                          | Redis server username                                                                      |
+| `SERVER_DESCRIP_DEV`      | `'Development server (local only)'` | Development server description                                                             |
+| `SERVER_DESCRIP_PROD`     | `'Production server'`               | Production server description                                                              |
+| `SERVER_DESCRIP_STG`      | `'Staging server'`                  | Staging server description                                                                 |
+| `SERVER_NAME`             | `api.dev.$TLD`                      | Nginx `server_name` for `app` service                                                      |
+| `SERVER_URL_DEV`          | `api.dev.$TLD`                      | Development server description                                                             |
+| `SERVER_URL_PROD`         | `api.$TLD`                          | Production server description                                                              |
+| `SERVER_URL_STG`          | `api.stg.$TLD`                      | Staging server description                                                                 |
+| `THROTTLE_LIMIT`          | `10`                                | Maximum number of requests within the `THROTTLE_TTL` limit                                 |
+| `THROTTLE_TTL`            | `60`                                | Number of seconds that each request will last in storage                                   |
+| `TLD`                     | -                                   | Top level domain                                                                           |
 
 See the [`EnvironmentVariables`](src/models/environment-variables.model.ts)
 model for more information on variables specific to the NestJS application (and

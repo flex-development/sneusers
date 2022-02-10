@@ -1,14 +1,11 @@
-import type {
-  NumberString,
-  ObjectPlain,
-  ObjectUnknown,
-  OneOrMany,
-  Path
-} from '@flex-development/tutils'
+import type { ObjectPlain, ObjectUnknown, Path } from '@flex-development/tutils'
 import type { LOCK } from '@sneusers/enums'
-import type { WhereAttributeHash, WhereOptions, WhereValue } from 'sequelize'
-import type { Model, ModelStatic } from 'sequelize-typescript'
-import type { Col, Fn } from 'sequelize/dist/lib/utils'
+import type { Model, ModelStatic } from 'sequelize'
+import type {
+  Fn,
+  Literal,
+  Where as SequelizeWhere
+} from 'sequelize/dist/lib/utils'
 import type ModelAttributes from './model-attributes.type'
 import type SearchOptions from './search-options.type'
 
@@ -117,17 +114,10 @@ namespace QueryParam {
    *
    * @template T - Raw entity attributes
    */
-  export type Where<T extends ObjectPlain = ObjectUnknown> = {
-    [field in keyof ModelAttributes.All<T>]?:
-      | Exclude<
-          WhereValue<ModelAttributes.All<T>>,
-          ReadonlyArray<any> | Buffer | Col | Fn
-        >
-      | Exclude<WhereOptions<ModelAttributes.All<T>>, Fn>
-      | Readonly<
-          OneOrMany<NumberString | WhereAttributeHash<ModelAttributes.All<T>>>
-        >
-  }
+  export type Where<T extends ObjectPlain = ObjectUnknown> = Exclude<
+    SearchOptions<T>['where'],
+    Fn | Literal | SequelizeWhere
+  >
 
   /**
    * Throw an `Exception` if an entity isn't found instead of returning `null`.

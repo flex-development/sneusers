@@ -1,4 +1,4 @@
-import type IUserRaw from './user-raw.interface'
+import IUserRaw from './user-raw.interface'
 
 /**
  * @file Users Subdomain Interfaces - IUser

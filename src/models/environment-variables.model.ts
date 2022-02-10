@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
   MinLength
 } from 'class-validator'
 
@@ -46,6 +47,26 @@ class EnvironmentVariables {
   @IsNumber()
   @IsOptional()
   CACHE_TTL: number
+
+  /**
+   * Cookie signing secret.
+   *
+   * Defaults to `'COOKIE_SECRET'` in `development` and `test` environments.
+   */
+  @IsString()
+  @IsNotEmpty()
+  COOKIE_SECRET: string
+
+  /**
+   * Number to use when calculating `Expires` `Set-Cookie` attribute (ms).
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default 60000
+   */
+  @IsNumber()
+  @IsOptional()
+  CSURF_COOKIE_MAX_AGE: number
 
   /**
    * Automatically load database models.
@@ -289,7 +310,7 @@ class EnvironmentVariables {
    */
   @IsNumber()
   @IsOptional()
-  JWT_EXP_VERIFY: number
+  JWT_EXP_VERIFICATION: number
 
   /**
    * Access token signing secret.
@@ -316,7 +337,7 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  JWT_SECRET_VERIFY: string
+  JWT_SECRET_VERIFICATION: string
 
   /**
    * Node environment.
@@ -407,12 +428,19 @@ class EnvironmentVariables {
   SERVER_DESCRIP_STG: string
 
   /**
+   * Current server URL.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsUrl()
+  SERVER_URL: string
+
+  /**
    * Development server URL.
    *
    * @default `https://api.dev.${TLD}`
    */
-  @IsString()
-  @IsNotEmpty()
+  @IsUrl()
   @IsOptional()
   SERVER_URL_DEV: string
 
@@ -421,8 +449,7 @@ class EnvironmentVariables {
    *
    * @default `https://api.${TLD}`
    */
-  @IsString()
-  @IsNotEmpty()
+  @IsUrl()
   @IsOptional()
   SERVER_URL_PROD: string
 
@@ -431,8 +458,7 @@ class EnvironmentVariables {
    *
    * @default `https://api.stg.${TLD}`
    */
-  @IsString()
-  @IsNotEmpty()
+  @IsUrl()
   @IsOptional()
   SERVER_URL_STG: string
 

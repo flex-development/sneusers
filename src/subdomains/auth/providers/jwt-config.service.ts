@@ -14,7 +14,9 @@ import type { EnvironmentVariables } from '@sneusers/models'
 
 @Injectable()
 export default class JwtConfigService implements JwtOptionsFactory {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
    * Returns the application [`JwtModule`][1] configuration options.
@@ -37,9 +39,15 @@ export default class JwtConfigService implements JwtOptionsFactory {
    * @return {JwtModuleOptions} Secret and encryption key options
    */
   createJwtOptions(): JwtModuleOptions {
+    const HOST = this.config.get<string>('HOST')
+
     return {
-      secret: this.config.get<string>('JWT_SECRET_ACCESS'),
-      signOptions: { expiresIn: this.config.get<string>('JWT_EXP_ACCESS') }
+      signOptions: {
+        algorithm: 'HS256',
+        audience: HOST,
+        issuer: HOST,
+        noTimestamp: false
+      }
     }
   }
 }

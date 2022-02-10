@@ -1,5 +1,5 @@
+import faker from '@faker-js/faker'
 import chai, { expect } from 'chai'
-import faker from 'faker'
 import { format } from 'pretty-format'
 import sinon from 'sinon'
 import { inspect } from 'util'

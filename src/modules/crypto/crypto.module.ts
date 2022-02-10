@@ -1,15 +1,10 @@
-import { Global, Module } from '@nestjs/common'
-import { HASH_SERVICE } from './crypto.module.constants'
-import { HashService } from './providers'
+import { Module } from '@nestjs/common'
+import { ScryptService } from './providers'
 
 /**
  * @file CryptoModule
  * @module sneusers/modules/crypto/CryptoModule
  */
 
-@Global()
-@Module({
-  exports: [HASH_SERVICE],
-  providers: [{ provide: HASH_SERVICE, useClass: HashService }]
-})
+@Module({ exports: [ScryptService], providers: [ScryptService] })
 export default class CryptoModule {}

@@ -1,6 +1,6 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import type { BaseEntity } from '@sneusers/entities'
-import type { Model } from 'sequelize-typescript'
+import type { Model } from 'sequelize'
 
 /**
  * @file Type Definitions - ModelAttributes

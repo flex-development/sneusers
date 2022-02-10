@@ -3,7 +3,7 @@ import RequestVerifDTO from './request-verif.dto'
 
 /**
  * @file Auth Subdomain DTOs - RequestVerifResendDTO
- * @module sneusers/subdomains/auth/models/RequestVerifResendDTO
+ * @module sneusers/subdomains/auth/dtos/RequestVerifResendDTO
  */
 
 /**

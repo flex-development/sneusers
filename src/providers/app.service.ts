@@ -11,15 +11,15 @@ import pkg from 'read-pkg'
 
 @Injectable()
 export default class AppService {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
-   * Returns the application [`ConfigModule`][1] configuration options.
-   *
-   * [1]: https://docs.nestjs.com/techniques/configuration
+   * Get `ConfigModule` options.
    *
    * @static
-   * @return {ConfigModuleOptions} `ConfigModule` configuration options
+   * @return {ConfigModuleOptions} Module options
    */
   static get configModuleOptions(): ConfigModuleOptions {
     return {
@@ -35,7 +35,7 @@ export default class AppService {
   }
 
   /**
-   * Returns the options used to create the NestJS application.
+   * Get the options used to create the NestJS application.
    *
    * @static
    * @return {NestApplicationOptions} NestJS application options

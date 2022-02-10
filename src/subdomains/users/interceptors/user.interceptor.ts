@@ -5,8 +5,10 @@ import {
   NestInterceptor
 } from '@nestjs/common'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { UserDTO } from '@sneusers/subdomains/users/dtos'
-import type { IUser } from '@sneusers/subdomains/users/interfaces'
+import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
+import { User } from '@sneusers/subdomains/users/entities'
+import type { IUser, UserRequest } from '@sneusers/subdomains/users/interfaces'
+import type { OutputUser, StreamUser } from '@sneusers/subdomains/users/types'
 import omit from 'lodash.omit'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -16,49 +18,75 @@ import { map } from 'rxjs/operators'
  * @module sneusers/subdomains/users/interceptors/UserInterceptor
  */
 
-type Stream = Partial<IUser> | PaginatedDTO<Partial<IUser>>
-
 /**
+ * Intercepts responses including {@link User} data.
+ *
+ * The `EntitySerializer` should be used **before** this interceptor.
+ *
  * @template T - Pre-intercepted response type(s)
  * @template R - Interceptor output type(s)
+ *
+ * @implements {NestInterceptor<T, R>}
  */
 @Injectable()
 class UserInterceptor<
-  T extends Stream = Stream,
-  R extends UserDTO | PaginatedDTO<UserDTO> = UserDTO | PaginatedDTO<UserDTO>
+  T extends StreamUser = StreamUser,
+  R extends OutputUser = OutputUser
 > implements NestInterceptor<T, R>
 {
   /**
    * Removes sensitive data from {@link IUser} objects.
    *
+   * If an authenticated user isn't detected, the following properties will be
+   * removed from the payload:
+   *
+   * - `email_verified`
+   * - `password`
+   *
+   * If an authenticated user is found, the following properties will be removed
+   * from the payload:
+   *
+   * - `password`
+   *
    * @see {@link IUser}
    *
-   * @param {ExecutionContext} context - Object containing methods for accessing
-   * the route handler and the class about to be invoked
-   * @param {CallHandler<T>} next - Object providing access to an
-   * {@link Observable} representing the response stream from the route handler
+   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {CallHandler<T>} next - Object providing access to response stream
    * @return {Observable<R>} {@link Observable} containing {@link Payload}
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
-    return next.handle().pipe(map(this.strip))
+    const req = context.switchToHttp().getRequest<UserRequest>()
+    return next.handle().pipe(map(value => this.strip(value, req.user)))
   }
 
   /**
-   * Removes the following properties from {@link IUser} objects:
+   * Removes sensitive data from `payload`.
+   *
+   * If `user` is defined, the following properties will be removed:
+   *
+   * - `password`
+   *
+   * If `user` is not defined, the following properties will be removed:
    *
    * - `email_verified`
    * - `password`
    *
    * @param {T} payload - User object or paginated response
+   * @param {User} [user] - Authenticated user, if any
    * @return {R} Payload without listed properties
    */
-  strip(payload: T): R {
-    const STRIP = ['email_verified', 'password']
+  strip(payload: T, user?: User): R {
+    if ((payload as ILoginDTO).access_token) return payload as unknown as R
+
+    const STRIP: (keyof IUser)[] = ['password']
+    const STRIP_PAGINATED: (keyof IUser)[] = [...STRIP, 'password']
 
     if (payload instanceof PaginatedDTO) {
-      payload.results = payload.results.map(user => omit(user, STRIP))
+      payload.results = payload.results.map(user => omit(user, STRIP_PAGINATED))
       return payload as unknown as R
     }
+
+    if (!user) STRIP.push('email_verified')
 
     return omit(payload, STRIP) as unknown as R
   }

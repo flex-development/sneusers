@@ -6,8 +6,9 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { EnvironmentVariables } from '@sneusers/models'
+import { RedisClientOpts } from '@sneusers/modules/redis/interfaces'
 import RedisCacheStore from 'cache-manager-redis-store'
-import type { ClientOpts as RedisClientOpts } from 'redis'
+import RedisConfigService from './redis-config.service'
 
 /**
  * @file Providers - CacheConfigService
@@ -18,34 +19,34 @@ import type { ClientOpts as RedisClientOpts } from 'redis'
 export default class CacheConfigService
   implements CacheOptionsFactory<RedisClientOpts>
 {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>,
+    protected readonly redis: RedisConfigService
+  ) {}
 
   /**
-   * Returns the application [`CacheModule`][1] configuration options.
-   *
-   * [1]: https://docs.nestjs.com/techniques/caching
-   * [2]: https://docs.nestjs.com/techniques/caching#async-configuration
+   * Get `CacheModule` configuration options.
    *
    * @static
-   * @return {CacheModuleAsyncOptions<RedisClientOpts>} Module config options
+   * @return {CacheModuleAsyncOptions<RedisClientOpts>} Module options
    */
   static get moduleOptions(): CacheModuleAsyncOptions<RedisClientOpts> {
-    return { isGlobal: true, useClass: CacheConfigService }
+    return {
+      extraProviders: [RedisConfigService],
+      isGlobal: true,
+      useClass: CacheConfigService
+    }
   }
 
   /**
-   * Returns the application [caching configuration][1].
-   *
-   * [1]: https://docs.nestjs.com/techniques/caching#customize-caching
+   * Get caching configuration options.
    *
    * @return {CacheModuleOptions<RedisClientOpts>} Caching configuration options
    */
   createCacheOptions(): CacheModuleOptions<RedisClientOpts> {
     return {
-      host: this.config.get<string>('REDIS_HOST'),
+      ...this.redis.createRedisOptions(),
       max: this.config.get<number>('CACHE_MAX'),
-      password: this.config.get<string>('REDIS_PASSWORD'),
-      port: this.config.get<number>('REDIS_PORT'),
       store: this.config.get<boolean>('TEST') ? 'memory' : RedisCacheStore,
       ttl: this.config.get<number>('CACHE_TTL')
     }
