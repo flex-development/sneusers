@@ -26,8 +26,8 @@ import {
 import type { Literal } from 'sequelize/types/lib/utils'
 
 /**
- * @file Models - BaseEntity
- * @module sneusers/models/BaseEntity
+ * @file Entities - BaseEntity
+ * @module sneusers/entities/BaseEntity
  */
 
 /**

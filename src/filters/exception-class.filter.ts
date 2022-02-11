@@ -17,7 +17,7 @@ import isPlainObject from 'lodash.isplainobject'
  */
 
 @Catch(Exception)
-export default class ExceptionClassFilter implements ExceptionFilter {
+class ExceptionClassFilter implements ExceptionFilter {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
@@ -62,3 +62,5 @@ export default class ExceptionClassFilter implements ExceptionFilter {
     return res.status(payload.code).json(payload).end()
   }
 }
+
+export default ExceptionClassFilter

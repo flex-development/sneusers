@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { EnvironmentVariables } from '@sneusers/models'
+import { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
 import RedisCacheStore from 'cache-manager-redis-store'
 import { RedisClientOptions } from 'redis'
-import RedisConfigService from './redis-config.service'
 
 /**
  * @file Providers - CacheConfigService
@@ -16,12 +16,10 @@ import RedisConfigService from './redis-config.service'
  */
 
 @Injectable()
-export default class CacheConfigService
-  implements CacheOptionsFactory<RedisClientOptions>
-{
+class CacheConfigService implements CacheOptionsFactory<RedisClientOptions> {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>,
-    protected readonly redis: RedisConfigService
+    protected readonly redis: RedisOptionsFactory
   ) {}
 
   /**
@@ -33,11 +31,7 @@ export default class CacheConfigService
    * @return {CacheModuleAsyncOptions<RedisClientOptions>} Module options
    */
   static get moduleOptions(): CacheModuleAsyncOptions<RedisClientOptions> {
-    return {
-      extraProviders: [RedisConfigService],
-      isGlobal: true,
-      useClass: CacheConfigService
-    }
+    return { isGlobal: true, useClass: CacheConfigService }
   }
 
   /**
@@ -56,3 +50,5 @@ export default class CacheConfigService
     }
   }
 }
+
+export default CacheConfigService

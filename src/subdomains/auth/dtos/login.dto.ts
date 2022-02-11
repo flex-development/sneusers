@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
+import { ILoginDTO } from '../interfaces'
 
 /**
  * @file Auth Subdomain DTOs - LoginDTO

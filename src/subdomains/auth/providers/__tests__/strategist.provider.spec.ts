@@ -1,11 +1,10 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DatabaseTable, ExceptionCode } from '@sneusers/enums'
+import { DatabaseTable } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import CryptoModule from '@sneusers/modules/crypto/crypto.module'
-import EmailModule from '@sneusers/modules/email/email.module'
 import { CacheConfigService } from '@sneusers/providers'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import {
@@ -40,9 +39,7 @@ describe('unit:subdomains/auth/providers/Strategist', () => {
     const ntapp = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
-        CryptoModule,
         SequelizeModule.forFeature([Token, User])
       ],
       providers: [TestSubject, TokensService, UsersService]

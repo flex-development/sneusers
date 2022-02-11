@@ -1,7 +1,7 @@
+import type { AppEnv } from '@flex-development/tutils/enums'
 import { NestApplicationOptions } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import type { AppEnv } from '@sneusers/enums'
 import AppModule from './app.module'
 import useGlobal from './hooks/use-global.hook'
 import type { EnvironmentVariables } from './models'

@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { NullishString, OrNull } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -5,20 +6,9 @@ import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/sequelize'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { ExceptionCode, SequelizeErrorName } from '@sneusers/enums'
+import { SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { EnvironmentVariables } from '@sneusers/models'
-import {
-  CreateTokenDTO,
-  JwtPayload,
-  JwtPayloadAccess,
-  JwtPayloadRefresh,
-  JwtPayloadVerif,
-  PatchTokenDTO,
-  ResolvedToken
-} from '@sneusers/subdomains/auth/dtos'
-import { Token } from '@sneusers/subdomains/auth/entities'
-import { TokenType } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
@@ -28,6 +18,17 @@ import { SearchOptions } from '@sneusers/types'
 import type { TokenExpiredError } from 'jsonwebtoken'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { Sequelize } from 'sequelize-typescript'
+import {
+  CreateTokenDTO,
+  JwtPayload,
+  JwtPayloadAccess,
+  JwtPayloadRefresh,
+  JwtPayloadVerif,
+  PatchTokenDTO,
+  ResolvedToken
+} from '../dtos'
+import { Token } from '../entities'
+import { TokenType } from '../enums'
 
 /**
  * @file Auth Subdomain Providers - TokensService
@@ -35,7 +36,7 @@ import { Sequelize } from 'sequelize-typescript'
  */
 
 @Injectable()
-export default class TokensService {
+class TokensService {
   constructor(
     @InjectModel(Token) protected readonly repo: typeof Token,
     protected readonly sequelize: Sequelize,
@@ -436,3 +437,5 @@ export default class TokensService {
     return this.repo
   }
 }
+
+export default TokensService

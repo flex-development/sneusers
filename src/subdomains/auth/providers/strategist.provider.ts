@@ -1,14 +1,13 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { ScryptService } from '@sneusers/modules/crypto/providers'
-import { JwtPayload, ResolvedToken } from '@sneusers/subdomains/auth/dtos'
-import { TokenType } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions } from '@sneusers/types'
+import { JwtPayload, ResolvedToken } from '../dtos'
+import { TokenType } from '../enums'
 import TokensService from './tokens.service'
 
 /**

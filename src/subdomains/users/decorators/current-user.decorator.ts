@@ -1,9 +1,9 @@
 import { OrNil, OrNull, PathValue } from '@flex-development/tutils'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { User } from '@sneusers/subdomains/users/entities'
-import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
-import { IUser } from '@sneusers/subdomains/users/interfaces'
 import type { Request } from 'express'
+import { User } from '../entities'
+import type { UserRequest } from '../interfaces'
+import { IUser } from '../interfaces'
 
 /**
  * @file Users Subdomain Decorators - CurrentUser

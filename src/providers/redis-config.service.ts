@@ -12,7 +12,7 @@ import { RedisClientOptions } from 'redis'
  */
 
 @Injectable()
-export default class RedisConfigService implements RedisOptionsFactory {
+class RedisConfigService implements RedisOptionsFactory {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>
   ) {}
@@ -49,3 +49,5 @@ export default class RedisConfigService implements RedisOptionsFactory {
     }
   }
 }
+
+export default RedisConfigService

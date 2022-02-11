@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common'
 import { PaginatedDTO } from '@sneusers/dtos'
 import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
-import { User } from '@sneusers/subdomains/users/entities'
-import type { IUser, UserRequest } from '@sneusers/subdomains/users/interfaces'
-import type { OutputUser, StreamUser } from '@sneusers/subdomains/users/types'
 import omit from 'lodash.omit'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { User } from '../entities'
+import type { IUser, UserRequest } from '../interfaces'
+import type { OutputUser, StreamUser } from '../types'
 
 /**
  * @file Users Subdomain Interceptors - UserInterceptor

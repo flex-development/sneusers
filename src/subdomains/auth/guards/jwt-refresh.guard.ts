@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
-import { AuthStrategy } from '@sneusers/subdomains/auth/enums'
 import { AuthenticateOptions } from 'passport'
+import { AuthStrategy } from '../enums'
 
 /**
  * @file Auth Subdomain Guards - JwtRefreshGuard

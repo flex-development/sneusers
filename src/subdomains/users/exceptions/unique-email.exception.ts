@@ -1,8 +1,8 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { ObjectPlain } from '@flex-development/tutils'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UniqueConstraintError } from 'sequelize'
+import type { IUserRaw } from '../interfaces'
 
 /**
  * @file Users Subdomain Exceptions - EmailException

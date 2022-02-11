@@ -18,11 +18,15 @@ import sqlite3 from 'sqlite3'
  */
 
 @Injectable()
-export default class SequelizeConfigService implements SequelizeOptionsFactory {
+class SequelizeConfigService implements SequelizeOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Get `SequelizeModule` configuration options.
+   * Get [`SequelizeModule`][1] configuration options.
+   *
+   * [1]: https://docs.nestjs.com/techniques/database#sequelize-integration
+   *
+   * @see https://github.com/nestjs/sequelize
    *
    * @static
    * @return {SequelizeModuleAsyncOptions} Module options
@@ -92,3 +96,5 @@ export default class SequelizeConfigService implements SequelizeOptionsFactory {
     return options
   }
 }
+
+export default SequelizeConfigService

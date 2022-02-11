@@ -144,6 +144,7 @@
     "@flex-development/tutils": "4.5.0",
     "@istanbuljs/esm-loader-hook": "0.1.2",
     "@jest-mock/express": "1.4.5",
+    "@kadeluxe/ts-transform-paths": "1.7.18",
     "@nestjs/cli": "8.2.0",
     "@nestjs/schematics": "8.0.5",
     "@nestjs/testing": "8.2.6",
@@ -203,7 +204,6 @@
     "@typescript-eslint/eslint-plugin": "5.11.0",
     "@typescript-eslint/parser": "5.11.0",
     "@vates/toggle-scripts": "1.0.0",
-    "@zerollup/ts-transform-paths": "1.7.18",
     "babel-plugin-istanbul": "6.1.1",
     "chai": "4.3.4",
     "chai-http": "4.3.0",
@@ -269,8 +269,7 @@
     "@types/node": "16.0.0",
     "axios": "0.25.0",
     "redis": "4.0.3",
-    "typescript": "4.5.5",
-    "webpack": "5.68.0"
+    "typescript": "4.5.5"
   },
   "packageManager": "yarn@3.2.0-rc.8"
 }

@@ -1,7 +1,7 @@
-import { WhoamiDTO } from '@sneusers/subdomains/auth/dtos'
+import type { WhoamiDTO } from '@sneusers/subdomains/auth/dtos'
 import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
-import type { UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { OrPaginated } from '@sneusers/types'
+import type { UserDTO } from '../dtos'
 
 /**
  * @file Type Definitions - OutputUser

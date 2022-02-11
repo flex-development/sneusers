@@ -1,6 +1,6 @@
 import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
-import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import type { OrPaginated } from '@sneusers/types'
+import type { IUser } from '../interfaces'
 
 /**
  * @file Type Definitions - StreamUser

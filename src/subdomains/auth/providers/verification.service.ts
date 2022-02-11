@@ -1,21 +1,21 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import {
-  RequestVerifDTO,
-  RequestVerifResendDTO,
-  VerifEmailSentDTO
-} from '@sneusers/subdomains/auth/dtos'
-import { TokenType, VerifType } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import pick from 'lodash.pick'
 import OPENAPI from '../controllers/openapi/verification.openapi'
+import {
+  RequestVerifDTO,
+  RequestVerifResendDTO,
+  VerifEmailSentDTO
+} from '../dtos'
+import { TokenType, VerifType } from '../enums'
 import TokensService from './tokens.service'
 
 /**

@@ -5,9 +5,6 @@ import { BaseEntity } from '@sneusers/entities'
 import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { Token } from '@sneusers/subdomains/auth/entities'
-import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
-import { IUser, IUserRaw } from '@sneusers/subdomains/users/interfaces'
-import { UserUid } from '@sneusers/subdomains/users/types'
 import type { SequelizeError } from '@sneusers/types'
 import { SearchOptions } from '@sneusers/types'
 import {
@@ -26,6 +23,9 @@ import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
 import isStrongPassword from 'validator/lib/isStrongPassword'
+import { CreateUserDTO } from '../dtos'
+import { IUser, IUserRaw } from '../interfaces'
+import { UserUid } from '../types'
 
 /**
  * @file Users Subdomain Entities - User

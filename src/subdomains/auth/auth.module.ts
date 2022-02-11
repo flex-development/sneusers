@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
-import CryptoModule from '@sneusers/modules/crypto/crypto.module'
-import { CookieOptionsProvider } from '@sneusers/modules/middleware/providers'
 import UsersModule from '@sneusers/subdomains/users/users.module'
 import { AuthController, VerificationController } from './controllers'
 import { Token } from './entities'
@@ -24,7 +22,6 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
 @Module({
   controllers: [AuthController, VerificationController],
   imports: [
-    CryptoModule,
     JwtModule.registerAsync(JwtConfigService.moduleOptions),
     PassportModule,
     SequelizeModule.forFeature([Token]),
@@ -32,7 +29,6 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   ],
   providers: [
     AuthService,
-    CookieOptionsProvider(),
     JwtConfigService,
     JwtRefreshStrategy,
     JwtStrategy,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { ScryptService } from './providers'
 
 /**
@@ -6,5 +6,6 @@ import { ScryptService } from './providers'
  * @module sneusers/modules/crypto/CryptoModule
  */
 
+@Global()
 @Module({ exports: [ScryptService], providers: [ScryptService] })
 export default class CryptoModule {}

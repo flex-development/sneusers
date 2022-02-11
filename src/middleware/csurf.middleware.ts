@@ -1,7 +1,7 @@
 import { OrUndefined } from '@flex-development/tutils'
 import { Injectable, NestMiddleware, Optional } from '@nestjs/common'
-import { CsurfOptionsFactory } from '@sneusers/factories'
-import { CsurfOptions } from '@sneusers/interfaces'
+import { CsurfOptions } from '@sneusers/modules/middleware/abstracts'
+import { CsurfOptionsFactory } from '@sneusers/modules/middleware/factories'
 import csurf from 'csurf'
 import { NextFunction, Request, Response } from 'express'
 
@@ -12,7 +12,7 @@ import { NextFunction, Request, Response } from 'express'
  */
 
 @Injectable()
-export default class CsurfMiddleware implements NestMiddleware {
+class CsurfMiddleware implements NestMiddleware {
   constructor(@Optional() protected readonly factory?: CsurfOptionsFactory) {}
 
   /**
@@ -63,3 +63,5 @@ export default class CsurfMiddleware implements NestMiddleware {
     return csurf({ ...options, value })(req, res, next)
   }
 }
+
+export default CsurfMiddleware

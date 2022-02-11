@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import { CacheModule, HttpStatus } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
@@ -6,7 +7,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
 import {
   DatabaseTable,
-  ExceptionCode,
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
@@ -16,8 +16,6 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import type { QueryParams } from '@sneusers/models'
-import CryptoModule from '@sneusers/modules/crypto/crypto.module'
-import EmailModule from '@sneusers/modules/email/email.module'
 import { CacheConfigService } from '@sneusers/providers'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import {
@@ -67,8 +65,6 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       controllers: [TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        CryptoModule,
-        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([Token, User])
       ],

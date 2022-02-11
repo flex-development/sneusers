@@ -19,7 +19,7 @@ import type { Response } from 'express'
  */
 
 @Catch(HttpException)
-export default class HttpExceptionFilter implements ExceptionFilter {
+class HttpExceptionFilter implements ExceptionFilter {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
@@ -67,3 +67,5 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     return res.status(payload.code).json(payload).end()
   }
 }
+
+export default HttpExceptionFilter

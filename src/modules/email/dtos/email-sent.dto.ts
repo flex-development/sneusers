@@ -1,4 +1,4 @@
-import type { SentMessageInfo } from 'nodemailer/lib/smtp-transport'
+import { SentMessageInfo } from 'nodemailer/lib/smtp-transport'
 
 /**
  * @file EmailModule DTOs - EmailSentDTO

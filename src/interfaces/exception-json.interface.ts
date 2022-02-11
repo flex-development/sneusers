@@ -1,4 +1,4 @@
-import type { ExceptionJSON as EJSON } from '@flex-development/exceptions/interfaces'
+import { ExceptionJSON as EJSON } from '@flex-development/exceptions/interfaces'
 import type { ExceptionData } from '@sneusers/types'
 
 /**

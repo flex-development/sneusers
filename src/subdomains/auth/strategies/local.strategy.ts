@@ -1,11 +1,11 @@
 import { NullishString } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport'
-import { AuthStrategy } from '@sneusers/subdomains/auth/enums'
-import { Strategist } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IStrategyOptions } from 'passport-local'
 import { Strategy } from 'passport-local'
+import { AuthStrategy } from '../enums'
+import { Strategist } from '../providers'
 
 /**
  * @file Authentication Strategies - Local

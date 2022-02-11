@@ -1,11 +1,8 @@
 import { HttpStatus } from '@nestjs/common'
 import { ApiEndpoint } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import {
-  RequestVerifDTO,
-  RequestVerifResendDTO
-} from '@sneusers/subdomains/auth/dtos'
 import { UserDTO, UserEmailSentDTO } from '@sneusers/subdomains/users/dtos'
+import { RequestVerifDTO, RequestVerifResendDTO } from '../../dtos'
 
 /**
  * @file Controllers - VerificationController OpenAPI Documentation

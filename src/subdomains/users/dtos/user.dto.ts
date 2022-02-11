@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common'
 import { ApiProperty, PickType } from '@nestjs/swagger'
-import User from '@sneusers/subdomains/users/entities/user.dao'
-import { IUser } from '@sneusers/subdomains/users/interfaces'
+import { User } from '../entities'
+import { IUser } from '../interfaces'
 
 /**
  * @file Users Subdomain DTOs - UserDTO

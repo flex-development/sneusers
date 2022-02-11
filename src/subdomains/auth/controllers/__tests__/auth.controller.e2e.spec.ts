@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { NullishString } from '@flex-development/tutils'
 import { CacheModule, HttpStatus } from '@nestjs/common'
@@ -7,7 +8,6 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   DatabaseTable,
-  ExceptionCode,
   SequelizeErrorName as SequelizeError
 } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
@@ -17,10 +17,9 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
-import CryptoModule from '@sneusers/modules/crypto/crypto.module'
 import {
-  CookieOptionsProvider,
-  CsurfOptionsProvider
+  CookieConfigService,
+  CsurfConfigService
 } from '@sneusers/modules/middleware/providers'
 import { CacheConfigService } from '@sneusers/providers'
 import type {
@@ -87,7 +86,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        CryptoModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         PassportModule,
         SequelizeModule.forFeature([Token]),
@@ -96,8 +94,8 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       middlewares: [CookieParserMiddleware, CsurfMiddleware],
       providers: [
         AuthService,
-        CookieOptionsProvider(),
-        CsurfOptionsProvider(),
+        CookieConfigService.createProvider(),
+        CsurfConfigService.createProvider(),
         ErrorFilter.createProvider(),
         ExceptionClassFilter.createProvider(),
         HttpExceptionFilter.createProvider(),

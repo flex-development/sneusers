@@ -1,14 +1,14 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { OrNull } from '@flex-development/tutils'
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { AuthMetadataKey, AuthStrategy } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
 import { AuthenticateOptions } from 'passport'
 import { ExtractJwt } from 'passport-jwt'
+import { AuthMetadataKey, AuthStrategy } from '../enums'
 
 /**
  * @file Auth Subdomain Guards - JwtAuthGuard

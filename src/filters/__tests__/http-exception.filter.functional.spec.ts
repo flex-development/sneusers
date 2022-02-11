@@ -1,8 +1,12 @@
+import {
+  ExceptionClassName,
+  ExceptionCode,
+  ExceptionId
+} from '@flex-development/exceptions/enums'
 import type { ArgumentsHost } from '@nestjs/common'
 import { BadRequestException, HttpException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { NestExpressApplication } from '@nestjs/platform-express'
-import { ExceptionClassName, ExceptionCode, ExceptionId } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { ExceptionJSON } from '@sneusers/interfaces'
 import createApp from '@tests/utils/create-app.util'

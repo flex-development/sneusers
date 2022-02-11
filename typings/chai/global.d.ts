@@ -1,6 +1,6 @@
 declare module 'chai' {
+  import type { ExceptionCode } from '@flex-development/exceptions/enums'
   import type { HttpStatus } from '@nestjs/common'
-  import type { ExceptionCode } from '@sneusers/enums'
 
   global {
     export namespace Chai {

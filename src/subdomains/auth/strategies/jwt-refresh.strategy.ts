@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport'
 import { EnvironmentVariables } from '@sneusers/models'
-import { JwtPayloadRefresh } from '@sneusers/subdomains/auth/dtos'
-import { AuthStrategy, TokenType } from '@sneusers/subdomains/auth/enums'
-import { Strategist } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { Request } from 'express'
 import type { StrategyOptions } from 'passport-jwt'
 import { ExtractJwt, Strategy } from 'passport-jwt'
+import { JwtPayloadRefresh } from '../dtos'
+import { AuthStrategy, TokenType } from '../enums'
+import { Strategist } from '../providers'
 
 /**
  * @file Authentication Strategies - JwtRefresh

@@ -1,16 +1,15 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import type { ObjectPlain } from '@flex-development/tutils'
 import { ANY } from '@flex-development/tutils'
 import { HttpModuleOptionsFactory } from '@nestjs/axios'
 import {
   HttpModuleAsyncOptions,
   HttpModuleOptions,
-  HttpStatus,
   Inject,
   Injectable
 } from '@nestjs/common'
 import { AXIOS_INSTANCE } from '@sneusers/config/provider-tokens.config'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 
@@ -20,7 +19,7 @@ import { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
  */
 
 @Injectable()
-export default class HttpConfigService implements HttpModuleOptionsFactory {
+class HttpConfigService implements HttpModuleOptionsFactory {
   constructor(@Inject(AXIOS_INSTANCE) protected readonly axios: AxiosInstance) {
     axios.interceptors.response.use(
       HttpConfigService.onFulfilled,
@@ -29,7 +28,9 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
   }
 
   /**
-   * Get `HttpModule` configuration options.
+   * Get [`HttpModule`][1] configuration options.
+   *
+   * [1]: https://docs.nestjs.com/techniques/http-module
    *
    * @static
    * @return {HttpModuleAsyncOptions} Module options
@@ -143,7 +144,9 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
   }
 
   /**
-   * Get http client configuration options.
+   * Get [http client][1] configuration options.
+   *
+   * [1]: https://github.com/axios/axios
    *
    * @return {HttpModuleOptions} HTTP client options
    */
@@ -153,7 +156,7 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
        * Defines whether to resolve or reject the promise for a given HTTP
        * response status code.
        *
-       * @param {HttpStatus} status - HTTP response status code
+       * @param {number} status - HTTP response status code
        * @return {boolean} `true` to resolve, `false` to reject
        */
       validateStatus(status: number): boolean {
@@ -164,3 +167,5 @@ export default class HttpConfigService implements HttpModuleOptionsFactory {
     }
   }
 }
+
+export default HttpConfigService

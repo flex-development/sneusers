@@ -12,19 +12,19 @@ import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
 import { EmailService } from '@sneusers/modules/email/providers'
+import { SearchOptions, SequelizeError } from '@sneusers/types'
+import { Cache } from 'cache-manager'
+import { UniqueConstraintError } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import {
   CreateUserDTO,
   PatchUserDTO,
   UpsertUserDTO,
   UserEmailSentDTO
-} from '@sneusers/subdomains/users/dtos'
-import { User } from '@sneusers/subdomains/users/entities'
-import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
-import { UserUid } from '@sneusers/subdomains/users/types'
-import { SearchOptions, SequelizeError } from '@sneusers/types'
-import { Cache } from 'cache-manager'
-import { UniqueConstraintError } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
+} from '../dtos'
+import { User } from '../entities'
+import { UniqueEmailException } from '../exceptions'
+import { UserUid } from '../types'
 
 /**
  * @file Users Subdomain Providers - UsersService
@@ -42,9 +42,9 @@ class UsersService {
 
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,
-    @Inject(Sequelize) protected readonly sequelize: Sequelize,
+    protected readonly sequelize: Sequelize,
     @Inject(CACHE_MANAGER) protected readonly cache: Cache,
-    @Inject(EmailService) protected readonly email: EmailService
+    protected readonly email: EmailService
   ) {}
 
   /**

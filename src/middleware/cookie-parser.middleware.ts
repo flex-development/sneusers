@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware, Optional } from '@nestjs/common'
-import { CookieOptionsFactory } from '@sneusers/factories'
+import { CookieOptionsFactory } from '@sneusers/modules/middleware/factories'
 import cookieParser from 'cookie-parser'
 import { NextFunction, Request, Response } from 'express'
 
@@ -9,7 +9,7 @@ import { NextFunction, Request, Response } from 'express'
  */
 
 @Injectable()
-export default class CookieParserMiddleware implements NestMiddleware {
+class CookieParserMiddleware implements NestMiddleware {
   constructor(@Optional() protected readonly factory?: CookieOptionsFactory) {}
 
   /**
@@ -27,3 +27,5 @@ export default class CookieParserMiddleware implements NestMiddleware {
     return cookieParser(options.secret, options)(req, res, next)
   }
 }
+
+export default CookieParserMiddleware

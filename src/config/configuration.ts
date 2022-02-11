@@ -1,5 +1,5 @@
 import { ObjectPlain } from '@flex-development/tutils'
-import { AppEnv, NodeEnv } from '@sneusers/enums'
+import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
 import { EnvironmentVariables } from '@sneusers/models'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'

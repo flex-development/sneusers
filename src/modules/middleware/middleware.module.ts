@@ -1,9 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, Type } from '@nestjs/common'
-import {
-  CookieOptionsFactory,
-  CsurfOptionsFactory,
-  HelmetOptionsFactory
-} from '@sneusers/factories'
+import { Global, MiddlewareConsumer, Module, Type } from '@nestjs/common'
 import {
   CookieParserMiddleware,
   CsurfMiddleware,
@@ -12,9 +7,14 @@ import {
 } from '@sneusers/middleware'
 import { ForRoutesConfig } from '@sneusers/types'
 import {
-  CookieOptionsProvider,
-  CsurfOptionsProvider,
-  HelmetOptionsProvider
+  CookieOptionsFactory,
+  CsurfOptionsFactory,
+  HelmetOptionsFactory
+} from './factories'
+import {
+  CookieConfigService,
+  CsurfConfigService,
+  HelmetConfigService
 } from './providers'
 
 /**
@@ -22,15 +22,16 @@ import {
  * @module sneusers/modules/middleware/MiddlewareModule
  */
 
+@Global()
 @Module({
   exports: [CookieOptionsFactory, CsurfOptionsFactory, HelmetOptionsFactory],
   providers: [
-    CookieOptionsProvider(),
-    CsurfOptionsProvider(),
-    HelmetOptionsProvider()
+    CookieConfigService.createProvider(),
+    CsurfConfigService.createProvider(),
+    HelmetConfigService.createProvider()
   ]
 })
-export default class MiddlewareModule implements NestModule {
+export default class MiddlewareModule {
   constructor(
     protected readonly cookie: CookieOptionsFactory,
     protected readonly csurf: CsurfOptionsFactory,

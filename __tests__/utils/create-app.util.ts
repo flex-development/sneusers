@@ -2,8 +2,12 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import useGlobal from '@sneusers/hooks/use-global.hook'
+import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import EmailModule from '@sneusers/modules/email/email.module'
 import MiddlewareModule from '@sneusers/modules/middleware/middleware.module'
-import { AppService } from '@sneusers/providers'
+import RedisModule from '@sneusers/modules/redis/redis.module'
+import AppService from '@sneusers/providers/app.service'
+import RedisConfigService from '@sneusers/providers/redis-config.service'
 import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
 import SequelizeConfig from '@tests/fixtures/sequelize-config-service.fixture'
 import createTestingModule from './creating-testing-module.util'
@@ -40,6 +44,9 @@ const createApp = async (
     exports: [...exports],
     imports: [
       ConfigModule.forRoot(AppService.configModuleOptions),
+      CryptoModule,
+      EmailModule,
+      RedisModule.registerAsync(RedisConfigService.moduleOptions),
       SequelizeModule.forRoot(SequelizeConfig.createSequelizeOptions()),
       ...imports
     ],

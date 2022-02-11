@@ -1,10 +1,9 @@
-import { AppEnv, NodeEnv } from '@sneusers/enums'
+import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   IsUrl,
   MinLength
@@ -25,7 +24,6 @@ class EnvironmentVariables {
    * @default AppEnv.DEV
    */
   @IsEnum(AppEnv)
-  @IsOptional()
   APP_ENV: AppEnv
 
   /**
@@ -34,7 +32,6 @@ class EnvironmentVariables {
    * @default 100
    */
   @IsNumber()
-  @IsOptional()
   CACHE_MAX: number
 
   /**
@@ -45,7 +42,6 @@ class EnvironmentVariables {
    * @default 5
    */
   @IsNumber()
-  @IsOptional()
   CACHE_TTL: number
 
   /**
@@ -65,7 +61,6 @@ class EnvironmentVariables {
    * @default 60000
    */
   @IsNumber()
-  @IsOptional()
   CSURF_COOKIE_MAX_AGE: number
 
   /**
@@ -76,7 +71,6 @@ class EnvironmentVariables {
    * @default true
    */
   @IsBoolean()
-  @IsOptional()
   DB_AUTO_LOAD_MODELS: boolean
 
   /**
@@ -86,7 +80,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   DB_HOST: string
 
   /**
@@ -95,7 +88,6 @@ class EnvironmentVariables {
    * @default true
    */
   @IsBoolean()
-  @IsOptional()
   DB_LOG_QUERY_PARAMS: boolean
 
   /**
@@ -111,7 +103,6 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   @MinLength(4)
-  @IsOptional()
   DB_PASSWORD?: string
 
   /**
@@ -120,7 +111,6 @@ class EnvironmentVariables {
    * @default 5432
    */
   @IsNumber()
-  @IsOptional()
   DB_PORT: number
 
   /**
@@ -129,7 +119,6 @@ class EnvironmentVariables {
    * @default 10
    */
   @IsNumber()
-  @IsOptional()
   DB_RETRY_ATTEMPTS: number
 
   /**
@@ -138,7 +127,6 @@ class EnvironmentVariables {
    * @default 3000
    */
   @IsNumber()
-  @IsOptional()
   DB_RETRY_DELAY: number
 
   /**
@@ -155,7 +143,6 @@ class EnvironmentVariables {
    * @default true
    */
   @IsBoolean()
-  @IsOptional()
   DB_SYNC_ALTER: boolean
 
   /**
@@ -171,7 +158,6 @@ class EnvironmentVariables {
    * @default false
    */
   @IsBoolean()
-  @IsOptional()
   DB_SYNC_FORCE: boolean
 
   /**
@@ -190,7 +176,6 @@ class EnvironmentVariables {
    * @default true
    */
   @IsBoolean()
-  @IsOptional()
   DB_SYNCHRONIZE: boolean
 
   /**
@@ -201,7 +186,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   DB_TIMEZONE: string
 
   /**
@@ -231,7 +215,6 @@ class EnvironmentVariables {
    * @default 'smtp.gmail.com'
    */
   @IsString()
-  @IsOptional()
   EMAIL_HOST: string
 
   /**
@@ -240,7 +223,6 @@ class EnvironmentVariables {
    * @default 465
    */
   @IsNumber()
-  @IsOptional()
   EMAIL_PORT: number
 
   /**
@@ -282,7 +264,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   HOSTNAME: string
 
   /**
@@ -291,7 +272,6 @@ class EnvironmentVariables {
    * @default 900
    */
   @IsNumber()
-  @IsOptional()
   JWT_EXP_ACCESS: number
 
   /**
@@ -300,7 +280,6 @@ class EnvironmentVariables {
    * @default 86400
    */
   @IsNumber()
-  @IsOptional()
   JWT_EXP_REFRESH: number
 
   /**
@@ -309,7 +288,6 @@ class EnvironmentVariables {
    * @default 86400
    */
   @IsNumber()
-  @IsOptional()
   JWT_EXP_VERIFICATION: number
 
   /**
@@ -345,7 +323,6 @@ class EnvironmentVariables {
    * @default NodeEnv.DEV
    */
   @IsEnum(NodeEnv)
-  @IsOptional()
   NODE_ENV: NodeEnv
 
   /**
@@ -354,7 +331,6 @@ class EnvironmentVariables {
    * @default 8080
    */
   @IsNumber()
-  @IsOptional()
   PORT: number
 
   /**
@@ -375,7 +351,6 @@ class EnvironmentVariables {
    * @default 'redis'
    */
   @IsString()
-  @IsOptional()
   REDIS_HOST: string
 
   /**
@@ -394,7 +369,6 @@ class EnvironmentVariables {
    */
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
   REDIS_USER: string
 
   /**
@@ -407,7 +381,6 @@ class EnvironmentVariables {
    * @default 6379
    */
   @IsNumber()
-  @IsOptional()
   REDIS_PORT: number
 
   /**
@@ -416,7 +389,6 @@ class EnvironmentVariables {
    * @default 'Development server (local only)'
    */
   @IsString()
-  @IsOptional()
   SERVER_DESCRIP_DEV: string
 
   /**
@@ -425,7 +397,6 @@ class EnvironmentVariables {
    * @default 'Production server'
    */
   @IsString()
-  @IsOptional()
   SERVER_DESCRIP_PROD: string
 
   /**
@@ -434,7 +405,6 @@ class EnvironmentVariables {
    * @default 'Staging server'
    */
   @IsString()
-  @IsOptional()
   SERVER_DESCRIP_STG: string
 
   /**
@@ -451,7 +421,6 @@ class EnvironmentVariables {
    * @default `https://api.dev.${TLD}`
    */
   @IsUrl()
-  @IsOptional()
   SERVER_URL_DEV: string
 
   /**
@@ -460,7 +429,6 @@ class EnvironmentVariables {
    * @default `https://api.${TLD}`
    */
   @IsUrl()
-  @IsOptional()
   SERVER_URL_PROD: string
 
   /**
@@ -469,7 +437,6 @@ class EnvironmentVariables {
    * @default `https://api.stg.${TLD}`
    */
   @IsUrl()
-  @IsOptional()
   SERVER_URL_STG: string
 
   /**
@@ -496,7 +463,6 @@ class EnvironmentVariables {
    * @default 10
    */
   @IsNumber()
-  @IsOptional()
   THROTTLE_LIMIT: number
 
   /**
@@ -507,7 +473,6 @@ class EnvironmentVariables {
    * @default 60
    */
   @IsNumber()
-  @IsOptional()
   THROTTLE_TTL: number
 
   /**

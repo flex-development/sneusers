@@ -13,11 +13,13 @@ import type { EnvironmentVariables } from '@sneusers/models'
  */
 
 @Injectable()
-export default class ThrottlerConfigService implements ThrottlerOptionsFactory {
+class ThrottlerConfigService implements ThrottlerOptionsFactory {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
-   * Get `ThrottlerModule` configuration options.
+   * Get [`ThrottlerModule`][1] configuration options.
+   *
+   * [1]: https://github.com/nestjs/throttler
    *
    * @static
    * @return {ThrottlerAsyncOptions} Module options
@@ -27,7 +29,9 @@ export default class ThrottlerConfigService implements ThrottlerOptionsFactory {
   }
 
   /**
-   * Get rate limiting options.
+   * Get [rate limiting][1] options.
+   *
+   * [1]: https://docs.nestjs.com/security/rate-limiting
    *
    * @return {ThrottlerModuleOptions} Rate limiting configuration options
    */
@@ -38,3 +42,5 @@ export default class ThrottlerConfigService implements ThrottlerOptionsFactory {
     }
   }
 }
+
+export default ThrottlerConfigService

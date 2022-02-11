@@ -718,6 +718,7 @@ __metadata:
     "@flex-development/tutils": 4.5.0
     "@istanbuljs/esm-loader-hook": 0.1.2
     "@jest-mock/express": 1.4.5
+    "@kadeluxe/ts-transform-paths": 1.7.18
     "@nestjs-modules/mailer": 1.6.1
     "@nestjs/axios": 0.0.5
     "@nestjs/cli": 8.2.0
@@ -792,7 +793,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": 5.11.0
     "@typescript-eslint/parser": 5.11.0
     "@vates/toggle-scripts": 1.0.0
-    "@zerollup/ts-transform-paths": 1.7.18
     axios: 0.25.0
     babel-plugin-istanbul: 6.1.1
     cache-manager: 3.6.0
@@ -992,6 +992,17 @@ __metadata:
     "@jridgewell/resolve-uri": ^3.0.3
     "@jridgewell/sourcemap-codec": ^1.4.10
   checksum: b58be6b4133cbcb20bfd28c9ca843b8db9efa0bf1d7e0e9e26b2228dace94ad53161c996ab1d762d7c3955dfc398a7734e7b84a2493ae36b451f232234fbb257
+  languageName: node
+  linkType: hard
+
+"@kadeluxe/ts-transform-paths@npm:1.7.18":
+  version: 1.7.18
+  resolution: "@kadeluxe/ts-transform-paths@npm:1.7.18::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40kadeluxe%2Fts-transform-paths%2F1.7.18%2F162dc314b783718574bcab137bf8fa5007b1c102b99fe4b6a4d6ebbae6aeb3b9"
+  dependencies:
+    "@zerollup/ts-helpers": ^1.7.18
+  peerDependencies:
+    typescript: ">=3.7.2"
+  checksum: a0f415378ce6d9ce0283ea882f71201d18f495c44c65fbcddbcdc4d10682071b45edbb0af74f8558424175ecda2054bb60f6ea8c0f1b6807f08e11b87034b2e4
   languageName: node
   linkType: hard
 
@@ -2787,17 +2798,6 @@ __metadata:
   peerDependencies:
     typescript: ">=3.7.2"
   checksum: 6ad5cc350139e28866ecff6138b38771a385b8f6c66af07bfff5f7a6d54a9071c06cdd43e0ae0e71157cce2815e6207c0ce15a28ef862d87fe2ad8381b0465dd
-  languageName: node
-  linkType: hard
-
-"@zerollup/ts-transform-paths@npm:1.7.18":
-  version: 1.7.18
-  resolution: "@zerollup/ts-transform-paths@npm:1.7.18"
-  dependencies:
-    "@zerollup/ts-helpers": ^1.7.18
-  peerDependencies:
-    typescript: ">=3.7.2"
-  checksum: 2a3b258222c954e6cbcb85fdbb8fe0a8781128015951d352a42fe4b59379b7051397592c9be0dd96d15fc8c6f2916b2805cd85adff93aaa3b9346beaf144a0dd
   languageName: node
   linkType: hard
 
@@ -14052,14 +14052,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^3.2.3":
+"webpack-sources@npm:^3.2.2, webpack-sources@npm:^3.2.3":
   version: 3.2.3
   resolution: "webpack-sources@npm:3.2.3"
   checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
   languageName: node
   linkType: hard
 
-"webpack@npm:5.68.0":
+"webpack@npm:5.66.0":
+  version: 5.66.0
+  resolution: "webpack@npm:5.66.0"
+  dependencies:
+    "@types/eslint-scope": ^3.7.0
+    "@types/estree": ^0.0.50
+    "@webassemblyjs/ast": 1.11.1
+    "@webassemblyjs/wasm-edit": 1.11.1
+    "@webassemblyjs/wasm-parser": 1.11.1
+    acorn: ^8.4.1
+    acorn-import-assertions: ^1.7.6
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.8.3
+    es-module-lexer: ^0.9.0
+    eslint-scope: 5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.9
+    json-parse-better-errors: ^1.0.2
+    loader-runner: ^4.2.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    schema-utils: ^3.1.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.1.3
+    watchpack: ^2.3.1
+    webpack-sources: ^3.2.2
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: 5a44664a840fd64c5383aa78847b205ae0b42b607f85ee1d6a568617a210c1b9caab1822bce40a89a3b5eb0f626a83fb5fe2055c638aa230897bf224030d28e8
+  languageName: node
+  linkType: hard
+
+"webpack@npm:5.68.0, webpack@npm:^5":
   version: 5.68.0
   resolution: "webpack@npm:5.68.0"
   dependencies:

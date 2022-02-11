@@ -3,6 +3,6 @@
  * @module sneusers/modules/middleware/providers
  */
 
-export { default as CookieOptionsProvider } from './cookie-options.provider'
-export { default as CsurfOptionsProvider } from './csurf-options.provider'
-export { default as HelmetOptionsProvider } from './helmet-options.provider'
+export { default as CookieConfigService } from './cookie-config.service'
+export { default as CsurfConfigService } from './csurf-config.service'
+export { default as HelmetConfigService } from './helmet-config.service'

@@ -1,5 +1,5 @@
 import { MailerModule } from '@nestjs-modules/mailer'
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { EmailService, MailerConfigService } from './providers'
 
 /**
@@ -7,6 +7,7 @@ import { EmailService, MailerConfigService } from './providers'
  * @module sneusers/modules/email/EmailModule
  */
 
+@Global()
 @Module({
   exports: [EmailService],
   imports: [MailerModule.forRootAsync(MailerConfigService.moduleOptions)],

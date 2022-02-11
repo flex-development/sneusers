@@ -12,18 +12,18 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ApiResponses, ApiTokenAuth } from '@sneusers/decorators'
 import type { EntityDTO } from '@sneusers/dtos'
 import { EntitySerializer } from '@sneusers/interceptors'
-import {
-  RequestVerifDTO,
-  RequestVerifResendDTO,
-  VerifEmailSentDTO
-} from '@sneusers/subdomains/auth/dtos'
-import { JwtAuthGuard } from '@sneusers/subdomains/auth/guards'
-import { VerificationService } from '@sneusers/subdomains/auth/providers'
 import { CurrentUser } from '@sneusers/subdomains/users/decorators'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
+import {
+  RequestVerifDTO,
+  RequestVerifResendDTO,
+  VerifEmailSentDTO
+} from '../dtos'
+import { JwtAuthGuard } from '../guards'
+import { VerificationService } from '../providers'
 import OPENAPI from './openapi/verification.openapi'
 
 /**

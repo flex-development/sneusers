@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware, Optional } from '@nestjs/common'
-import { HelmetOptionsFactory } from '@sneusers/factories'
+import { HelmetOptionsFactory } from '@sneusers/modules/middleware/factories'
 import { NextFunction, Request, Response } from 'express'
 import helmet from 'helmet'
 
@@ -9,7 +9,7 @@ import helmet from 'helmet'
  */
 
 @Injectable()
-export default class HelmetMiddleware implements NestMiddleware {
+class HelmetMiddleware implements NestMiddleware {
   constructor(@Optional() protected readonly factory?: HelmetOptionsFactory) {}
 
   /**
@@ -26,3 +26,5 @@ export default class HelmetMiddleware implements NestMiddleware {
     return helmet(this.factory?.createHelmetOptions())(req, res, next)
   }
 }
+
+export default HelmetMiddleware

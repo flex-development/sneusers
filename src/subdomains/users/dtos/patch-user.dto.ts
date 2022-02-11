@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common'
 import { OmitType, PartialType } from '@nestjs/swagger'
-import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { IsBoolean, IsOptional } from 'class-validator'
+import type { IUserRaw } from '../interfaces'
 import CreateUserDTO from './create-user.dto'
 
 /**

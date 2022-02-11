@@ -1,10 +1,7 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  DatabaseTable,
-  ExceptionCode,
-  SequelizeErrorName
-} from '@sneusers/enums'
+import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'

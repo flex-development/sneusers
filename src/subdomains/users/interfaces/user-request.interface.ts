@@ -1,9 +1,9 @@
 import type { ObjectPlain } from '@flex-development/tutils'
 import type { QueryParams } from '@sneusers/models'
-import type { UserDTO } from '@sneusers/subdomains/users/dtos'
-import type { User } from '@sneusers/subdomains/users/entities'
 import type { OrPaginated } from '@sneusers/types'
 import { Request } from 'express'
+import type { UserDTO } from '../dtos'
+import type { User } from '../entities'
 
 /**
  * @file Users Subdomain Interfaces - UserRequest

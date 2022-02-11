@@ -1,7 +1,7 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import type { UserRequest } from '@sneusers/subdomains/users/interfaces'
+import type { UserRequest } from '../interfaces'
 
 /**
  * @file Users Subdomain Guards - EmailVerificationGuard

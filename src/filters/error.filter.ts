@@ -1,3 +1,4 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import {
   ArgumentsHost,
   Catch,
@@ -7,7 +8,6 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { APP_FILTER } from '@nestjs/core'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { EnvironmentVariables } from '@sneusers/models'
 import type { Response } from 'express'
@@ -19,7 +19,7 @@ import { isHttpError } from 'http-errors'
  */
 
 @Catch()
-export default class ErrorFilter implements ExceptionFilter {
+class ErrorFilter implements ExceptionFilter {
   constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
 
   /**
@@ -69,3 +69,5 @@ export default class ErrorFilter implements ExceptionFilter {
     return res.status(payload.code).json(payload).end()
   }
 }
+
+export default ErrorFilter

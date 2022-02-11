@@ -1,4 +1,4 @@
-import type { User } from '@sneusers/subdomains/users/entities'
+import type { User } from '../entities'
 
 /**
  * @file Type Definitions - UserUid

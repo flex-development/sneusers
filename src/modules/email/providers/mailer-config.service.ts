@@ -17,21 +17,21 @@ class MailerConfigService implements MailerOptionsFactory {
   constructor(protected readonly config: ConfigService<EnvVars, true>) {}
 
   /**
-   * Returns the [`MailerModule`][1] configuration options.
+   * Get [`MailerModule`][1] configuration options.
    *
    * [1]: https://nest-modules.github.io/mailer/docs/mailer#async-configuration
    *
    * @static
-   * @return {MailerAsyncOptions} Module config options
+   * @return {MailerAsyncOptions} Module options
    */
   static get moduleOptions(): MailerAsyncOptions {
     return { useClass: MailerConfigService }
   }
 
   /**
-   * Returns the module [mailer][1] configuration options.
+   * Get [mailer][1] configuration options.
    *
-   * [1]: https://nest-modules.github.io/mailer/docs/mailer#configuration
+   * [1]: https://nest-modules.github.io/mailer/docs/mailer#service
    *
    * @return {MailerOptions} Mailer configuration options
    */

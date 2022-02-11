@@ -1,5 +1,5 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { HttpStatus } from '@nestjs/common'
-import { ExceptionCode } from '@sneusers/enums'
 
 /**
  * @file Custom Matchers - jsonResponse

@@ -1,5 +1,5 @@
 import { CustomDecorator, SetMetadata } from '@nestjs/common'
-import { AuthMetadataKey } from '@sneusers/subdomains/auth/enums'
+import { AuthMetadataKey } from '../enums'
 
 /**
  * @file Auth Subdomain Decorators - JwtOptional

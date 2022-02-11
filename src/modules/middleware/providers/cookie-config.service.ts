@@ -1,22 +1,30 @@
-import { Injectable } from '@nestjs/common'
+import { ClassProvider, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { CookieType } from '@sneusers/enums'
-import CookieOptionsFactory from '@sneusers/factories/cookie-options.factory'
-import { CookieParserOptions } from '@sneusers/interfaces'
 import type { EnvironmentVariables } from '@sneusers/models'
-import { CookieOptions as CsurfCookieOptions } from 'csurf'
-import { CookieOptions } from 'express'
+import { CookieOptions, CookieParseOptions } from '../abstracts'
+import { CookieOptionsFactory } from '../factories'
 
 /**
- * @file Providers - CookieConfigService
- * @module sneusers/providers/CookieConfigService
+ * @file MiddlewareModule Providers - CookieConfigService
+ * @module sneusers/modules/middleware/providers/CookieConfigService
  */
 
 @Injectable()
-export default class CookieConfigService implements CookieOptionsFactory {
+class CookieConfigService implements CookieOptionsFactory {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>
   ) {}
+
+  /**
+   * Creates a {@link CookieOptionsFactory} provider.
+   *
+   * @static
+   * @return {ClassProvider<CookieOptionsFactory>} Class provider
+   */
+  static createProvider(): ClassProvider<CookieOptionsFactory> {
+    return { provide: CookieOptionsFactory, useClass: CookieConfigService }
+  }
 
   /**
    * Get cookie options.
@@ -24,9 +32,9 @@ export default class CookieConfigService implements CookieOptionsFactory {
    * @see https://github.com/expressjs/csurf#cookie
    *
    * @param {CookieType} [type] - Cookie type
-   * @return {CookieOptions | CsurfCookieOptions} Cookie options
+   * @return {CookieOptions} Cookie options
    */
-  createOptions(type?: CookieType): CookieOptions | CsurfCookieOptions {
+  createOptions(type?: CookieType): CookieOptions {
     const options: CookieOptions = {
       domain: this.config.get<string>('HOSTNAME'),
       httpOnly: true,
@@ -61,9 +69,9 @@ export default class CookieConfigService implements CookieOptionsFactory {
    *
    * [1]: https://github.com/expressjs/cookie-parser
    *
-   * @return {CookieParserOptions} `cookie-parser` options
+   * @return {CookieParseOptions} `cookie-parser` options
    */
-  createParserOptions(): CookieParserOptions {
+  createParserOptions(): CookieParseOptions {
     return {
       secret: this.config.get<string>('COOKIE_SECRET')
     }
@@ -82,3 +90,5 @@ export default class CookieConfigService implements CookieOptionsFactory {
     return ['*']
   }
 }
+
+export default CookieConfigService

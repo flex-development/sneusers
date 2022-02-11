@@ -8,7 +8,7 @@ import volleyball from 'volleyball'
  */
 
 @Injectable()
-export default class HttpLoggerMiddleware implements NestMiddleware {
+class HttpLoggerMiddleware implements NestMiddleware {
   /**
    * @static
    * @readonly
@@ -33,3 +33,5 @@ export default class HttpLoggerMiddleware implements NestMiddleware {
     return volleyball.custom({ debug })(req, res, next)
   }
 }
+
+export default HttpLoggerMiddleware

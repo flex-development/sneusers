@@ -1,22 +1,31 @@
-import { Injectable } from '@nestjs/common'
+import { ClassProvider, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { CookieType } from '@sneusers/enums'
-import CookieOptionsFactory from '@sneusers/factories/cookie-options.factory'
-import CsurfOptionsFactory from '@sneusers/factories/csurf-options.factory'
-import { CsurfOptions } from '@sneusers/interfaces'
 import type { EnvironmentVariables } from '@sneusers/models'
+import { CsurfOptions } from '../abstracts'
+import { CookieOptionsFactory, CsurfOptionsFactory } from '../factories'
 
 /**
- * @file Providers - CsurfConfigService
- * @module sneusers/providers/CsurfConfigService
+ * @file MiddlewareModule Providers - CsurfConfigService
+ * @module sneusers/modules/middleware/providers/CsurfConfigService
  */
 
 @Injectable()
-export default class CsurfConfigService implements CsurfOptionsFactory {
+class CsurfConfigService implements CsurfOptionsFactory {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>,
     protected readonly cookie: CookieOptionsFactory
   ) {}
+
+  /**
+   * Creates a {@link CsurfOptionsFactory} provider.
+   *
+   * @static
+   * @return {ClassProvider<CsurfOptionsFactory>} Class provider
+   */
+  static createProvider(): ClassProvider<CsurfOptionsFactory> {
+    return { provide: CsurfOptionsFactory, useClass: CsurfConfigService }
+  }
 
   /**
    * Get [`csurf`][1] options.
@@ -45,3 +54,5 @@ export default class CsurfConfigService implements CsurfOptionsFactory {
     return ['/auth*', '/verify*']
   }
 }
+
+export default CsurfConfigService

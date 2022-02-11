@@ -1,5 +1,5 @@
-import type { TokenType } from '@sneusers/subdomains/auth/enums'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import type { TokenType } from '../enums'
 
 /**
  * @file Auth Subdomain Interfaces - ITokenRaw

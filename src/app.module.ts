@@ -4,16 +4,17 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TerminusModule } from '@nestjs/terminus'
 import { ThrottlerModule } from '@nestjs/throttler'
-import { HealthController } from '@sneusers/controllers'
+import { HealthController } from './controllers'
 import {
   ErrorFilter,
   ExceptionClassFilter,
   HttpExceptionFilter
-} from '@sneusers/filters'
-import { ThrottlerProxyGuard } from '@sneusers/guards'
-import CryptoModule from '@sneusers/modules/crypto/crypto.module'
-import MiddlewareModule from '@sneusers/modules/middleware/middleware.module'
-import RedisModule from '@sneusers/modules/redis/redis.module'
+} from './filters'
+import { ThrottlerProxyGuard } from './guards'
+import CryptoModule from './modules/crypto/crypto.module'
+import EmailModule from './modules/email/email.module'
+import MiddlewareModule from './modules/middleware/middleware.module'
+import RedisModule from './modules/redis/redis.module'
 import {
   AppService,
   CacheConfigService,
@@ -21,9 +22,9 @@ import {
   RedisConfigService,
   SequelizeConfigService,
   ThrottlerConfigService
-} from '@sneusers/providers'
-import AuthModule from '@sneusers/subdomains/auth/auth.module'
-import UsersModule from '@sneusers/subdomains/users/users.module'
+} from './providers'
+import AuthModule from './subdomains/auth/auth.module'
+import UsersModule from './subdomains/users/users.module'
 
 /**
  * @file AppModule
@@ -37,6 +38,7 @@ import UsersModule from '@sneusers/subdomains/users/users.module'
     CacheModule.registerAsync(CacheConfigService.moduleOptions),
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
+    EmailModule,
     HttpModule.registerAsync(HttpConfigService.moduleOptions),
     MiddlewareModule,
     RedisModule.registerAsync(RedisConfigService.moduleOptions),
@@ -49,7 +51,6 @@ import UsersModule from '@sneusers/subdomains/users/users.module'
     ErrorFilter.createProvider(),
     ExceptionClassFilter.createProvider(),
     HttpExceptionFilter.createProvider(),
-    RedisConfigService,
     ThrottlerProxyGuard.createProvider()
   ]
 })

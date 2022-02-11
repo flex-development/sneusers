@@ -1,8 +1,8 @@
 import type { NullishString } from '@flex-development/tutils'
 import { ApiProperty } from '@nestjs/swagger'
-import { VerifType } from '@sneusers/subdomains/auth/enums'
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { VerifType } from '../enums'
 
 /**
  * @file Auth Subdomain DTOs - RequestVerifDTO

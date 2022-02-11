@@ -1,5 +1,5 @@
 import NodeEnv from '@flex-development/tutils/enums/node-env.enum'
-import tsTransformPaths from '@zerollup/ts-transform-paths'
+import tsTransformPaths from '@kadeluxe/ts-transform-paths'
 import path from 'path'
 import resolve from 'resolve-from'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
@@ -19,8 +19,8 @@ const EXTENSIONS: string[] = ['.cjs', '.js', '.json', '.ts']
 /** @property {NodeEnv} NODE_ENV - Node environment */
 const NODE_ENV: NodeEnv = (process.env.NODE_ENV || NodeEnv.DEV) as NodeEnv
 
-/** @property {string} TS_NODE_PROJECT - Path to tsconfig file */
-const TS_NODE_PROJECT: string = `${process.cwd()}/tsconfig.app.json`
+/** @property {string} TSCONFIG - Project tsconfig file */
+const TSCONFIG: string = 'tsconfig.app.json'
 
 /**
  * Alters the native NestJS webpack configuration.
@@ -47,28 +47,26 @@ const config = (config: Configuration): Configuration => {
             path.join(config.context, '__doubles__'),
             path.join(config.context, '__tests__'),
             path.join(config.context, 'src'),
-            path.join(config.context, 'tools', 'helpers', 'secrets.ts'),
             path.join(config.context, 'webpack.config.ts')
           ],
-          resolve: { extensions: EXTENSIONS, fullySpecified: false },
           use: {
             loader: resolve(config.context, 'ts-loader'),
             options: {
               colors: true,
-              configFile: TS_NODE_PROJECT,
+              configFile: `${config.context}/${TSCONFIG}`,
               getCustomTransformers(program: Program): CustomTransformers {
                 const transformer = tsTransformPaths(program)
 
-                const afterDeclarations = [transformer.afterDeclarations]
-                const before = [transformer.before]
-
                 return {
-                  afterDeclarations: afterDeclarations.filter(Boolean),
-                  before: before.filter(Boolean)
+                  afterDeclarations: [transformer.afterDeclarations],
+                  before: [transformer.before]
                 } as CustomTransformers
               },
-              onlyCompileBundledFiles: true,
-              transpileOnly: true,
+              ignoreDiagnostics: [2589],
+              logInfoToStdOut: true,
+              logLevel: 'error',
+              onlyCompileBundledFiles: false,
+              transpileOnly: false,
               useCaseSensitiveFileNames: true
             }
           }
@@ -87,20 +85,23 @@ const config = (config: Configuration): Configuration => {
       sideEffects: 'flag',
       usedExports: true
     },
-    output: { clean: true },
+    output: {
+      clean: true
+    },
     performance: {
       hints: 'warning'
     },
     resolve: {
       extensions: EXTENSIONS,
+      fullySpecified: false,
       plugins: [
         new TsconfigPathsPlugin({
           baseUrl: config.context,
-          configFile: TS_NODE_PROJECT,
+          configFile: TSCONFIG,
           context: config.context,
           extensions: EXTENSIONS,
-          logInfoToStdOut: false,
-          logLevel: 'WARN',
+          logInfoToStdOut: true,
+          logLevel: 'ERROR',
           silent: false
         })
       ]

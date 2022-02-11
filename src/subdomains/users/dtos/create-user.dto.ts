@@ -1,7 +1,6 @@
 import type { NumberString } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Is } from '@sneusers/decorators'
-import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import {
   IsEmail,
   IsNotEmpty,
@@ -10,6 +9,7 @@ import {
   MaxLength,
   MinLength
 } from 'class-validator'
+import type { IUserRaw } from '../interfaces'
 
 /**
  * @file Users Subdomain DTOs - CreateUserDTO

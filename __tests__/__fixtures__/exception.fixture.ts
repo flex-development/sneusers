@@ -1,5 +1,5 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionCode } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { EmptyResultError } from 'sequelize'
 

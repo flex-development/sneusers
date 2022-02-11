@@ -13,7 +13,7 @@ import type { EnvironmentVariables } from '@sneusers/models'
  */
 
 @Injectable()
-export default class JwtConfigService implements JwtOptionsFactory {
+class JwtConfigService implements JwtOptionsFactory {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>
   ) {}
@@ -51,3 +51,5 @@ export default class JwtConfigService implements JwtOptionsFactory {
     }
   }
 }
+
+export default JwtConfigService

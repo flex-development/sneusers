@@ -123,5 +123,6 @@
       "format": "svg",
       "icon": "typings"
     }
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

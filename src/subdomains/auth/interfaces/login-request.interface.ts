@@ -1,7 +1,7 @@
-import { RequestLoginDTO } from '@sneusers/subdomains/auth/dtos'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UserRequest } from '@sneusers/subdomains/users/interfaces'
+import { RequestLoginDTO } from '../dtos'
 
 /**
  * @file Auth Subdomain Interfaces - LoginRequest

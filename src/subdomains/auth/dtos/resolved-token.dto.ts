@@ -7,7 +7,7 @@ import type { User } from '@sneusers/subdomains/users/entities'
  */
 
 /**
- * Data extracted from a long-lived token.
+ * Data extracted from a resolved jwt.
  */
 class ResolvedToken {
   /**

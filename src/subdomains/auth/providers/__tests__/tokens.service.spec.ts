@@ -1,14 +1,10 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  DatabaseTable,
-  ExceptionCode,
-  SequelizeErrorName
-} from '@sneusers/enums'
+import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import EmailModule from '@sneusers/modules/email/email.module'
 import { CacheConfigService } from '@sneusers/providers'
 import type {
   CreateTokenDTO,
@@ -46,7 +42,6 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
     const ntapp = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
-        EmailModule,
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([Token, User])
       ],

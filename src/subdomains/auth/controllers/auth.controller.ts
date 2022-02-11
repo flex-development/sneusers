@@ -20,27 +20,23 @@ import {
 } from '@sneusers/decorators'
 import type { EntityDTO } from '@sneusers/dtos'
 import { CookieType } from '@sneusers/enums'
-import { CookieOptionsFactory } from '@sneusers/factories'
 import { EntitySerializer } from '@sneusers/interceptors'
-import {
-  LoginDTO,
-  RegisterUserDTO,
-  WhoamiDTO
-} from '@sneusers/subdomains/auth/dtos'
-import {
-  JwtAuthGuard,
-  JwtRefreshGuard,
-  LocalAuthGuard,
-  WhoamiGuard
-} from '@sneusers/subdomains/auth/guards'
-import type { ILoginDTO } from '@sneusers/subdomains/auth/interfaces'
-import { AuthService } from '@sneusers/subdomains/auth/providers'
+import { CookieOptionsFactory } from '@sneusers/modules/middleware/factories'
 import { CurrentUser } from '@sneusers/subdomains/users/decorators'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
 import type { User } from '@sneusers/subdomains/users/entities'
 import { UserInterceptor } from '@sneusers/subdomains/users/interceptors'
 import type { IUser, UserRequest } from '@sneusers/subdomains/users/interfaces'
 import { Response } from 'express'
+import { LoginDTO, RegisterUserDTO, WhoamiDTO } from '../dtos'
+import {
+  JwtAuthGuard,
+  JwtRefreshGuard,
+  LocalAuthGuard,
+  WhoamiGuard
+} from '../guards'
+import type { ILoginDTO } from '../interfaces'
+import { AuthService } from '../providers'
 import OPENAPI from './openapi/auth.openapi'
 
 /**

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import EmailModule from '@sneusers/modules/email/email.module'
 import { UsersController } from './controllers'
 import { User } from './entities'
 import { UsersService } from './providers'
@@ -13,7 +12,7 @@ import { UsersService } from './providers'
 @Module({
   controllers: [UsersController],
   exports: [SequelizeModule, UsersService],
-  imports: [EmailModule, SequelizeModule.forFeature([User])],
+  imports: [SequelizeModule.forFeature([User])],
   providers: [UsersService]
 })
 export default class UsersModule {}

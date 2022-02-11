@@ -1,6 +1,6 @@
-import { TokenType } from '@sneusers/subdomains/auth/enums'
-import type { ITokenRaw } from '@sneusers/subdomains/auth/interfaces'
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import { TokenType } from '../enums'
+import type { ITokenRaw } from '../interfaces'
 
 /**
  * @file Auth Subdomain DTOs - JwtPayloadAccess

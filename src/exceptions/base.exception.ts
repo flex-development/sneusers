@@ -1,16 +1,16 @@
 import {
+  ExceptionClassName,
+  ExceptionCode,
+  ExceptionId
+} from '@flex-development/exceptions/enums'
+import {
   isExceptionCode,
   isExceptionJSON
 } from '@flex-development/exceptions/guards'
 import { NullishString, ObjectPlain } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ExceptionDataDTO } from '@sneusers/dtos'
-import {
-  ExceptionClassName,
-  ExceptionCode,
-  ExceptionId,
-  SequelizeErrorCode
-} from '@sneusers/enums'
+import { SequelizeErrorCode } from '@sneusers/enums'
 import { ExceptionJSON } from '@sneusers/interfaces'
 import { ExceptionData, ExceptionErrors, SequelizeError } from '@sneusers/types'
 import omit from 'lodash.omit'
@@ -26,7 +26,7 @@ import type { ValidationErrorItem } from 'sequelize'
  *
  * @template T - Aggregated error type
  */
-export default class Exception<T = any> {
+class Exception<T = any> {
   /**
    * @static
    * @readonly
@@ -224,3 +224,5 @@ export default class Exception<T = any> {
     return this.code
   }
 }
+
+export default Exception

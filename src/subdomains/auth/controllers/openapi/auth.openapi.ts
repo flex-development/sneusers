@@ -1,13 +1,13 @@
 import { HttpStatus } from '@nestjs/common'
 import { ApiEndpoint } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { UserDTO } from '@sneusers/subdomains/users/dtos'
 import {
   LoginDTO,
   RegisterUserDTO,
   RequestLoginDTO,
   WhoamiDTO
-} from '@sneusers/subdomains/auth/dtos'
-import { UserDTO } from '@sneusers/subdomains/users/dtos'
+} from '../../dtos'
 
 /**
  * @file Controllers - AuthController OpenAPI Documentation

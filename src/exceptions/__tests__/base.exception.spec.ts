@@ -1,5 +1,9 @@
+import {
+  ExceptionClassName,
+  ExceptionCode,
+  ExceptionId
+} from '@flex-development/exceptions/enums'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { ExceptionClassName, ExceptionCode, ExceptionId } from '@sneusers/enums'
 import ERROR from '@tests/fixtures/error.fixture'
 import EJSON from '@tests/fixtures/exception-json.fixture'
 import type { Testcase } from '@tests/utils/types'

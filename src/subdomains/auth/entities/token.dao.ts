@@ -1,10 +1,8 @@
+import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { OrNull } from '@flex-development/tutils'
 import { BaseEntity } from '@sneusers/entities'
-import { DatabaseTable, ExceptionCode } from '@sneusers/enums'
+import { DatabaseTable } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
-import { CreateTokenDTO, JwtPayload } from '@sneusers/subdomains/auth/dtos'
-import { TokenType } from '@sneusers/subdomains/auth/enums'
-import { IToken, ITokenRaw } from '@sneusers/subdomains/auth/interfaces'
 import { User } from '@sneusers/subdomains/users/entities'
 import { SearchOptions } from '@sneusers/types'
 import {
@@ -18,6 +16,9 @@ import {
 } from 'sequelize-typescript'
 import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
+import { CreateTokenDTO, JwtPayload } from '../dtos'
+import { TokenType } from '../enums'
+import { IToken, ITokenRaw } from '../interfaces'
 
 /**
  * @file Auth Subdomain Entities - Token

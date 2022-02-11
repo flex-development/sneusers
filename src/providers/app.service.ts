@@ -10,7 +10,7 @@ import pkg from 'read-pkg'
  */
 
 @Injectable()
-export default class AppService {
+class AppService {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>
   ) {}
@@ -64,3 +64,5 @@ export default class AppService {
     return { ...data, app: name[1] as string, org: name[0] as string }
   }
 }
+
+export default AppService
