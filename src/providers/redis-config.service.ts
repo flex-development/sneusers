@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ENV } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
+import { RedisModuleOptionsAsync } from '@sneusers/modules/redis/abstracts'
 import { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
-import {
-  RedisClientOpts,
-  RedisModuleOptionsAsync
-} from '@sneusers/modules/redis/interfaces'
+import { RedisClientOptions } from 'redis'
 
 /**
  * @file Providers - RedisConfigService
@@ -34,15 +32,20 @@ export default class RedisConfigService implements RedisOptionsFactory {
   }
 
   /**
-   * Get Redis client configuration options.
+   * Get [Redis client][1] configuration options.
    *
-   * @return {RedisClientOpts} Client configuration options
+   * [1]: https://github.com/redis/node-redis
+   *
+   * @return {RedisClientOptions} Client configuration options
    */
-  createRedisOptions(): RedisClientOpts {
+  createRedisOptions(): RedisClientOptions {
     return {
-      host: this.config.get<string>('REDIS_HOST'),
       password: this.config.get<string>('REDIS_PASSWORD'),
-      port: this.config.get<number>('REDIS_PORT')
+      socket: {
+        host: this.config.get<string>('REDIS_HOST'),
+        port: this.config.get<number>('REDIS_PORT')
+      },
+      username: this.config.get<string>('REDIS_USER')
     }
   }
 }

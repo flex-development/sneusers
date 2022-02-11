@@ -75,6 +75,7 @@ describe('integration:AppModule', () => {
         { expected: 'string', variable: 'REDIS_HOST' },
         { expected: 'string', variable: 'REDIS_PASSWORD' },
         { expected: 'number', variable: 'REDIS_PORT' },
+        { expected: 'string', variable: 'REDIS_USER' },
         { expected: 'string', variable: 'SERVER_DESCRIP_DEV' },
         { expected: 'string', variable: 'SERVER_DESCRIP_PROD' },
         { expected: 'string', variable: 'SERVER_URL' },

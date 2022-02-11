@@ -55,6 +55,7 @@ const validate = ({
   REDIS_HOST = 'redis',
   REDIS_PASSWORD,
   REDIS_PORT = 6379,
+  REDIS_USER = 'ubuntu',
   SERVER_DESCRIP_DEV = 'Development server (local only)',
   SERVER_DESCRIP_PROD = 'Production server',
   SERVER_DESCRIP_STG = 'Staging server',
@@ -133,6 +134,7 @@ const validate = ({
   env.REDIS_HOST = REDIS_HOST
   env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(`${REDIS_PORT}`)
+  env.REDIS_USER = REDIS_USER
   env.SERVER_DESCRIP_DEV = SERVER_DESCRIP_DEV
   env.SERVER_DESCRIP_PROD = SERVER_DESCRIP_PROD
   env.SERVER_DESCRIP_STG = SERVER_DESCRIP_STG
@@ -199,6 +201,7 @@ const configuration = (): EnvironmentVariables => {
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_PORT: process.env.REDIS_PORT,
+    REDIS_USER: process.env.REDIS_USER,
     SERVER_DESCRIP_DEV: process.env.SERVER_DESCRIP_DEV,
     SERVER_DESCRIP_PROD: process.env.SERVER_DESCRIP_PROD,
     SERVER_DESCRIP_STG: process.env.SERVER_DESCRIP_STG,

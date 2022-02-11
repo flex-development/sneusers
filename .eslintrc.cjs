@@ -78,6 +78,7 @@ module.exports = {
           'timestamps',
           'ttl',
           'tutils',
+          'ubuntu',
           'uid',
           'unix',
           'upsert',

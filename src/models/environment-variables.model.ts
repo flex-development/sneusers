@@ -370,7 +370,7 @@ class EnvironmentVariables {
    *
    * [1]: https://redis.io
    *
-   * @see https://github.com/redis/node-redis/tree/v3.0.2
+   * @see https://github.com/redis/node-redis
    *
    * @default 'redis'
    */
@@ -379,7 +379,7 @@ class EnvironmentVariables {
   REDIS_HOST: string
 
   /**
-   * Redis password.
+   * Redis server password.
    *
    * Defaults to `'redis'` in `development` and `test` environments.
    */
@@ -388,11 +388,21 @@ class EnvironmentVariables {
   REDIS_PASSWORD: string
 
   /**
+   * Redis server username.
+   *
+   * @default 'ubuntu'
+   */
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  REDIS_USER: string
+
+  /**
    * Port [Redis][1] server is running on.
    *
    * [1]: https://redis.io
    *
-   * @see https://github.com/redis/node-redis/tree/v3.0.2
+   * @see https://github.com/redis/node-redis
    *
    * @default 6379
    */

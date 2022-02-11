@@ -1,5 +1,5 @@
 import type { OrPromise } from '@flex-development/tutils'
-import type { RedisClientOpts } from '@sneusers/modules/redis/interfaces'
+import type { RedisClientOptions } from 'redis'
 
 /**
  * @file Factories - RedisOptionsFactory
@@ -7,7 +7,7 @@ import type { RedisClientOpts } from '@sneusers/modules/redis/interfaces'
  */
 
 abstract class RedisOptionsFactory {
-  abstract createRedisOptions(): OrPromise<RedisClientOpts>
+  abstract createRedisOptions(): OrPromise<RedisClientOptions>
 }
 
 export default RedisOptionsFactory

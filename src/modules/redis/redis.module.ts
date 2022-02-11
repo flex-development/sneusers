@@ -6,11 +6,13 @@ import {
   Provider,
   ValueProvider
 } from '@nestjs/common'
-import { REDIS_MODULE_OPTIONS } from '@sneusers/modules/redis/redis.constants'
 import { createClient } from 'redis'
-import { RedisClient } from './abstracts'
+import {
+  RedisClient,
+  RedisModuleOptions,
+  RedisModuleOptionsAsync
+} from './abstracts'
 import { RedisOptionsFactory } from './factories'
-import { RedisModuleOptions, RedisModuleOptionsAsync } from './interfaces'
 
 /**
  * @file RedisModule
@@ -41,7 +43,7 @@ export default class RedisModule {
     options: RedisModuleOptionsAsync
   ): FactoryProvider<RedisClient> {
     return {
-      inject: [REDIS_MODULE_OPTIONS],
+      inject: [RedisModuleOptions],
       provide: RedisClient,
       useFactory(opts: RedisModuleOptions): RedisClient {
         return options.skipClient ? ({} as RedisClient) : createClient(opts)
@@ -60,7 +62,7 @@ export default class RedisModule {
   private static createOptions(
     options: RedisModuleOptions
   ): ValueProvider<RedisModuleOptions> {
-    return { provide: REDIS_MODULE_OPTIONS, useValue: options }
+    return { provide: RedisModuleOptions, useValue: options }
   }
 
   /**
@@ -77,20 +79,20 @@ export default class RedisModule {
     if (options.useFactory) {
       return {
         inject: options.inject || [],
-        provide: REDIS_MODULE_OPTIONS,
+        provide: RedisModuleOptions,
         useFactory: options.useFactory
       }
     }
 
     return {
       inject: [(options.useClass || options.useExisting)!],
-      provide: REDIS_MODULE_OPTIONS,
+      provide: RedisModuleOptions,
       useFactory: async (f: RedisOptionsFactory) => f.createRedisOptions()
     }
   }
 
   /**
-   * Configure the module statically.
+   * Configures the module statically.
    *
    * @static
    * @param {RedisModuleOptions} options - Module options
@@ -105,7 +107,7 @@ export default class RedisModule {
   }
 
   /**
-   * Configure the module dynamically.
+   * Configures the module dynamically.
    *
    * @static
    * @param {RedisModuleOptionsAsync} options - Async module options
@@ -114,10 +116,22 @@ export default class RedisModule {
   static registerAsync(options: RedisModuleOptionsAsync): DynamicModule {
     if (!options.extraProviders) options.extraProviders = []
 
-    if (options.useClass) options.extraProviders.push(options.useClass)
+    if (options.useClass) {
+      options.extraProviders.push(options.useClass, {
+        provide: RedisOptionsFactory,
+        useClass: options.useClass
+      })
+    }
+
+    if (options.useExisting) {
+      options.extraProviders.push({
+        provide: RedisOptionsFactory,
+        useExisting: options.useExisting
+      })
+    }
 
     return {
-      exports: [RedisClient],
+      exports: [RedisClient, RedisModuleOptions, RedisOptionsFactory],
       global: options.isGlobal,
       imports: options.imports,
       module: RedisModule,

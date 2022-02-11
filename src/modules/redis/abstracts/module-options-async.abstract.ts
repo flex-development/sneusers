@@ -1,11 +1,12 @@
 import type { OrPromise } from '@flex-development/tutils'
-import type { ModuleMetadata, Provider, Type } from '@nestjs/common'
+import type { Provider, Type } from '@nestjs/common'
+import { ModuleMetadata } from '@nestjs/common'
 import type { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
-import type RedisModuleOptions from './module-options.interface'
+import type RedisModuleOptions from './module-options.abstract'
 
 /**
- * @file RedisModule Interfaces - RedisModuleOptionsAsync
- * @module sneusers/modules/redis/interfaces/RedisModuleOptionsAsync
+ * @file RedisModule Abstracts - RedisModuleOptionsAsync
+ * @module sneusers/modules/redis/abstracts/RedisModuleOptionsAsync
  */
 
 /**
