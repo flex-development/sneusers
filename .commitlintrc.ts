@@ -71,6 +71,7 @@ const config: UserConfig = {
         'middleware',
         'models',
         'modules',
+        'nestjs',
         'nginx',
         'pipes',
         'providers',
@@ -88,6 +89,7 @@ const config: UserConfig = {
         'utils',
         'vm',
         'vscode',
+        'webpack',
         'workflows',
         'yarn'
       ]
