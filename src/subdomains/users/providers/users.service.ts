@@ -12,8 +12,8 @@ import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
 import { EmailService } from '@sneusers/modules/email/providers'
+import { RedisCache } from '@sneusers/modules/redis/abstracts'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
-import { Cache } from 'cache-manager'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
@@ -43,7 +43,7 @@ class UsersService {
   constructor(
     @InjectModel(User) protected readonly repo: typeof User,
     protected readonly sequelize: Sequelize,
-    @Inject(CACHE_MANAGER) protected readonly cache: Cache,
+    @Inject(CACHE_MANAGER) protected readonly cache: RedisCache,
     protected readonly email: EmailService
   ) {}
 
@@ -54,10 +54,8 @@ class UsersService {
    * @return {Promise<boolean>} Boolean indicating if cache was cleared
    */
   async clearCache(): Promise<boolean> {
-    if (!this.cache.store.keys) return false
-
-    for (const key of await this.cache.store.keys()) {
-      if (key.startsWith(UsersService.CACHE_KEY)) await this.cache.del(key)
+    for (const key of await this.cache.store.keys('*')) {
+      key.startsWith(UsersService.CACHE_KEY) && (await this.cache.del(key))
     }
 
     return true

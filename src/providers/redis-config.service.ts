@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ENV } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
-import { RedisModuleOptionsAsync } from '@sneusers/modules/redis/abstracts'
+import {
+  RedisClientOptions,
+  RedisModuleOptionsAsync
+} from '@sneusers/modules/redis/abstracts'
 import { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
-import { RedisClientOptions } from 'redis'
 
 /**
  * @file Providers - RedisConfigService
@@ -24,11 +25,7 @@ class RedisConfigService implements RedisOptionsFactory {
    * @return {RedisModuleOptionsAsync} Module options
    */
   static get moduleOptions(): RedisModuleOptionsAsync {
-    return {
-      isGlobal: true,
-      skipClient: ENV.TEST,
-      useClass: RedisConfigService
-    }
+    return { isGlobal: true, useClass: RedisConfigService }
   }
 
   /**
@@ -45,7 +42,7 @@ class RedisConfigService implements RedisOptionsFactory {
         host: this.config.get<string>('REDIS_HOST'),
         port: this.config.get<number>('REDIS_PORT')
       },
-      username: this.config.get<string>('REDIS_USER')
+      username: this.config.get<string>('REDIS_USERNAME')
     }
   }
 }

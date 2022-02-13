@@ -6,13 +6,13 @@ import {
   Provider,
   ValueProvider
 } from '@nestjs/common'
+import type { RedisScripts } from 'redis'
 import { createClient } from 'redis'
-import {
-  RedisClient,
-  RedisModuleOptions,
-  RedisModuleOptionsAsync
-} from './abstracts'
+import { RedisModuleOptions, RedisModuleOptionsAsync } from './abstracts'
 import { RedisOptionsFactory } from './factories'
+import { RedisCacheStore, RedisStore } from './providers'
+import { REDIS_CLIENT } from './redis.constants'
+import { RedisClient } from './types'
 
 /**
  * @file RedisModule
@@ -24,29 +24,40 @@ export default class RedisModule {
   /**
    * Creates a {@link RedisClient} provider.
    *
-   * @param {RedisModuleOptions} options - `RedisModule` options
-   * @return {ValueProvider<RedisClient>} - Factory provider
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
+   * @private
+   * @static
+   * @param {RedisModuleOptions<S>} options - Module options
+   * @return {ValueProvider<RedisClient<S>>} - Value provider
    */
-  private static createClient(
-    options: RedisModuleOptions
-  ): ValueProvider<RedisClient> {
-    return { provide: RedisClient, useValue: createClient(options) }
+  private static createClient<S extends RedisScripts = RedisScripts>(
+    options: RedisModuleOptions<S>
+  ): ValueProvider<RedisClient<S>> {
+    return { provide: REDIS_CLIENT, useValue: createClient<S>(options) }
   }
 
   /**
    * Creates an asynchronous {@link RedisClient} provider.
    *
-   * @param {RedisModuleOptionsAsync} options - Async module options
-   * @return {FactoryProvider<RedisClient>} - Factory provider
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
+   * @private
+   * @static
+   * @return {FactoryProvider<RedisClient<S>>} - Factory provider
    */
-  private static createClientAsync(
-    options: RedisModuleOptionsAsync
-  ): FactoryProvider<RedisClient> {
+  private static createClientAsync<
+    S extends RedisScripts = RedisScripts
+  >(): FactoryProvider<RedisClient<S>> {
     return {
       inject: [RedisModuleOptions],
-      provide: RedisClient,
-      useFactory(opts: RedisModuleOptions): RedisClient {
-        return options.skipClient ? ({} as RedisClient) : createClient(opts)
+      provide: REDIS_CLIENT,
+      useFactory(options: RedisModuleOptions<S>): RedisClient<S> {
+        return createClient<S>(options)
       }
     }
   }
@@ -54,28 +65,36 @@ export default class RedisModule {
   /**
    * Creates a {@link RedisModuleOptions} provider.
    *
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
    * @private
    * @static
-   * @param {RedisModuleOptions} options - Module options
-   * @return {ValueProvider<RedisModuleOptions>} Value provider
+   * @param {RedisModuleOptions<S>} options - Module options
+   * @return {ValueProvider<RedisModuleOptions<S>>} Value provider
    */
-  private static createOptions(
-    options: RedisModuleOptions
-  ): ValueProvider<RedisModuleOptions> {
+  private static createOptions<S extends RedisScripts = RedisScripts>(
+    options: RedisModuleOptions<S>
+  ): ValueProvider<RedisModuleOptions<S>> {
     return { provide: RedisModuleOptions, useValue: options }
   }
 
   /**
    * Creates an asynchronous {@link RedisModuleOptions} provider.
    *
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
    * @private
    * @static
-   * @param {RedisModuleOptionsAsync} options - Async module options
-   * @return {Provider<OrPromise<RedisModuleOptions>>} Options provider
+   * @param {RedisModuleOptionsAsync<S>} options - Module options
+   * @return {Provider<OrPromise<RedisModuleOptions<S>>>} Options provider
    */
-  private static createOptionsAsync(
-    options: RedisModuleOptionsAsync
-  ): Provider<OrPromise<RedisModuleOptions>> {
+  private static createOptionsAsync<S extends RedisScripts = RedisScripts>(
+    options: RedisModuleOptionsAsync<S>
+  ): Provider<OrPromise<RedisModuleOptions<S>>> {
     if (options.useFactory) {
       return {
         inject: options.inject || [],
@@ -87,33 +106,50 @@ export default class RedisModule {
     return {
       inject: [(options.useClass || options.useExisting)!],
       provide: RedisModuleOptions,
-      useFactory: async (f: RedisOptionsFactory) => f.createRedisOptions()
+      useFactory: async (f: RedisOptionsFactory<S>) => f.createRedisOptions()
     }
   }
 
   /**
    * Configures the module statically.
    *
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
    * @static
-   * @param {RedisModuleOptions} options - Module options
+   * @param {RedisModuleOptions<S>} options - Module options
    * @return {DynamicModule} Configured module
    */
-  static register(options: RedisModuleOptions): DynamicModule {
+  static register<S extends RedisScripts = RedisScripts>(
+    options: RedisModuleOptions<S>
+  ): DynamicModule {
     return {
-      exports: [RedisClient],
+      exports: [REDIS_CLIENT, RedisCacheStore, RedisStore, RedisModuleOptions],
       module: RedisModule,
-      providers: [this.createClient(options), this.createOptions(options)]
+      providers: [
+        RedisCacheStore,
+        RedisStore,
+        this.createClient(options),
+        this.createOptions(options)
+      ]
     }
   }
 
   /**
    * Configures the module dynamically.
    *
+   * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+   *
+   * @template S - [Lua Scripts][1]
+   *
    * @static
-   * @param {RedisModuleOptionsAsync} options - Async module options
+   * @param {RedisModuleOptionsAsync<S>} options - Module options
    * @return {DynamicModule} Configured module
    */
-  static registerAsync(options: RedisModuleOptionsAsync): DynamicModule {
+  static registerAsync<S extends RedisScripts = RedisScripts>(
+    options: RedisModuleOptionsAsync<S>
+  ): DynamicModule {
     if (!options.extraProviders) options.extraProviders = []
 
     if (options.useClass) {
@@ -131,13 +167,21 @@ export default class RedisModule {
     }
 
     return {
-      exports: [RedisClient, RedisModuleOptions, RedisOptionsFactory],
+      exports: [
+        REDIS_CLIENT,
+        RedisCacheStore,
+        RedisStore,
+        RedisModuleOptions,
+        RedisOptionsFactory
+      ],
       global: options.isGlobal,
       imports: options.imports,
       module: RedisModule,
       providers: [
-        this.createClientAsync(options),
-        this.createOptionsAsync(options),
+        RedisCacheStore,
+        RedisStore,
+        this.createClientAsync<S>(),
+        this.createOptionsAsync<S>(options),
         ...options.extraProviders
       ]
     }

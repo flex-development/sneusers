@@ -1,4 +1,5 @@
-import type { RedisClientOptions, RedisModules, RedisScripts } from 'redis'
+import type { RedisScripts } from 'redis'
+import RedisClientOptions from './client-options.abstract'
 
 /**
  * @file RedisModule Abstracts - RedisModuleOptions
@@ -8,32 +9,15 @@ import type { RedisClientOptions, RedisModules, RedisScripts } from 'redis'
 /**
  * `RedisModule` options.
  *
- * [1]: https://github.com/redis/node-redis/blob/master/README.md#packages
- * [2]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+ * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
  *
- * @template M - [Redis Modules][1]
- * @template S - [Lua Scripts][2]
+ * @template S - [Lua Scripts][1]
  *
  * @abstract
- * @implements {RedisClientOptions<M,S>}
+ * @implements {RedisClientOptions<S>}
  */
 abstract class RedisModuleOptions<
-  M extends RedisModules = RedisModules,
   S extends RedisScripts = RedisScripts
-> implements RedisClientOptions<M, S>
-{
-  commandsQueueMaxLength?: RedisClientOptions<M, S>['commandsQueueMaxLength']
-  database?: RedisClientOptions<M, S>['database']
-  isolationPoolOptions?: RedisClientOptions<M, S>['isolationPoolOptions']
-  legacyMode?: RedisClientOptions<M, S>['legacyMode']
-  modules?: RedisClientOptions<M, S>['modules']
-  name?: RedisClientOptions<M, S>['name']
-  password?: RedisClientOptions<M, S>['password']
-  readonly?: RedisClientOptions<M, S>['readonly']
-  scripts?: RedisClientOptions<M, S>['scripts']
-  socket?: RedisClientOptions<M, S>['socket']
-  url?: RedisClientOptions<M, S>['url']
-  username?: RedisClientOptions<M, S>['username']
-}
+> extends RedisClientOptions<S> {}
 
 export default RedisModuleOptions

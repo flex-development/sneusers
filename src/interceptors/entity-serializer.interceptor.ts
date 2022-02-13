@@ -38,7 +38,7 @@ class EntitySerializer<
    *
    * @param {ExecutionContext} context - Details about current request pipeline
    * @param {CallHandler<T>} next - Object providing access to response stream
-   * @return {Observable<R>} {@link Observable} containing {@link Payload}
+   * @return {Observable<R>} `Observable` containing response payload
    */
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<R> {
     return next.handle().pipe(map(this.serialize))

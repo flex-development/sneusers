@@ -734,6 +734,12 @@ __metadata:
     "@nestjs/terminus": 8.0.4
     "@nestjs/testing": 8.2.6
     "@nestjs/throttler": 2.0.0
+    "@node-redis/bloom": 1.0.1
+    "@node-redis/client": 1.0.3
+    "@node-redis/graph": 1.0.0
+    "@node-redis/json": 1.0.2
+    "@node-redis/search": 1.0.2
+    "@node-redis/time-series": 1.0.1
     "@octokit/types": 6.34.0
     "@sindresorhus/is": 4.4.0
     "@sneusers/config": "link:src/config"
@@ -756,7 +762,6 @@ __metadata:
     "@stdlib/utils-noop": 0.0.8
     "@tests/utils": "link:__tests__/utils"
     "@types/cache-manager": 3.4.2
-    "@types/cache-manager-redis-store": 2.0.1
     "@types/chai": 4.3.0
     "@types/cookie": 0.4.1
     "@types/cookie-parser": 1.4.2
@@ -796,7 +801,6 @@ __metadata:
     axios: 0.25.0
     babel-plugin-istanbul: 6.1.1
     cache-manager: 3.6.0
-    cache-manager-redis-store: 2.0.0
     chai: 4.3.4
     chai-http: 4.3.0
     chalk: 4.1.2
@@ -1821,17 +1825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cache-manager-redis-store@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@types/cache-manager-redis-store@npm:2.0.1"
-  dependencies:
-    "@types/cache-manager": "*"
-    "@types/redis": ^2.8.0
-  checksum: 4d63b3f2b2c8850f1ff30080ffe8eca13a80428bb25354f27395d5c48e10e408c320de3a85a1c33c95db2df0496e1629146753a2a363f1c862bba9c1afe1c80f
-  languageName: node
-  linkType: hard
-
-"@types/cache-manager@npm:*, @types/cache-manager@npm:3.4.2":
+"@types/cache-manager@npm:3.4.2":
   version: 3.4.2
   resolution: "@types/cache-manager@npm:3.4.2"
   checksum: 121cad75d66da5e65aa9096dfe706d2ec696b20b6bd558128606063488dcedebdafaafc16b27ff620e1fd9c860ca64e088866f01e05cbaf0708a4d43b341c9d5
@@ -2288,15 +2282,6 @@ __metadata:
   version: 1.2.4
   resolution: "@types/range-parser@npm:1.2.4"
   checksum: b7c0dfd5080a989d6c8bb0b6750fc0933d9acabeb476da6fe71d8bdf1ab65e37c136169d84148034802f48378ab94e3c37bb4ef7656b2bec2cb9c0f8d4146a95
-  languageName: node
-  linkType: hard
-
-"@types/redis@npm:^2.8.0":
-  version: 2.8.32
-  resolution: "@types/redis@npm:2.8.32"
-  dependencies:
-    "@types/node": "*"
-  checksum: 2b12103e05977941870c9a248f6ea51f4b7ad7e0f16a7403799c2ed1b3e63b60f693c39f9186be0ea02776934c4595ddcd2a5bde41e530aaad42d26449f6a669
   languageName: node
   linkType: hard
 
@@ -3625,15 +3610,6 @@ __metadata:
     tar: ^6.0.2
     unique-filename: ^1.1.1
   checksum: a07327c27a4152c04eb0a831c63c00390d90f94d51bb80624a66f4e14a6b6360bbf02a84421267bd4d00ca73ac9773287d8d7169e8d2eafe378d2ce140579db8
-  languageName: node
-  linkType: hard
-
-"cache-manager-redis-store@npm:2.0.0":
-  version: 2.0.0
-  resolution: "cache-manager-redis-store@npm:2.0.0"
-  dependencies:
-    redis: ^3.0.2
-  checksum: 2e651dbf40691e3d75e5e85b597c4e2db3d110ba92a18a3a3c31aaa57f343e17213e4bd2f77e7283336b7105de2240766ceb375e1438edc0bae02fb595b76952
   languageName: node
   linkType: hard
 

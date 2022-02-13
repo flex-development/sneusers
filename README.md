@@ -126,7 +126,7 @@ See [Get Docker][14] for help installing Docker on your platform.
 | `REDIS_PASSWORD`          | `'redis'`                           | Redis server password                                                                      |
 | `REDIS_PORT`              | `6379`                              | Port Redis server is running on                                                            |
 | `REDIS_SERVER_NAME`       | `redis.dev.$TLD`                    | Nginx `server_name` for `redis-commander` service                                          |
-| `REDIS_USER`              | `'ubuntu'`                          | Redis server username                                                                      |
+| `REDIS_USERNAME`          | `'default'`                         | Redis server username                                                                      |
 | `SERVER_DESCRIP_DEV`      | `'Development server (local only)'` | Development server description                                                             |
 | `SERVER_DESCRIP_PROD`     | `'Production server'`               | Production server description                                                              |
 | `SERVER_DESCRIP_STG`      | `'Staging server'`                  | Staging server description                                                                 |

@@ -365,11 +365,11 @@ class EnvironmentVariables {
   /**
    * Redis server username.
    *
-   * @default 'ubuntu'
+   * @default 'default'
    */
   @IsString()
   @IsNotEmpty()
-  REDIS_USER: string
+  REDIS_USERNAME: string
 
   /**
    * Port [Redis][1] server is running on.

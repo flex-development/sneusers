@@ -6,9 +6,8 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { EnvironmentVariables } from '@sneusers/models'
-import { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
-import RedisCacheStore from 'cache-manager-redis-store'
-import { RedisClientOptions } from 'redis'
+import { RedisCacheOptions } from '@sneusers/modules/redis/abstracts'
+import { RedisCacheStore } from '@sneusers/modules/redis/providers'
 
 /**
  * @file Providers - CacheConfigService
@@ -16,21 +15,21 @@ import { RedisClientOptions } from 'redis'
  */
 
 @Injectable()
-class CacheConfigService implements CacheOptionsFactory<RedisClientOptions> {
+class CacheConfigService implements CacheOptionsFactory<RedisCacheOptions> {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>,
-    protected readonly redis: RedisOptionsFactory
+    protected readonly store: RedisCacheStore
   ) {}
 
   /**
-   * Get [`CacheModule`] configuration options.
+   * Get [`CacheModule`][1] configuration options.
    *
    * [1]: https://docs.nestjs.com/techniques/caching
    *
    * @static
-   * @return {CacheModuleAsyncOptions<RedisClientOptions>} Module options
+   * @return {CacheModuleAsyncOptions<RedisCacheOptions>} Module options
    */
-  static get moduleOptions(): CacheModuleAsyncOptions<RedisClientOptions> {
+  static get moduleOptions(): CacheModuleAsyncOptions<RedisCacheOptions> {
     return { isGlobal: true, useClass: CacheConfigService }
   }
 
@@ -39,13 +38,15 @@ class CacheConfigService implements CacheOptionsFactory<RedisClientOptions> {
    *
    * [1]: https://docs.nestjs.com/techniques/caching
    *
-   * @return {CacheModuleOptions<RedisClientOptions>} Caching options
+   * @async
+   * @return {Promise<CacheModuleOptions<RedisCacheOptions>>} Caching options
    */
-  createCacheOptions(): CacheModuleOptions<RedisClientOptions> {
+  async createCacheOptions(): Promise<CacheModuleOptions<RedisCacheOptions>> {
+    if (!this.config.get<boolean>('TEST')) await this.store.client.connect()
+
     return {
-      ...this.redis.createRedisOptions(),
       max: this.config.get<number>('CACHE_MAX'),
-      store: this.config.get<boolean>('TEST') ? 'memory' : RedisCacheStore,
+      store: this.store,
       ttl: this.config.get<number>('CACHE_TTL')
     }
   }

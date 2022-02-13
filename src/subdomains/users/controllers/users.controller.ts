@@ -53,7 +53,7 @@ export default class UsersController {
   @ApiTokenAuth()
   @ApiResponses(OPENAPI.delete.responses)
   async delete(@Param('uid') uid: UserUid): Promise<UserDTO> {
-    return await this.users.remove(uid)
+    return this.users.remove(uid)
   }
 
   @CacheTTL(120)
@@ -66,7 +66,7 @@ export default class UsersController {
     @Query(new ValidationPipe({ transform: true }))
     query: QueryParams<User> = {}
   ): Promise<PaginatedDTO<UserDTO>> {
-    return await this.users.find(this.users.getSearchOptions(query))
+    return this.users.find(this.users.getSearchOptions(query))
   }
 
   @CacheTTL(120)
@@ -82,7 +82,7 @@ export default class UsersController {
     return (await this.users.findOne(
       uid,
       this.users.getSearchOptions({ ...query, rejectOnEmpty: true })
-    )) as UserDTO
+    ))!
   }
 
   @UseGuards(EmailVerificationGuard)
@@ -95,6 +95,6 @@ export default class UsersController {
     @Param('uid') uid: UserUid,
     @Body(new ValidationPipe({ transform: true })) dto: PatchUserDTO
   ): Promise<UserDTO> {
-    return await this.users.patch(uid, dto)
+    return this.users.patch(uid, dto)
   }
 }

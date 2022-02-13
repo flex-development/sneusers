@@ -1,7 +1,8 @@
 import type { OrPromise } from '@flex-development/tutils'
 import type { Provider, Type } from '@nestjs/common'
 import { ModuleMetadata } from '@nestjs/common'
-import type { RedisOptionsFactory } from '@sneusers/modules/redis/factories'
+import type { RedisScripts } from 'redis'
+import type { RedisOptionsFactory } from '../factories'
 import type RedisModuleOptions from './module-options.abstract'
 
 /**
@@ -12,16 +13,23 @@ import type RedisModuleOptions from './module-options.abstract'
 /**
  * `RedisModule` async options.
  *
- * @extends {Pick<ModuleMetadata, 'imports'>}
+ * [1]: https://github.com/redis/node-redis/blob/master/README.md#lua-scripts
+ *
+ * @template S - [Lua Scripts][1]
+ *
+ * @abstract
+ * @implements {Pick<ModuleMetadata, 'imports'>}
  */
-interface RedisModuleOptionsAsync extends Pick<ModuleMetadata, 'imports'> {
+abstract class RedisModuleOptionsAsync<S extends RedisScripts = RedisScripts>
+  implements Pick<ModuleMetadata, 'imports'>
+{
   extraProviders?: Provider[]
+  imports?: ModuleMetadata['imports']
   inject?: any[]
   isGlobal?: boolean
-  skipClient?: boolean
-  useClass?: Type<RedisOptionsFactory>
-  useExisting?: Type<RedisOptionsFactory>
-  useFactory?: (...args: any[]) => OrPromise<RedisModuleOptions>
+  useClass?: Type<RedisOptionsFactory<S>>
+  useExisting?: Type<RedisOptionsFactory<S>>
+  useFactory?: (...args: any[]) => OrPromise<RedisModuleOptions<S>>
 }
 
 export default RedisModuleOptionsAsync

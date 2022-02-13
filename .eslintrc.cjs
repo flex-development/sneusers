@@ -31,6 +31,7 @@ module.exports = {
           'authed',
           'axios',
           'bcc',
+          'cacheable',
           'csrf',
           'csurf',
           'dao',
@@ -140,7 +141,10 @@ module.exports = {
       }
     },
     {
-      files: ['src/modules/middleware/middleware.module.ts'],
+      files: [
+        'src/modules/middleware/middleware.module.ts',
+        'src/modules/redis/types/client.type.ts'
+      ],
       rules: {
         '@typescript-eslint/ban-types': 0
       }
