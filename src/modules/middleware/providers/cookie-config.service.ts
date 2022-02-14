@@ -1,8 +1,8 @@
 import { ClassProvider, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { CookieType } from '@sneusers/enums'
 import type { EnvironmentVariables } from '@sneusers/models'
 import { CookieOptions, CookieParseOptions } from '../abstracts'
+import { CookieType, SameSitePolicy } from '../enums'
 import { CookieOptionsFactory } from '../factories'
 
 /**
@@ -35,29 +35,31 @@ class CookieConfigService implements CookieOptionsFactory {
    * @return {CookieOptions} Cookie options
    */
   createOptions(type?: CookieType): CookieOptions {
-    const options: CookieOptions = {
-      domain: this.config.get<string>('HOSTNAME'),
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: this.config.get<boolean>('PROD')
-    }
+    let options: CookieOptions = { domain: this.config.get<string>('HOSTNAME') }
 
     if (type === CookieType.CSRF) {
-      return {
+      options = {
         ...options,
-        key: '_csrf',
-        maxAge: this.config.get<number>('CSURF_COOKIE_MAX_AGE')
+        httpOnly: this.config.get<boolean>('CSURF_COOKIE_HTTP_ONLY'),
+        key: this.config.get<string>('CSURF_COOKIE_KEY'),
+        maxAge: this.config.get<number>('CSURF_COOKIE_MAX_AGE'),
+        path: this.config.get<string>('CSURF_COOKIE_PATH'),
+        sameSite: this.config.get<SameSitePolicy>('CSURF_COOKIE_SAME_SITE'),
+        secure: this.config.get<boolean>('CSURF_COOKIE_SECURE'),
+        signed: this.config.get<boolean>('CSURF_COOKIE_SIGNED')
       }
     }
 
     if (type === CookieType.LOGOUT || type === CookieType.REFRESH) {
       const logout = type === CookieType.LOGOUT
 
-      return {
+      options = {
         ...options,
+        httpOnly: true,
         maxAge: logout ? 0 : this.config.get<number>('JWT_EXP_REFRESH'),
         path: '/refresh',
-        sameSite: logout ? undefined : options.sameSite
+        sameSite: logout ? undefined : SameSitePolicy.STRICT,
+        secure: this.config.get<boolean>('PROD')
       }
     }
 

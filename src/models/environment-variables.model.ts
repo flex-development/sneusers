@@ -1,13 +1,18 @@
+import type { OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
+import { SameSitePolicy } from '@sneusers/modules/middleware/enums'
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUrl,
-  MinLength
+  MinLength,
+  ValidateNested
 } from 'class-validator'
+import ServerInfo from './server-info.model'
 
 /**
  * @file Models - EnvironmentVariables
@@ -18,6 +23,60 @@ import {
  * Environment variables used by this application.
  */
 class EnvironmentVariables {
+  /**
+   * Development server description.
+   */
+  @IsString()
+  @IsOptional()
+  API_SERVER_DESCRIP_DEV: OrUndefined<string>
+
+  /**
+   * Production server description.
+   */
+  @IsString()
+  @IsOptional()
+  API_SERVER_DESCRIP_PROD: OrUndefined<string>
+
+  /**
+   * Staging server description.
+   */
+  @IsString()
+  @IsOptional()
+  API_SERVER_DESCRIP_STG: OrUndefined<string>
+
+  /**
+   * Development server URL.
+   */
+  @IsUrl()
+  @IsOptional()
+  API_SERVER_URL_DEV: OrUndefined<string>
+
+  /**
+   * Production server URL.
+   */
+  @IsUrl()
+  @IsOptional()
+  API_SERVER_URL_PROD: OrUndefined<string>
+
+  /**
+   * Staging server URL.
+   */
+  @IsUrl()
+  @IsOptional()
+  API_SERVER_URL_STG: OrUndefined<string>
+
+  /**
+   * OpenAPI server documentation.
+   *
+   * @see https://swagger.io/docs/specification/api-host-and-base-path
+   *
+   * **Note**: This value is computed by the application.
+   *
+   * @default []
+   */
+  @ValidateNested({ each: true })
+  API_SERVERS: ServerInfo[]
+
   /**
    * Application environment.
    *
@@ -46,22 +105,80 @@ class EnvironmentVariables {
 
   /**
    * Cookie signing secret.
-   *
-   * Defaults to `'COOKIE_SECRET'` in `development` and `test` environments.
    */
   @IsString()
-  @IsNotEmpty()
-  COOKIE_SECRET: string
+  @IsOptional()
+  COOKIE_SECRET: OrUndefined<string>
 
   /**
-   * Number to use when calculating `Expires` `Set-Cookie` attribute (ms).
+   * Force csurf cookies to be accessible by the web server only.
    *
    * @see https://github.com/expressjs/csurf#cookie
    *
-   * @default 60000
+   * @default false
+   */
+  @IsBoolean()
+  CSURF_COOKIE_HTTP_ONLY: boolean
+
+  /**
+   * Name of cookie to use to store csurf token secret.
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default '_csrf'
+   */
+  @IsString()
+  CSURF_COOKIE_KEY: string
+
+  /**
+   * Number to use when calculating csurf cookie expiration time (s).
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default 86400
    */
   @IsNumber()
   CSURF_COOKIE_MAX_AGE: number
+
+  /**
+   * csurf cookie path.
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default '/'
+   */
+  @IsString()
+  CSURF_COOKIE_PATH: string
+
+  /**
+   * csurf cookie same site policy.
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default SameSitePolicy.NONE
+   */
+  @IsEnum(SameSitePolicy)
+  CSURF_COOKIE_SAME_SITE: SameSitePolicy
+
+  /**
+   * Force csurf cookies to be used over `HTTPS` only.
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default false
+   */
+  @IsBoolean()
+  CSURF_COOKIE_SECURE: boolean
+
+  /**
+   * Sign csurf cookies.
+   *
+   * @see https://github.com/expressjs/csurf#cookie
+   *
+   * @default false
+   */
+  @IsBoolean()
+  CSURF_COOKIE_SIGNED: boolean
 
   /**
    * Automatically load database models.
@@ -79,7 +196,6 @@ class EnvironmentVariables {
    * @default 'postgres'
    */
   @IsString()
-  @IsNotEmpty()
   DB_HOST: string
 
   /**
@@ -101,9 +217,8 @@ class EnvironmentVariables {
    * Database password.
    */
   @IsString()
-  @IsNotEmpty()
   @MinLength(4)
-  DB_PASSWORD?: string
+  DB_PASSWORD: string
 
   /**
    * Port of database to connect to.
@@ -181,12 +296,10 @@ class EnvironmentVariables {
   /**
    * Timezone to use when converting a date from the database into a JavaScript
    * {@link Date} object.
-   *
-   * @default '-05:00'
    */
   @IsString()
-  @IsNotEmpty()
-  DB_TIMEZONE: string
+  @IsOptional()
+  DB_TIMEZONE: OrUndefined<string>
 
   /**
    * Database user.
@@ -254,7 +367,6 @@ class EnvironmentVariables {
    * @default `http://${HOSTNAME}:${PORT}`
    */
   @IsString()
-  @IsNotEmpty()
   HOST: string
 
   /**
@@ -263,7 +375,6 @@ class EnvironmentVariables {
    * @default 'localhost'
    */
   @IsString()
-  @IsNotEmpty()
   HOSTNAME: string
 
   /**
@@ -296,7 +407,6 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
-  @IsNotEmpty()
   JWT_SECRET_ACCESS: string
 
   /**
@@ -305,7 +415,6 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
-  @IsNotEmpty()
   JWT_SECRET_REFRESH: string
 
   /**
@@ -314,7 +423,6 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
-  @IsNotEmpty()
   JWT_SECRET_VERIFICATION: string
 
   /**
@@ -355,89 +463,27 @@ class EnvironmentVariables {
 
   /**
    * Redis server password.
-   *
-   * Defaults to `'redis'` in `development` and `test` environments.
    */
   @IsString()
-  @IsNotEmpty()
-  REDIS_PASSWORD: string
+  @IsOptional()
+  REDIS_PASSWORD: OrUndefined<string>
 
   /**
    * Redis server username.
-   *
-   * @default 'default'
    */
   @IsString()
-  @IsNotEmpty()
-  REDIS_USERNAME: string
+  @IsOptional()
+  REDIS_USERNAME: OrUndefined<string>
 
   /**
    * Port [Redis][1] server is running on.
    *
    * [1]: https://redis.io
    *
-   * @see https://github.com/redis/node-redis
-   *
    * @default 6379
    */
   @IsNumber()
   REDIS_PORT: number
-
-  /**
-   * Development server description.
-   *
-   * @default 'Development server (local only)'
-   */
-  @IsString()
-  SERVER_DESCRIP_DEV: string
-
-  /**
-   * Production server description.
-   *
-   * @default 'Production server'
-   */
-  @IsString()
-  SERVER_DESCRIP_PROD: string
-
-  /**
-   * Staging server description.
-   *
-   * @default 'Staging server'
-   */
-  @IsString()
-  SERVER_DESCRIP_STG: string
-
-  /**
-   * Current server URL.
-   *
-   * **Note**: This value is computed by the application.
-   */
-  @IsUrl()
-  SERVER_URL: string
-
-  /**
-   * Development server URL.
-   *
-   * @default `https://api.dev.${TLD}`
-   */
-  @IsUrl()
-  SERVER_URL_DEV: string
-
-  /**
-   * Production server URL.
-   *
-   * @default `https://api.${TLD}`
-   */
-  @IsUrl()
-  SERVER_URL_PROD: string
-
-  /**
-   * Staging server URL.
-   *
-   * @default `https://api.stg.${TLD}`
-   */
-  @IsUrl()
-  SERVER_URL_STG: string
 
   /**
    * Indicates if application is running in a staging environment.

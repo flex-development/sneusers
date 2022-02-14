@@ -19,8 +19,8 @@ import {
   CsrfToken
 } from '@sneusers/decorators'
 import type { EntityDTO } from '@sneusers/dtos'
-import { CookieType } from '@sneusers/enums'
 import { EntitySerializer } from '@sneusers/interceptors'
+import { CookieType } from '@sneusers/modules/middleware/enums'
 import { CookieOptionsFactory } from '@sneusers/modules/middleware/factories'
 import { CurrentUser } from '@sneusers/subdomains/users/decorators'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'

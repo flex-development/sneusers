@@ -175,16 +175,12 @@ Follow the steps below to autosource environment variables:
 Follow the steps below to add new environment variables:
 
 1. Update [Usage - Environment Variables](README.md#environment-variables)
-2. Add default values to [`.env`](.env) (if necessary)
-3. Add new variables to [Doppler](#doppler)
-4. Update [`docker-compose.yml`](docker-compose.yml): `services.app.environment`
-5. Update [`docker-cloud.yml`](docker-cloud.yml): `services.app.environment`
-6. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
-7. Update app [configuration](src/config/configuration.ts) module
-8. Update
-   [`AppModule` integration tests](src/modules/app/__tests__/app.module.integration.spec.ts)
-   - `'app.get(ConfigService).get'`
-9. Restart Docker
+2. Add new variables to [Doppler](#doppler)
+3. Update [`docker-compose.yml`](docker-compose.yml): `services.app.environment`
+4. Update [`docker-cloud.yml`](docker-cloud.yml): `services.app.environment`
+5. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
+6. Update app [configuration](src/config/configuration.ts) module
+7. Restart Docker
    - `yarn restart:dev`, `yarn restart:dev -d`
    - `yarn restart`, `yarn restart -d`
 

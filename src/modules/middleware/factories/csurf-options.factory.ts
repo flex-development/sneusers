@@ -10,7 +10,7 @@ import type { CsurfOptions } from '../abstracts'
 /**
  * Creates [`csurf`][1] library options and [middleware][2] routing options.
  *
- * [1]: https://github.com/expressjs/csurf#cookie
+ * [1]: https://github.com/expressjs/csurf
  * [2]: https://docs.nestjs.com/middleware
  *
  * @abstract

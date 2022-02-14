@@ -64,9 +64,7 @@ const useSwagger = async (
   })
 
   // Add servers
-  builder.addServer(ENV.SERVER_URL_PROD, ENV.SERVER_DESCRIP_PROD)
-  builder.addServer(ENV.SERVER_URL_STG, ENV.SERVER_DESCRIP_STG)
-  builder.addServer(ENV.SERVER_URL_DEV, ENV.SERVER_DESCRIP_DEV)
+  for (const s of ENV.API_SERVERS) builder.addServer(s.url, s.description)
 
   // Get documentation options
   const options: SwaggerDocumentOptions = {

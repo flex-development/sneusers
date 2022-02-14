@@ -1,6 +1,6 @@
 /**
- * @file Enums - CookieType
- * @module sneusers/enums/CookieType
+ * @file MiddlewareModule Enums - CookieType
+ * @module sneusers/modules/middleware/enums/CookieType
  */
 
 /**
@@ -11,7 +11,8 @@
 enum CookieType {
   CSRF = 'csrf-token',
   LOGOUT = 'logout',
-  REFRESH = 'refresh'
+  REFRESH = 'refresh',
+  SESSION = 'session'
 }
 
 export default CookieType

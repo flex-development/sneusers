@@ -5,7 +5,6 @@
  */
 
 export { default as ApiEndpoint } from './api-endpoint.enum'
-export { default as CookieType } from './cookie-type.enum'
 export { default as DatabaseTable } from './database-table.enum'
 export { default as LOCK } from './lock.enum'
 export { default as OrderDirection } from './order-direction.enum'

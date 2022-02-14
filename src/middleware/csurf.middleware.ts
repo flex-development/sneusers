@@ -8,7 +8,6 @@ import { NextFunction, Request, Response } from 'express'
 /**
  * @file Middleware - CsurfMiddleware
  * @module sneusers/middleware/CsurfMiddleware
- * @see https://github.com/expressjs/csurf
  */
 
 @Injectable()

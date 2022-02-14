@@ -1,8 +1,8 @@
 import type { OrPromise } from '@flex-development/tutils'
 import type { RouteInfo } from '@nestjs/common/interfaces'
-import type { CookieType } from '@sneusers/enums'
 import type { CookieOptions } from 'express'
 import type { CookieParseOptions } from '../abstracts'
+import type { CookieType } from '../enums'
 
 /**
  * @file MiddlewareModule Factories - CookieOptionsFactory

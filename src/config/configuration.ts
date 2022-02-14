@@ -1,6 +1,7 @@
 import { ObjectPlain } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
-import { EnvironmentVariables } from '@sneusers/models'
+import { EnvironmentVariables, ServerInfo } from '@sneusers/models'
+import { SameSitePolicy } from '@sneusers/modules/middleware/enums'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
 
@@ -18,11 +19,23 @@ import { validateSync, ValidationError } from 'class-validator'
  * @throws {ValidationError[]}
  */
 const validate = ({
+  API_SERVER_DESCRIP_DEV,
+  API_SERVER_DESCRIP_PROD,
+  API_SERVER_DESCRIP_STG,
+  API_SERVER_URL_DEV,
+  API_SERVER_URL_PROD,
+  API_SERVER_URL_STG,
   APP_ENV = AppEnv.DEV,
   CACHE_MAX = 100,
   CACHE_TTL = 5,
   COOKIE_SECRET,
-  CSURF_COOKIE_MAX_AGE = 60_000,
+  CSURF_COOKIE_HTTP_ONLY = false,
+  CSURF_COOKIE_KEY = '_csrf',
+  CSURF_COOKIE_MAX_AGE = 86_400,
+  CSURF_COOKIE_PATH = '/',
+  CSURF_COOKIE_SAME_SITE = SameSitePolicy.NONE,
+  CSURF_COOKIE_SECURE = false,
+  CSURF_COOKIE_SIGNED = false,
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'postgres',
   DB_LOG_QUERY_PARAMS = true,
@@ -34,7 +47,7 @@ const validate = ({
   DB_SYNC_ALTER = true,
   DB_SYNC_FORCE = false,
   DB_SYNCHRONIZE = true,
-  DB_TIMEZONE = '-05:00',
+  DB_TIMEZONE,
   DB_USERNAME,
   EMAIL_CLIENT,
   EMAIL_HOST = 'smtp.gmail.com',
@@ -55,13 +68,7 @@ const validate = ({
   REDIS_HOST = 'redis',
   REDIS_PASSWORD,
   REDIS_PORT = 6379,
-  REDIS_USERNAME = 'default',
-  SERVER_DESCRIP_DEV = 'Development server (local only)',
-  SERVER_DESCRIP_PROD = 'Production server',
-  SERVER_DESCRIP_STG = 'Staging server',
-  SERVER_URL_DEV,
-  SERVER_URL_PROD,
-  SERVER_URL_STG,
+  REDIS_USERNAME,
   THROTTLE_LIMIT = 10,
   THROTTLE_TTL = 60,
   TLD
@@ -75,35 +82,47 @@ const validate = ({
   // Check if running in production or staging environment
   env.PROD = env.APP_ENV === AppEnv.PROD && env.NODE_ENV === NodeEnv.PROD
   env.STG = env.APP_ENV === AppEnv.STG
-  const STGPROD = env.STG || env.PROD
 
   // Set hostname, port to run application on, and top level domain
   env.HOSTNAME = HOSTNAME
   env.PORT = Number.parseInt(PORT.toString())
   env.TLD = TLD
 
-  // Set server URLs
-  env.SERVER_URL_DEV = SERVER_URL_DEV || `https://api.dev.${env.TLD}`
-  env.SERVER_URL_PROD = SERVER_URL_PROD || `https://api.${env.TLD}`
-  env.SERVER_URL_STG = SERVER_URL_STG || `https://api.stg.${env.TLD}`
-  env.SERVER_URL = ((): EnvironmentVariables['SERVER_URL'] => {
-    if (env.APP_ENV === AppEnv.STG) return env.SERVER_URL_STG
-    if (env.APP_ENV === AppEnv.PROD) return env.SERVER_URL_PROD
-    return env.SERVER_URL_DEV
+  // Set server descriptions and URLs
+  env.API_SERVER_DESCRIP_DEV = API_SERVER_DESCRIP_DEV
+  env.API_SERVER_DESCRIP_PROD = API_SERVER_DESCRIP_PROD
+  env.API_SERVER_DESCRIP_STG = API_SERVER_DESCRIP_STG
+  env.API_SERVER_URL_DEV = API_SERVER_URL_DEV
+  env.API_SERVER_URL_PROD = API_SERVER_URL_PROD
+  env.API_SERVER_URL_STG = API_SERVER_URL_STG
+
+  // Set API servers
+  env.API_SERVERS = ((): ServerInfo[] => {
+    return [
+      new ServerInfo(env.API_SERVER_URL_PROD, env.API_SERVER_DESCRIP_PROD),
+      new ServerInfo(env.API_SERVER_URL_STG, env.API_SERVER_DESCRIP_STG),
+      new ServerInfo(env.API_SERVER_URL_DEV, env.API_SERVER_DESCRIP_DEV)
+    ].filter(server => server.url !== undefined)
   })()
 
   // Provide defaults in development and test environments
-  COOKIE_SECRET = (STGPROD && COOKIE_SECRET) || 'COOKIE_SECRET'
-  JWT_SECRET_ACCESS = (STGPROD && JWT_SECRET_ACCESS) || 'JWT_SECRET'
-  JWT_SECRET_REFRESH = (STGPROD && JWT_SECRET_REFRESH) || 'JWT_SECRET'
-  JWT_SECRET_VERIFICATION = (STGPROD && JWT_SECRET_VERIFICATION) || 'JWT_SECRET'
-  REDIS_PASSWORD = (STGPROD && REDIS_PASSWORD) || 'redis'
+  if (!env.PROD && !env.STG) {
+    JWT_SECRET_ACCESS = JWT_SECRET_ACCESS || 'JWT_SECRET'
+    JWT_SECRET_REFRESH = JWT_SECRET_REFRESH || 'JWT_SECRET'
+    JWT_SECRET_VERIFICATION = JWT_SECRET_VERIFICATION || 'JWT_SECRET'
+  }
 
   // Assign remaining environment variables
   env.CACHE_MAX = Number.parseInt(`${CACHE_MAX}`)
   env.CACHE_TTL = Number.parseInt(`${CACHE_TTL}`)
   env.COOKIE_SECRET = COOKIE_SECRET
+  env.CSURF_COOKIE_HTTP_ONLY = JSON.parse(`${CSURF_COOKIE_HTTP_ONLY}`)
+  env.CSURF_COOKIE_KEY = CSURF_COOKIE_KEY
   env.CSURF_COOKIE_MAX_AGE = Number.parseInt(`${CSURF_COOKIE_MAX_AGE}`)
+  env.CSURF_COOKIE_PATH = CSURF_COOKIE_PATH
+  env.CSURF_COOKIE_SAME_SITE = CSURF_COOKIE_SAME_SITE
+  env.CSURF_COOKIE_SECURE = JSON.parse(`${CSURF_COOKIE_SECURE}`)
+  env.CSURF_COOKIE_SIGNED = JSON.parse(`${CSURF_COOKIE_SIGNED}`)
   env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
   env.DB_LOG_QUERY_PARAMS = JSON.parse(DB_LOG_QUERY_PARAMS)
@@ -135,9 +154,6 @@ const validate = ({
   env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(`${REDIS_PORT}`)
   env.REDIS_USERNAME = REDIS_USERNAME
-  env.SERVER_DESCRIP_DEV = SERVER_DESCRIP_DEV
-  env.SERVER_DESCRIP_PROD = SERVER_DESCRIP_PROD
-  env.SERVER_DESCRIP_STG = SERVER_DESCRIP_STG
   env.TEST = env.APP_ENV === AppEnv.TEST || env.NODE_ENV === NodeEnv.TEST
   env.THROTTLE_LIMIT = Number.parseInt(`${THROTTLE_LIMIT}`)
   env.THROTTLE_TTL = Number.parseInt(`${THROTTLE_TTL}`)
@@ -164,11 +180,23 @@ const validate = ({
  */
 const configuration = (): EnvironmentVariables => {
   return validate({
+    API_SERVER_DESCRIP_DEV: process.env.API_SERVER_DESCRIP_DEV,
+    API_SERVER_DESCRIP_PROD: process.env.API_SERVER_DESCRIP_PROD,
+    API_SERVER_DESCRIP_STG: process.env.API_SERVER_DESCRIP_STG,
+    API_SERVER_URL_DEV: process.env.API_SERVER_URL_DEV,
+    API_SERVER_URL_PROD: process.env.API_SERVER_URL_PROD,
+    API_SERVER_URL_STG: process.env.API_SERVER_URL_STG,
     APP_ENV: process.env.APP_ENV,
     CACHE_MAX: process.env.CACHE_MAX,
     CACHE_TTL: process.env.CACHE_TTL,
     COOKIE_SECRET: process.env.COOKIE_SECRET,
+    CSURF_COOKIE_HTTP_ONLY: process.env.CSURF_COOKIE_HTTP_ONLY,
+    CSURF_COOKIE_KEY: process.env.CSURF_COOKIE_KEY,
     CSURF_COOKIE_MAX_AGE: process.env.CSURF_COOKIE_MAX_AGE,
+    CSURF_COOKIE_PATH: process.env.CSURF_COOKIE_PATH,
+    CSURF_COOKIE_SAME_SITE: process.env.CSURF_COOKIE_SAME_SITE,
+    CSURF_COOKIE_SECURE: process.env.CSURF_COOKIE_SECURE,
+    CSURF_COOKIE_SIGNED: process.env.CSURF_COOKIE_SIGNED,
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
     DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
@@ -202,12 +230,6 @@ const configuration = (): EnvironmentVariables => {
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_PORT: process.env.REDIS_PORT,
     REDIS_USERNAME: process.env.REDIS_USERNAME,
-    SERVER_DESCRIP_DEV: process.env.SERVER_DESCRIP_DEV,
-    SERVER_DESCRIP_PROD: process.env.SERVER_DESCRIP_PROD,
-    SERVER_DESCRIP_STG: process.env.SERVER_DESCRIP_STG,
-    SERVER_URL_DEV: process.env.SERVER_URL_DEV,
-    SERVER_URL_PROD: process.env.SERVER_URL_PROD,
-    SERVER_URL_STG: process.env.SERVER_URL_STG,
     THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,
     THROTTLE_TTL: process.env.THROTTLE_TTL,
     TLD: process.env.TLD

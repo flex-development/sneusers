@@ -1,8 +1,8 @@
 import { ClassProvider, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { CookieType } from '@sneusers/enums'
 import type { EnvironmentVariables } from '@sneusers/models'
 import { CsurfOptions } from '../abstracts'
+import { CookieType } from '../enums'
 import { CookieOptionsFactory, CsurfOptionsFactory } from '../factories'
 
 /**
