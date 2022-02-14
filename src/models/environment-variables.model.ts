@@ -1,6 +1,9 @@
 import type { OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
-import { SameSitePolicy } from '@sneusers/modules/middleware/enums'
+import {
+  SameSitePolicy,
+  SessionUnset
+} from '@sneusers/modules/middleware/enums'
 import {
   IsBoolean,
   IsEnum,
@@ -484,6 +487,130 @@ class EnvironmentVariables {
    */
   @IsNumber()
   REDIS_PORT: number
+
+  /**
+   * Force session cookies to be accessible by the web server only.
+   *
+   * @see https://github.com/expressjs/session#cookiehttponly
+   *
+   * @default false
+   */
+  @IsBoolean()
+  SESSION_COOKIE_HTTP_ONLY: boolean
+
+  /**
+   * Number to use when calculating session cookie expiration time (s).
+   *
+   * @see https://github.com/expressjs/session#cookiemaxage
+   *
+   * @default 86400
+   */
+  @IsNumber()
+  SESSION_COOKIE_MAX_AGE: number
+
+  /**
+   * session cookie path.
+   *
+   * @see https://github.com/expressjs/session#cookiepath
+   *
+   * @default '/'
+   */
+  @IsString()
+  SESSION_COOKIE_PATH: string
+
+  /**
+   * session cookie same site policy.
+   *
+   * @see https://github.com/expressjs/session#cookiesamesite
+   *
+   * @default SameSitePolicy.NONE
+   */
+  @IsEnum(SameSitePolicy)
+  SESSION_COOKIE_SAME_SITE: SameSitePolicy
+
+  /**
+   * Force session cookies to be used over `HTTPS` only.
+   *
+   * @see https://github.com/expressjs/session#cookiesecure
+   *
+   * @default false
+   */
+  @IsBoolean()
+  SESSION_COOKIE_SECURE: boolean
+
+  /**
+   * Name of session ID cookie.
+   *
+   * @see https://github.com/expressjs/session#name
+   *
+   * @default 'connect.sid'
+   */
+  @IsString()
+  SESSION_NAME: string
+
+  /**
+   * Trust the reverse proxy when setting secure session cookies.
+   *
+   * @see https://github.com/expressjs/session#proxy
+   *
+   * @default undefined
+   */
+  @IsBoolean()
+  @IsOptional()
+  SESSION_PROXY: OrUndefined<boolean>
+
+  /**
+   * Forces sessions to be saved back to the session store, even if a session
+   * was never modified during a request.
+   *
+   * @see https://github.com/expressjs/session#resave
+   *
+   * @default true
+   */
+  @IsBoolean()
+  SESSION_RESAVE: boolean
+
+  /**
+   * Force the session identifier cookie to be set on every response.
+   *
+   * @see https://github.com/expressjs/session#rolling
+   *
+   * @default false
+   */
+  @IsBoolean()
+  SESSION_ROLLING: boolean
+
+  /**
+   * Forces sessions that are "uninitialized" to be saved to the store.
+   *
+   * A session is uninitialized when it is new but not modified.
+   *
+   * @see https://github.com/expressjs/session#rolling
+   *
+   * @default true
+   */
+  @IsBoolean()
+  SESSION_SAVE_UNINITIALIZED: boolean
+
+  /**
+   * Secret used to sign session ID cookies.
+   *
+   * Defaults to `'SESSION_SECRET'` in `development` and `test` environments.
+   *
+   * @see https://github.com/expressjs/session#secret
+   */
+  @IsString()
+  SESSION_SECRET: string
+
+  /**
+   * Control the result of unsetting `req.session`.
+   *
+   * @see https://github.com/expressjs/session#unset
+   *
+   * @default SessionUnset.KEEP
+   */
+  @IsEnum(SessionUnset)
+  SESSION_UNSET: SessionUnset
 
   /**
    * Indicates if application is running in a staging environment.

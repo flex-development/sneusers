@@ -17,6 +17,7 @@ import type { CookieType } from '../enums'
  * [2]: https://github.com/expressjs/cookie-parser
  *
  * @see https://github.com/expressjs/csurf#cookie
+ * @see https://github.com/expressjs/session#cookie
  *
  * @abstract
  */

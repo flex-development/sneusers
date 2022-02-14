@@ -3,18 +3,21 @@ import {
   CookieParserMiddleware,
   CsurfMiddleware,
   HelmetMiddleware,
-  HttpLoggerMiddleware
+  HttpLoggerMiddleware,
+  SessionMiddleware
 } from '@sneusers/middleware'
 import { ForRoutesConfig } from '@sneusers/types'
 import {
   CookieOptionsFactory,
   CsurfOptionsFactory,
-  HelmetOptionsFactory
+  HelmetOptionsFactory,
+  SessionOptionsFactory
 } from './factories'
 import {
   CookieConfigService,
   CsurfConfigService,
-  HelmetConfigService
+  HelmetConfigService,
+  SessionConfigService
 } from './providers'
 
 /**
@@ -24,18 +27,25 @@ import {
 
 @Global()
 @Module({
-  exports: [CookieOptionsFactory, CsurfOptionsFactory, HelmetOptionsFactory],
+  exports: [
+    CookieOptionsFactory,
+    CsurfOptionsFactory,
+    HelmetOptionsFactory,
+    SessionOptionsFactory
+  ],
   providers: [
     CookieConfigService.createProvider(),
     CsurfConfigService.createProvider(),
-    HelmetConfigService.createProvider()
+    HelmetConfigService.createProvider(),
+    SessionConfigService.createProvider()
   ]
 })
 export default class MiddlewareModule {
   constructor(
     protected readonly cookie: CookieOptionsFactory,
     protected readonly csurf: CsurfOptionsFactory,
-    protected readonly helmet: HelmetOptionsFactory
+    protected readonly helmet: HelmetOptionsFactory,
+    protected readonly session: SessionOptionsFactory
   ) {}
 
   /**
@@ -73,13 +83,15 @@ export default class MiddlewareModule {
       HttpLoggerMiddleware,
       HelmetMiddleware,
       CookieParserMiddleware,
+      SessionMiddleware,
       CsurfMiddleware
     ]
 
     await MiddlewareModule.configure(consumer, middlewares, {
       [CookieParserMiddleware.name]: this.cookie.createParserRoutes,
       [CsurfMiddleware.name]: this.csurf.createCsurfRoutes,
-      [HelmetMiddleware.name]: this.helmet.createHelmetRoutes
+      [HelmetMiddleware.name]: this.helmet.createHelmetRoutes,
+      [SessionMiddleware.name]: this.session.createSessionRoutes
     })
   }
 }

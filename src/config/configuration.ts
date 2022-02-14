@@ -1,7 +1,11 @@
 import { ObjectPlain } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
+import isNIL from '@flex-development/tutils/guards/is-nil.guard'
 import { EnvironmentVariables, ServerInfo } from '@sneusers/models'
-import { SameSitePolicy } from '@sneusers/modules/middleware/enums'
+import {
+  SameSitePolicy,
+  SessionUnset
+} from '@sneusers/modules/middleware/enums'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
 
@@ -69,6 +73,18 @@ const validate = ({
   REDIS_PASSWORD,
   REDIS_PORT = 6379,
   REDIS_USERNAME,
+  SESSION_COOKIE_HTTP_ONLY = false,
+  SESSION_COOKIE_MAX_AGE = 86_400,
+  SESSION_COOKIE_PATH = '/',
+  SESSION_COOKIE_SAME_SITE = SameSitePolicy.NONE,
+  SESSION_COOKIE_SECURE = false,
+  SESSION_NAME = 'connect.sid',
+  SESSION_PROXY,
+  SESSION_RESAVE = true,
+  SESSION_ROLLING = false,
+  SESSION_SAVE_UNINITIALIZED = false,
+  SESSION_SECRET,
+  SESSION_UNSET = SessionUnset.KEEP,
   THROTTLE_LIMIT = 10,
   THROTTLE_TTL = 60,
   TLD
@@ -110,6 +126,7 @@ const validate = ({
     JWT_SECRET_ACCESS = JWT_SECRET_ACCESS || 'JWT_SECRET'
     JWT_SECRET_REFRESH = JWT_SECRET_REFRESH || 'JWT_SECRET'
     JWT_SECRET_VERIFICATION = JWT_SECRET_VERIFICATION || 'JWT_SECRET'
+    SESSION_SECRET = SESSION_SECRET || 'SESSION_SECRET'
   }
 
   // Assign remaining environment variables
@@ -154,6 +171,18 @@ const validate = ({
   env.REDIS_PASSWORD = REDIS_PASSWORD
   env.REDIS_PORT = Number.parseInt(`${REDIS_PORT}`)
   env.REDIS_USERNAME = REDIS_USERNAME
+  env.SESSION_COOKIE_HTTP_ONLY = JSON.parse(`${SESSION_COOKIE_HTTP_ONLY}`)
+  env.SESSION_COOKIE_MAX_AGE = Number.parseInt(`${SESSION_COOKIE_MAX_AGE}`)
+  env.SESSION_COOKIE_PATH = SESSION_COOKIE_PATH
+  env.SESSION_COOKIE_SAME_SITE = SESSION_COOKIE_SAME_SITE
+  env.SESSION_COOKIE_SECURE = JSON.parse(`${SESSION_COOKIE_SECURE}`)
+  env.SESSION_NAME = SESSION_NAME
+  if (!isNIL(SESSION_PROXY)) env.SESSION_PROXY = JSON.parse(`${SESSION_PROXY}`)
+  env.SESSION_RESAVE = JSON.parse(`${SESSION_RESAVE}`)
+  env.SESSION_ROLLING = JSON.parse(`${SESSION_ROLLING}`)
+  env.SESSION_SAVE_UNINITIALIZED = JSON.parse(`${SESSION_SAVE_UNINITIALIZED}`)
+  env.SESSION_SECRET = SESSION_SECRET
+  env.SESSION_UNSET = SESSION_UNSET
   env.TEST = env.APP_ENV === AppEnv.TEST || env.NODE_ENV === NodeEnv.TEST
   env.THROTTLE_LIMIT = Number.parseInt(`${THROTTLE_LIMIT}`)
   env.THROTTLE_TTL = Number.parseInt(`${THROTTLE_TTL}`)
@@ -230,6 +259,17 @@ const configuration = (): EnvironmentVariables => {
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     REDIS_PORT: process.env.REDIS_PORT,
     REDIS_USERNAME: process.env.REDIS_USERNAME,
+    SESSION_COOKIE_HTTP_ONLY: process.env.SESSION_COOKIE_HTTP_ONLY,
+    SESSION_COOKIE_MAX_AGE: process.env.SESSION_COOKIE_MAX_AGE,
+    SESSION_COOKIE_PATH: process.env.SESSION_COOKIE_PATH,
+    SESSION_COOKIE_SAME_SITE: process.env.SESSION_COOKIE_SAME_SITE,
+    SESSION_COOKIE_SECURE: process.env.SESSION_COOKIE_SECURE,
+    SESSION_PROXY: process.env.SESSION_PROXY,
+    SESSION_RESAVE: process.env.SESSION_RESAVE,
+    SESSION_ROLLING: process.env.SESSION_ROLLING,
+    SESSION_SAVE_UNINITIALIZED: process.env.SESSION_SAVE_UNINITIALIZED,
+    SESSION_SECRET: process.env.SESSION_SECRET,
+    SESSION_UNSET: process.env.SESSION_UNSET,
     THROTTLE_LIMIT: process.env.THROTTLE_LIMIT,
     THROTTLE_TTL: process.env.THROTTLE_TTL,
     TLD: process.env.TLD

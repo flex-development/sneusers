@@ -6,3 +6,4 @@
 export { default as CookieOptionsFactory } from './cookie-options.factory'
 export { default as CsurfOptionsFactory } from './csurf-options.factory'
 export { default as HelmetOptionsFactory } from './helmet-options.factory'
+export { default as SessionOptionsFactory } from './session-options.factory'

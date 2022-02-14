@@ -30,6 +30,7 @@ class CookieConfigService implements CookieOptionsFactory {
    * Get cookie options.
    *
    * @see https://github.com/expressjs/csurf#cookie
+   * @see https://github.com/expressjs/session#cookie
    *
    * @param {CookieType} [type] - Cookie type
    * @return {CookieOptions} Cookie options
@@ -60,6 +61,17 @@ class CookieConfigService implements CookieOptionsFactory {
         path: '/refresh',
         sameSite: logout ? undefined : SameSitePolicy.STRICT,
         secure: this.config.get<boolean>('PROD')
+      }
+    }
+
+    if (type === CookieType.SESSION) {
+      options = {
+        ...options,
+        httpOnly: this.config.get<boolean>('SESSION_COOKIE_HTTP_ONLY'),
+        maxAge: this.config.get<number>('SESSION_COOKIE_MAX_AGE'),
+        path: this.config.get<string>('SESSION_COOKIE_PATH'),
+        sameSite: this.config.get<SameSitePolicy>('SESSION_COOKIE_SAME_SITE'),
+        secure: this.config.get<boolean>('SESSION_COOKIE_SECURE')
       }
     }
 

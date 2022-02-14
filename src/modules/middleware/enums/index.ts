@@ -5,3 +5,4 @@
 
 export { default as CookieType } from './cookie-type.enum'
 export { default as SameSitePolicy } from './same-site-policy.enum'
+export { default as SessionUnset } from './session-unset.enum'

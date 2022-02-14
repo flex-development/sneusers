@@ -78,64 +78,76 @@ See [Get Docker][14] for help installing Docker on your platform.
 
 #### Application ([`ghcr.io/flex-development/sneusers`][15])
 
-| name                      | default                      | description                                                                                |
-| ------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------ |
-| `API_SERVER_DESCRIP_DEV`  | -                            | Development server description                                                             |
-| `API_SERVER_DESCRIP_PROD` | -                            | Production server description                                                              |
-| `API_SERVER_DESCRIP_STG`  | -                            | Staging server description                                                                 |
-| `API_SERVER_URL_DEV`      | -                            | Development server url                                                                     |
-| `API_SERVER_URL_PROD`     | -                            | Production server url                                                                      |
-| `API_SERVER_URL_STG`      | -                            | Staging server url                                                                         |
-| `APP_ENV`                 | `AppEnv.DEV`                 | Application environment (`'development' \| 'production' \| 'staging' \| 'test'`)           |
-| `CACHE_MAX`               | `100`                        | Maximum number of responses to store in the cache                                          |
-| `CACHE_TTL`               | `5`                          | Amount of time a response is cached before it is deleted (s)                               |
-| `COOKIE_SECRET`           | -                            | Cookie signing secret                                                                      |
-| `CSURF_COOKIE_HTTP_ONLY`  | `false`                      | Force `csurf` cookies to be accessible by the web server only                              |
-| `CSURF_COOKIE_KEY`        | `'_csrf'`                    | Name of cookie to use to store `csurf` token secret                                        |
-| `CSURF_COOKIE_MAX_AGE`    | `86400`                      | Number to use when calculating `csurf` cookie expiration time (s)                          |
-| `CSURF_COOKIE_PATH`       | `'/'`                        | `csurf` cookie path                                                                        |
-| `CSURF_COOKIE_SAME_SITE`  | `SameSitePolicy.NONE`        | `csurf` cookie same site policy                                                            |
-| `CSURF_COOKIE_SECURE`     | `false`                      | Force `csurf` cookies to be used over `HTTPS` only                                         |
-| `CSURF_COOKIE_SIGNED`     | `false`                      | Sign `csurf` cookies                                                                       |
-| `DB_AUTO_LOAD_MODELS`     | `true`                       | Automatically load database models                                                         |
-| `DB_HOST`                 | `'postgres'`                 | Hostname of database to connect to                                                         |
-| `DB_LOG_QUERY_PARAMS`     | `true`                       | Show database bind parameters in log                                                       |
-| `DB_NAME`                 | -                            | Name of database to connect to                                                             |
-| `DB_PASSWORD`             | -                            | Database password                                                                          |
-| `DB_PORT`                 | `5432`                       | Port of database to connect to                                                             |
-| `DB_RETRY_ATTEMPTS`       | `10`                         | Number of attempts to connect to the database                                              |
-| `DB_RETRY_DELAY`          | `3000`                       | Delay between database connection retry attempts (ms)                                      |
-| `DB_SYNC_ALTER`           | `true`                       | `ALTER` tables to fit database models during synchronization. Does **not** delete any data |
-| `DB_SYNC_FORCE`           | `false`                      | `DROP` existing tables before creating new tables during synchronization                   |
-| `DB_SYNCHRONIZE`          | `true`                       | Automatically synchronize database models (requires `$DB_AUTO_LOAD_MODELS=true`)           |
-| `DB_TIMEZONE`             | -                            | Timezone to use when converting a date from the database into a JavaScript `Date` object   |
-| `DB_USERNAME`             | -                            | Database user                                                                              |
-| `DEBUG`                   | -                            | Enables/disables specific debugging namespaces                                             |
-| `DEBUG_COLORS`            | -                            | Whether or not to use colors in the debug output                                           |
-| `EMAIL_CLIENT`            | -                            | Google service account `client_id`                                                         |
-| `EMAIL_HOST`              | `'smtp.gmail.com'`           | Hostname of email server                                                                   |
-| `EMAIL_PORT`              | `465`                        | Port to send emails from                                                                   |
-| `EMAIL_PRIVATE_KEY`       | -                            | Google service account `private_key`                                                       |
-| `EMAIL_SEND_AS`           | -                            | Email address to send emails from                                                          |
-| `EMAIL_USER`              | -                            | Email address used to authenticate with Google APIs                                        |
-| `HOST`                    | `http://${HOSTNAME}:${PORT}` | Application URL (includes scheme and `PORT` if applicable)                                 |
-| `HOSTNAME`                | `'localhost'`                | Application hostname                                                                       |
-| `JWT_EXP_ACCESS`          | `900`                        | Access token expiration time (s)                                                           |
-| `JWT_EXP_REFRESH`         | `86400`                      | Refresh token expiration time (s)                                                          |
-| `JWT_EXP_VERIFICATION`    | `86400`                      | Verification token expiration time (s)                                                     |
-| `JWT_SECRET_ACCESS`       | `'JWT_SECRET'`               | Access token signing secret                                                                |
-| `JWT_SECRET_REFRESH`      | `'JWT_SECRET'`               | Refresh token signing secret                                                               |
-| `JWT_SECRET_VERIFICATION` | `'JWT_SECRET'`               | Verification token signing secret                                                          |
-| `NEST_DEBUG`              | `1`                          | Enable NestJS dependency resolution logs                                                   |
-| `NODE_ENV`                | `NodeEnv.DEV`                | Node environment (`'development' \| 'production' \| 'test'`)                               |
-| `PORT`                    | `8080`                       | Port to run application on (and expose `app` service on)                                   |
-| `REDIS_HOST`              | `'redis'`                    | Hostname of Redis server                                                                   |
-| `REDIS_PASSWORD`          | -                            | Redis server password                                                                      |
-| `REDIS_PORT`              | `6379`                       | Port Redis server is running on                                                            |
-| `REDIS_USERNAME`          | -                            | Redis server username                                                                      |
-| `THROTTLE_LIMIT`          | `10`                         | Maximum number of requests within the `THROTTLE_TTL` limit                                 |
-| `THROTTLE_TTL`            | `60`                         | Number of seconds that each request will last in storage                                   |
-| `TLD`                     | -                            | Top level domain                                                                           |
+| name                         | default                      | description                                                                                |
+| ---------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------ |
+| `API_SERVER_DESCRIP_DEV`     | -                            | Development server description                                                             |
+| `API_SERVER_DESCRIP_PROD`    | -                            | Production server description                                                              |
+| `API_SERVER_DESCRIP_STG`     | -                            | Staging server description                                                                 |
+| `API_SERVER_URL_DEV`         | -                            | Development server url                                                                     |
+| `API_SERVER_URL_PROD`        | -                            | Production server url                                                                      |
+| `API_SERVER_URL_STG`         | -                            | Staging server url                                                                         |
+| `APP_ENV`                    | `AppEnv.DEV`                 | Application environment (`'development' \| 'production' \| 'staging' \| 'test'`)           |
+| `CACHE_MAX`                  | `100`                        | Maximum number of responses to store in the cache                                          |
+| `CACHE_TTL`                  | `5`                          | Amount of time a response is cached before it is deleted (s)                               |
+| `COOKIE_SECRET`              | -                            | Cookie signing secret                                                                      |
+| `CSURF_COOKIE_HTTP_ONLY`     | `false`                      | Force `csurf` cookies to be accessible by the web server only                              |
+| `CSURF_COOKIE_KEY`           | `'_csrf'`                    | Name of cookie to use to store `csurf` token secret                                        |
+| `CSURF_COOKIE_MAX_AGE`       | `86400`                      | Number to use when calculating `csurf` cookie expiration time (s)                          |
+| `CSURF_COOKIE_PATH`          | `'/'`                        | `csurf` cookie path                                                                        |
+| `CSURF_COOKIE_SAME_SITE`     | `SameSitePolicy.NONE`        | `csurf` cookie same site policy                                                            |
+| `CSURF_COOKIE_SECURE`        | `false`                      | Force `csurf` cookies to be used over `HTTPS` only                                         |
+| `CSURF_COOKIE_SIGNED`        | `false`                      | Sign `csurf` cookies                                                                       |
+| `DB_AUTO_LOAD_MODELS`        | `true`                       | Automatically load database models                                                         |
+| `DB_HOST`                    | `'postgres'`                 | Hostname of database to connect to                                                         |
+| `DB_LOG_QUERY_PARAMS`        | `true`                       | Show database bind parameters in log                                                       |
+| `DB_NAME`                    | -                            | Name of database to connect to                                                             |
+| `DB_PASSWORD`                | -                            | Database password                                                                          |
+| `DB_PORT`                    | `5432`                       | Port of database to connect to                                                             |
+| `DB_RETRY_ATTEMPTS`          | `10`                         | Number of attempts to connect to the database                                              |
+| `DB_RETRY_DELAY`             | `3000`                       | Delay between database connection retry attempts (ms)                                      |
+| `DB_SYNC_ALTER`              | `true`                       | `ALTER` tables to fit database models during synchronization. Does **not** delete any data |
+| `DB_SYNC_FORCE`              | `false`                      | `DROP` existing tables before creating new tables during synchronization                   |
+| `DB_SYNCHRONIZE`             | `true`                       | Automatically synchronize database models (requires `$DB_AUTO_LOAD_MODELS=true`)           |
+| `DB_TIMEZONE`                | -                            | Timezone to use when converting a date from the database into a JavaScript `Date` object   |
+| `DB_USERNAME`                | -                            | Database user                                                                              |
+| `DEBUG`                      | -                            | Enables/disables specific debugging namespaces                                             |
+| `DEBUG_COLORS`               | -                            | Whether or not to use colors in the debug output                                           |
+| `EMAIL_CLIENT`               | -                            | Google service account `client_id`                                                         |
+| `EMAIL_HOST`                 | `'smtp.gmail.com'`           | Hostname of email server                                                                   |
+| `EMAIL_PORT`                 | `465`                        | Port to send emails from                                                                   |
+| `EMAIL_PRIVATE_KEY`          | -                            | Google service account `private_key`                                                       |
+| `EMAIL_SEND_AS`              | -                            | Email address to send emails from                                                          |
+| `EMAIL_USER`                 | -                            | Email address used to authenticate with Google APIs                                        |
+| `HOST`                       | `http://${HOSTNAME}:${PORT}` | Application URL (includes scheme and `PORT` if applicable)                                 |
+| `HOSTNAME`                   | `'localhost'`                | Application hostname                                                                       |
+| `JWT_EXP_ACCESS`             | `900`                        | Access token expiration time (s)                                                           |
+| `JWT_EXP_REFRESH`            | `86400`                      | Refresh token expiration time (s)                                                          |
+| `JWT_EXP_VERIFICATION`       | `86400`                      | Verification token expiration time (s)                                                     |
+| `JWT_SECRET_ACCESS`          | `'JWT_SECRET'`               | Access token signing secret                                                                |
+| `JWT_SECRET_REFRESH`         | `'JWT_SECRET'`               | Refresh token signing secret                                                               |
+| `JWT_SECRET_VERIFICATION`    | `'JWT_SECRET'`               | Verification token signing secret                                                          |
+| `NEST_DEBUG`                 | `1`                          | Enable NestJS dependency resolution logs                                                   |
+| `NODE_ENV`                   | `NodeEnv.DEV`                | Node environment (`'development' \| 'production' \| 'test'`)                               |
+| `PORT`                       | `8080`                       | Port to run application on (and expose `app` service on)                                   |
+| `REDIS_HOST`                 | `'redis'`                    | Hostname of Redis server                                                                   |
+| `REDIS_PASSWORD`             | -                            | Redis server password                                                                      |
+| `REDIS_PORT`                 | `6379`                       | Port Redis server is running on                                                            |
+| `REDIS_USERNAME`             | -                            | Redis server username                                                                      |
+| `SESSION_COOKIE_HTTP_ONLY`   | `false`                      | Force `session` cookies to be accessible by the web server only                            |
+| `SESSION_COOKIE_MAX_AGE`     | `86400`                      | Number to use when calculating `session` cookie expiration time (s)                        |
+| `SESSION_COOKIE_PATH`        | `'/'`                        | `session` cookie path                                                                      |
+| `SESSION_COOKIE_SAME_SITE`   | `SameSitePolicy.NONE`        | `session` cookie same site policy                                                          |
+| `SESSION_COOKIE_SECURE`      | `false`                      | Force `session` cookies to be used over `HTTPS` only                                       |
+| `SESSION_NAME`               | `'connect.sid'`              | Name of `session` ID cookie                                                                |
+| `SESSION_PROXY`              | `undefined`                  | Trust the reverse proxy when setting secure `session` cookies                              |
+| `SESSION_RESAVE`             | `true`                       | Force sessions to be saved back to the session store                                       |
+| `SESSION_ROLLING`            | `false`                      | Force the session identifier cookie to be set on every response                            |
+| `SESSION_SAVE_UNINITIALIZED` | `true`                       | Forces sessions that are new, but unmodified to be saved to the store                      |
+| `SESSION_SECRET`             | -                            | Secret used to sign session ID cookies                                                     |
+| `SESSION_UNSET`              | `SessionUnset.KEEP`          | Control the result of unsetting `req.session`                                              |
+| `THROTTLE_LIMIT`             | `10`                         | Maximum number of requests within the `THROTTLE_TTL` limit                                 |
+| `THROTTLE_TTL`               | `60`                         | Number of seconds that each request will last in storage                                   |
+| `TLD`                        | -                            | Top level domain                                                                           |
 
 See the [`EnvironmentVariables`](src/models/environment-variables.model.ts)
 model for more detailed descriptions.
