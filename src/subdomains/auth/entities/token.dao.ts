@@ -131,7 +131,7 @@ class Token
   /**
    * @static
    * @readonly
-   * @property {ReadonlyArray<TokenType>} TYPES - Valid `Token#type` values
+   * @property {ReadonlyArray<TokenType>} TYPES - Token types
    */
   static readonly TYPES: ReadonlyArray<TokenType> = Object.freeze([
     ...Object.values(TokenType)

@@ -62,6 +62,10 @@ const useSwagger = async (
     description: 'NestJS Docs - Healthchecks (Terminus)',
     url: 'https://docs.nestjs.com/recipes/terminus'
   })
+  builder.addTag(ApiEndpoint.OAUTH, 'Open Authorization', {
+    description: 'OAuth Community Site',
+    url: 'https://oauth.net'
+  })
 
   // Add servers
   for (const s of ENV.API_SERVERS) builder.addServer(s.url, s.description)

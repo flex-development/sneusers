@@ -1,14 +1,11 @@
-import { ExceptionCode } from '@flex-development/exceptions/enums'
-import { OrNull } from '@flex-development/tutils'
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
-import { Exception } from '@sneusers/exceptions'
-import { User } from '@sneusers/subdomains/users/entities'
+import { IAuthModuleOptions } from '@nestjs/passport'
 import type { Request } from 'express'
 import { AuthenticateOptions } from 'passport'
 import { ExtractJwt } from 'passport-jwt'
 import { AuthMetadataKey, AuthStrategy } from '../enums'
+import AuthGuard from './auth.guard'
 
 /**
  * @file Auth Subdomain Guards - JwtAuthGuard
@@ -42,51 +39,20 @@ class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) implements CanActivate {
   }
 
   /**
-   * Returns authentication options.
+   * Returns [`passport.authenticate`][1] options.
    *
+   * [1]: https://github.com/jaredhanson/passport/blob/master/lib/middleware/authenticate.js
+   *
+   * @param {ExecutionContext} context - Details about current request
    * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
    */
-  getAuthenticateOptions(): IAuthModuleOptions & AuthenticateOptions {
+  getAuthenticateOptions(
+    context: ExecutionContext
+  ): IAuthModuleOptions & AuthenticateOptions {
     return {
-      authInfo: true,
-      property: 'user',
+      ...super.getAuthenticateOptions(context),
       session: false
     }
-  }
-
-  /**
-   * Intercepts authentication attempts.
-   *
-   * @template TUser - User entity
-   *
-   * @param {OrNull<Error>} err - Error thrown, if any
-   * @param {TUser | false} user - Authenticated user if attempt was successful
-   * @param {OrNull<Error>} info - Error info
-   * @param {ExecutionContext} context - Details about current request pipeline
-   * @param {ExceptionCode} [status] - HTTP status if error occurred
-   * @return {TUser} Authenticated user
-   * @throws {Exception}
-   */
-  handleRequest<TUser extends User>(
-    err: OrNull<Error>,
-    user: TUser | false,
-    info: OrNull<Error>,
-    context: ExecutionContext,
-    status?: ExceptionCode
-  ): TUser {
-    if (err || info || !user) {
-      const error = err || info
-      const data = { code: status, errors: error ? [error] : [] }
-
-      throw new Exception<Error>(
-        ExceptionCode.UNAUTHORIZED,
-        error?.message ?? 'Unauthorized',
-        data,
-        error?.stack
-      )
-    }
-
-    return super.handleRequest(err, user, info, context, status)
   }
 }
 

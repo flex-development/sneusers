@@ -1,9 +1,11 @@
+import type { OrUndefined } from '@flex-development/tutils'
 import { ClassProvider, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { EnvironmentVariables } from '@sneusers/models'
 import { CookieOptions, CookieParseOptions } from '../abstracts'
 import { CookieType, SameSitePolicy } from '../enums'
 import { CookieOptionsFactory } from '../factories'
+import type { SameSite } from '../types'
 
 /**
  * @file MiddlewareModule Providers - CookieConfigService
@@ -45,7 +47,7 @@ class CookieConfigService implements CookieOptionsFactory {
         key: this.config.get<string>('CSURF_COOKIE_KEY'),
         maxAge: this.config.get<number>('CSURF_COOKIE_MAX_AGE'),
         path: this.config.get<string>('CSURF_COOKIE_PATH'),
-        sameSite: this.config.get<SameSitePolicy>('CSURF_COOKIE_SAME_SITE'),
+        sameSite: this.config.get<SameSite>('CSURF_COOKIE_SAME_SITE'),
         secure: this.config.get<boolean>('CSURF_COOKIE_SECURE'),
         signed: this.config.get<boolean>('CSURF_COOKIE_SIGNED')
       }
@@ -68,9 +70,9 @@ class CookieConfigService implements CookieOptionsFactory {
       options = {
         ...options,
         httpOnly: this.config.get<boolean>('SESSION_COOKIE_HTTP_ONLY'),
-        maxAge: this.config.get<number>('SESSION_COOKIE_MAX_AGE'),
+        maxAge: this.config.get<OrUndefined<number>>('SESSION_COOKIE_MAX_AGE'),
         path: this.config.get<string>('SESSION_COOKIE_PATH'),
-        sameSite: this.config.get<SameSitePolicy>('SESSION_COOKIE_SAME_SITE'),
+        sameSite: this.config.get<SameSite>('SESSION_COOKIE_SAME_SITE'),
         secure: this.config.get<boolean>('SESSION_COOKIE_SECURE')
       }
     }

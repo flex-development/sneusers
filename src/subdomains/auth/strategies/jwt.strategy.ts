@@ -43,7 +43,7 @@ class JwtStrategy
    * @return {Promise<User>} Promise containing authenticated user
    */
   async validate(payload: JwtPayloadAccess): Promise<User> {
-    return await this.strategist.validatePayload(payload)
+    return this.strategist.validatePayload(payload)
   }
 }
 

@@ -1,4 +1,9 @@
-import type { NullishNumber, NullishString } from '@flex-development/tutils'
+import type {
+  NullishNumber,
+  NullishString,
+  OrNull
+} from '@flex-development/tutils'
+import type { AuthProvider } from '@sneusers/subdomains/auth/enums'
 
 /**
  * @file Users Subdomain Interfaces - IUserRaw
@@ -21,6 +26,7 @@ interface IUserRaw {
   id: number
   last_name: NullishString
   password: NullishString
+  provider: OrNull<AuthProvider>
   updated_at: NullishNumber
 }
 

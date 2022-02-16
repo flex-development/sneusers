@@ -4,7 +4,7 @@ import type { OrPaginated } from '@sneusers/types'
 import type { UserDTO } from '../dtos'
 
 /**
- * @file Type Definitions - OutputUser
+ * @file Users Subdomain Type Definitions - OutputUser
  * @module sneusers/subdomains/users/types/OutputUser
  */
 

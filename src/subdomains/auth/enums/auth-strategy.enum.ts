@@ -9,6 +9,7 @@
  * @enum {Lowercase<string>}
  */
 enum AuthStrategy {
+  GITHUB = 'github',
   JWT = 'jwt-auth',
   JWT_REFRESH = 'jwt-refresh',
   LOCAL = 'local'

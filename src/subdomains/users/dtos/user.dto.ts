@@ -22,6 +22,7 @@ class UserDTO extends PickType(User, [
   'full_name',
   'id',
   'last_name',
+  'provider',
   'updated_at'
 ]) {
   @ApiProperty({ description: 'Unique identifier', type: Number })

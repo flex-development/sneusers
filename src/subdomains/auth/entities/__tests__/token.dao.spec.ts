@@ -207,6 +207,7 @@ describe('unit:subdomains/auth/entities/Token', () => {
       expect(result!.id).to.be.a('number')
       expect(result!.last_name).to.be.a('string')
       expect(result!.password).to.be.null
+      expect(result!.provider).to.be.null
       expect(result!.updated_at).to.be.null
     })
 

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport'
+import { ExecutionContext, Injectable } from '@nestjs/common'
+import { IAuthModuleOptions } from '@nestjs/passport'
 import { AuthenticateOptions } from 'passport'
 import { AuthStrategy } from '../enums'
+import AuthGuard from './auth.guard'
 
 /**
  * @file Auth Subdomain Guards - JwtRefreshGuard
@@ -11,13 +12,18 @@ import { AuthStrategy } from '../enums'
 @Injectable()
 class JwtRefreshGuard extends AuthGuard(AuthStrategy.JWT_REFRESH) {
   /**
-   * Returns authentication options.
+   * Returns [`passport.authenticate`][1] options.
    *
+   * [1]: https://github.com/jaredhanson/passport/blob/master/lib/middleware/authenticate.js
+   *
+   * @param {ExecutionContext} context - Details about current request
    * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
    */
-  getAuthenticateOptions(): IAuthModuleOptions & AuthenticateOptions {
+  getAuthenticateOptions(
+    context: ExecutionContext
+  ): IAuthModuleOptions & AuthenticateOptions {
     return {
-      property: 'user',
+      ...super.getAuthenticateOptions(context),
       session: false
     }
   }

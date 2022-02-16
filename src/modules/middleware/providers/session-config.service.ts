@@ -92,7 +92,8 @@ class SessionConfigService implements SessionOptionsFactory {
     if (this.config.get<boolean>('TEST')) return { captureRejections: true }
 
     return {
-      client: this.redis as unknown as RedisStoreOptions['client']
+      client: this.redis as unknown as RedisStoreOptions['client'],
+      logErrors: true
     }
   }
 }

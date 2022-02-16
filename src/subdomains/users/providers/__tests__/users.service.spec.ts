@@ -75,6 +75,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name.toLowerCase())
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
     })
 
@@ -128,6 +129,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result!.id).to.be.a('number')
       expect(result!.last_name).to.be.a('string')
       expect(result!.password).to.be.null
+      expect(result!.provider).to.be.null
       expect(result!.updated_at).to.be.null
     })
 
@@ -174,6 +176,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name!.toLowerCase())
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })
 
@@ -230,6 +233,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.be.a('string')
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
     })
 
@@ -271,7 +275,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#upsert', () => {
-    it('should return new User if user was created', async () => {
+    it('should return new User', async () => {
       // Arrange
       const dto = getCreateUserDTO()
 
@@ -288,10 +292,11 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name.toLowerCase())
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
     })
 
-    it('should return User if user was updated', async function (this) {
+    it('should return updated user', async function (this) {
       // Arrange
       const id: User['id'] = users[users.length - 3].id
       const dto: UpsertUserDTO = { email: this.faker.internet.email(), id }
@@ -309,6 +314,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.be.a('string')
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })
   })
@@ -331,6 +337,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.id).to.equal(uid)
       expect(result.last_name).to.be.a('string')
       expect(result.password).to.be.null
+      expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })
   })

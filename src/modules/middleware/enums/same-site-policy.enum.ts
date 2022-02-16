@@ -4,7 +4,7 @@
  */
 
 /**
- * Cookie `sameSite` policices,
+ * Cookie `sameSite` policices.
  *
  * @see https://github.com/expressjs/csurf#cookie
  * @see https://github.com/expressjs/session#cookiesamesite

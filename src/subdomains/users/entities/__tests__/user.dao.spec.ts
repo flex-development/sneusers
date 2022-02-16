@@ -121,6 +121,7 @@ describe('unit:subdomains/users/entities/User', () => {
       expect(result!.id).to.equal(user.id)
       expect(result!.last_name).to.equal(user.last_name)
       expect(result!.password).to.equal(user.password)
+      expect(result!.provider).to.equal(user.provider)
       expect(result!.updated_at).to.equal(user.updated_at)
     })
 
@@ -173,6 +174,7 @@ describe('unit:subdomains/users/entities/User', () => {
       expect(result!.id).to.equal(user.id)
       expect(result!.last_name).to.equal(user.last_name)
       expect(result!.password).to.equal(user.password)
+      expect(result!.provider).to.equal(user.provider)
       expect(result!.updated_at).to.equal(user.updated_at)
     })
 
@@ -221,6 +223,7 @@ describe('unit:subdomains/users/entities/User', () => {
       expect(result!.id).to.equal(user.id)
       expect(result!.last_name).to.equal(user.last_name)
       expect(result!.password).to.equal(user.password)
+      expect(result!.provider).to.equal(user.provider)
       expect(result!.updated_at).to.equal(user.updated_at)
     })
 
@@ -241,6 +244,7 @@ describe('unit:subdomains/users/entities/User', () => {
       expect(result!.id).to.equal(user.id)
       expect(result!.last_name).to.equal(user.last_name)
       expect(result!.password).to.equal(user.password)
+      expect(result!.provider).to.equal(user.provider)
       expect(result!.updated_at).to.equal(user.updated_at)
     })
 

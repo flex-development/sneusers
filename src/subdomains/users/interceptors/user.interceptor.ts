@@ -37,11 +37,12 @@ class UserInterceptor<
   /**
    * Removes sensitive data from {@link IUser} objects.
    *
-   * If an authenticated user isn't detected, the following properties will be
-   * removed from the payload:
+   * If an authenticated user isn't detected, or the payload is paginated, the
+   * following properties will be removed from the payload:
    *
    * - `email_verified`
    * - `password`
+   * - `provider`
    *
    * If an authenticated user is found, the following properties will be removed
    * from the payload:
@@ -62,15 +63,6 @@ class UserInterceptor<
   /**
    * Removes sensitive data from `payload`.
    *
-   * If `user` is defined, the following properties will be removed:
-   *
-   * - `password`
-   *
-   * If `user` is not defined, the following properties will be removed:
-   *
-   * - `email_verified`
-   * - `password`
-   *
    * @param {T} payload - User object or paginated response
    * @param {User} [user] - Authenticated user, if any
    * @return {R} Payload without listed properties
@@ -78,17 +70,15 @@ class UserInterceptor<
   strip(payload: T, user?: User): R {
     if ((payload as ILoginDTO).access_token) return payload as unknown as R
 
-    const STRIP: (keyof IUser)[] = ['password']
-    const STRIP_PAGINATED: (keyof IUser)[] = [...STRIP, 'password']
+    const STRIP_ALWAYS: (keyof IUser)[] = ['password']
+    const STRIP = [...STRIP_ALWAYS, 'email_verified', 'provider']
 
     if (payload instanceof PaginatedDTO) {
-      payload.results = payload.results.map(user => omit(user, STRIP_PAGINATED))
+      payload.results = payload.results.map(user => omit(user, STRIP))
       return payload as unknown as R
     }
 
-    if (!user) STRIP.push('email_verified')
-
-    return omit(payload, STRIP) as unknown as R
+    return omit(payload, user ? STRIP_ALWAYS : STRIP) as unknown as R
   }
 }
 

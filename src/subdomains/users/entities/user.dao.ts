@@ -5,6 +5,7 @@ import { BaseEntity } from '@sneusers/entities'
 import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { Token } from '@sneusers/subdomains/auth/entities'
+import { AuthProvider } from '@sneusers/subdomains/auth/enums'
 import type { SequelizeError } from '@sneusers/types'
 import { SearchOptions } from '@sneusers/types'
 import {
@@ -44,40 +45,56 @@ import { UserUid } from '../types'
   deletedAt: false,
   hooks: {
     /**
-     * Hashes a user's password before the user is persisted to the database.
+     * Normalizes data before a user is created.
+     *
+     * This includes:
+     *
+     * - Hashing a user's password
      *
      * @async
      * @param {User} instance - Current user instance
      * @return {Promise<void>} Empty promise when complete
      */
     async beforeCreate(instance: User): Promise<void> {
-      if (!instance.password) return
-      instance.password = await User.scrypt.hash(instance.password)
+      if (instance.password) {
+        instance.dataValues.password = await User.scrypt.hash(instance.password)
+      }
 
       return
     },
 
     /**
-     * Trims string fields and forces a user's display name, email, first name,
-     * and last name to be lowercased.
+     * Normalizes data before a user is persisted to the database.
+     *
+     * This includes:
+     *
+     * - Trimming string fields and forcing a user's display name, email, first
+     *   name, and last name to be lowercased
+     * - Setting defaults for users registered with an {@link AuthProvider}
      *
      * @param {User} instance - Current user instance
      * @return {void} Nothing when complete
      */
     beforeSave(instance: User): void {
-      instance.display_name =
-        instance.display_name?.toLowerCase().trim() ?? null
-      instance.email = instance.email.toLowerCase().trim()
-      instance.first_name = instance.first_name?.toLowerCase().trim() ?? null
-      instance.last_name = instance.last_name?.toLowerCase().trim() ?? null
+      const tl = (str?: NullishString) => str?.toLowerCase().trim() ?? null
 
-      if (instance.id) instance.id = Number.parseInt(instance.id.toString())
+      instance.dataValues.display_name = tl(instance.display_name)
+      instance.dataValues.email = tl(instance.email) as string
+      instance.dataValues.first_name = tl(instance.first_name)
+      instance.dataValues.last_name = tl(instance.last_name)
+
+      if (instance.id) instance.dataValues.id = JSON.parse(`${instance.id}`)
+
+      if (instance.provider !== null) {
+        instance.dataValues.email_verified = true
+        instance.dataValues.password = null
+      }
 
       return
     },
 
     /**
-     * Prepares a {@link User} instance for validation.
+     * Prepares a `instance` for validation.
      *
      * This includes:
      *
@@ -87,22 +104,18 @@ import { UserUid } from '../types'
      * @return {void} Nothing when complete
      */
     beforeValidate(instance: User): void {
-      const isNewRecord = !instance.id && !instance.updated_at
-
-      if (isNewRecord) {
+      if (instance.isNewRecord || (!instance.id && !instance.updated_at)) {
         const NOW = User.CURRENT_TIMESTAMP
 
         let created_at = instance.dataValues.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-
         if ((NOW as Literal).val === created_at) created_at = Date.now()
 
         instance.dataValues.created_at = created_at || Date.now()
+        instance.isNewRecord = true
         instance.dataValues.updated_at = null
       } else instance.dataValues.updated_at = Date.now()
-
-      instance.isNewRecord = isNewRecord
 
       return
     }
@@ -194,6 +207,18 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @Column(DataType.STRING)
   declare password: IUser['password']
 
+  @ApiProperty({
+    description: 'Authentication provider',
+    enum: AuthProvider,
+    enumName: 'AuthProvider',
+    nullable: true
+  })
+  @Comment('AuthProvider')
+  @Index('provider')
+  @Default(null)
+  @Column(DataType.ENUM(...User.AUTH_PROVIDERS))
+  declare provider: IUser['provider']
+
   @HasMany(() => Token)
   declare tokens: Token[]
 
@@ -225,6 +250,15 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   /**
    * @static
    * @readonly
+   * @property {ReadonlyArray<AuthProvider>} AUTH_PROVIDERS - Auth providers
+   */
+  static readonly AUTH_PROVIDERS: ReadonlyArray<AuthProvider> = Object.freeze([
+    ...Object.values(AuthProvider)
+  ])
+
+  /**
+   * @static
+   * @readonly
    * @property {(keyof IUserRaw)[]} RAW_KEYS - {@link IUserRaw} attributes
    */
   static readonly RAW_KEYS: (keyof IUserRaw)[] = [
@@ -236,6 +270,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     'id',
     'last_name',
     'password',
+    'provider',
     'updated_at'
   ]
 

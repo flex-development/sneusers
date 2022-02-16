@@ -28,6 +28,9 @@
   - [x] Register users
   - [x] [Refresh tokens][4]
   - [x] [Email verification][5]
+  - [ ] Social Login
+    - [x] GitHub
+    - [ ] Google
 - [x] Authorization
   - [x] Require user email to be verified before performing `PATCH`
 - [x] Security

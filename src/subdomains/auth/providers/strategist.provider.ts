@@ -1,4 +1,5 @@
-import { NullishString } from '@flex-development/tutils'
+import { ExceptionCode } from '@flex-development/exceptions/enums'
+import { NullishString, OrUndefined } from '@flex-development/tutils'
 import { Injectable } from '@nestjs/common'
 import { Exception } from '@sneusers/exceptions'
 import { ScryptService } from '@sneusers/modules/crypto/providers'
@@ -7,7 +8,8 @@ import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
 import { SearchOptions } from '@sneusers/types'
 import { JwtPayload, ResolvedToken } from '../dtos'
-import { TokenType } from '../enums'
+import { AuthProvider, TokenType } from '../enums'
+import { GitHubProfile } from '../types'
 import TokensService from './tokens.service'
 
 /**
@@ -24,18 +26,52 @@ class Strategist {
   ) {}
 
   /**
-   * Authenticates a user using an email and password.
+   * Authenticates a user via GitHub OAuth `profile`.
+   *
+   * @async
+   * @param {string} access_token - GitHub user access token
+   * @param {OrUndefined<string>} refresh_token - GitHub user refresh token
+   * @param {GitHubProfile} profile - GitHub user profile
+   * @return {Promise<User>} Promise containing authenticated user
+   */
+  async validateGitHub(
+    access_token: string,
+    refresh_token: OrUndefined<string>,
+    profile: GitHubProfile
+  ): Promise<User> {
+    return this.users.upsert<'internal'>({
+      display_name: profile.name,
+      email: profile.email!,
+      first_name: profile.name,
+      id: profile.id,
+      last_name: null,
+      provider: AuthProvider.GITHUB
+    })
+  }
+
+  /**
+   * Authenticates a user using an `email` and `password`.
    *
    * @async
    * @param {string} email - User email
    * @param {NullishString} [password=null] - User password
    * @return {Promise<User>} Promise containing authenticated user
+   * @throws {Exception}
    */
   async validateLocal(
     email: User['email'],
     password: User['password'] = null
   ): Promise<User> {
     const user = (await this.users.findOne(email, { rejectOnEmpty: true }))!
+
+    if (user.provider !== null) {
+      const message = 'Provider authentication required'
+
+      throw new Exception(ExceptionCode.FORBIDDEN, message, {
+        provider: user.provider,
+        user: { email: user.email, id: user.id }
+      })
+    }
 
     if (user.password === null && password === null) return user
 

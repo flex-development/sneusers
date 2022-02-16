@@ -32,8 +32,6 @@ const createAuthedUser = async (
   const entity = await users.create(dto, { isNewRecord: true, silent: true })
   const user = pick({ ...entity.toJSON(), updated_at: null }, users.RAW_KEYS)
 
-  await qi.insert(null, users.tableName, user)
-
   return {
     ...user,
     // @ts-expect-error Property 'tokens' is protected and only accessible

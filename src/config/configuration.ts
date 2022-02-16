@@ -1,13 +1,11 @@
-import { ObjectPlain } from '@flex-development/tutils'
+import { OrNil, OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
-import isNIL from '@flex-development/tutils/guards/is-nil.guard'
+import { isNIL } from '@flex-development/tutils/guards'
 import { EnvironmentVariables, ServerInfo } from '@sneusers/models'
-import {
-  SameSitePolicy,
-  SessionUnset
-} from '@sneusers/modules/middleware/enums'
+import { SessionUnset } from '@sneusers/modules/middleware/enums'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
+import validator from 'validator'
 
 /**
  * @file Configuration - Environment Variables
@@ -16,9 +14,28 @@ import { validateSync, ValidationError } from 'class-validator'
  */
 
 /**
+ * Parses `value`.
+ *
+ * @template T - Return type
+ *
+ * @param {OrNil<string>} [value] - Value to parse
+ * @return {T} Normalized value
+ */
+function parse<T = any>(value?: OrNil<string>): T {
+  if (value === 'false') return false as unknown as T
+  if (value === 'null') return null as unknown as T
+  if (value === 'true') return true as unknown as T
+  if (value === 'undefined') return undefined as unknown as T
+  if (isNIL(value)) return value as unknown as T
+  if (validator.isNumeric(value)) return Number.parseInt(value) as unknown as T
+
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
+/**
  * Validates environment variables.
  *
- * @param {ObjectPlain} config - Object containing environment variables
+ * @param {Record<string, OrUndefined<string>>} config - Environment variables
  * @return {EnvironmentVariables} **Validated** environment variables
  * @throws {ValidationError[]}
  */
@@ -30,70 +47,78 @@ const validate = ({
   API_SERVER_URL_PROD,
   API_SERVER_URL_STG,
   APP_ENV = AppEnv.DEV,
-  CACHE_MAX = 100,
-  CACHE_TTL = 5,
+  CACHE_MAX = '10',
+  CACHE_TTL = '5',
   COOKIE_SECRET,
-  CSURF_COOKIE_HTTP_ONLY = false,
+  CSURF_COOKIE_HTTP_ONLY = 'false',
   CSURF_COOKIE_KEY = '_csrf',
-  CSURF_COOKIE_MAX_AGE = 86_400,
+  CSURF_COOKIE_MAX_AGE = '86400',
   CSURF_COOKIE_PATH = '/',
-  CSURF_COOKIE_SAME_SITE = SameSitePolicy.NONE,
-  CSURF_COOKIE_SECURE = false,
-  CSURF_COOKIE_SIGNED = false,
+  CSURF_COOKIE_SAME_SITE = 'false',
+  CSURF_COOKIE_SECURE = 'false',
+  CSURF_COOKIE_SIGNED = 'false',
   DB_AUTO_LOAD_MODELS = 'true',
   DB_HOST = 'postgres',
-  DB_LOG_QUERY_PARAMS = true,
+  DB_LOG_QUERY_PARAMS = 'true',
   DB_NAME,
   DB_PASSWORD,
-  DB_PORT = 5432,
-  DB_RETRY_ATTEMPTS = 10,
-  DB_RETRY_DELAY = 3000,
-  DB_SYNC_ALTER = true,
-  DB_SYNC_FORCE = false,
-  DB_SYNCHRONIZE = true,
+  DB_PORT = '5432',
+  DB_RETRY_ATTEMPTS = '10',
+  DB_RETRY_DELAY = '3000',
+  DB_SYNC_ALTER = 'true',
+  DB_SYNC_FORCE = 'false',
+  DB_SYNCHRONIZE = 'true',
   DB_TIMEZONE,
   DB_USERNAME,
   EMAIL_CLIENT,
   EMAIL_HOST = 'smtp.gmail.com',
-  EMAIL_PORT = 465,
+  EMAIL_PORT = '465',
   EMAIL_PRIVATE_KEY,
   EMAIL_SEND_AS,
   EMAIL_USER,
+  GH_AUTHORIZATION_URL = 'https://github.com/login/oauth/authorize',
+  GH_CLIENT_ID,
+  GH_CLIENT_SECRET,
+  GH_SCOPES,
+  GH_SCOPES_SEPARATOR = ' ',
+  GH_TOKEN_URL = 'https://github.com/login/oauth/access_token',
+  GH_USER_EMAIL_URL = 'https://api.github.com/user/emails',
+  GH_USER_PROFILE_URL = 'https://api.github.com/user',
   HOST,
   HOSTNAME = 'localhost',
-  JWT_EXP_ACCESS = 900,
-  JWT_EXP_REFRESH = 86_400,
-  JWT_EXP_VERIFICATION = 86_400,
+  JWT_EXP_ACCESS = '900',
+  JWT_EXP_REFRESH = '86400',
+  JWT_EXP_VERIFICATION = '86400',
   JWT_SECRET_ACCESS,
   JWT_SECRET_REFRESH,
   JWT_SECRET_VERIFICATION,
   NODE_ENV = NodeEnv.DEV,
-  PORT = 8080,
+  PORT = '8080',
   REDIS_HOST = 'redis',
   REDIS_PASSWORD,
-  REDIS_PORT = 6379,
+  REDIS_PORT = '6379',
   REDIS_USERNAME,
-  SESSION_COOKIE_HTTP_ONLY = false,
-  SESSION_COOKIE_MAX_AGE = 86_400,
+  SESSION_COOKIE_HTTP_ONLY = 'true',
+  SESSION_COOKIE_MAX_AGE,
   SESSION_COOKIE_PATH = '/',
-  SESSION_COOKIE_SAME_SITE = SameSitePolicy.NONE,
-  SESSION_COOKIE_SECURE = false,
+  SESSION_COOKIE_SAME_SITE,
+  SESSION_COOKIE_SECURE = 'false',
   SESSION_NAME = 'connect.sid',
   SESSION_PROXY,
-  SESSION_RESAVE = true,
-  SESSION_ROLLING = false,
-  SESSION_SAVE_UNINITIALIZED = false,
+  SESSION_RESAVE = 'true',
+  SESSION_ROLLING = 'false',
+  SESSION_SAVE_UNINITIALIZED = 'false',
   SESSION_SECRET,
   SESSION_UNSET = SessionUnset.KEEP,
-  THROTTLE_LIMIT = 10,
-  THROTTLE_TTL = 60,
+  THROTTLE_LIMIT = '10',
+  THROTTLE_TTL = '60',
   TLD
-}: ObjectPlain): EnvironmentVariables => {
-  const env = new EnvironmentVariables()
+}: Record<string, OrUndefined<string>>): EnvironmentVariables => {
+  const env = new EnvironmentVariables() as Partial<EnvironmentVariables>
 
   // Set application and  Node environment
-  env.APP_ENV = APP_ENV
-  env.NODE_ENV = NODE_ENV
+  env.APP_ENV = parse<AppEnv>(APP_ENV)
+  env.NODE_ENV = parse<NodeEnv>(NODE_ENV)
 
   // Check if running in production or staging environment
   env.PROD = env.APP_ENV === AppEnv.PROD && env.NODE_ENV === NodeEnv.PROD
@@ -101,7 +126,7 @@ const validate = ({
 
   // Set hostname, port to run application on, and top level domain
   env.HOSTNAME = HOSTNAME
-  env.PORT = Number.parseInt(PORT.toString())
+  env.PORT = parse(PORT.toString())
   env.TLD = TLD
 
   // Set server descriptions and URLs
@@ -130,62 +155,70 @@ const validate = ({
   }
 
   // Assign remaining environment variables
-  env.CACHE_MAX = Number.parseInt(`${CACHE_MAX}`)
-  env.CACHE_TTL = Number.parseInt(`${CACHE_TTL}`)
+  env.CACHE_MAX = parse(CACHE_MAX)
+  env.CACHE_TTL = parse(CACHE_TTL)
   env.COOKIE_SECRET = COOKIE_SECRET
-  env.CSURF_COOKIE_HTTP_ONLY = JSON.parse(`${CSURF_COOKIE_HTTP_ONLY}`)
+  env.CSURF_COOKIE_HTTP_ONLY = parse(CSURF_COOKIE_HTTP_ONLY)
   env.CSURF_COOKIE_KEY = CSURF_COOKIE_KEY
-  env.CSURF_COOKIE_MAX_AGE = Number.parseInt(`${CSURF_COOKIE_MAX_AGE}`)
+  env.CSURF_COOKIE_MAX_AGE = parse(CSURF_COOKIE_MAX_AGE)
   env.CSURF_COOKIE_PATH = CSURF_COOKIE_PATH
-  env.CSURF_COOKIE_SAME_SITE = CSURF_COOKIE_SAME_SITE
-  env.CSURF_COOKIE_SECURE = JSON.parse(`${CSURF_COOKIE_SECURE}`)
-  env.CSURF_COOKIE_SIGNED = JSON.parse(`${CSURF_COOKIE_SIGNED}`)
-  env.DB_AUTO_LOAD_MODELS = JSON.parse(DB_AUTO_LOAD_MODELS)
+  env.CSURF_COOKIE_SAME_SITE = parse(CSURF_COOKIE_SAME_SITE)
+  env.CSURF_COOKIE_SECURE = parse(CSURF_COOKIE_SECURE)
+  env.CSURF_COOKIE_SIGNED = parse(CSURF_COOKIE_SIGNED)
+  env.DB_AUTO_LOAD_MODELS = parse(DB_AUTO_LOAD_MODELS)
   env.DB_HOST = DB_HOST
-  env.DB_LOG_QUERY_PARAMS = JSON.parse(DB_LOG_QUERY_PARAMS)
+  env.DB_LOG_QUERY_PARAMS = parse(DB_LOG_QUERY_PARAMS)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
-  env.DB_PORT = Number.parseInt(`${DB_PORT}`)
-  env.DB_RETRY_ATTEMPTS = Number.parseInt(`${DB_RETRY_ATTEMPTS}`)
-  env.DB_RETRY_DELAY = Number.parseInt(`${DB_RETRY_DELAY}`)
-  env.DB_SYNC_ALTER = JSON.parse(DB_SYNC_ALTER)
-  env.DB_SYNC_FORCE = JSON.parse(DB_SYNC_FORCE)
-  env.DB_SYNCHRONIZE = JSON.parse(DB_SYNCHRONIZE)
+  env.DB_PORT = parse(DB_PORT)
+  env.DB_RETRY_ATTEMPTS = parse(DB_RETRY_ATTEMPTS)
+  env.DB_RETRY_DELAY = parse(DB_RETRY_DELAY)
+  env.DB_SYNC_ALTER = parse(DB_SYNC_ALTER)
+  env.DB_SYNC_FORCE = parse(DB_SYNC_FORCE)
+  env.DB_SYNCHRONIZE = parse(DB_SYNCHRONIZE)
   env.DB_TIMEZONE = DB_TIMEZONE
   env.DB_USERNAME = DB_USERNAME
   env.DEV = env.APP_ENV === AppEnv.DEV && env.NODE_ENV === NodeEnv.DEV
   env.EMAIL_CLIENT = EMAIL_CLIENT
   env.EMAIL_HOST = EMAIL_HOST
-  env.EMAIL_PORT = Number.parseInt(`${EMAIL_PORT}`)
-  env.EMAIL_PRIVATE_KEY = EMAIL_PRIVATE_KEY!.replace(/\\n/g, '\n')
+  env.EMAIL_PORT = parse(EMAIL_PORT)
+  env.EMAIL_PRIVATE_KEY = EMAIL_PRIVATE_KEY?.replace(/\\n/g, '\n')
   env.EMAIL_SEND_AS = EMAIL_SEND_AS
   env.EMAIL_USER = EMAIL_USER
+  env.GH_AUTHORIZATION_URL = GH_AUTHORIZATION_URL
+  env.GH_CLIENT_ID = GH_CLIENT_ID
+  env.GH_CLIENT_SECRET = GH_CLIENT_SECRET
+  env.GH_SCOPES = GH_SCOPES
+  env.GH_SCOPES_SEPARATOR = GH_SCOPES_SEPARATOR
+  env.GH_TOKEN_URL = GH_TOKEN_URL
+  env.GH_USER_EMAIL_URL = GH_USER_EMAIL_URL
+  env.GH_USER_PROFILE_URL = GH_USER_PROFILE_URL
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
-  env.JWT_EXP_ACCESS = Number.parseInt(`${JWT_EXP_ACCESS}`)
-  env.JWT_EXP_REFRESH = Number.parseInt(`${JWT_EXP_REFRESH}`)
-  env.JWT_EXP_VERIFICATION = Number.parseInt(`${JWT_EXP_VERIFICATION}`)
+  env.JWT_EXP_ACCESS = parse(JWT_EXP_ACCESS)
+  env.JWT_EXP_REFRESH = parse(JWT_EXP_REFRESH)
+  env.JWT_EXP_VERIFICATION = parse(JWT_EXP_VERIFICATION)
   env.JWT_SECRET_ACCESS = JWT_SECRET_ACCESS
   env.JWT_SECRET_REFRESH = JWT_SECRET_REFRESH
   env.JWT_SECRET_VERIFICATION = JWT_SECRET_VERIFICATION
   env.REDIS_HOST = REDIS_HOST
   env.REDIS_PASSWORD = REDIS_PASSWORD
-  env.REDIS_PORT = Number.parseInt(`${REDIS_PORT}`)
+  env.REDIS_PORT = parse(REDIS_PORT)
   env.REDIS_USERNAME = REDIS_USERNAME
-  env.SESSION_COOKIE_HTTP_ONLY = JSON.parse(`${SESSION_COOKIE_HTTP_ONLY}`)
-  env.SESSION_COOKIE_MAX_AGE = Number.parseInt(`${SESSION_COOKIE_MAX_AGE}`)
+  env.SESSION_COOKIE_HTTP_ONLY = parse(SESSION_COOKIE_HTTP_ONLY)
+  env.SESSION_COOKIE_MAX_AGE = parse(SESSION_COOKIE_MAX_AGE)
   env.SESSION_COOKIE_PATH = SESSION_COOKIE_PATH
-  env.SESSION_COOKIE_SAME_SITE = SESSION_COOKIE_SAME_SITE
-  env.SESSION_COOKIE_SECURE = JSON.parse(`${SESSION_COOKIE_SECURE}`)
+  env.SESSION_COOKIE_SAME_SITE = parse(SESSION_COOKIE_SAME_SITE)
+  env.SESSION_COOKIE_SECURE = parse(SESSION_COOKIE_SECURE)
   env.SESSION_NAME = SESSION_NAME
-  if (!isNIL(SESSION_PROXY)) env.SESSION_PROXY = JSON.parse(`${SESSION_PROXY}`)
-  env.SESSION_RESAVE = JSON.parse(`${SESSION_RESAVE}`)
-  env.SESSION_ROLLING = JSON.parse(`${SESSION_ROLLING}`)
-  env.SESSION_SAVE_UNINITIALIZED = JSON.parse(`${SESSION_SAVE_UNINITIALIZED}`)
+  env.SESSION_PROXY = parse(SESSION_PROXY)
+  env.SESSION_RESAVE = parse(SESSION_RESAVE)
+  env.SESSION_ROLLING = parse(SESSION_ROLLING)
+  env.SESSION_SAVE_UNINITIALIZED = parse(SESSION_SAVE_UNINITIALIZED)
   env.SESSION_SECRET = SESSION_SECRET
-  env.SESSION_UNSET = SESSION_UNSET
+  env.SESSION_UNSET = parse<SessionUnset>(SESSION_UNSET)
   env.TEST = env.APP_ENV === AppEnv.TEST || env.NODE_ENV === NodeEnv.TEST
-  env.THROTTLE_LIMIT = Number.parseInt(`${THROTTLE_LIMIT}`)
-  env.THROTTLE_TTL = Number.parseInt(`${THROTTLE_TTL}`)
+  env.THROTTLE_LIMIT = parse(THROTTLE_LIMIT)
+  env.THROTTLE_TTL = parse(THROTTLE_TTL)
 
   // Validate environment variables
   const errors: ValidationError[] = validateSync(env, {
@@ -245,6 +278,14 @@ const configuration = (): EnvironmentVariables => {
     EMAIL_PRIVATE_KEY: process.env.EMAIL_PRIVATE_KEY,
     EMAIL_SEND_AS: process.env.EMAIL_SEND_AS,
     EMAIL_USER: process.env.EMAIL_USER,
+    GH_AUTHORIZATION_URL: process.env.GH_AUTHORIZATION_URL,
+    GH_CLIENT_ID: process.env.GH_CLIENT_ID,
+    GH_CLIENT_SECRET: process.env.GH_CLIENT_SECRET,
+    GH_SCOPES: process.env.GH_SCOPES,
+    GH_SCOPES_SEPARATOR: process.env.GH_SCOPES_SEPARATOR,
+    GH_TOKEN_URL: process.env.GH_TOKEN_URL,
+    GH_USER_EMAIL_URL: process.env.GH_USER_EMAIL_URL,
+    GH_USER_PROFILE_URL: process.env.GH_USER_PROFILE_URL,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
     JWT_EXP_ACCESS: process.env.JWT_EXP_ACCESS,

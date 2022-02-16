@@ -5,12 +5,12 @@ import { AuthStrategy } from '../enums'
 import AuthGuard from './auth.guard'
 
 /**
- * @file Auth Subdomain Guards - LocalAuthGuard
- * @module sneusers/subdomains/auth/guards/LocalAuthGuard
+ * @file Auth Subdomain Guards - OAuthGuard
+ * @module sneusers/subdomains/auth/guards/OAuthGuard
  */
 
 @Injectable()
-class LocalAuthGuard extends AuthGuard(AuthStrategy.LOCAL) {
+class OAuthGuard extends AuthGuard([AuthStrategy.GITHUB]) {
   /**
    * Returns [`passport.authenticate`][1] options.
    *
@@ -24,9 +24,9 @@ class LocalAuthGuard extends AuthGuard(AuthStrategy.LOCAL) {
   ): IAuthModuleOptions & AuthenticateOptions {
     return {
       ...super.getAuthenticateOptions(context),
-      session: false
+      session: true
     }
   }
 }
 
-export default LocalAuthGuard
+export default OAuthGuard

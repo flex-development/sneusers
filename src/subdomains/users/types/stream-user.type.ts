@@ -3,7 +3,7 @@ import type { OrPaginated } from '@sneusers/types'
 import type { IUser } from '../interfaces'
 
 /**
- * @file Type Definitions - StreamUser
+ * @file Users Subdomain Type Definitions - StreamUser
  * @module sneusers/subdomains/users/types/StreamUser
  */
 

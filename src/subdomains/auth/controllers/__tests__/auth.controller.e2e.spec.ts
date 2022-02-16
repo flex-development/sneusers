@@ -236,6 +236,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.null
         expect(res.body.updated_at).to.be.null
         expect(cookie.parse(cookies).Refresh).to.be.empty
       })
@@ -305,7 +306,6 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
-        expect(res.body.message).to.equal('Unauthorized')
       })
     })
   })
@@ -336,6 +336,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.equal(dto.last_name.toLowerCase())
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -383,6 +384,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.null
         expect(res.body.updated_at).to.be.null
       })
 

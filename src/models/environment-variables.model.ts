@@ -4,8 +4,10 @@ import {
   SameSitePolicy,
   SessionUnset
 } from '@sneusers/modules/middleware/enums'
+import { SameSite } from '@sneusers/modules/middleware/types'
 import {
   IsBoolean,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -13,6 +15,7 @@ import {
   IsString,
   IsUrl,
   MinLength,
+  ValidateIf,
   ValidateNested
 } from 'class-validator'
 import ServerInfo from './server-info.model'
@@ -73,7 +76,8 @@ class EnvironmentVariables {
    *
    * @see https://swagger.io/docs/specification/api-host-and-base-path
    *
-   * **Note**: This value is computed by the application.
+   * **Note**: This value is computed by the application and does **NOT**
+   * support server variables.
    *
    * @default []
    */
@@ -91,13 +95,13 @@ class EnvironmentVariables {
   /**
    * Maximum number of responses to store in the cache.
    *
-   * @default 100
+   * @default 10
    */
   @IsNumber()
   CACHE_MAX: number
 
   /**
-   * Amount of time a response is cached before it is deleted (in seconds).
+   * Amount of time a response is cached before it is deleted (s).
    *
    * Subsequent requests will go to the route handler and refresh the cache.
    *
@@ -110,6 +114,7 @@ class EnvironmentVariables {
    * Cookie signing secret.
    */
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   COOKIE_SECRET: OrUndefined<string>
 
@@ -131,6 +136,7 @@ class EnvironmentVariables {
    * @default '_csrf'
    */
   @IsString()
+  @IsNotEmpty()
   CSURF_COOKIE_KEY: string
 
   /**
@@ -151,6 +157,7 @@ class EnvironmentVariables {
    * @default '/'
    */
   @IsString()
+  @IsNotEmpty()
   CSURF_COOKIE_PATH: string
 
   /**
@@ -158,10 +165,12 @@ class EnvironmentVariables {
    *
    * @see https://github.com/expressjs/csurf#cookie
    *
-   * @default SameSitePolicy.NONE
+   * @default false
    */
   @IsEnum(SameSitePolicy)
-  CSURF_COOKIE_SAME_SITE: SameSitePolicy
+  @IsOptional()
+  @ValidateIf(o => typeof o.CSURF_COOKIE_SAME_SITE !== 'boolean')
+  CSURF_COOKIE_SAME_SITE: SameSite
 
   /**
    * Force csurf cookies to be used over `HTTPS` only.
@@ -199,6 +208,7 @@ class EnvironmentVariables {
    * @default 'postgres'
    */
   @IsString()
+  @IsNotEmpty()
   DB_HOST: string
 
   /**
@@ -301,6 +311,7 @@ class EnvironmentVariables {
    * {@link Date} object.
    */
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   DB_TIMEZONE: OrUndefined<string>
 
@@ -323,6 +334,7 @@ class EnvironmentVariables {
    * Google service account `client_id`.
    */
   @IsString()
+  @IsNotEmpty()
   EMAIL_CLIENT: string
 
   /**
@@ -331,6 +343,7 @@ class EnvironmentVariables {
    * @default 'smtp.gmail.com'
    */
   @IsString()
+  @IsNotEmpty()
   EMAIL_HOST: string
 
   /**
@@ -345,6 +358,7 @@ class EnvironmentVariables {
    * Google service account `private_key`.
    */
   @IsString()
+  @IsNotEmpty()
   EMAIL_PRIVATE_KEY: string
 
   /**
@@ -355,21 +369,85 @@ class EnvironmentVariables {
    *
    * @see https://support.google.com/mail/answer/22370?hl=en
    */
-  @IsString()
+  @IsEmail()
   EMAIL_SEND_AS: string
 
   /**
    * Email address used to authenticate with Google APIs.
    */
   @IsString()
+  @IsNotEmpty()
   EMAIL_USER: string
+
+  /**
+   * GitHub OAuth authorization URL.
+   *
+   * @default 'https://github.com/login/oauth/authorize'
+   */
+  @IsUrl()
+  GH_AUTHORIZATION_URL: string
+
+  /**
+   * GitHub OAuth client id.
+   */
+  @IsString()
+  @IsNotEmpty()
+  GH_CLIENT_ID: string
+
+  /**
+   * GitHub OAuth client id.
+   */
+  @IsString()
+  @IsNotEmpty()
+  GH_CLIENT_SECRET: string
+
+  /**
+   * GitHub OAuth access token URL.
+   *
+   * @default 'https://github.com/login/oauth/access_token'
+   */
+  @IsUrl()
+  GH_TOKEN_URL: string
+
+  /**
+   * GitHub OAuth user email URL.
+   *
+   * @default 'https://api.github.com/user/emails'
+   */
+  @IsUrl()
+  GH_USER_EMAIL_URL: string
+
+  /**
+   * GitHub OAuth user profile URL.
+   *
+   * @default 'https://api.github.com/user'
+   */
+  @IsUrl()
+  GH_USER_PROFILE_URL: string
+
+  /**
+   * List of GitHub OAuth scopes.
+   *
+   * @see https://docs.github.com/developers/apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes
+   */
+  @IsString()
+  @IsOptional()
+  GH_SCOPES: string
+
+  /**
+   * {@link EnvironmentVariables.GH_SCOPES} list separator.
+   *
+   * @default ' '
+   */
+  @IsString()
+  GH_SCOPES_SEPARATOR: string
 
   /**
    * Application URL (includes scheme and `PORT` if applicable).
    *
    * @default `http://${HOSTNAME}:${PORT}`
    */
-  @IsString()
+  @IsUrl()
   HOST: string
 
   /**
@@ -378,6 +456,7 @@ class EnvironmentVariables {
    * @default 'localhost'
    */
   @IsString()
+  @IsNotEmpty()
   HOSTNAME: string
 
   /**
@@ -410,6 +489,7 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
+  @IsNotEmpty()
   JWT_SECRET_ACCESS: string
 
   /**
@@ -418,6 +498,7 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
+  @IsNotEmpty()
   JWT_SECRET_REFRESH: string
 
   /**
@@ -426,6 +507,7 @@ class EnvironmentVariables {
    * Defaults to `'JWT_SECRET'` in `development` and `test` environments.
    */
   @IsString()
+  @IsNotEmpty()
   JWT_SECRET_VERIFICATION: string
 
   /**
@@ -462,12 +544,14 @@ class EnvironmentVariables {
    * @default 'redis'
    */
   @IsString()
+  @IsNotEmpty()
   REDIS_HOST: string
 
   /**
    * Redis server password.
    */
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   REDIS_PASSWORD: OrUndefined<string>
 
@@ -475,6 +559,7 @@ class EnvironmentVariables {
    * Redis server username.
    */
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   REDIS_USERNAME: OrUndefined<string>
 
@@ -493,7 +578,7 @@ class EnvironmentVariables {
    *
    * @see https://github.com/expressjs/session#cookiehttponly
    *
-   * @default false
+   * @default true
    */
   @IsBoolean()
   SESSION_COOKIE_HTTP_ONLY: boolean
@@ -503,10 +588,12 @@ class EnvironmentVariables {
    *
    * @see https://github.com/expressjs/session#cookiemaxage
    *
-   * @default 86400
+   * @default undefined
    */
   @IsNumber()
-  SESSION_COOKIE_MAX_AGE: number
+  @IsOptional()
+  @ValidateIf(o => o.SESSION_COOKIE_MAX_AGE !== undefined)
+  SESSION_COOKIE_MAX_AGE: OrUndefined<number>
 
   /**
    * session cookie path.
@@ -516,6 +603,7 @@ class EnvironmentVariables {
    * @default '/'
    */
   @IsString()
+  @IsNotEmpty()
   SESSION_COOKIE_PATH: string
 
   /**
@@ -523,10 +611,12 @@ class EnvironmentVariables {
    *
    * @see https://github.com/expressjs/session#cookiesamesite
    *
-   * @default SameSitePolicy.NONE
+   * @default undefined
    */
   @IsEnum(SameSitePolicy)
-  SESSION_COOKIE_SAME_SITE: SameSitePolicy
+  @IsOptional()
+  @ValidateIf(o => typeof o.SESSION_COOKIE_SAME_SITE !== 'boolean')
+  SESSION_COOKIE_SAME_SITE: SameSite
 
   /**
    * Force session cookies to be used over `HTTPS` only.
@@ -546,6 +636,7 @@ class EnvironmentVariables {
    * @default 'connect.sid'
    */
   @IsString()
+  @IsNotEmpty()
   SESSION_NAME: string
 
   /**
@@ -560,8 +651,8 @@ class EnvironmentVariables {
   SESSION_PROXY: OrUndefined<boolean>
 
   /**
-   * Forces sessions to be saved back to the session store, even if a session
-   * was never modified during a request.
+   * Force sessions to be saved back to the session store, even if a session was
+   * never modified during a request.
    *
    * @see https://github.com/expressjs/session#resave
    *
@@ -600,6 +691,7 @@ class EnvironmentVariables {
    * @see https://github.com/expressjs/session#secret
    */
   @IsString()
+  @IsNotEmpty()
   SESSION_SECRET: string
 
   /**

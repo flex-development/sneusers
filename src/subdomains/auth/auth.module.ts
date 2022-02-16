@@ -3,7 +3,11 @@ import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { SequelizeModule } from '@nestjs/sequelize'
 import UsersModule from '@sneusers/subdomains/users/users.module'
-import { AuthController, VerificationController } from './controllers'
+import {
+  AuthController,
+  OAuthController,
+  VerificationController
+} from './controllers'
 import { Token } from './entities'
 import {
   AuthService,
@@ -12,7 +16,12 @@ import {
   TokensService,
   VerificationService
 } from './providers'
-import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
+import {
+  GitHubStrategy,
+  JwtRefreshStrategy,
+  JwtStrategy,
+  LocalStrategy
+} from './strategies'
 
 /**
  * @file Auth Subdomain - AuthModule
@@ -20,7 +29,7 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
  */
 
 @Module({
-  controllers: [AuthController, VerificationController],
+  controllers: [AuthController, OAuthController, VerificationController],
   imports: [
     JwtModule.registerAsync(JwtConfigService.moduleOptions),
     PassportModule,
@@ -29,6 +38,7 @@ import { JwtRefreshStrategy, JwtStrategy, LocalStrategy } from './strategies'
   ],
   providers: [
     AuthService,
+    GitHubStrategy,
     JwtConfigService,
     JwtRefreshStrategy,
     JwtStrategy,

@@ -39,13 +39,11 @@ class JwtConfigService implements JwtOptionsFactory {
    * @return {JwtModuleOptions} Secret and encryption key options
    */
   createJwtOptions(): JwtModuleOptions {
-    const HOST = this.config.get<string>('HOST')
-
     return {
       signOptions: {
         algorithm: 'HS256',
-        audience: HOST,
-        issuer: HOST,
+        audience: this.config.get<string>('HOST'),
+        issuer: this.config.get<string>('HOSTNAME'),
         noTimestamp: false
       }
     }

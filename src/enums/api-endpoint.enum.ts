@@ -12,6 +12,7 @@ enum ApiEndpoint {
   AUTH = 'auth',
   DOCS = 'docs',
   HEALTH = 'health',
+  OAUTH = 'oauth',
   USERS = 'users',
   VERIFY = 'verify'
 }

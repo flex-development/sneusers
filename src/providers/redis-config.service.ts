@@ -37,6 +37,7 @@ class RedisConfigService implements RedisOptionsFactory {
    */
   createRedisOptions(): RedisClientOptions {
     return {
+      legacyMode: true,
       password: this.config.get<string>('REDIS_PASSWORD'),
       socket: {
         host: this.config.get<string>('REDIS_HOST'),

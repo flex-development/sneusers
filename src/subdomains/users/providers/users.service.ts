@@ -13,6 +13,7 @@ import { QueryParams } from '@sneusers/models'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
 import { EmailService } from '@sneusers/modules/email/providers'
 import { RedisCache } from '@sneusers/modules/redis/abstracts'
+import { AuthProvider } from '@sneusers/subdomains/auth/enums'
 import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -78,20 +79,25 @@ class UsersService {
    * @param {NumberString} [dto.id] - Unique id
    * @param {NullishString} [dto.last_name] - Last name
    * @param {NullishString} [dto.password] - Plaintext password
+   * @param {OrNull<AuthProvider>} [dto.provider] - Authentication provider
    * @return {Promise<User>} - Promise containing new user
    * @throws {Exception | UniqueEmailException}
    */
   async create(dto: CreateUserDTO): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
+      dto['email_verified'] = false
+
       try {
         return await this.repo.create(dto, {
           fields: [
             'display_name',
             'email',
+            'email_verified', // must be included for triggers to fire correctly
             'first_name',
             'id',
             'last_name',
-            'password'
+            'password',
+            'provider'
           ],
           isNewRecord: true,
           raw: true,
@@ -189,17 +195,17 @@ class UsersService {
    *
    * @see {@link PatchUserDTO}
    *
-   * @template Internal - Allow internal-only updates
+   * @template I - Allow internal-only updates
    *
    * @async
    * @param {UserUid} uid - Id or email of user to update
-   * @param {PatchUserDTO} [dto={}] - Data to update user
+   * @param {PatchUserDTO<I>} [dto={}] - Data to update user
    * @return {Promise<User>} - Promise containing updated user
    * @throws {Exception | UniqueEmailException}
    */
-  async patch<Internal extends 'internal' | never = never>(
+  async patch<I extends 'internal' | never = never>(
     uid: UserUid,
-    dto: PatchUserDTO<Internal> = {}
+    dto: PatchUserDTO<I> = {}
   ): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
@@ -213,7 +219,8 @@ class UsersService {
             'email_verified',
             'first_name',
             'last_name',
-            'password'
+            'password',
+            'provider'
           ],
           silent: false,
           transaction,
@@ -296,15 +303,19 @@ class UsersService {
   /**
    * Creates or updates a user.
    *
+   * @template I - Allow internal-only updates
+   *
    * @async
-   * @param {UpsertUserDTO} [dto={}] - Data to create or update user
+   * @param {UpsertUserDTO<I>} [dto={}] - Data to create or update user
    * @param {NumberString} [dto.id] - Id of new user or id of user to update
    * @return {Promise<User>} - Promise containing new or updated user
    */
-  async upsert(dto: UpsertUserDTO = {}): Promise<User> {
+  async upsert<I extends 'internal' | never = never>(
+    dto: UpsertUserDTO<I> = {}
+  ): Promise<User> {
     const id = dto.id
 
-    if (id && (await this.findOne(id))) return await this.patch(id, dto)
+    if (id && (await this.findOne(id))) return await this.patch<I>(id, dto)
     return await this.create(dto as CreateUserDTO)
   }
 

@@ -1,8 +1,10 @@
 import type { NumberString } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Is } from '@sneusers/decorators'
+import { AuthProvider } from '@sneusers/subdomains/auth/enums'
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -86,6 +88,17 @@ class CreateUserDTO {
   @IsString()
   @IsOptional()
   readonly password?: IUserRaw['password']
+
+  @ApiPropertyOptional({
+    default: null,
+    description: 'Authentication provider',
+    enum: AuthProvider,
+    enumName: 'AuthProvider',
+    nullable: true
+  })
+  @IsEnum(AuthProvider)
+  @IsOptional()
+  readonly provider?: IUserRaw['provider']
 }
 
 export default CreateUserDTO

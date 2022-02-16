@@ -63,6 +63,7 @@ module.exports = {
           'nodemailer',
           'nullish',
           'nginx',
+          'oauth',
           'openapi',
           'passwordless',
           'plaintext',
@@ -165,6 +166,12 @@ module.exports = {
       files: ['src/subdomains/auth/entities/token.dao.ts'],
       rules: {
         eqeqeq: 0
+      }
+    },
+    {
+      files: ['src/subdomains/users/entities/user.dao.ts'],
+      rules: {
+        'unicorn/consistent-function-scoping': 0
       }
     },
     {

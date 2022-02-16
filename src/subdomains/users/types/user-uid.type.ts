@@ -1,7 +1,7 @@
 import type { User } from '../entities'
 
 /**
- * @file Type Definitions - UserUid
+ * @file Users Subdomain Type Definitions - UserUid
  * @module sneusers/subdomains/users/types/UserUid
  */
 

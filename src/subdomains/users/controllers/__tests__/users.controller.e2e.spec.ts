@@ -146,6 +146,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.equal(user.last_name.toLowerCase())
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.null
         expect(res.body.updated_at).to.be.null
       })
 
@@ -199,6 +200,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -221,6 +223,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.equal(id)
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.undefined
         expect(res.body.updated_at).to.be.null
       })
 
@@ -275,6 +278,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         expect(res.body.id).to.be.a('number')
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
+        expect(res.body.provider).to.be.null
         expect(res.body.updated_at).to.be.a('number')
       })
 

@@ -40,7 +40,7 @@ class LocalStrategy
     email: User['email'],
     password: User['password']
   ): Promise<User> {
-    return await this.strategist.validateLocal(email, password)
+    return this.strategist.validateLocal(email, password)
   }
 }
 

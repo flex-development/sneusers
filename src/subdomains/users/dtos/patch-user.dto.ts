@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common'
 import { OmitType, PartialType } from '@nestjs/swagger'
-import { IsBoolean, IsOptional } from 'class-validator'
+import { AuthProvider } from '@sneusers/subdomains/auth/enums'
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator'
 import type { IUserRaw } from '../interfaces'
 import CreateUserDTO from './create-user.dto'
 
@@ -9,13 +10,16 @@ import CreateUserDTO from './create-user.dto'
  * @module sneusers/subdomains/users/dtos/PatchUserDTO
  */
 
+/** Properties that can't be updated or only updated by the application */
+type Internal = 'id' | 'provider'
+
 /**
  * @internal
- * @property {Type<Omit<Partial<CreateUserDTO>, 'id'>>} PatchUserDTOB - DTO base
+ * @property {Omit<Partial<CreateUserDTO>, Internal>} PatchUserDTOB - DTO base
  */
-const PatchUserDTOB: Type<Omit<Partial<CreateUserDTO>, 'id'>> = OmitType(
+const PatchUserDTOB: Type<Omit<Partial<CreateUserDTO>, Internal>> = OmitType(
   PartialType(CreateUserDTO),
-  ['id']
+  ['id', 'provider']
 )
 
 /**
@@ -29,6 +33,10 @@ class PatchUserDTO<I extends 'internal' | never = never> extends PatchUserDTOB {
   @IsBoolean()
   @IsOptional()
   email_verified?: I extends 'internal' ? IUserRaw['email_verified'] : I
+
+  @IsEnum(AuthProvider)
+  @IsOptional()
+  provider?: I extends 'internal' ? IUserRaw['provider'] : I
 }
 
 export default PatchUserDTO

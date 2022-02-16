@@ -99,7 +99,11 @@ class RedisStore implements Store {
   ): Promise<string[]> {
     if (!this.connected) return []
 
-    return redis ? this.redis.KEYS(redis, pattern) : this.redis.KEYS(pattern)
+    const keys = redis
+      ? await this.redis.KEYS(redis, pattern)
+      : await this.redis.KEYS(pattern)
+
+    return keys || []
   }
 
   /**
