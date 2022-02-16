@@ -90,28 +90,6 @@ more details.
 
 #### GitHub Actions
 
-| name                       | required | development | test               | production | release            |
-| -------------------------- | -------- | ----------- | ------------------ | ---------- | ------------------ |
-| `DBDOCS_TOKEN_ADMIN`**\*** | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_CONFIG`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_ENVIRONMENT`      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_PROJECT`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN_TEST`       | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `DOPPLER_TOKEN`            | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `GCLOUD_PROJECT`           | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `GITHUB_ACTIONS`           | `false`  | :x:         | :white_check_mark: | :x:        | :white_check_mark: |
-| `NODE_ENV`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `NPM_TOKEN_ADMIN`**\***    | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_CPR_ADMIN`**\***      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_GPR_ADMIN`**\***      | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `PAT_REPO_ADMIN`**\***     | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_HOST`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_HOST_STG`             | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_PRIVATE_KEY`          | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-| `SSH_USER`                 | `true`   | :x:         | :x:                | :x:        | :white_check_mark: |
-
-**\*** GitHub organization secret
-
 Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 
 #### [`package.json`](package.json) scripts

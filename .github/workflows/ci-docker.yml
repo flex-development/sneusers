@@ -132,7 +132,7 @@ jobs:
         with:
           debug: true
           host: ${{ secrets.SSH_HOST_STG }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_STG }}
           port: ${{ secrets.SSH_PORT }}
           rm: true
           source: db/*,nginx/*,docker-cloud.yml,docker-compose.yml
