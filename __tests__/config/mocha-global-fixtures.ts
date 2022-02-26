@@ -1,6 +1,6 @@
+import sequelize from '@fixtures/sequelize.fixture'
+import umzug from '@fixtures/umzug.fixture'
 import { ENV } from '@sneusers/config/configuration'
-import sequelize from '@tests/fixtures/sequelize.fixture'
-import umzug from '@tests/fixtures/umzug.fixture'
 import initdb from '@tests/utils/initdb.util'
 import chai, { expect } from 'chai'
 import { spawn } from 'child_process'

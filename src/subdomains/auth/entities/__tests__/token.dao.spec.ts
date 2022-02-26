@@ -1,3 +1,4 @@
+import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import type { ModuleRef } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
@@ -11,7 +12,6 @@ import type {
 import { Token } from '@sneusers/subdomains/auth/entities'
 import { TokenType } from '@sneusers/subdomains/auth/enums'
 import { User } from '@sneusers/subdomains/users/entities'
-import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createTokens from '@tests/utils/create-tokens.util'
 import createUsers from '@tests/utils/create-users.util'

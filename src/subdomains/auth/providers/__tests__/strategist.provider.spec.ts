@@ -1,3 +1,4 @@
+import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
 import type { ModuleRef } from '@nestjs/core'
@@ -13,7 +14,6 @@ import {
 } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
-import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createUsers from '@tests/utils/create-users.util'
 import tableSeed from '@tests/utils/table-seed.util'

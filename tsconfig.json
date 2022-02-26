@@ -43,9 +43,9 @@
       "@flex-development/tutils": [
         "node_modules/@flex-development/tutils/cjs/index"
       ],
+      "@fixtures/*": ["__fixtures__/*"],
       "@sneusers/*": ["src/*"],
       "@tests/doubles/*": ["__doubles__/*"],
-      "@tests/fixtures/*": ["__tests__/__fixtures__/*"],
       "@tests/*": ["__tests__/*"]
     },
     "preserveConstEnums": true,

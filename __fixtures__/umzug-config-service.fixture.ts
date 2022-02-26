@@ -3,8 +3,8 @@ import config from './sequelize-config-service.fixture'
 import sequelize from './sequelize.fixture'
 
 /**
- * @file Global Test Fixture - UmzugConfigService
- * @module tests/fixtures/UmzugConfigService
+ * @file Fixtures - UmzugConfigService
+ * @module fixtures/UmzugConfigService
  */
 
 export default new UmzugConfigService(config, sequelize)

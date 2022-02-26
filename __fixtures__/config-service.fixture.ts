@@ -4,8 +4,8 @@ import { ENV } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
 
 /**
- * @file Global Test Fixture - ConfigService
- * @module tests/fixtures/ConfigService
+ * @file Fixtures - ConfigService
+ * @module fixtures/ConfigService
  */
 
 export default new ConfigService<EnvironmentVariables, true>({

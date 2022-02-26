@@ -1,4 +1,4 @@
-import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
+import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import type {
   IsOption,
   Testcase,

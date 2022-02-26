@@ -1,8 +1,8 @@
+import EJSON from '@fixtures/exception-json.fixture'
+import EXCEPTION from '@fixtures/exception.fixture'
 import type { ArgumentsHost } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { NestExpressApplication } from '@nestjs/platform-express'
-import EJSON from '@tests/fixtures/exception-json.fixture'
-import EXCEPTION from '@tests/fixtures/exception.fixture'
 import createApp from '@tests/utils/create-app.util'
 import TestSubject from '../exception-class.filter'
 

@@ -1,3 +1,4 @@
+import CsrfTokenController from '@fixtures/csrf-token-controller.fixture'
 import {
   MiddlewareConsumer,
   Module,
@@ -16,7 +17,6 @@ import MiddlewareModule from '@sneusers/modules/middleware/middleware.module'
 import RedisModule from '@sneusers/modules/redis/redis.module'
 import AppService from '@sneusers/providers/app.service'
 import RedisConfigService from '@sneusers/providers/redis-config.service'
-import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
 import createTestingModule from './create-testing-module.util'
 import { ModuleMetadataTest } from './types'
 

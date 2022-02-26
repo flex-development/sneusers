@@ -2,8 +2,8 @@ import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common'
 import { CsrfToken } from '@sneusers/decorators'
 
 /**
- * @file Global Test Fixture - CsrfTokenController
- * @module tests/fixtures/CsrfTokenController
+ * @file Fixtures - CsrfTokenController
+ * @module fixtures/CsrfTokenController
  */
 
 @Controller('csrf-token')

@@ -1,7 +1,7 @@
+import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import type { OneOrMany } from '@flex-development/tutils'
 import validator from '@sneusers/constraints/is.constraint'
 import type { IsOptions } from '@sneusers/interfaces'
-import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import type { IsOption, TestcaseDecoratorValidation } from '@tests/utils/types'
 import { validateSync } from 'class-validator'
 import TestSubject from '../is.decorator'

@@ -4,8 +4,8 @@ import { Exception } from '@sneusers/exceptions'
 import { EmptyResultError } from 'sequelize'
 
 /**
- * @file Global Test Fixture - Exception
- * @module tests/fixtures/Exception
+ * @file Fixtures - Exception
+ * @module fixtures/Exception
  */
 
 const message = 'Test exception'
