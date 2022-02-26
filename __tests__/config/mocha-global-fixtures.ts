@@ -1,4 +1,3 @@
-import faker from '@faker-js/faker'
 import { ENV } from '@sneusers/config/configuration'
 import sequelize from '@tests/fixtures/sequelize.fixture'
 import umzug from '@tests/fixtures/umzug.fixture'
@@ -22,7 +21,6 @@ declare const global: NodeJS.TestingGlobal
 // ! Update global namespace
 global.expect = expect
 global.chai = chai
-global.faker = faker
 global.inspect = inspect
 global.pf = format
 global.sandbox = sinon.createSandbox()

@@ -1,3 +1,4 @@
+import faker from '@faker-js/faker'
 import { CreateTokenDTO } from '@sneusers/subdomains/auth/dtos'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import { TokenType } from '@sneusers/subdomains/auth/enums'

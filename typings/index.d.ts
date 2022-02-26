@@ -1,4 +1,3 @@
-/// <reference path='@faker-js/faker/index.d.ts' />
 /// <reference path='@flex-development/exceptions/index.d.ts' />
 /// <reference path='chai/index.d.ts' />
 /// <reference path='mocha/index.d.ts' />

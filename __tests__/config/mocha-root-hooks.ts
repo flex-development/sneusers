@@ -1,3 +1,4 @@
+import faker from '@faker-js/faker'
 import { each, jsonResponse } from '@tests/matchers'
 import chaiHttp from 'chai-http'
 import type { RootHookObject } from 'mocha'

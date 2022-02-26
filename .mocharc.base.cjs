@@ -25,7 +25,7 @@ const config = {
   forbidOnly: true,
   forbidPending: false,
   fullTrace: true,
-  globals: ['chai', 'expect', 'faker', 'inspect', 'pf', 'sandbox'],
+  globals: ['chai', 'expect', 'inspect', 'pf', 'sandbox'],
   growl: !(require('is-ci') && JSON.parse(process.env.CI || 'false')),
   ignore: ['coverage/**', 'node_modules/**'],
   inlineDiffs: true,

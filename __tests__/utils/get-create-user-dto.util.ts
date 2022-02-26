@@ -1,3 +1,4 @@
+import faker from '@faker-js/faker'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { MockCreateUserDTO } from './types'
 
