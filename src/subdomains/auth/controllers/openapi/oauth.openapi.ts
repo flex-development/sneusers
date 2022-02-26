@@ -1,7 +1,8 @@
 import { HttpStatus } from '@nestjs/common'
+import { getSchemaPath } from '@nestjs/swagger'
 import { ApiEndpoint } from '@sneusers/enums'
 import { UserDTO } from '@sneusers/subdomains/users/dtos'
-import { RequestGitHubAuthDTO } from '../../dtos'
+import { RequestGitHubAuthDTO, RequestGoogleAuthDTO } from '../../dtos'
 
 /**
  * @file Controllers - AuthController OpenAPI Documentation
@@ -11,16 +12,24 @@ import { RequestGitHubAuthDTO } from '../../dtos'
 export default {
   controller: ApiEndpoint.OAUTH,
   tags: [ApiEndpoint.AUTH, ApiEndpoint.USERS],
-  github: {
-    path: 'github',
+  extraModels: [RequestGitHubAuthDTO, RequestGoogleAuthDTO],
+  provider: {
+    path: ':provider',
     status: HttpStatus.PERMANENT_REDIRECT
   },
-  githubCallback: {
-    path: 'github/callback',
+  providerCallback: {
+    path: ':provider/callback',
     status: HttpStatus.OK,
-    query: { type: RequestGitHubAuthDTO },
+    query: {
+      schema: {
+        oneOf: [
+          { $ref: getSchemaPath(RequestGitHubAuthDTO) },
+          { $ref: getSchemaPath(RequestGoogleAuthDTO) }
+        ]
+      }
+    },
     responses: {
-      200: { description: 'Authenticated GitHub user', type: UserDTO }
+      200: { description: 'Authenticated user', type: UserDTO }
     }
   }
 }

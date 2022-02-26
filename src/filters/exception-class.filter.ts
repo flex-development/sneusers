@@ -18,7 +18,9 @@ import isPlainObject from 'lodash.isplainobject'
 
 @Catch(Exception)
 class ExceptionClassFilter implements ExceptionFilter {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
    * Returns a global-scoped application filter.

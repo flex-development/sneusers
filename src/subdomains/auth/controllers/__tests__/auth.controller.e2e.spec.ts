@@ -29,6 +29,7 @@ import { Token } from '@sneusers/subdomains/auth/entities'
 import {
   AuthService,
   JwtConfigService,
+  PassportConfigService,
   Strategist,
   TokensService,
   VerificationService
@@ -82,7 +83,7 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
-        PassportModule,
+        PassportModule.registerAsync(PassportConfigService.moduleOptions),
         SequelizeModule.forFeature([Token]),
         UsersModule
       ],

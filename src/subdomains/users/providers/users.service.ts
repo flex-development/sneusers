@@ -15,7 +15,7 @@ import { SearchOptions, SequelizeErrorType } from '@sneusers/modules/db/types'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
 import { EmailService } from '@sneusers/modules/email/providers'
 import { RedisCache } from '@sneusers/modules/redis/abstracts'
-import { AuthProvider } from '@sneusers/subdomains/auth/enums'
+import { OAuthProvider } from '@sneusers/subdomains/auth/enums'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
@@ -80,7 +80,7 @@ class UsersService {
    * @param {NumberString} [dto.id] - Unique id
    * @param {NullishString} [dto.last_name] - Last name
    * @param {NullishString} [dto.password] - Plaintext password
-   * @param {OrNull<AuthProvider>} [dto.provider] - Authentication provider
+   * @param {OrNull<OAuthProvider>} [dto.provider] - Authentication provider
    * @return {Promise<User>} - Promise containing new user
    * @throws {Exception | UniqueEmailException}
    */

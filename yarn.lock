@@ -787,6 +787,7 @@ __metadata:
     "@types/nodemailer": 6.4.4
     "@types/passport": 1.0.7
     "@types/passport-github2": 1.2.5
+    "@types/passport-google-oauth20": 2.0.11
     "@types/passport-jwt": 3.0.6
     "@types/passport-local": 1.0.34
     "@types/passport-oauth2": 1.4.11
@@ -810,6 +811,7 @@ __metadata:
     chai: 4.3.4
     chai-http: 4.3.0
     chalk: 4.1.2
+    ci-info: 3.3.0
     class-transformer: 0.5.1
     class-transformer-validator: 0.9.1
     class-validator: 0.13.2
@@ -857,6 +859,7 @@ __metadata:
     nyc: 15.1.0
     passport: 0.5.2
     passport-github2: 0.1.12
+    passport-google-oauth20: 2.0.0
     passport-jwt: 4.0.0
     passport-local: 1.0.0
     passport-oauth2: 1.6.1
@@ -2307,6 +2310,17 @@ __metadata:
     "@types/passport": "*"
     "@types/passport-oauth2": "*"
   checksum: a4f1851edb91a2502136b7e76dd10fd3c52aebec938ff21ffa2ade40b1f62d0e7f65991c80589f5cfa40b6cba04bf0b8ea46db6942975bf5918fa4690f681235
+  languageName: node
+  linkType: hard
+
+"@types/passport-google-oauth20@npm:2.0.11":
+  version: 2.0.11
+  resolution: "@types/passport-google-oauth20@npm:2.0.11"
+  dependencies:
+    "@types/express": "*"
+    "@types/passport": "*"
+    "@types/passport-oauth2": "*"
+  checksum: 5e87a0bf40d77ce863dbcea4ae1cd6bccc663282593c9b6ce83b0e2d5d6c56ed9dc0275a04f5d81832f03b3a477fd47d17fd9b3ee22ceb69ca445ab0b0d326d7
   languageName: node
   linkType: hard
 
@@ -4079,17 +4093,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ci-info@npm:3.3.0, ci-info@npm:^3.2.0, ci-info@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "ci-info@npm:3.3.0"
+  checksum: c3d86fe374938ecda5093b1ba39acb535d8309185ba3f23587747c6a057e63f45419b406d880304dbc0e1d72392c9a33e42fe9a1e299209bc0ded5efaa232b66
+  languageName: node
+  linkType: hard
+
 "ci-info@npm:^2.0.0":
   version: 2.0.0
   resolution: "ci-info@npm:2.0.0"
   checksum: 3b374666a85ea3ca43fa49aa3a048d21c9b475c96eb13c133505d2324e7ae5efd6a454f41efe46a152269e9b6a00c9edbe63ec7fa1921957165aae16625acd67
-  languageName: node
-  linkType: hard
-
-"ci-info@npm:^3.2.0, ci-info@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "ci-info@npm:3.3.0"
-  checksum: c3d86fe374938ecda5093b1ba39acb535d8309185ba3f23587747c6a057e63f45419b406d880304dbc0e1d72392c9a33e42fe9a1e299209bc0ded5efaa232b66
   languageName: node
   linkType: hard
 
@@ -10909,6 +10923,15 @@ __metadata:
   dependencies:
     passport-oauth2: 1.x.x
   checksum: 2d33c1bdd808c617a5faef51f6079f8775a4dbb8864b2be073e5e043ed2b7e8f9addd66a5844c7604f26be99a5899ae6cd9f8adac85999714b2a19649aef2b35
+  languageName: node
+  linkType: hard
+
+"passport-google-oauth20@npm:2.0.0":
+  version: 2.0.0
+  resolution: "passport-google-oauth20@npm:2.0.0"
+  dependencies:
+    passport-oauth2: 1.x.x
+  checksum: 1d34f4c2da059504b6a3c149b261b9063d0390c84d500fa314b3895d599d7f96ce9750e48a5b715df92fba57ef4ecb5e66d3ce99ded5cc9b17d201a06ba8701e
   languageName: node
   linkType: hard
 

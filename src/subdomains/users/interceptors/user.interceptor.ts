@@ -51,7 +51,7 @@ class UserInterceptor<
    *
    * @see {@link IUser}
    *
-   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {ExecutionContext} context - Request pipeline details pipeline
    * @param {CallHandler<T>} next - Object providing access to response stream
    * @return {Observable<R>} {@link Observable} containing {@link Payload}
    */
@@ -74,7 +74,7 @@ class UserInterceptor<
     const STRIP = [...STRIP_ALWAYS, 'email_verified', 'provider']
 
     if (payload instanceof PaginatedDTO) {
-      payload.results = payload.results.map(user => omit(user, STRIP))
+      payload.results = payload.results.map(res => omit(res, STRIP))
       return payload as unknown as R
     }
 

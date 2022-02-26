@@ -14,7 +14,9 @@ import type { EnvironmentVariables } from '@sneusers/models'
 
 @Injectable()
 class ThrottlerConfigService implements ThrottlerOptionsFactory {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
    * Get [`ThrottlerModule`][1] configuration options.

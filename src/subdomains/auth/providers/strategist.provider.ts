@@ -8,9 +8,10 @@ import { SearchOptions } from '@sneusers/modules/db/types'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
+import { GoogleCallbackParameters } from 'passport-google-oauth20'
 import { JwtPayload, ResolvedToken } from '../dtos'
-import { AuthProvider, TokenType } from '../enums'
-import { GitHubProfile } from '../types'
+import { OAuthProvider, TokenType } from '../enums'
+import { OAuthUserProfile } from '../namespaces'
 import TokensService from './tokens.service'
 
 /**
@@ -32,13 +33,13 @@ class Strategist {
    * @async
    * @param {string} access_token - GitHub user access token
    * @param {OrUndefined<string>} refresh_token - GitHub user refresh token
-   * @param {GitHubProfile} profile - GitHub user profile
+   * @param {OAuthUserProfile.GitHub} profile - GitHub user profile
    * @return {Promise<User>} Promise containing authenticated user
    */
   async validateGitHub(
     access_token: string,
     refresh_token: OrUndefined<string>,
-    profile: GitHubProfile
+    profile: OAuthUserProfile.GitHub
   ): Promise<User> {
     return this.users.upsert<'internal'>({
       display_name: profile.name,
@@ -46,7 +47,32 @@ class Strategist {
       first_name: profile.name,
       id: profile.id,
       last_name: null,
-      provider: AuthProvider.GITHUB
+      provider: OAuthProvider.GITHUB
+    })
+  }
+
+  /**
+   * Authenticates a user via Google OAuth `profile`.
+   *
+   * @async
+   * @param {string} access_token - Google user access token
+   * @param {OrUndefined<string>} refresh_token - Google user refresh token
+   * @param {GoogleCallbackParameters} params - Google callback parameters
+   * @param {OAuthUserProfile.Google} profile - Google user profile
+   * @return {Promise<User>} Promise containing authenticated user
+   */
+  async validateGoogle(
+    access_token: string,
+    refresh_token: OrUndefined<string>,
+    params: GoogleCallbackParameters,
+    profile: OAuthUserProfile.Google
+  ): Promise<User> {
+    return this.users.upsert<'internal'>({
+      email: profile.email,
+      first_name: profile.given_name,
+      id: profile.sub,
+      last_name: profile.family_name,
+      provider: OAuthProvider.GOOGLE
     })
   }
 

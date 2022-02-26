@@ -6,7 +6,7 @@ import {
   UseGuards,
   UseInterceptors
 } from '@nestjs/common'
-import { ApiQuery, ApiTags } from '@nestjs/swagger'
+import { ApiExtraModels, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ApiResponses } from '@sneusers/decorators'
 import type { EntityDTO } from '@sneusers/modules/db/dtos'
 import { EntitySerializer } from '@sneusers/modules/db/interceptors'
@@ -32,6 +32,7 @@ type Serialized = EntityDTO<IUser> | ILoginDTO
 
 @Controller(OPENAPI.controller)
 @ApiTags(...OPENAPI.tags)
+@ApiExtraModels(...OPENAPI.extraModels)
 @UseInterceptors(new EntitySerializer<User, User | LoginDTO, Serialized>())
 @UseInterceptors(new UserInterceptor<Serialized, ILoginDTO>())
 export default class OAuthController {
@@ -41,18 +42,18 @@ export default class OAuthController {
   ) {}
 
   @UseGuards(OAuthGuard)
-  @Get(OPENAPI.github.path)
-  @HttpCode(OPENAPI.github.status)
-  async github(): Promise<void> {
+  @Get(OPENAPI.provider.path)
+  @HttpCode(OPENAPI.provider.status)
+  async provider(): Promise<void> {
     return // redirects
   }
 
   @UseGuards(OAuthGuard)
-  @Get(OPENAPI.githubCallback.path)
-  @HttpCode(OPENAPI.githubCallback.status)
-  @ApiQuery(OPENAPI.githubCallback.query)
-  @ApiResponses(OPENAPI.githubCallback.responses)
-  async githubCallback(
+  @Get(OPENAPI.providerCallback.path)
+  @HttpCode(OPENAPI.providerCallback.status)
+  @ApiQuery(OPENAPI.providerCallback.query)
+  @ApiResponses(OPENAPI.providerCallback.responses)
+  async providerCallback(
     @CurrentUser() user: User,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginDTO> {

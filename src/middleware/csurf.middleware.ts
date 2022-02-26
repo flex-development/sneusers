@@ -56,7 +56,7 @@ class CsurfMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction): void {
     const options = this.factory?.createCsurfOptions() ?? {}
 
-    const extract = (req: Request) => this.extract(req, options)
+    const extract = (request: Request) => this.extract(request, options)
     const value = (options.value || extract) as () => string
 
     return csurf({ ...options, value })(req, res, next)

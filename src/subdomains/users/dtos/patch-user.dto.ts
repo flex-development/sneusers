@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { OmitType, PartialType } from '@nestjs/swagger'
-import { AuthProvider } from '@sneusers/subdomains/auth/enums'
+import { OAuthProvider } from '@sneusers/subdomains/auth/enums'
 import { IsBoolean, IsEnum, IsOptional } from 'class-validator'
 import type { IUserRaw } from '../interfaces'
 import CreateUserDTO from './create-user.dto'
@@ -39,7 +39,7 @@ class PatchUserDTO<I extends 'internal' | never = never> extends PatchUserDTOB {
   @IsOptional()
   email_verified?: I extends 'internal' ? IUserRaw['email_verified'] : I
 
-  @IsEnum(AuthProvider)
+  @IsEnum(OAuthProvider)
   @IsOptional()
   provider?: I extends 'internal' ? IUserRaw['provider'] : I
 }

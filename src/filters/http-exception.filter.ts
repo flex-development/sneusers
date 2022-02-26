@@ -20,7 +20,9 @@ import type { Response } from 'express'
 
 @Catch(HttpException)
 class HttpExceptionFilter implements ExceptionFilter {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
    * Returns a global-scoped application filter.

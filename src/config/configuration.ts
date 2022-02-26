@@ -89,6 +89,13 @@ const validate = ({
   GH_TOKEN_URL = 'https://github.com/login/oauth/access_token',
   GH_USER_EMAIL_URL = 'https://api.github.com/user/emails',
   GH_USER_PROFILE_URL = 'https://api.github.com/user',
+  GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth',
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_SCOPES,
+  GOOGLE_SCOPES_SEPARATOR = ' ',
+  GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token',
+  GOOGLE_USER_PROFILE_URL = 'https://www.googleapis.com/oauth2/v3/userinfo',
   HOST,
   HOSTNAME = 'localhost',
   JWT_EXP_ACCESS = '900',
@@ -127,7 +134,7 @@ const validate = ({
   env.NODE_ENV = parse<NodeEnv>(NODE_ENV)
 
   // Check if running in CI environment and if Docker services are running
-  env.CI = parse(CI)
+  env.CI = parse(CI) || false
   env.DOCKER = isDockerEnv()
 
   // Check if database server should be running locally
@@ -213,6 +220,13 @@ const validate = ({
   env.GH_TOKEN_URL = GH_TOKEN_URL
   env.GH_USER_EMAIL_URL = GH_USER_EMAIL_URL
   env.GH_USER_PROFILE_URL = GH_USER_PROFILE_URL
+  env.GOOGLE_AUTHORIZATION_URL = GOOGLE_AUTHORIZATION_URL
+  env.GOOGLE_CLIENT_ID = GOOGLE_CLIENT_ID
+  env.GOOGLE_CLIENT_SECRET = GOOGLE_CLIENT_SECRET
+  env.GOOGLE_SCOPES = GOOGLE_SCOPES
+  env.GOOGLE_SCOPES_SEPARATOR = GOOGLE_SCOPES_SEPARATOR
+  env.GOOGLE_TOKEN_URL = GOOGLE_TOKEN_URL
+  env.GOOGLE_USER_PROFILE_URL = GOOGLE_USER_PROFILE_URL
   env.HOST = HOST || `http://${env.HOSTNAME}:${env.PORT}`
   env.JWT_EXP_ACCESS = parse(JWT_EXP_ACCESS)
   env.JWT_EXP_REFRESH = parse(JWT_EXP_REFRESH)
@@ -309,6 +323,13 @@ const configuration = (): EnvironmentVariables => {
     GH_TOKEN_URL: process.env.GH_TOKEN_URL,
     GH_USER_EMAIL_URL: process.env.GH_USER_EMAIL_URL,
     GH_USER_PROFILE_URL: process.env.GH_USER_PROFILE_URL,
+    GOOGLE_AUTHORIZATION_URL: process.env.GOOGLE_AUTHORIZATION_URL,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_SCOPES: process.env.GOOGLE_SCOPES,
+    GOOGLE_SCOPES_SEPARATOR: process.env.GOOGLE_SCOPES_SEPARATOR,
+    GOOGLE_TOKEN_URL: process.env.GOOGLE_TOKEN_URL,
+    GOOGLE_USER_PROFILE_URL: process.env.GOOGLE_USER_PROFILE_URL,
     HOST: process.env.HOST,
     HOSTNAME: process.env.HOSTNAME,
     JWT_EXP_ACCESS: process.env.JWT_EXP_ACCESS,

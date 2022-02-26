@@ -36,7 +36,7 @@ class EntitySerializer<
    *
    * @see {@link ResBodyEntity}
    *
-   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {ExecutionContext} context - Request pipeline details pipeline
    * @param {CallHandler<T>} next - Object providing access to response stream
    * @return {Observable<R>} `Observable` containing response payload
    */

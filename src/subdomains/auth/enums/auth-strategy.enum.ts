@@ -10,6 +10,7 @@
  */
 enum AuthStrategy {
   GITHUB = 'github',
+  GOOGLE = 'google',
   JWT = 'jwt-auth',
   JWT_REFRESH = 'jwt-refresh',
   LOCAL = 'local'

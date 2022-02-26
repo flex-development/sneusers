@@ -12,12 +12,14 @@ import { Token } from './entities'
 import {
   AuthService,
   JwtConfigService,
+  PassportConfigService,
   Strategist,
   TokensService,
   VerificationService
 } from './providers'
 import {
   GitHubStrategy,
+  GoogleStrategy,
   JwtRefreshStrategy,
   JwtStrategy,
   LocalStrategy
@@ -32,13 +34,14 @@ import {
   controllers: [AuthController, OAuthController, VerificationController],
   imports: [
     JwtModule.registerAsync(JwtConfigService.moduleOptions),
-    PassportModule,
+    PassportModule.registerAsync(PassportConfigService.moduleOptions),
     SequelizeModule.forFeature([Token]),
     UsersModule
   ],
   providers: [
     AuthService,
     GitHubStrategy,
+    GoogleStrategy,
     JwtConfigService,
     JwtRefreshStrategy,
     JwtStrategy,

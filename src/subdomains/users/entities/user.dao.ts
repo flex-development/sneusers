@@ -12,7 +12,7 @@ import {
 import type { SequelizeErrorType } from '@sneusers/modules/db/types'
 import { SearchOptions } from '@sneusers/modules/db/types'
 import { Token } from '@sneusers/subdomains/auth/entities'
-import { AuthProvider } from '@sneusers/subdomains/auth/enums'
+import { OAuthProvider } from '@sneusers/subdomains/auth/enums'
 import {
   Column,
   DataType,
@@ -76,7 +76,7 @@ import { UserUid } from '../types'
      *
      * - Trimming string fields and forcing a user's display name, email, first
      *   name, and last name to be lowercased
-     * - Setting defaults for users registered with an {@link AuthProvider}
+     * - Setting defaults for users registered with an {@link OAuthProvider}
      *
      * @param {User} instance - Current user instance
      * @return {void} Nothing when complete
@@ -237,8 +237,8 @@ class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
 
   @ApiProperty({
     description: 'Authentication provider',
-    enum: AuthProvider,
-    enumName: 'AuthProvider',
+    enum: OAuthProvider,
+    enumName: 'OAuthProvider',
     nullable: true
   })
   @Index('provider')
@@ -282,10 +282,10 @@ class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   /**
    * @static
    * @readonly
-   * @property {ReadonlyArray<AuthProvider>} AUTH_PROVIDERS - Auth providers
+   * @property {ReadonlyArray<OAuthProvider>} AUTH_PROVIDERS - Auth providers
    */
-  static readonly AUTH_PROVIDERS: ReadonlyArray<AuthProvider> = Object.freeze([
-    ...Object.values(AuthProvider)
+  static readonly AUTH_PROVIDERS: ReadonlyArray<OAuthProvider> = Object.freeze([
+    ...Object.values(OAuthProvider)
   ])
 
   /**

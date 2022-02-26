@@ -3,17 +3,17 @@ import {
   ObjectPlain,
   OneOrMany,
   OrNull,
+  OrPromise,
   OrUndefined
 } from '@flex-development/tutils'
 import { ExecutionContext, mixin, Type } from '@nestjs/common'
-import {
-  AuthGuard as NestAuthGuard,
-  IAuthGuard,
-  IAuthModuleOptions
-} from '@nestjs/passport'
+import { AuthGuard as NestAuthGuard } from '@nestjs/passport'
 import { Exception } from '@sneusers/exceptions'
 import { User } from '@sneusers/subdomains/users/entities'
-import { AuthenticateOptions } from 'passport'
+import { Request, Response } from 'express'
+import { AuthStrategy } from '../enums'
+import { IAuthGuard } from '../interfaces'
+import { AuthenticateOptions } from '../namespaces'
 
 /**
  * @file Auth Subdomain Guards - AuthGuard
@@ -21,15 +21,15 @@ import { AuthenticateOptions } from 'passport'
  */
 
 /**
- * Creates an base authentication guard.
+ * Creates a base authentication guard.
  *
  * @template TUser - User type
  *
- * @param {OneOrMany<string>} [type] - Authentication strategies
+ * @param {OneOrMany<AuthStrategy>} [type] - Authentication strategies
  * @return {Type<IAuthGuard>} New {@link AuthGuard} class
  */
 function createAuthGuard<TUser extends User = User>(
-  type?: OneOrMany<string>
+  type?: OneOrMany<AuthStrategy>
 ): Type<IAuthGuard> {
   /**
    * Base authentication guard.
@@ -46,23 +46,42 @@ function createAuthGuard<TUser extends User = User>(
     extends NestAuthGuard(type)
     implements IAuthGuard
   {
+    /** @property {IAuthGuard['options']} options - Auth options */
+    options: IAuthGuard['options'] = {}
+
     /**
      * Returns [`passport.authenticate`][1] options.
      *
      * [1]: https://github.com/jaredhanson/passport/blob/master/lib/middleware/authenticate.js
      *
-     * @param {ExecutionContext} context - Details about current request
-     * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
+     * @return {OrPromise<AuthenticateOptions.Base>} Authentication options
      */
-    getAuthenticateOptions(
-      context: ExecutionContext
-    ): IAuthModuleOptions & AuthenticateOptions {
-      return {
-        ...super.getAuthenticateOptions(context),
-        authInfo: true,
-        failWithError: true,
-        property: 'user'
-      }
+    getAuthenticateOptions(): OrPromise<AuthenticateOptions.Base> {
+      return {}
+    }
+
+    /**
+     * Retrieves the incoming request from `context`.
+     *
+     * @template T - Request type
+     *
+     * @param {ExecutionContext} context - Request pipeline details
+     * @return {T} Incoming request
+     */
+    getRequest<T extends Request = Request>(context: ExecutionContext): T {
+      return context.switchToHttp().getRequest<T>()
+    }
+
+    /**
+     * Retrieves the outgoing server response from `context`.
+     *
+     * @template T - Response type
+     *
+     * @param {ExecutionContext} context - Request pipeline details
+     * @return {T} Server response
+     */
+    getResponse<T extends Response = Response>(context: ExecutionContext): T {
+      return context.switchToHttp().getResponse<T>()
     }
 
     /**
@@ -76,7 +95,7 @@ function createAuthGuard<TUser extends User = User>(
      * @param {OrNull<Error | Exception>} err - Error thrown, if any
      * @param {T | false} [user] - Authenticated user, if any
      * @param {OneOrMany<ObjectPlain>} [info] - Additional strategy info
-     * @param {ExecutionContext} context - Details about current request
+     * @param {ExecutionContext} context - Request pipeline details
      * @param {OneOrMany<ExceptionCode>} [status] - HTTP status error code
      * @return {T} Authenticated user
      * @throws {Exception}

@@ -1,10 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { IAuthModuleOptions } from '@nestjs/passport'
 import type { Request } from 'express'
-import { AuthenticateOptions } from 'passport'
 import { ExtractJwt } from 'passport-jwt'
 import { AuthMetadataKey, AuthStrategy } from '../enums'
+import { AuthenticateOptions } from '../namespaces'
 import AuthGuard from './auth.guard'
 
 /**
@@ -23,7 +22,7 @@ class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) implements CanActivate {
    *
    * If an access token is optional, but provided anyway, it'll be verified.
    *
-   * @param {ExecutionContext} context - Get data from current request pipeline
+   * @param {ExecutionContext} context - Request pipeline details
    * @return {boolean} `true` if anon requests are allowed, `false` otherwise
    */
   canActivate(context: ExecutionContext): boolean {
@@ -43,12 +42,10 @@ class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) implements CanActivate {
    *
    * [1]: https://github.com/jaredhanson/passport/blob/master/lib/middleware/authenticate.js
    *
-   * @param {ExecutionContext} context - Details about current request
-   * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
+   * @param {ExecutionContext} context - Request pipeline details
+   * @return {AuthenticateOptions.Base} Authentication options
    */
-  getAuthenticateOptions(
-    context: ExecutionContext
-  ): IAuthModuleOptions & AuthenticateOptions {
+  getAuthenticateOptions(context: ExecutionContext): AuthenticateOptions.Base {
     return {
       ...super.getAuthenticateOptions(context),
       session: false

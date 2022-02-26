@@ -13,7 +13,7 @@ class WhoamiGuard extends JwtAuthGuard implements CanActivate {
    * Allows a route to authenticate a user using an access token and **fail
    * silently** if there's an error identifying the user.
    *
-   * @param {ExecutionContext} context - Details about current request pipeline
+   * @param {ExecutionContext} context - Request pipeline details pipeline
    * @return {true} `true`
    */
   canActivate(context: ExecutionContext): true {

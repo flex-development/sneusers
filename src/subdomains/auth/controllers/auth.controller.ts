@@ -93,7 +93,7 @@ export default class AuthController {
   @ApiCookieAuth('Refresh')
   @ApiResponses(OPENAPI.refresh.responses)
   async refresh(@Req() req: UserRequest): Promise<LoginDTO> {
-    return await this.auth.refresh(req.cookies.Refresh)
+    return this.auth.refresh(req.cookies.Refresh)
   }
 
   @Post(OPENAPI.register.path)
@@ -106,7 +106,7 @@ export default class AuthController {
     @Res({ passthrough: true }) res: Response
   ): Promise<UserDTO> {
     res.cookie('csrf-token', cookie, this.cookie.createOptions(CookieType.CSRF))
-    return await this.auth.register(dto)
+    return this.auth.register(dto)
   }
 
   @UseGuards(WhoamiGuard)

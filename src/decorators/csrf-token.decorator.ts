@@ -17,7 +17,7 @@ import { Request } from 'express'
  * @see https://github.com/expressjs/csurf
  *
  * @param {OrNil<'create'>} [action] - Return function or token value
- * @param {ExecutionContext} context - Details about current request pipeline
+ * @param {ExecutionContext} context - Request pipeline details pipeline
  * @return {CsrfTokenFn | string} `csrfToken` function or function return value
  */
 const CsrfToken = (

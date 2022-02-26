@@ -489,6 +489,61 @@ class EnvironmentVariables {
   GH_USER_PROFILE_URL: string
 
   /**
+   * Google OAuth authorization URL.
+   *
+   * @default 'https://accounts.google.com/o/oauth2/v2/auth'
+   */
+  @IsUrl()
+  GOOGLE_AUTHORIZATION_URL: string
+
+  /**
+   * Google OAuth client id.
+   */
+  @IsString()
+  @IsNotEmpty()
+  GOOGLE_CLIENT_ID: string
+
+  /**
+   * Google OAuth client id.
+   */
+  @IsString()
+  @IsNotEmpty()
+  GOOGLE_CLIENT_SECRET: string
+
+  /**
+   * List of GitHub OAuth scopes.
+   *
+   * @see https://developers.google.com/identity/protocols/oauth2/scopes#oauth2
+   */
+  @IsString()
+  @IsOptional()
+  GOOGLE_SCOPES: OrUndefined<string>
+
+  /**
+   * {@link EnvironmentVariables.GOOGLE_SCOPES} list separator.
+   *
+   * @default ' '
+   */
+  @IsString()
+  GOOGLE_SCOPES_SEPARATOR: string
+
+  /**
+   * Google OAuth access token URL.
+   *
+   * @default 'https://www.googleapis.com/oauth2/v4/token'
+   */
+  @IsUrl()
+  GOOGLE_TOKEN_URL: string
+
+  /**
+   * Google OAuth user profile URL.
+   *
+   * @default 'https://www.googleapis.com/oauth2/v3/userinfo'
+   */
+  @IsUrl()
+  GOOGLE_USER_PROFILE_URL: string
+
+  /**
    * Application URL (includes scheme and `PORT` if applicable).
    *
    * @default `http://${HOSTNAME}:${PORT}`

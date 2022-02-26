@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common'
-import { IAuthModuleOptions } from '@nestjs/passport'
-import { AuthenticateOptions } from 'passport'
 import { AuthStrategy } from '../enums'
+import { AuthenticateOptions } from '../namespaces'
 import AuthGuard from './auth.guard'
 
 /**
@@ -16,12 +15,10 @@ class JwtRefreshGuard extends AuthGuard(AuthStrategy.JWT_REFRESH) {
    *
    * [1]: https://github.com/jaredhanson/passport/blob/master/lib/middleware/authenticate.js
    *
-   * @param {ExecutionContext} context - Details about current request
-   * @return {IAuthModuleOptions & AuthenticateOptions} Authentication options
+   * @param {ExecutionContext} context - Request pipeline details
+   * @return {AuthenticateOptions.Base} Authentication options
    */
-  getAuthenticateOptions(
-    context: ExecutionContext
-  ): IAuthModuleOptions & AuthenticateOptions {
+  getAuthenticateOptions(context: ExecutionContext): AuthenticateOptions.Base {
     return {
       ...super.getAuthenticateOptions(context),
       session: false

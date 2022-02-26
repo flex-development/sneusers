@@ -16,7 +16,7 @@ import { IUser } from '../interfaces'
  * Pick a specific field by supplying `attribute`.
  *
  * @param {OrNil<keyof IUser>} [attribute] - Name of field value to retrieve
- * @param {ExecutionContext} context - Details about current request pipeline
+ * @param {ExecutionContext} context - Request pipeline details pipeline
  * @return {OrNull<User | PathValue<IUser>>} `User`, field value, or `null`
  */
 const CurrentUser = (

@@ -3,7 +3,7 @@ import type {
   NullishString,
   OrNull
 } from '@flex-development/tutils'
-import type { AuthProvider } from '@sneusers/subdomains/auth/enums'
+import type { OAuthProvider } from '@sneusers/subdomains/auth/enums'
 
 /**
  * @file Users Subdomain Interfaces - IUserRaw
@@ -26,7 +26,7 @@ interface IUserRaw {
   id: number
   last_name: NullishString
   password: NullishString
-  provider: OrNull<AuthProvider>
+  provider: OrNull<OAuthProvider>
   updated_at: NullishNumber
 }
 

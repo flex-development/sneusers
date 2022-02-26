@@ -22,7 +22,6 @@ import createTokens from '@tests/utils/create-tokens.util'
 import createUsers from '@tests/utils/create-users.util'
 import tableSeed from '@tests/utils/table-seed.util'
 import tableTruncate from '@tests/utils/table-truncate.util'
-import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../tokens.service'
 
 /**
@@ -32,7 +31,6 @@ import TestSubject from '../tokens.service'
 
 describe('unit:subdomains/auth/providers/TokensService', () => {
   let app: NestExpressApplication
-  let repo: typeof Token
   let subject: TestSubject
   let tokens: Token[]
   let users: User[]
@@ -45,21 +43,20 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
         SequelizeModule.forFeature([Token, User])
       ],
       async onModuleInit(ref: ModuleRef): Promise<void> {
-        const sequelize = ref.get(Sequelize, { strict: false })
+        const seed_users = createUsers(MAGIC_NUMBER)
 
-        repo = sequelize.models.Token as typeof Token
         subject = ref.get(TestSubject, { strict: false })
 
-        users = await tableSeed<User>(repo.User, createUsers(MAGIC_NUMBER))
-        tokens = await tableSeed<Token>(repo, createTokens(users))
+        users = await tableSeed<User>(subject.repository.User, seed_users)
+        tokens = await tableSeed<Token>(subject.repository, createTokens(users))
       },
       providers: [TestSubject, UsersService]
     })
   })
 
   after(async () => {
-    await tableTruncate<User>(repo.User)
-    await tableTruncate<Token>(repo)
+    await tableTruncate<User>(subject.repository.User)
+    await tableTruncate<Token>(subject.repository)
     await app.close()
   })
 

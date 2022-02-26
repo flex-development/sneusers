@@ -30,9 +30,9 @@
   - [x] Register users
   - [x] [Refresh tokens][5]
   - [x] [Email verification][6]
-  - [ ] Social Login
+  - [x] Social Login
     - [x] GitHub
-    - [ ] Google
+    - [x] Google
 - [x] Authorization
   - [x] Require user email to be verified before performing `PATCH`
 - [x] Security

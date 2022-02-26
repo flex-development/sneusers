@@ -20,7 +20,9 @@ import { isHttpError } from 'http-errors'
 
 @Catch()
 class ErrorFilter implements ExceptionFilter {
-  constructor(readonly config: ConfigService<EnvironmentVariables, true>) {}
+  constructor(
+    protected readonly config: ConfigService<EnvironmentVariables, true>
+  ) {}
 
   /**
    * Returns a global-scoped application filter.
