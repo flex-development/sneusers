@@ -1,0 +1,8 @@
+{
+  "anonmyize": false,
+  "functionCase": "uppercase",
+  "keywordCase": "uppercase",
+  "spaces": 2,
+  "stripComments": false,
+  "tabs": false
+}

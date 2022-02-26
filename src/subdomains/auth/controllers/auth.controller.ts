@@ -18,8 +18,8 @@ import {
   ApiTokenAuth,
   CsrfToken
 } from '@sneusers/decorators'
-import type { EntityDTO } from '@sneusers/dtos'
-import { EntitySerializer } from '@sneusers/interceptors'
+import type { EntityDTO } from '@sneusers/modules/db/dtos'
+import { EntitySerializer } from '@sneusers/modules/db/interceptors'
 import { CookieType } from '@sneusers/modules/middleware/enums'
 import { CookieOptionsFactory } from '@sneusers/modules/middleware/factories'
 import { CurrentUser } from '@sneusers/subdomains/users/decorators'

@@ -17,9 +17,6 @@ on:
       - .github/workflows/ci-docker.yml
       - .yarn/plugins/**
       - .yarn/releases/**
-      - db/config/**
-      - db/migrations/**
-      - db/seeders/**
       - nginx/**
       - src/**
       - tools/helpers/match-specifier.cjs
@@ -27,6 +24,7 @@ on:
       - typings/**
       - views/**
       - .dockerignore
+      - .sequelizerc
       - .yarnrc.yml
       - docker-cloud.yml
       - docker-compose.yml
@@ -45,9 +43,6 @@ on:
       - .github/workflows/ci-docker.yml
       - .yarn/plugins/**
       - .yarn/releases/**
-      - db/config/**
-      - db/migrations/**
-      - db/seeders/**
       - nginx/**
       - src/**
       - tools/helpers/match-specifier.cjs
@@ -55,6 +50,7 @@ on:
       - typings/**
       - views/**
       - .dockerignore
+      - .sequelizerc
       - .yarnrc.yml
       - docker-cloud.yml
       - docker-compose.yml
@@ -135,6 +131,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_STG }}
           port: ${{ secrets.SSH_PORT }}
           rm: true
-          source: db/*,nginx/*,docker-cloud.yml,docker-compose.yml
+          source: docker/*,nginx/*,docker-cloud.yml,docker-compose.yml
           target: opt/${{ secrets.GCLOUD_PROJECT }}
           username: ${{ secrets.SSH_USER }}

@@ -1,28 +1,31 @@
 import { NullishString, OrNull } from '@flex-development/tutils'
 import { ApiProperty } from '@nestjs/swagger'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
-import { BaseEntity } from '@sneusers/entities'
-import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { Entity } from '@sneusers/modules/db/entities'
+import {
+  DatabaseSequence,
+  DatabaseTable,
+  OrderDirection,
+  SequelizeError
+} from '@sneusers/modules/db/enums'
+import type { SequelizeErrorType } from '@sneusers/modules/db/types'
+import { SearchOptions } from '@sneusers/modules/db/types'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import { AuthProvider } from '@sneusers/subdomains/auth/enums'
-import type { SequelizeError } from '@sneusers/types'
-import { SearchOptions } from '@sneusers/types'
 import {
-  AllowNull,
   Column,
-  Comment,
   DataType,
-  Default,
   HasMany,
   Index,
-  Table,
-  Unique,
-  Validate
+  Sequelize,
+  Table
 } from 'sequelize-typescript'
+import type { HasManyGetAssociationsMixin } from 'sequelize/types'
 import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
+import isNumeric from 'validator/lib/isNumeric'
 import isStrongPassword from 'validator/lib/isStrongPassword'
 import { CreateUserDTO } from '../dtos'
 import { IUser, IUserRaw } from '../interfaces'
@@ -38,10 +41,15 @@ import { UserUid } from '../types'
  *
  * [1]: https://en.wikipedia.org/wiki/Data_access_object
  *
- * @extends {BaseEntity<IUserRaw, CreateUserDTO, IUser>}
+ * @extends {Entity<IUserRaw, CreateUserDTO, IUser>}
  * @implements {IUser}
  */
 @Table<User>({
+  defaultScope: {
+    attributes: User.KEYS,
+    order: [['id', OrderDirection.ASC]],
+    raw: false
+  },
   deletedAt: false,
   hooks: {
     /**
@@ -57,10 +65,8 @@ import { UserUid } from '../types'
      */
     async beforeCreate(instance: User): Promise<void> {
       if (instance.password) {
-        instance.dataValues.password = await User.scrypt.hash(instance.password)
+        instance.password = await User.scrypt.hash(instance.password)
       }
-
-      return
     },
 
     /**
@@ -78,19 +84,19 @@ import { UserUid } from '../types'
     beforeSave(instance: User): void {
       const tl = (str?: NullishString) => str?.toLowerCase().trim() ?? null
 
-      instance.dataValues.display_name = tl(instance.display_name)
-      instance.dataValues.email = tl(instance.email) as string
-      instance.dataValues.first_name = tl(instance.first_name)
-      instance.dataValues.last_name = tl(instance.last_name)
+      instance.display_name = tl(instance.display_name)
+      instance.email = tl(instance.email) as string
+      instance.first_name = tl(instance.first_name)
+      instance.last_name = tl(instance.last_name)
 
-      if (instance.id) instance.dataValues.id = JSON.parse(`${instance.id}`)
-
-      if (instance.provider !== null) {
-        instance.dataValues.email_verified = true
-        instance.dataValues.password = null
+      if (instance.id && isNumeric(instance.id.toString())) {
+        instance.id = Number.parseInt(instance.id.toString())
       }
 
-      return
+      if (instance.provider !== null) {
+        instance.email_verified = true
+        instance.password = null
+      }
     },
 
     /**
@@ -107,17 +113,17 @@ import { UserUid } from '../types'
       if (instance.isNewRecord || (!instance.id && !instance.updated_at)) {
         const NOW = User.CURRENT_TIMESTAMP
 
-        let created_at = instance.dataValues.created_at
+        let created_at: number | Literal = instance.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if ((NOW as Literal).val === created_at) created_at = Date.now()
+        if ((NOW as Literal).val === (created_at as unknown as Literal).val) {
+          created_at = Date.now()
+        }
 
-        instance.dataValues.created_at = created_at || Date.now()
+        instance.created_at = created_at || Date.now()
         instance.isNewRecord = true
-        instance.dataValues.updated_at = null
-      } else instance.dataValues.updated_at = Date.now()
-
-      return
+        instance.updated_at = null
+      } else instance.updated_at = Date.now()
     }
   },
   omitNull: false,
@@ -125,14 +131,15 @@ import { UserUid } from '../types'
   tableName: DatabaseTable.USERS,
   timestamps: true
 })
-class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
+class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   @ApiProperty({ description: 'When user was created', type: Number })
-  @Comment('when user was created (unix timestamp)')
-  @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
-  @AllowNull(false)
   @Index('created_at')
-  @Default(User.CURRENT_TIMESTAMP)
-  @Column(DataType.BIGINT)
+  @Column({
+    allowNull: false,
+    defaultValue: User.CURRENT_TIMESTAMP,
+    type: DataType.BIGINT,
+    validate: { isUnixTimestamp: User.isUnixTimestamp }
+  })
   declare created_at: IUser['created_at']
 
   @ApiProperty({
@@ -141,11 +148,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: String
   })
-  @Comment('display name')
-  @Validate({ len: [1, 255] })
   @Index('display_name')
-  @Default(null)
-  @Column(DataType.STRING)
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.STRING,
+    validate: { notEmpty: true }
+  })
   declare display_name: IUser['display_name']
 
   @ApiProperty({
@@ -154,20 +163,21 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     minLength: 3,
     type: String
   })
-  @Comment('unique email address')
-  @Validate({ isEmail: true, len: [3, 254], notNull: true })
-  @AllowNull(false)
-  @Unique
-  @Index('email')
-  @Column(DataType.STRING(254))
+  @Column({
+    allowNull: false,
+    type: DataType.STRING(254),
+    unique: true,
+    validate: { isEmail: true, len: [3, 254] }
+  })
   declare email: IUser['email']
 
   @ApiProperty({ description: 'Email address verified?', type: Boolean })
-  @Comment('user verified?')
-  @AllowNull(false)
   @Index('email_verified')
-  @Default(false)
-  @Column(DataType.BOOLEAN)
+  @Column({
+    allowNull: false,
+    defaultValue: false,
+    type: DataType.BOOLEAN
+  })
   declare email_verified: IUser['email_verified']
 
   @ApiProperty({
@@ -176,12 +186,26 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: String
   })
-  @Comment('first name of user')
-  @Validate({ len: [1, 255] })
   @Index('first_name')
-  @Default(null)
-  @Column(DataType.STRING)
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.STRING,
+    validate: { notEmpty: true }
+  })
   declare first_name: IUser['first_name']
+
+  @ApiProperty({ description: 'Unique identifier', type: Number })
+  @Column({
+    allowNull: false,
+    autoIncrementIdentity: true,
+    defaultValue: Sequelize.fn('nextval', DatabaseSequence.USERS),
+    primaryKey: true,
+    type: 'NUMERIC',
+    unique: true,
+    validate: { notNull: true }
+  })
+  declare id: IUser['id']
 
   @ApiProperty({
     description: 'Last name',
@@ -189,11 +213,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: String
   })
-  @Comment('last name of user')
-  @Validate({ len: [1, 255] })
   @Index('last_name')
-  @Default(null)
-  @Column(DataType.STRING)
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.STRING,
+    validate: { notEmpty: true }
+  })
   declare last_name: IUser['last_name']
 
   @ApiProperty({
@@ -201,10 +227,12 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: String
   })
-  @Comment('hashed password')
-  @Validate({ len: [8, 255], strong: User.checkPasswordStrength })
-  @Default(null)
-  @Column(DataType.STRING)
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.STRING,
+    validate: { isStrong: User.checkPasswordStrength }
+  })
   declare password: IUser['password']
 
   @ApiProperty({
@@ -213,14 +241,16 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     enumName: 'AuthProvider',
     nullable: true
   })
-  @Comment('AuthProvider')
   @Index('provider')
-  @Default(null)
-  @Column(DataType.ENUM(...User.AUTH_PROVIDERS))
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.ENUM(...User.AUTH_PROVIDERS)
+  })
   declare provider: IUser['provider']
 
   @HasMany(() => Token)
-  declare tokens: Token[]
+  declare tokens: HasManyGetAssociationsMixin<Token>
 
   @ApiProperty({
     default: null,
@@ -228,11 +258,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     nullable: true,
     type: Number
   })
-  @Comment('when user was last modified (unix timestamp)')
-  @Validate({ isUnixTimestamp: User.checkUnixTimestamp })
   @Index('updated_at')
-  @Default(null)
-  @Column(DataType.BIGINT)
+  @Column({
+    allowNull: true,
+    defaultValue: null,
+    type: DataType.BIGINT,
+    validate: { isUnixTimestampOrNull: User.isUnixTimestampOrNull }
+  })
   declare updated_at: IUser['updated_at']
 
   /**
@@ -259,9 +291,9 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   /**
    * @static
    * @readonly
-   * @property {(keyof IUserRaw)[]} RAW_KEYS - {@link IUserRaw} attributes
+   * @property {(keyof IUserRaw)[]} KEYS_RAW - {@link IUserRaw} attributes
    */
-  static readonly RAW_KEYS: (keyof IUserRaw)[] = [
+  static readonly KEYS_RAW: (keyof IUserRaw)[] = [
     'created_at',
     'display_name',
     'email',
@@ -275,14 +307,25 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   ]
 
   /**
+   * @static
+   * @readonly
+   * @property {(keyof IUser)[]} KEYS - {@link IUser} attributes
+   */
+  static readonly KEYS: (keyof IUser)[] = [...User.KEYS_RAW, 'full_name']
+
+  /**
    * Checks a user's password strength.
+   *
+   * If `password === null`, however, it'll be returned.
    *
    * @static
    * @param {any} password - Password to check
-   * @return {string} Password if strength check passes
+   * @return {User['password']} Password if strength check passes
    * @throws {Error | TypeError}
    */
-  static checkPasswordStrength(password: any): NonNullable<User['password']> {
+  static checkPasswordStrength(password: any): User['password'] {
+    if (password === null) return password
+
     if (typeof password !== 'string') {
       throw new TypeError('Password must be a string')
     }
@@ -326,7 +369,7 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
    *
    * @static
    * @async
-   * @param {string} email - Email address of user to find
+   * @param {IUser['email']} email - Email address of user to find
    * @param {SearchOptions<User>} [options={}] - Search options
    * @return {Promise<OrNull<User>>} `User` instance or `null`
    * @throws {Exception}
@@ -337,7 +380,6 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   ): Promise<OrNull<User>> {
     const find_options: SearchOptions<User> = {
       ...options,
-      plain: true,
       where: {
         ...(options.where && {}),
         email: this.sequelize.fn('lower', email)
@@ -347,13 +389,13 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     try {
       return await this.findOne<User>(find_options)
     } catch (e) {
-      const error = e as SequelizeError
-      const data: ExceptionDataDTO<SequelizeError> = {
+      const error = e as SequelizeErrorType
+      const data: ExceptionDataDTO<SequelizeErrorType> = {
         email,
         options: find_options
       }
 
-      if (error.name === SequelizeErrorName.EmptyResult) {
+      if (error.name === SequelizeError.EmptyResult) {
         data.message = `User with email [${email}] not found`
       }
 
@@ -380,8 +422,8 @@ class User extends BaseEntity<IUserRaw, CreateUserDTO, IUser> implements IUser {
     uid: UserUid,
     options: SearchOptions<User> = {}
   ): Promise<OrNull<User>> {
-    if (!isEmail(uid.toString())) return await this.findByPk(uid, options)
-    return await this.findByEmail(uid as string, options)
+    if (!isEmail(uid.toString())) return this.findByPk(uid, options)
+    return this.findByEmail(uid as string, options)
   }
 }
 

@@ -1,1 +1,1 @@
-/// <reference path='./global.d.ts' />
+/// <reference path='./globals.global.d.ts' />

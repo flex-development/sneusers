@@ -22,6 +22,9 @@ import type { IUserRaw } from '../interfaces'
  * Data used to create a new user.
  */
 class CreateUserDTO {
+  /** When user was created. */
+  readonly created_at?: never
+
   @ApiPropertyOptional({
     default: null,
     description: 'Display name',
@@ -45,6 +48,9 @@ class CreateUserDTO {
   @MinLength(3)
   @MaxLength(254)
   readonly email: IUserRaw['email']
+
+  /** Email verified? */
+  readonly email_verified?: never
 
   @ApiPropertyOptional({
     default: null,
@@ -99,6 +105,9 @@ class CreateUserDTO {
   @IsEnum(AuthProvider)
   @IsOptional()
   readonly provider?: IUserRaw['provider']
+
+  /** When user was last modified. */
+  readonly updated_at?: never
 }
 
 export default CreateUserDTO

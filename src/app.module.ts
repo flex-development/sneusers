@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { CacheModule, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { TerminusModule } from '@nestjs/terminus'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { HealthController } from './controllers'
@@ -12,6 +11,7 @@ import {
 } from './filters'
 import { ThrottlerProxyGuard } from './guards'
 import CryptoModule from './modules/crypto/crypto.module'
+import DatabaseModule from './modules/db/db.module'
 import EmailModule from './modules/email/email.module'
 import MiddlewareModule from './modules/middleware/middleware.module'
 import RedisModule from './modules/redis/redis.module'
@@ -20,7 +20,6 @@ import {
   CacheConfigService,
   HttpConfigService,
   RedisConfigService,
-  SequelizeConfigService,
   ThrottlerConfigService
 } from './providers'
 import AuthModule from './subdomains/auth/auth.module'
@@ -38,11 +37,11 @@ import UsersModule from './subdomains/users/users.module'
     CacheModule.registerAsync(CacheConfigService.moduleOptions),
     ConfigModule.forRoot(AppService.configModuleOptions),
     CryptoModule,
+    DatabaseModule,
     EmailModule,
     HttpModule.registerAsync(HttpConfigService.moduleOptions),
     MiddlewareModule,
     RedisModule.registerAsync(RedisConfigService.moduleOptions),
-    SequelizeModule.forRootAsync(SequelizeConfigService.moduleOptions),
     TerminusModule,
     ThrottlerModule.forRootAsync(ThrottlerConfigService.moduleOptions),
     UsersModule

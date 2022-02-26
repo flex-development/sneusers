@@ -4,5 +4,4 @@
  * @see https://docs.nestjs.com/interceptors
  */
 
-export { default as EntitySerializer } from './entity-serializer.interceptor'
 export { default as HttpCacheInterceptor } from './http-cache.interceptor'

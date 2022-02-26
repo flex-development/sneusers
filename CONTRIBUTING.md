@@ -281,12 +281,14 @@ commit scopes and types.
 
 ### Making Changes
 
-Source code is located in [`src`](src) directory.
+Source code is located in the [`src`](src) directory.
 
 The purpose of each file should be documented using the `@file` annotation,
 along with an accompanying `@module` annotation.
 
-See the [NestJS docs][15] for help developing NestJS application.
+#### Database Migrations
+
+**TODO**: Update documentation.
 
 #### Docker Compose Services
 
@@ -295,6 +297,10 @@ See the [NestJS docs][15] for help developing NestJS application.
 - `postgres`: <https://hub.docker.com/_/postgres>
 - `redis`: <https://hub.docker.com/_/redis>
 - `redis-commander`: <https://github.com/joeferner/redis-commander#docker>
+
+#### NestJS App
+
+See the [NestJS docs][15] for help developing NestJS applications.
 
 ### Documentation
 
@@ -314,6 +320,10 @@ issue regarding a test, or need to make a `wip` commit, use Mocha's [inclusive
 tests feature][20] to mark your tests or suites as pending.
 
 For more details on testing NestJS applications, see [Testing docs][21].
+
+#### Database Hosts & Migrations
+
+**TODO**: Update documentation.
 
 ### Getting Help
 

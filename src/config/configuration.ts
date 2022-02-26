@@ -2,9 +2,12 @@ import { OrNil, OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
 import { isNIL } from '@flex-development/tutils/guards'
 import { EnvironmentVariables, ServerInfo } from '@sneusers/models'
+import { DatabaseDialect } from '@sneusers/modules/db/enums'
 import { SessionUnset } from '@sneusers/modules/middleware/enums'
+import { isDockerEnv } from '@sneusers/utils'
 import { instanceToPlain } from 'class-transformer'
 import { validateSync, ValidationError } from 'class-validator'
+import fs from 'fs'
 import validator from 'validator'
 
 /**
@@ -49,6 +52,7 @@ const validate = ({
   APP_ENV = AppEnv.DEV,
   CACHE_MAX = '10',
   CACHE_TTL = '5',
+  CI = 'false',
   COOKIE_SECRET,
   CSURF_COOKIE_HTTP_ONLY = 'false',
   CSURF_COOKIE_KEY = '_csrf',
@@ -58,8 +62,9 @@ const validate = ({
   CSURF_COOKIE_SECURE = 'false',
   CSURF_COOKIE_SIGNED = 'false',
   DB_AUTO_LOAD_MODELS = 'true',
-  DB_HOST = 'postgres',
+  DB_HOST,
   DB_LOG_QUERY_PARAMS = 'true',
+  DB_MIGRATE = 'true',
   DB_NAME,
   DB_PASSWORD,
   DB_PORT = '5432',
@@ -93,6 +98,7 @@ const validate = ({
   JWT_SECRET_REFRESH,
   JWT_SECRET_VERIFICATION,
   NODE_ENV = NodeEnv.DEV,
+  PGAPPNAME,
   PORT = '8080',
   REDIS_HOST = 'redis',
   REDIS_PASSWORD,
@@ -120,9 +126,17 @@ const validate = ({
   env.APP_ENV = parse<AppEnv>(APP_ENV)
   env.NODE_ENV = parse<NodeEnv>(NODE_ENV)
 
-  // Check if running in production or staging environment
+  // Check if running in CI environment and if Docker services are running
+  env.CI = parse(CI)
+  env.DOCKER = isDockerEnv()
+
+  // Check if database server should be running locally
+  env.DB_LOCAL = !env.CI && !env.DOCKER
+
+  // Check if running in production, staging, or test environment
   env.PROD = env.APP_ENV === AppEnv.PROD && env.NODE_ENV === NodeEnv.PROD
   env.STG = env.APP_ENV === AppEnv.STG
+  env.TEST = env.APP_ENV === AppEnv.TEST || env.NODE_ENV === NodeEnv.TEST
 
   // Set hostname, port to run application on, and top level domain
   env.HOSTNAME = HOSTNAME
@@ -130,12 +144,12 @@ const validate = ({
   env.TLD = TLD
 
   // Set server descriptions and URLs
-  env.API_SERVER_DESCRIP_DEV = API_SERVER_DESCRIP_DEV
-  env.API_SERVER_DESCRIP_PROD = API_SERVER_DESCRIP_PROD
-  env.API_SERVER_DESCRIP_STG = API_SERVER_DESCRIP_STG
-  env.API_SERVER_URL_DEV = API_SERVER_URL_DEV
-  env.API_SERVER_URL_PROD = API_SERVER_URL_PROD
-  env.API_SERVER_URL_STG = API_SERVER_URL_STG
+  env.API_SERVER_DESCRIP_DEV = parse(API_SERVER_DESCRIP_DEV)
+  env.API_SERVER_DESCRIP_PROD = parse(API_SERVER_DESCRIP_PROD)
+  env.API_SERVER_DESCRIP_STG = parse(API_SERVER_DESCRIP_STG)
+  env.API_SERVER_URL_DEV = parse(API_SERVER_URL_DEV)
+  env.API_SERVER_URL_PROD = parse(API_SERVER_URL_PROD)
+  env.API_SERVER_URL_STG = parse(API_SERVER_URL_STG)
 
   // Set API servers
   env.API_SERVERS = ((): ServerInfo[] => {
@@ -157,7 +171,7 @@ const validate = ({
   // Assign remaining environment variables
   env.CACHE_MAX = parse(CACHE_MAX)
   env.CACHE_TTL = parse(CACHE_TTL)
-  env.COOKIE_SECRET = COOKIE_SECRET
+  env.COOKIE_SECRET = parse(COOKIE_SECRET)
   env.CSURF_COOKIE_HTTP_ONLY = parse(CSURF_COOKIE_HTTP_ONLY)
   env.CSURF_COOKIE_KEY = CSURF_COOKIE_KEY
   env.CSURF_COOKIE_MAX_AGE = parse(CSURF_COOKIE_MAX_AGE)
@@ -166,17 +180,23 @@ const validate = ({
   env.CSURF_COOKIE_SECURE = parse(CSURF_COOKIE_SECURE)
   env.CSURF_COOKIE_SIGNED = parse(CSURF_COOKIE_SIGNED)
   env.DB_AUTO_LOAD_MODELS = parse(DB_AUTO_LOAD_MODELS)
-  env.DB_HOST = DB_HOST
+  env.DB_DIALECT = DatabaseDialect[env.TEST ? 'SQLITE' : 'POSTGRES']
+  env.DB_HOST = env.DB_LOCAL ? process.env.PGHOST || DB_HOST : DB_HOST
   env.DB_LOG_QUERY_PARAMS = parse(DB_LOG_QUERY_PARAMS)
+  env.DB_MIGRATIONS = ((): string[] => {
+    const migrations = fs.readdirSync('./src/modules/db/migrations')
+    return migrations.filter(migration => migration.endsWith('.ts'))
+  })()
+  env.DB_MIGRATE = parse(DB_MIGRATE)
   env.DB_NAME = DB_NAME
   env.DB_PASSWORD = DB_PASSWORD
-  env.DB_PORT = parse(DB_PORT)
+  env.DB_PORT = parse(env.DB_LOCAL ? process.env.PGPORT || DB_PORT : DB_PORT)
   env.DB_RETRY_ATTEMPTS = parse(DB_RETRY_ATTEMPTS)
   env.DB_RETRY_DELAY = parse(DB_RETRY_DELAY)
   env.DB_SYNC_ALTER = parse(DB_SYNC_ALTER)
   env.DB_SYNC_FORCE = parse(DB_SYNC_FORCE)
   env.DB_SYNCHRONIZE = parse(DB_SYNCHRONIZE)
-  env.DB_TIMEZONE = DB_TIMEZONE
+  env.DB_TIMEZONE = parse(DB_TIMEZONE)
   env.DB_USERNAME = DB_USERNAME
   env.DEV = env.APP_ENV === AppEnv.DEV && env.NODE_ENV === NodeEnv.DEV
   env.EMAIL_CLIENT = EMAIL_CLIENT
@@ -188,7 +208,7 @@ const validate = ({
   env.GH_AUTHORIZATION_URL = GH_AUTHORIZATION_URL
   env.GH_CLIENT_ID = GH_CLIENT_ID
   env.GH_CLIENT_SECRET = GH_CLIENT_SECRET
-  env.GH_SCOPES = GH_SCOPES
+  env.GH_SCOPES = parse(GH_SCOPES)
   env.GH_SCOPES_SEPARATOR = GH_SCOPES_SEPARATOR
   env.GH_TOKEN_URL = GH_TOKEN_URL
   env.GH_USER_EMAIL_URL = GH_USER_EMAIL_URL
@@ -200,10 +220,11 @@ const validate = ({
   env.JWT_SECRET_ACCESS = JWT_SECRET_ACCESS
   env.JWT_SECRET_REFRESH = JWT_SECRET_REFRESH
   env.JWT_SECRET_VERIFICATION = JWT_SECRET_VERIFICATION
+  env.PGAPPNAME = parse(PGAPPNAME)
   env.REDIS_HOST = REDIS_HOST
-  env.REDIS_PASSWORD = REDIS_PASSWORD
+  env.REDIS_PASSWORD = parse(REDIS_PASSWORD)
   env.REDIS_PORT = parse(REDIS_PORT)
-  env.REDIS_USERNAME = REDIS_USERNAME
+  env.REDIS_USERNAME = parse(REDIS_USERNAME)
   env.SESSION_COOKIE_HTTP_ONLY = parse(SESSION_COOKIE_HTTP_ONLY)
   env.SESSION_COOKIE_MAX_AGE = parse(SESSION_COOKIE_MAX_AGE)
   env.SESSION_COOKIE_PATH = SESSION_COOKIE_PATH
@@ -251,6 +272,7 @@ const configuration = (): EnvironmentVariables => {
     APP_ENV: process.env.APP_ENV,
     CACHE_MAX: process.env.CACHE_MAX,
     CACHE_TTL: process.env.CACHE_TTL,
+    CI: process.env.CI,
     COOKIE_SECRET: process.env.COOKIE_SECRET,
     CSURF_COOKIE_HTTP_ONLY: process.env.CSURF_COOKIE_HTTP_ONLY,
     CSURF_COOKIE_KEY: process.env.CSURF_COOKIE_KEY,
@@ -262,6 +284,7 @@ const configuration = (): EnvironmentVariables => {
     DB_AUTO_LOAD_MODELS: process.env.DB_AUTO_LOAD_MODELS,
     DB_HOST: process.env.DB_HOST,
     DB_LOG_QUERY_PARAMS: process.env.DB_LOG_QUERY_PARAMS,
+    DB_MIGRATE: process.env.DB_MIGRATE,
     DB_NAME: process.env.DB_NAME,
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_PORT: process.env.DB_PORT,
@@ -295,6 +318,7 @@ const configuration = (): EnvironmentVariables => {
     JWT_SECRET_REFRESH: process.env.JWT_SECRET_REFRESH,
     JWT_SECRET_VERIFICATION: process.env.JWT_SECRET_VERIFICATION,
     NODE_ENV: process.env.NODE_ENV,
+    PGAPPNAME: process.env.PGAPPNAME,
     PORT: process.env.PORT,
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,

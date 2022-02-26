@@ -7,14 +7,15 @@ import {
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { ApiEndpoint, SequelizeErrorName } from '@sneusers/enums'
+import { ApiEndpoint } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
+import { SequelizeError } from '@sneusers/modules/db/enums'
+import { SearchOptions, SequelizeErrorType } from '@sneusers/modules/db/types'
 import { CreateEmailDTO } from '@sneusers/modules/email/dtos'
 import { EmailService } from '@sneusers/modules/email/providers'
 import { RedisCache } from '@sneusers/modules/redis/abstracts'
 import { AuthProvider } from '@sneusers/subdomains/auth/enums'
-import { SearchOptions, SequelizeError } from '@sneusers/types'
 import { UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
@@ -85,8 +86,6 @@ class UsersService {
    */
   async create(dto: CreateUserDTO): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
-      dto['email_verified'] = false
-
       try {
         return await this.repo.create(dto, {
           fields: [
@@ -99,17 +98,18 @@ class UsersService {
             'password',
             'provider'
           ],
+          ignoreDuplicates: false,
           isNewRecord: true,
-          raw: true,
+          raw: false,
           silent: true,
           transaction,
           validate: true
         })
       } catch (e) {
-        const error = e as SequelizeError
+        const error = e as SequelizeErrorType
         const data: ObjectPlain = { dto }
 
-        if (error.name === SequelizeErrorName.UniqueConstraint) {
+        if (error.name === SequelizeError.UniqueConstraint) {
           throw new UniqueEmailException(
             dto.email,
             error as UniqueConstraintError
@@ -121,7 +121,7 @@ class UsersService {
     })
 
     await this.clearCache()
-    return user
+    return user.reload()
   }
 
   /**
@@ -134,7 +134,7 @@ class UsersService {
    * @return {Promise<PaginatedDTO<User>>} Paginated `User` response
    */
   async find(options: SearchOptions<User> = {}): Promise<PaginatedDTO<User>> {
-    return await this.sequelize.transaction(async transaction => {
+    return this.sequelize.transaction(async transaction => {
       const { count, rows } = await this.repo.findAndCountAll<User>({
         ...options,
         transaction
@@ -170,8 +170,8 @@ class UsersService {
     uid: UserUid,
     options: SearchOptions<User> = {}
   ): Promise<OrNull<User>> {
-    return await this.sequelize.transaction(async transaction => {
-      return await this.repo.findByUid(uid, { ...options, transaction })
+    return this.sequelize.transaction(async transaction => {
+      return this.repo.findByUid(uid, { ...options, transaction })
     })
   }
 
@@ -209,10 +209,10 @@ class UsersService {
   ): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
-      const user = (await this.repo.findByUid(uid, search)) as User
+      const entity = (await this.repo.findByUid(uid, search)) as User
 
       try {
-        return await user.update(dto, {
+        return await entity.update(dto, {
           fields: [
             'display_name',
             'email',
@@ -222,16 +222,17 @@ class UsersService {
             'password',
             'provider'
           ],
+          raw: false,
           silent: false,
           transaction,
           validate: true,
-          where: { id: user.id }
+          where: { id: entity.id }
         })
       } catch (e) {
-        const error = e as SequelizeError
+        const error = e as SequelizeErrorType
         const data: ObjectPlain = { dto }
 
-        if (error.name === SequelizeErrorName.UniqueConstraint) {
+        if (error.name === SequelizeError.UniqueConstraint) {
           throw new UniqueEmailException(
             data.dto.email,
             error as UniqueConstraintError,
@@ -244,7 +245,7 @@ class UsersService {
     })
 
     await this.clearCache()
-    return await user.reload()
+    return user.reload()
   }
 
   /**
@@ -257,16 +258,15 @@ class UsersService {
   async remove(uid: UserUid): Promise<User> {
     const user = await this.sequelize.transaction(async transaction => {
       const search: SearchOptions = { rejectOnEmpty: true, transaction }
-      const user = (await this.repo.findByUid(uid, search)) as User
+      const entity = (await this.repo.findByUid(uid, search)) as User
 
       await this.repo.destroy({
-        cascade: true,
         force: true,
         transaction,
-        where: { id: user.id }
+        where: { id: entity.id }
       })
 
-      return user
+      return entity
     })
 
     await this.clearCache()
@@ -315,8 +315,8 @@ class UsersService {
   ): Promise<User> {
     const id = dto.id
 
-    if (id && (await this.findOne(id))) return await this.patch<I>(id, dto)
-    return await this.create(dto as CreateUserDTO)
+    if (id && (await this.findOne(id))) return this.patch<I>(id, dto)
+    return this.create(dto as CreateUserDTO)
   }
 
   /**
@@ -327,7 +327,7 @@ class UsersService {
    * @return {Promise<User>} - Promise containing updated user
    */
   async verifyEmail(uid: UserUid): Promise<User> {
-    return await this.patch<'internal'>(uid, { email_verified: true })
+    return this.patch<'internal'>(uid, { email_verified: true })
   }
 }
 

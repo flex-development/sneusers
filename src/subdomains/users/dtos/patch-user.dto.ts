@@ -11,7 +11,12 @@ import CreateUserDTO from './create-user.dto'
  */
 
 /** Properties that can't be updated or only updated by the application */
-type Internal = 'id' | 'provider'
+type Internal =
+  | 'created_at'
+  | 'email_verified'
+  | 'id'
+  | 'provider'
+  | 'updated_at'
 
 /**
  * @internal
@@ -19,7 +24,7 @@ type Internal = 'id' | 'provider'
  */
 const PatchUserDTOB: Type<Omit<Partial<CreateUserDTO>, Internal>> = OmitType(
   PartialType(CreateUserDTO),
-  ['id', 'provider']
+  ['created_at', 'email_verified', 'id', 'provider', 'updated_at']
 )
 
 /**

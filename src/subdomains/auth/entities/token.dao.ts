@@ -1,18 +1,21 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { OrNull } from '@flex-development/tutils'
-import { BaseEntity } from '@sneusers/entities'
-import { DatabaseTable } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { Entity } from '@sneusers/modules/db/entities'
+import {
+  DatabaseSequence,
+  DatabaseTable,
+  OrderDirection,
+  ReferentialAction
+} from '@sneusers/modules/db/enums'
+import { SearchOptions } from '@sneusers/modules/db/types'
 import { User } from '@sneusers/subdomains/users/entities'
-import { SearchOptions } from '@sneusers/types'
 import {
   Column,
-  Comment,
   DataType,
-  Default,
   ForeignKey,
-  Table,
-  Validate
+  Sequelize,
+  Table
 } from 'sequelize-typescript'
 import type { Literal } from 'sequelize/types/lib/utils'
 import isDate from 'validator/lib/isDate'
@@ -32,10 +35,15 @@ import { IToken, ITokenRaw } from '../interfaces'
  *
  * @see {@link TokenType}
  *
- * @extends {BaseEntity<ITokenRaw, CreateTokenDTO, IToken>}
+ * @extends {Entity<ITokenRaw, CreateTokenDTO, IToken>}
  * @implements {IToken}
  */
 @Table<Token>({
+  defaultScope: {
+    attributes: Token.KEYS,
+    order: [['id', OrderDirection.ASC]],
+    raw: false
+  },
   deletedAt: false,
   hooks: {
     /**
@@ -50,23 +58,19 @@ import { IToken, ITokenRaw } from '../interfaces'
      * @return {void} Nothing when complete
      */
     beforeValidate(instance: Token): void {
-      const isNewRecord = !instance.id
-
-      if (isNewRecord) {
+      if (instance.isNewRecord || !instance.id) {
         const NOW = Token.CURRENT_TIMESTAMP
 
-        let created_at = instance.dataValues.created_at
+        let created_at = instance.created_at
 
         if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
+        if ((NOW as Literal).val === (created_at as unknown as Literal).val) {
+          created_at = Date.now()
+        }
 
-        if ((NOW as Literal).val === created_at) created_at = Date.now()
-
-        instance.dataValues.created_at = created_at || Date.now()
+        instance.created_at = created_at || Date.now()
+        instance.isNewRecord = true
       }
-
-      instance.isNewRecord = isNewRecord
-
-      return
     }
   },
   omitNull: true,
@@ -76,32 +80,43 @@ import { IToken, ITokenRaw } from '../interfaces'
   updatedAt: false
 })
 class Token
-  extends BaseEntity<ITokenRaw, CreateTokenDTO, IToken>
+  extends Entity<ITokenRaw, CreateTokenDTO, IToken>
   implements IToken
 {
-  @Comment('when user token created')
-  @Validate({ isUnixTimestamp: Token.checkUnixTimestamp })
-  @Default(Token.CURRENT_TIMESTAMP)
-  @Column(DataType.BIGINT)
+  @Column({
+    allowNull: false,
+    defaultValue: Token.CURRENT_TIMESTAMP,
+    type: DataType.BIGINT,
+    validate: { isUnixTimestamp: Token.isUnixTimestamp }
+  })
   declare created_at: IToken['created_at']
 
-  @Comment('revoked?')
-  @Default(false)
-  @Column(DataType.BOOLEAN)
+  @Column({
+    allowNull: false,
+    autoIncrementIdentity: true,
+    defaultValue: Sequelize.fn('nextval', DatabaseSequence.TOKENS),
+    primaryKey: true,
+    type: 'NUMERIC',
+    unique: { msg: 'token id must be unique', name: 'id' },
+    validate: { notNull: true }
+  })
+  declare id: number
+
+  @Column({ allowNull: false, defaultValue: false, type: DataType.BOOLEAN })
   declare revoked: IToken['revoked']
 
-  @Comment('time to live')
-  @Default(86_400)
-  @Column(DataType.BIGINT)
+  @Column({ allowNull: false, defaultValue: 86_400, type: DataType.BIGINT })
   declare ttl: IToken['ttl']
 
-  @Comment('TokenType')
-  @Column(DataType.ENUM(...Token.TYPES))
+  @Column({ allowNull: false, type: DataType.ENUM(...Token.TYPES) })
   declare type: IToken['type']
 
-  @Comment('id of user who token belongs to')
   @ForeignKey(() => User)
-  @Column(DataType.INTEGER)
+  @Column({
+    allowNull: false,
+    onDelete: ReferentialAction.CASCADE,
+    type: 'NUMERIC'
+  })
   declare user: IToken['user']
 
   /**
@@ -117,9 +132,9 @@ class Token
   /**
    * @static
    * @readonly
-   * @property {(keyof ITokenRaw)[]} RAW_KEYS - {@link ITokenRaw} attributes
+   * @property {(keyof ITokenRaw)[]} KEYS_RAW - {@link ITokenRaw} attributes
    */
-  static readonly RAW_KEYS: (keyof ITokenRaw)[] = [
+  static readonly KEYS_RAW: (keyof ITokenRaw)[] = [
     'created_at',
     'id',
     'revoked',
@@ -127,6 +142,13 @@ class Token
     'type',
     'user'
   ]
+
+  /**
+   * @static
+   * @readonly
+   * @property {(keyof IToken)[]} KEYS - {@link IToken} attributes
+   */
+  static readonly KEYS: (keyof IToken)[] = [...Token.KEYS_RAW, 'expires']
 
   /**
    * @static
@@ -214,11 +236,12 @@ class Token
     const token = (await this.findByPk(payload.jti, { rejectOnEmpty: true }))!
     const user = (await this.User.findByPk(token.user, options))!
 
-    // @ts-expect-error types 'string' and 'number' have no overlap
-    const mismatch_id = type !== TokenType.VERIFICATION && sub != user.id
-    const mismatch_email = type === TokenType.VERIFICATION && sub !== user.email
+    const mismatch =
+      type === TokenType.VERIFICATION
+        ? sub !== user.email
+        : Number.parseInt(sub) !== user.id
 
-    if (mismatch_id || mismatch_email) {
+    if (mismatch) {
       throw new Exception(ExceptionCode.UNAUTHORIZED, 'Token owner mismatch', {
         payload,
         token: token.toJSON(),

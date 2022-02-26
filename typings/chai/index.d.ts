@@ -1,2 +1,2 @@
-/// <reference path='./expect.d.ts' />
-/// <reference path='./global.d.ts' />
+/// <reference path='./expect.global.d.ts' />
+/// <reference path='./globals.global.d.ts' />

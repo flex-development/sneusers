@@ -9,7 +9,7 @@ import { MockCreateUserDTO } from './types'
 /**
  * Generates a `CreateUserDTO` object.
  *
- * @param {number} [id] - Unique user id
+ * @param {IUserRaw['id']} [id] - Unique user id
  * @return {MockCreateUserDTO} Mock `CreateUserDTO` object
  */
 const getCreateUserDTO = (id?: IUserRaw['id']): MockCreateUserDTO => {

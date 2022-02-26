@@ -27,7 +27,7 @@ async function runInCluster<T extends ChildClusterFn = ChildClusterFn>(
   fn: T,
   ...args: Parameters<T>
 ): Promise<void> {
-  if (!cluster.isPrimary) return await fn(...args)
+  if (!cluster.isPrimary) return fn(...args)
   for (let i = 0; i < os.cpus().length; ++i) cluster.fork()
 }
 

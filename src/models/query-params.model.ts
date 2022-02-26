@@ -1,7 +1,7 @@
 import type { ObjectPlain, ObjectUnknown } from '@flex-development/tutils'
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import OrderDirection from '@sneusers/enums/order-direction.enum'
-import type { QueryParam } from '@sneusers/types'
+import { OrderDirection } from '@sneusers/modules/db/enums'
+import { EntityQueryParam } from '@sneusers/modules/db/namespaces'
 import { Type } from 'class-transformer'
 import {
   IsBoolean,
@@ -22,7 +22,7 @@ import type { Model } from 'sequelize-typescript'
 /**
  * URL query parameters available when executing a search.
  *
- * @see {@link QueryParam}
+ * @see {@link EntityQueryParam}
  *
  * @template T - Raw entity attributes
  */
@@ -34,7 +34,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsString()
   @IsOptional()
   @Type(() => String)
-  attributes?: QueryParam.Attributes<T>
+  attributes?: EntityQueryParam.Attributes<T>
 
   @ApiPropertyOptional({
     description: 'Comma-delimited list of rows to group (`GROUP BY` in sql)',
@@ -47,7 +47,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsString()
   @IsOptional()
   @Type(() => String)
-  group?: QueryParam.Group<T>
+  group?: EntityQueryParam.Group<T>
 
   @ApiPropertyOptional({
     description: 'Select group rows after groups and aggregates are computed',
@@ -56,7 +56,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsObject()
   @IsOptional()
   @Type(() => Object)
-  having?: QueryParam.Where<T>
+  having?: EntityQueryParam.Where<T>
 
   @ApiPropertyOptional({
     default: 10,
@@ -68,13 +68,13 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsPositive()
   @IsOptional()
   @Type(() => Number)
-  limit?: QueryParam.Limit<T>
+  limit?: EntityQueryParam.Limit<T>
 
   /**
    * @internal
    * @see {@link QueryParam.Lock}
    */
-  lock?: QueryParam.Lock<T extends Model ? T : never>
+  lock?: EntityQueryParam.Lock<T extends Model ? T : never>
 
   @ApiPropertyOptional({
     default: true,
@@ -86,7 +86,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsBoolean()
   @IsOptional()
   @Type(() => Boolean)
-  nest?: QueryParam.Nest<T>
+  nest?: EntityQueryParam.Nest<T>
 
   @ApiPropertyOptional({
     description: 'Skip a certain number of results',
@@ -97,7 +97,7 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @Min(0)
   @IsOptional()
   @Type(() => Number)
-  offset?: QueryParam.Offset<T>
+  offset?: EntityQueryParam.Offset<T>
 
   @ApiPropertyOptional({
     default: `id,${OrderDirection.ASC}`,
@@ -112,19 +112,19 @@ class QueryParams<T extends ObjectPlain = ObjectUnknown> {
   @IsString()
   @IsOptional()
   @Type(() => String)
-  order?: QueryParam.Order<T>
+  order?: EntityQueryParam.Order<T>
 
   /**
    * @internal
    * @see {@link QueryParam.RejectOnEmpty}
    */
-  rejectOnEmpty?: QueryParam.RejectOnEmpty<T>
+  rejectOnEmpty?: EntityQueryParam.RejectOnEmpty<T>
 
   @ApiPropertyOptional({ description: 'Filter selected results', type: Object })
   @IsObject()
   @IsOptional()
   @Type(() => Object)
-  where?: QueryParam.Where<T>
+  where?: EntityQueryParam.Where<T>
 }
 
 export default QueryParams

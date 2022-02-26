@@ -20,9 +20,6 @@ services:
     ports:
       - ${ADMINER_PORT}:8080
     restart: always
-    volumes:
-      - ./adminer/plugins-enabled:/var/www/html/plugins-enabled
-      - ./db/data:/db/data
   app:
     container_name: app
     # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
@@ -49,6 +46,7 @@ services:
       APP_ENV: ${APP_ENV}
       CACHE_MAX: ${CACHE_MAX}
       CACHE_TTL: ${CACHE_TTL}
+      CI: ${GITHUB_ACTIONS:-false}
       COOKIE_SECRET: ${COOKIE_SECRET}
       CSURF_COOKIE_HTTP_ONLY: ${CSURF_COOKIE_HTTP_ONLY}
       CSURF_COOKIE_KEY: ${CSURF_COOKIE_KEY}
@@ -60,6 +58,7 @@ services:
       DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
       DB_HOST: ${DB_HOST}
       DB_LOG_QUERY_PARAMS: ${DB_LOG_QUERY_PARAMS}
+      DB_MIGRATE: ${DB_MIGRATE}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
@@ -87,7 +86,7 @@ services:
       GH_TOKEN_URL: ${GH_TOKEN_URL}
       GH_USER_EMAIL_URL: ${GH_USER_EMAIL_URL}
       GH_USER_PROFILE_URL: ${GH_USER_PROFILE_URL}
-      HOST: https://${SERVER_NAME}
+      HOST: ${HOST}
       HOSTNAME: ${HOSTNAME}
       JWT_EXP_ACCESS: ${JWT_EXP_ACCESS}
       JWT_EXP_REFRESH: ${JWT_EXP_REFRESH}
@@ -98,6 +97,7 @@ services:
       NEST_DEBUG: ${NEST_DEBUG}
       NODE_ENV: ${NODE_ENV}
       NPM_TOKEN: ${NPM_TOKEN}
+      PGAPPNAME: ${PGAPPNAME}
       PORT: ${PORT}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -126,12 +126,17 @@ services:
       - 9229:9229
     restart: always
     volumes:
-      - ./db/config:/opt/sneusers/db/config
-      - ./db/migrations:/opt/sneusers/db/migrations
-      - ./db/seeders:/opt/sneusers/db/seeders
+      - ./__doubles__:/opt/sneusers/__doubles__
+      - ./__tests__:/opt/sneusers/__tests__
       - ./src:/opt/sneusers/src
+      - ./tools/helpers:/opt/sneusers/tools/helpers
       - ./typings:/opt/sneusers/typings
       - ./views:/opt/sneusers/views
+      - ./.mocharc.base.cjs:/opt/sneusers/.mocharc.base.cjs
+      - ./.mocharc.cjs:/opt/sneusers/.mocharc.cjs
+      - ./.nycrc:/opt/sneusers/.nycrc
+      - ./.sequelizerc:/opt/sneusers/.sequelizerc
+      - ./package.json:/opt/sneusers/package.json
       - ./tsconfig.app.json:/opt/sneusers/tsconfig.app.json
       - ./tsconfig.json:/opt/sneusers/tsconfig.json
     working_dir: /opt/sneusers
@@ -176,16 +181,25 @@ services:
       - /etc/nginx/run:/etc/nginx/run
   postgres:
     container_name: ${DB_HOST}
-    image: postgres
+    image: postgres:${POSTGRES_IMAGE_TAG}
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
+      PGAPPNAME: ${PGAPPNAME}
+      PGPORT: ${PGPORT}
+      PGTZ: ${PGTZ}
+      PGUSER: ${PGUSER}
+      PG_COLOR: ${PG_COLOR}
+      POSTGRES_DATABASES: ${POSTGRES_DATABASES}
+      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
+      POSTGRES_INITDB_ARGS: ${POSTGRES_INITDB_ARGS}
+      POSTGRES_INITDB_WALDIR: ${POSTGRES_INITDB_WALDIR}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
     ports:
-      - ${DB_PORT}:5432
+      - ${DB_PORT}:${PGPORT}
     restart: always
     volumes:
-      - ./db/data/postgresql:/var/lib/postgresql/data
+      - ${PGDATA}:/var/lib/postgresql/data
+      - ./docker/entrypoint/initdb.d:/docker-entrypoint-initdb.d
   redis:
     container_name: ${REDIS_HOST}
     image: redis:alpine

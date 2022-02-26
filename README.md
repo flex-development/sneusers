@@ -98,8 +98,9 @@ See [Get Docker][14] for help installing Docker on your platform.
 | `CSURF_COOKIE_SECURE`        | `false`                                         | Force `csurf` cookies to be used over `HTTPS` only                                         |
 | `CSURF_COOKIE_SIGNED`        | `false`                                         | Sign `csurf` cookies                                                                       |
 | `DB_AUTO_LOAD_MODELS`        | `true`                                          | Automatically load database models                                                         |
-| `DB_HOST`                    | `'postgres'`                                    | Hostname of database to connect to                                                         |
+| `DB_HOST`                    | -                                               | Hostname of database to connect to                                                         |
 | `DB_LOG_QUERY_PARAMS`        | `true`                                          | Show database bind parameters in log                                                       |
+| `DB_MIGRATE`                 | `false`                                         | Run database migrations with `umzug`                                                       |
 | `DB_NAME`                    | -                                               | Name of database to connect to                                                             |
 | `DB_PASSWORD`                | -                                               | Database password                                                                          |
 | `DB_PORT`                    | `5432`                                          | Port of database to connect to                                                             |
@@ -136,6 +137,7 @@ See [Get Docker][14] for help installing Docker on your platform.
 | `JWT_SECRET_VERIFICATION`    | `'JWT_SECRET'`                                  | Verification token signing secret                                                          |
 | `NEST_DEBUG`                 | `1`                                             | Enable NestJS dependency resolution logs                                                   |
 | `NODE_ENV`                   | `NodeEnv.DEV`                                   | Node environment (`'development' \| 'production' \| 'test'`)                               |
+| `PGAPPNAME`                  | -                                               | Postgres application name                                                                  |
 | `PORT`                       | `8080`                                          | Port to run application on (and expose `app` service on)                                   |
 | `REDIS_HOST`                 | `'redis'`                                       | Hostname of Redis server                                                                   |
 | `REDIS_PASSWORD`             | -                                               | Redis server password                                                                      |
@@ -162,29 +164,39 @@ model for more detailed descriptions.
 
 #### Docker Compose
 
-| name                   | description                                                      |
-| ---------------------- | ---------------------------------------------------------------- |
-| `ADMINER_PORT`         | Port to expose `adminer` service on                              |
-| `ADMINER_SERVER_NAME`  | Nginx `server_name` for `adminer` service                        |
-| `DB_HOST`              | Hostname of database to connect to                               |
-| `DB_NAME`              | Name of database to connect to                                   |
-| `DB_PASSWORD`          | Database password                                                |
-| `DB_PORT`              | Port of database to connect to                                   |
-| `DB_USERNAME`          | Database user                                                    |
-| `DOCKER_IMAGE`         | Docker app image name                                            |
-| `DOCKER_IMAGE_TAG`     | `ghcr.io/$DOCKER_IMAGE` image tag                                |
-| `GH_PAT`               | GitHub personal access token with at least `read:packages` scope |
-| `NODE_ENV`             | Node environment (`'development' \| 'production' \| 'test'`)     |
-| `NPM_TOKEN`            | NPM registry auth token                                          |
-| `PORT`                 | Port to run application on (and expose `app` service on)         |
-| `REDIS_COMMANDER_PORT` | Port to run and expose `redis-commander` service on              |
-| `REDIS_HOST`           | Hostname of Redis server                                         |
-| `REDIS_PASSWORD`       | Redis server password                                            |
-| `REDIS_PORT`           | Port Redis server is running on                                  |
-| `REDIS_SERVER_NAME`    | Nginx `server_name` for `redis-commander` service                |
-| `REDIS_USER`           | Redis server username                                            |
-| `SERVER_NAME`          | Nginx `server_name` for `app` service                            |
-| `TLD`                  | Top level domain                                                 |
+| name                        | description                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `ADMINER_PORT`              | Port to expose `adminer` service on                                                                 |
+| `ADMINER_SERVER_NAME`       | Nginx `server_name` for `adminer` service                                                           |
+| `DB_HOST`                   | Hostname of database to connect to                                                                  |
+| `DB_PORT`                   | Port of database to connect to                                                                      |
+| `DOCKER_IMAGE_TAG`          | `ghcr.io/$DOCKER_IMAGE` image tag                                                                   |
+| `DOCKER_IMAGE`              | Docker app image name                                                                               |
+| `GH_PAT`                    | GitHub personal access token with at least `read:packages` scope                                    |
+| `NODE_ENV`                  | Node environment (`'development' \| 'production' \| 'test'`)                                        |
+| `NPM_TOKEN`                 | NPM registry auth token                                                                             |
+| `PGAPPNAME`                 | <https://www.postgresql.org/docs/14/libpq-connect.html#LIBPQ-CONNECT-APPLICATION-NAME>              |
+| `PGDATA`                    | [`postgres` database files location](https://www.postgresql.org/docs/14/storage-file-layout.html)   |
+| `PGPORT`                    | <https://www.postgresql.org/docs/14/libpq-connect.html#LIBPQ-CONNECT-PORT>                          |
+| `PGTZ`                      | Postgres default timezone                                                                           |
+| `PGUSER`                    | <https://www.postgresql.org/docs/14/libpq-connect.html#LIBPQ-CONNECT-USER>                          |
+| `PG_COLOR`                  | Use color in `postgres` diagnostic messages (`'always' \| 'auto' \| 'never'`)                       |
+| `PORT`                      | Port to run application on (and expose `app` service on)                                            |
+| `POSTGRES_DATABASES`        | Comma-delimited list of `postgres` databases                                                        |
+| `POSTGRES_HOST_AUTH_METHOD` | Postgres `auth-method` for `host` connections for `all` databases, `all` users, and `all` addresses |
+| `POSTGRES_IMAGE_TAG`        | `postgres` image tag                                                                                |
+| `POSTGRES_INITDB_ARGS`      | Space-delimited list of `postgres initdb` arguments                                                 |
+| `POSTGRES_INITDB_WALDIR`    | `postgres` transaction log location                                                                 |
+| `POSTGRES_PASSWORD`         | `postgres` superuser password                                                                       |
+| `POSTGRES_USER`             | `postgres` superuser username                                                                       |
+| `REDIS_COMMANDER_PORT`      | Port to run and expose `redis-commander` service on                                                 |
+| `REDIS_HOST`                | Hostname of Redis server                                                                            |
+| `REDIS_PASSWORD`            | Redis server password                                                                               |
+| `REDIS_PORT`                | Port Redis server is running on                                                                     |
+| `REDIS_SERVER_NAME`         | Nginx `server_name` for `redis-commander` service                                                   |
+| `REDIS_USER`                | Redis server username                                                                               |
+| `SERVER_NAME`               | Nginx `server_name` for `app` service                                                               |
+| `TLD`                       | Top level domain                                                                                    |
 
 Note that [Docker Image](#application-ghcrioflex-developmentsneusers) variables
 are required to run the `app` service.
@@ -195,10 +207,9 @@ The [`nginx`](docker-compose.yml) service works as a [reverse proxy][16].
 
 Three servers are configured to proxy requests to Docker Compose services:
 
-- [`api`](nginx/templates/api.conf.template): proxies requests to `app`
-- [`db`](nginx/templates/db.conf.template): proxies requests to `adminer`
-- [`redis`](nginx/templates/redis.conf.template): proxies requests to
-  `redis-commander`
+- [`adminer`](nginx/templates/adminer.conf.template): `adminer`
+- [`api`](nginx/templates/api.conf.template): `app`
+- [`redis`](nginx/templates/redis.conf.template): `redis-commander`
 
 #### SSL Certificates
 
@@ -268,6 +279,10 @@ your local DNS system:
    - `$TLD` is your top-level domain
    - `$VM_IP_STG` is the IP address of your staging virtual machine instance
    - `$VM_IP` is the IP address of your production virtual machine instance
+
+   afterwards:
+
+   - `ping` each host to make sure they resolve
 
 ### Running Services
 

@@ -36,6 +36,7 @@ module.exports = {
     'jsdoc',
     'markdown',
     'spellcheck',
+    'sql',
     'tree-shaking',
     'unicorn'
   ],
@@ -167,6 +168,21 @@ module.exports = {
           'zlib'
         ],
         strings: true
+      }
+    ],
+    'sql/format': [
+      2,
+      {
+        ignoreExpressions: false,
+        ignoreInline: true,
+        ignoreStartWithNewLine: true,
+        ignoreTagless: true
+      }
+    ],
+    'sql/no-unsafe-query': [
+      2,
+      {
+        allowLiteral: false
       }
     ],
     'unicorn/consistent-function-scoping': 2,
@@ -441,6 +457,9 @@ module.exports = {
         constant: 'const',
         returns: 'return'
       }
+    },
+    sql: {
+      placeholderRule: undefined
     }
   }
 }

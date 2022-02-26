@@ -1,9 +1,9 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
+import type { ModuleRef } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DatabaseTable } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import { CacheConfigService } from '@sneusers/providers'
 import { Token } from '@sneusers/subdomains/auth/entities'
@@ -16,9 +16,8 @@ import { UsersService } from '@sneusers/subdomains/users/providers'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createUsers from '@tests/utils/create-users.util'
-import resetSequence from '@tests/utils/reset-sequence.util'
-import seedTable from '@tests/utils/seed-table.util'
-import type { QueryInterface } from 'sequelize'
+import tableSeed from '@tests/utils/table-seed.util'
+import tableTruncate from '@tests/utils/table-truncate.util'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../strategist.provider'
 
@@ -29,33 +28,31 @@ import TestSubject from '../strategist.provider'
 
 describe('unit:subdomains/auth/providers/Strategist', () => {
   let app: NestExpressApplication
-  let qi: QueryInterface
-  let repo: typeof User
-  let sequelize: Sequelize
   let subject: TestSubject
+  let repo: typeof User
   let users: User[]
 
   before(async () => {
-    const ntapp = await createApp({
+    app = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([Token, User])
       ],
+      async onModuleInit(ref: ModuleRef): Promise<void> {
+        const sequelize = ref.get(Sequelize, { strict: false })
+
+        repo = sequelize.models.User as typeof User
+        subject = ref.get(TestSubject, { strict: false })
+
+        users = await tableSeed<User>(repo, createUsers(MAGIC_NUMBER))
+      },
       providers: [TestSubject, TokensService, UsersService]
     })
-
-    app = await ntapp.app.init()
-    sequelize = ntapp.ref.get(Sequelize)
-    qi = sequelize.getQueryInterface()
-    repo = sequelize.models.User as typeof User
-    subject = ntapp.ref.get(TestSubject)
-
-    users = await seedTable<User>(repo, createUsers(MAGIC_NUMBER))
   })
 
   after(async () => {
-    await resetSequence(qi, DatabaseTable.USERS)
+    await tableTruncate<User>(repo)
     await app.close()
   })
 

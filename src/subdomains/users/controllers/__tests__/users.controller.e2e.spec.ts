@@ -1,14 +1,11 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import { CacheModule, HttpStatus } from '@nestjs/common'
+import type { ModuleRef } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { PaginatedDTO } from '@sneusers/dtos'
-import {
-  DatabaseTable,
-  SequelizeErrorName as SequelizeError
-} from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import {
   ErrorFilter,
@@ -16,6 +13,7 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import type { QueryParams } from '@sneusers/models'
+import { SequelizeError } from '@sneusers/modules/db/enums'
 import { CacheConfigService } from '@sneusers/providers'
 import { Token } from '@sneusers/subdomains/auth/entities'
 import {
@@ -33,11 +31,10 @@ import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUsers from '@tests/utils/create-users.util'
-import resetSequence from '@tests/utils/reset-sequence.util'
-import seedTable from '@tests/utils/seed-table.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
+import tableSeed from '@tests/utils/table-seed.util'
+import tableTruncate from '@tests/utils/table-truncate.util'
 import type { AuthedUser } from '@tests/utils/types'
-import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../users.controller'
 
@@ -51,8 +48,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   const USERS = createUsers(MAGIC_NUMBER)
 
   let app: NestExpressApplication
-  let auth: AuthService
-  let qi: QueryInterface
+  let repo: typeof User
   let req: ChaiHttp.Agent
   let table: User[]
   let users: UsersService
@@ -61,13 +57,26 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   let user_authed_3: AuthedUser
 
   before(async () => {
-    const ntapp = await createApp({
+    app = await createApp({
       controllers: [TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
         JwtModule.registerAsync(JwtConfigService.moduleOptions),
         SequelizeModule.forFeature([Token, User])
       ],
+      async onModuleInit(ref: ModuleRef): Promise<void> {
+        const sequelize = ref.get(Sequelize, { strict: false })
+        const auth = ref.get(AuthService, { strict: false })
+        const qi = sequelize.getQueryInterface()
+
+        users = ref.get(UsersService, { strict: false })
+        repo = users.repository
+
+        table = await tableSeed<User>(repo, USERS)
+        user_authed_1 = await createAuthedUser(qi, auth)
+        user_authed_2 = await createAuthedUser(qi, auth)
+        user_authed_3 = await createAuthedUser(qi, auth)
+      },
       providers: [
         AuthService,
         ErrorFilter.createProvider(),
@@ -81,20 +90,11 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       ]
     })
 
-    app = await ntapp.app.init()
-    auth = ntapp.ref.get(AuthService)
-    qi = ntapp.ref.get(Sequelize).getQueryInterface()
     req = chai.request.agent(app.getHttpServer())
-    users = ntapp.ref.get(UsersService)
-    user_authed_1 = await createAuthedUser(qi, auth, USERS.length + 1)
-    user_authed_2 = await createAuthedUser(qi, auth, user_authed_1.id + 1)
-    user_authed_3 = await createAuthedUser(qi, auth, user_authed_2.id + 1)
-
-    table = await seedTable<User>(users.repository, USERS)
   })
 
   after(async () => {
-    await resetSequence(qi, DatabaseTable.USERS)
+    await tableTruncate<User>(repo)
     await app.close()
   })
 

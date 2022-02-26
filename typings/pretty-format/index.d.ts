@@ -1,1 +1,1 @@
-/// <reference path='./pf.d.ts' />
+/// <reference path='./pf.global.d.ts' />

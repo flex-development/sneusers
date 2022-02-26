@@ -28,13 +28,11 @@ ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 FROM deps As builder
 
 WORKDIR /opt/sneusers
-COPY db/config ./db/config
-COPY db/migrations ./db/migrations
-COPY db/seeders ./db/seeders
 COPY src ./src
 COPY tools/helpers ./tools/helpers
 COPY typings ./typings
 COPY views ./views
+COPY .sequelizerc ./.sequelizerc
 COPY nest-cli.json ./nest-cli.json
 COPY tsconfig.app.json ./tsconfig.app.json
 COPY tsconfig.json ./tsconfig.json
@@ -55,14 +53,12 @@ ARG PORT=8080
 ENV PORT $PORT
 
 WORKDIR /opt/sneusers
-COPY --from=builder /opt/sneusers/db/config ./db/config
-COPY --from=builder /opt/sneusers/db/migrations ./db/migrations
-COPY --from=builder /opt/sneusers/db/seeders ./db/seeders
 COPY --from=builder /opt/sneusers/dist ./dist
 COPY --from=builder /opt/sneusers/src ./src
 COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers
 COPY --from=builder /opt/sneusers/typings ./typings
 COPY --from=builder /opt/sneusers/views ./views
+COPY --from=builder /opt/sneusers/.sequelizerc ./.sequelizerc
 COPY --from=builder /opt/sneusers/nest-cli.json ./nest-cli.json
 COPY --from=builder /opt/sneusers/tsconfig.app.json ./tsconfig.app.json
 COPY --from=builder /opt/sneusers/tsconfig.json ./tsconfig.json
@@ -83,13 +79,11 @@ ENV PORT $PORT
 RUN yarn global add pm2
 WORKDIR /opt/sneusers
 COPY ecosystem.config.cjs ./ecosystem.config.cjs
-COPY --from=builder /opt/sneusers/db/config ./db/config
-COPY --from=builder /opt/sneusers/db/migrations ./db/migrations
-COPY --from=builder /opt/sneusers/db/seeders ./db/seeders
 COPY --from=builder /opt/sneusers/dist ./dist
 COPY --from=builder /opt/sneusers/src ./src
 COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers
 COPY --from=builder /opt/sneusers/views ./views
+COPY --from=builder /opt/sneusers/.sequelizerc ./.sequelizerc
 COPY --from=builder /opt/sneusers/tsconfig.json ./tsconfig.json
 COPY --from=deps /opt/sneusers/node_modules ./node_modules
 COPY --from=deps /opt/sneusers/package.json ./package.json

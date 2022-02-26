@@ -1,18 +1,17 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
+import type { ModuleRef } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { SequelizeError } from '@sneusers/modules/db/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
-import type { SequelizeError } from '@sneusers/types'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createUsers from '@tests/utils/create-users.util'
-import resetSequence from '@tests/utils/reset-sequence.util'
-import seedTable from '@tests/utils/seed-table.util'
+import tableSeed from '@tests/utils/table-seed.util'
+import tableTruncate from '@tests/utils/table-truncate.util'
 import type { Testcase } from '@tests/utils/types'
-import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../user.dao'
 
@@ -22,34 +21,30 @@ import TestSubject from '../user.dao'
  */
 
 describe('unit:subdomains/users/entities/User', () => {
-  let Subject: typeof TestSubject
   let app: NestExpressApplication
-  let queryInterface: QueryInterface
-  let sequelize: Sequelize
+  let subject: typeof TestSubject
   let users: TestSubject[]
 
   before(async () => {
-    const ntapp = await createApp({
-      imports: [SequelizeModule.forFeature([TestSubject])]
+    app = await createApp({
+      imports: [SequelizeModule.forFeature([TestSubject])],
+      async onModuleInit(ref: ModuleRef): Promise<void> {
+        const sequelize = ref.get(Sequelize, { strict: false })
+
+        subject = sequelize.models.User as typeof TestSubject
+        users = await tableSeed<TestSubject>(subject, createUsers(MAGIC_NUMBER))
+      }
     })
-
-    app = await ntapp.app.init()
-    sequelize = ntapp.ref.get(Sequelize)
-    queryInterface = sequelize.getQueryInterface()
-    Subject = sequelize.models.User as typeof TestSubject
-    Object.assign(Subject, { sequelize })
-
-    users = await seedTable<TestSubject>(Subject, createUsers(MAGIC_NUMBER))
   })
 
   after(async () => {
-    await resetSequence(queryInterface, DatabaseTable.USERS)
+    await tableTruncate<TestSubject>(subject)
     await app.close()
   })
 
   describe('.checkPasswordStrength', () => {
     it('should return password if password is strong', () => {
-      expect(Subject.checkPasswordStrength('password')).to.be.a('string')
+      expect(subject.checkPasswordStrength('password')).to.be.a('string')
     })
 
     it('should throw if password is not strong', async function (this) {
@@ -58,7 +53,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
       // Act
       try {
-        Subject.checkPasswordStrength(this.faker.lorem.word(4))
+        subject.checkPasswordStrength(this.faker.lorem.word(4))
       } catch (e) {
         error = e as typeof error
       }
@@ -98,7 +93,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     cases.forEach(({ expected, state, user1, user2 }) => {
       it(`should return ${expected} if ${state}`, () => {
-        expect(Subject.equal(user1, user2)).to.equal(expected)
+        expect(subject.equal(user1, user2)).to.equal(expected)
       })
     })
   })
@@ -109,7 +104,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const user = users[3]
 
       // Act
-      const result = await Subject.findByEmail(user.email)
+      const result = await subject.findByEmail(user.email)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -130,7 +125,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const email: User['email'] = this.faker.internet.exampleEmail()
 
       // Act + Expect
-      expect(await Subject.findByEmail(email)).to.be.null
+      expect(await subject.findByEmail(email)).to.be.null
     })
 
     it('should throw if user is not found', async function (this) {
@@ -141,7 +136,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
       // Act
       try {
-        await Subject.findByEmail(email, { rejectOnEmpty: true })
+        await subject.findByEmail(email, { rejectOnEmpty: true })
       } catch (error) {
         exception = error as typeof exception
       }
@@ -150,7 +145,7 @@ describe('unit:subdomains/users/entities/User', () => {
       expect(exception!).to.be.instanceOf(Exception)
       expect(exception!.code).to.equal(ExceptionCode.NOT_FOUND)
       expect(exception!.data.email).to.equal(email)
-      expect(exception!.data.error).to.equal(SequelizeErrorName.EmptyResult)
+      expect(exception!.data.error).to.equal(SequelizeError.EmptyResult)
       expect(exception!.data.options).to.be.an('object')
       expect(exception!.message).to.equal(emessage)
     })
@@ -162,7 +157,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const user = users[4]
 
       // Act
-      const result = await Subject.findByPk(user.id)
+      const result = await subject.findByPk(user.id)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -179,7 +174,7 @@ describe('unit:subdomains/users/entities/User', () => {
     })
 
     it('should return null if user is not found', async () => {
-      expect(await Subject.findByPk(users.length * -420)).to.be.null
+      expect(await subject.findByPk(users.length * -420)).to.be.null
     })
 
     it('should throw if user is not found', async function (this) {
@@ -189,7 +184,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
       // Act
       try {
-        await Subject.findByPk(pk, { rejectOnEmpty: true })
+        await subject.findByPk(pk, { rejectOnEmpty: true })
       } catch (error) {
         exception = error as typeof exception
       }
@@ -197,7 +192,7 @@ describe('unit:subdomains/users/entities/User', () => {
       // Expect
       expect(exception!).to.be.instanceOf(Exception)
       expect(exception!.code).to.equal(ExceptionCode.NOT_FOUND)
-      expect(exception!.data.error).to.equal(SequelizeErrorName.EmptyResult)
+      expect(exception!.data.error).to.equal(SequelizeError.EmptyResult)
       expect(exception!.data.id).to.equal(pk)
       expect(exception!.data.options).to.be.an('object')
       expect(exception!.data.pk).to.not.be.undefined
@@ -211,7 +206,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const user = users[5]
 
       // Act
-      const result = await Subject.findByUid(user.email)
+      const result = await subject.findByUid(user.email)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -232,7 +227,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const user = users[5]
 
       // Act
-      const result = await Subject.findByUid(user.id)
+      const result = await subject.findByUid(user.id)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -253,7 +248,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const uid: User['email'] = 'foofoobaby@email.com'
 
       // Act + Expect
-      expect(await Subject.findByUid(uid)).to.be.null
+      expect(await subject.findByUid(uid)).to.be.null
     })
 
     it('should return null given unknown id', async function (this) {
@@ -261,7 +256,7 @@ describe('unit:subdomains/users/entities/User', () => {
       const uid: User['id'] = this.faker.datatype.number() * -4200
 
       // Act + Expect
-      expect(await Subject.findByUid(uid)).to.be.null
+      expect(await subject.findByUid(uid)).to.be.null
     })
 
     it('should throw given unknown email', async function (this) {
@@ -271,7 +266,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
       // Act
       try {
-        await Subject.findByUid(uid, { rejectOnEmpty: true })
+        await subject.findByUid(uid, { rejectOnEmpty: true })
       } catch (error) {
         exception = error as typeof exception
       }
@@ -288,7 +283,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
       // Act
       try {
-        await Subject.findByUid(uid, { rejectOnEmpty: true })
+        await subject.findByUid(uid, { rejectOnEmpty: true })
       } catch (error) {
         exception = error as typeof exception
       }

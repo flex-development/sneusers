@@ -10,9 +10,10 @@ import {
 import { NullishString, ObjectPlain } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ExceptionDataDTO } from '@sneusers/dtos'
-import { SequelizeErrorCode } from '@sneusers/enums'
 import { ExceptionJSON } from '@sneusers/interfaces'
-import { ExceptionData, ExceptionErrors, SequelizeError } from '@sneusers/types'
+import { SequelizeErrorCode } from '@sneusers/modules/db/enums'
+import { SequelizeErrorType } from '@sneusers/modules/db/types'
+import { ExceptionData, ExceptionErrors } from '@sneusers/types'
 import omit from 'lodash.omit'
 import type { ValidationErrorItem } from 'sequelize'
 
@@ -154,7 +155,7 @@ class Exception<T = any> {
    *
    * @template T - Sequelize error type
    *
-   * @param {SequelizeError} error - Sequelize error
+   * @param {SequelizeErrorType} error - Sequelize error
    * @param {ExceptionDataDTO<T> | ObjectPlain} [data={}] - Custom error data
    * @param {ExceptionCode} [data.code] - Override error response status code
    * @param {ExceptionErrors<T>} [data.errors] - Single error or group of errors
@@ -162,9 +163,9 @@ class Exception<T = any> {
    * @return {Exception<T>} New `Exception` instance
    */
   static fromSequelizeError<
-    T extends SequelizeError | ValidationErrorItem = SequelizeError
+    T extends SequelizeErrorType | ValidationErrorItem = SequelizeErrorType
   >(
-    error: SequelizeError,
+    error: SequelizeErrorType,
     data: ExceptionDataDTO<T> | ObjectPlain = {}
   ): Exception<T> {
     if (!data.errors && error['errors']) data.errors = error['errors']

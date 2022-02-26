@@ -34,6 +34,7 @@ module.exports = {
           'cacheable',
           'csrf',
           'csurf',
+          'ctl',
           'dao',
           'datetime',
           'dkim',
@@ -52,29 +53,39 @@ module.exports = {
           'hsts',
           'ical',
           'impl',
+          'initdb',
           'jti',
           'keyof',
           'localhost',
           'lowercased',
+          'mariadb',
           'matcher',
           'matchers',
+          'maxvalue',
+          'minvalue',
+          'mssql',
           'mysql',
+          'namespaces',
           'nestjs',
+          'nextval',
+          'nginx',
           'nodemailer',
           'nullish',
-          'nginx',
           'oauth',
           'openapi',
-          'passwordless',
           'plaintext',
           'poq',
+          'postgre',
           'postgres',
+          'psql',
+          'pwfile',
           'readonly',
           'redis',
           'req',
           'resave',
-          'sequelize',
+          'rowid',
           'scrypt',
+          'sequelize',
           'sid',
           'smtp',
           'sneusers',
@@ -91,6 +102,7 @@ module.exports = {
           'tutils',
           'ubuntu',
           'uid',
+          'umzug',
           'unix',
           'upsert',
           'verif',
@@ -139,9 +151,20 @@ module.exports = {
       }
     },
     {
-      files: ['src/models/environment-variables.model.ts'],
+      files: [
+        '__tests__/utils/initdb.util.ts',
+        'src/models/environment-variables.model.ts',
+        'src/modules/db/config/sequelize.config.ts'
+      ],
       rules: {
         'unicorn/consistent-function-scoping': 0
+      }
+    },
+    {
+      files: ['src/modules/db/providers/umzug-config.service.ts'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 0,
+        'unicorn/prefer-module': 0
       }
     },
     {

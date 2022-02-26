@@ -11,16 +11,24 @@ import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 /**
  * Creates {@link CreateTokenDTO} objects for all users in `users`.
  *
- * @param {Pick<IUserRaw, 'id'>} [users=[]] - Users to create tokens for
+ * @param {Pick<IUserRaw, 'id'>[]} [users=[]] - Users to create tokens for
  * @return {CreateTokenDTO[]} Array containing `CreateTokenDTO` objects
  */
 const createTokens = (users: Pick<IUserRaw, 'id'>[] = []): CreateTokenDTO[] => {
+  const dtos: CreateTokenDTO[] = []
   const types = Token.TYPES.filter(type => type !== TokenType.ACCESS)
+  const inflection = types.length * 2
 
-  return users.map(({ id: user }) => ({
-    type: types[Math.floor(Math.random() * types.length)],
-    user
-  }))
+  for (let i = 0; i < inflection; i++) {
+    if (i < types.length) dtos.push({ type: types[i], user: users[i].id })
+    else dtos.push({ type: types[i - types.length], user: users[i].id })
+  }
+
+  for (let j = inflection; j < users.length; j++) {
+    dtos.push({ type: faker.helpers.randomize(types), user: users[j].id })
+  }
+
+  return dtos
 }
 
 export default createTokens

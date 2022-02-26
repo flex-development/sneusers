@@ -26,7 +26,7 @@ const config = {
   forbidPending: false,
   fullTrace: true,
   globals: ['chai', 'expect', 'faker', 'inspect', 'pf', 'sandbox'],
-  growl: !(require('is-ci') || process.env.GITHUB_ACTIONS === true),
+  growl: !(require('is-ci') && JSON.parse(process.env.CI || 'false')),
   ignore: ['coverage/**', 'node_modules/**'],
   inlineDiffs: true,
   isWorker: true,

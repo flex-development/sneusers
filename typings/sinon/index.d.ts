@@ -1,1 +1,1 @@
-/// <reference path='./sandbox.d.ts' />
+/// <reference path='./sandbox.global.d.ts' />

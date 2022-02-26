@@ -6,15 +6,14 @@ import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/sequelize'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import type { EnvironmentVariables } from '@sneusers/models'
+import { SequelizeError } from '@sneusers/modules/db/enums'
+import { SearchOptions, SequelizeErrorType } from '@sneusers/modules/db/types'
 import { User } from '@sneusers/subdomains/users/entities'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import type { SequelizeError } from '@sneusers/types'
-import { SearchOptions } from '@sneusers/types'
 import type { TokenExpiredError } from 'jsonwebtoken'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { Sequelize } from 'sequelize-typescript'
@@ -62,7 +61,7 @@ class TokensService {
    * @throws {Exception}
    */
   async create(dto: CreateTokenDTO): Promise<Token> {
-    return await this.sequelize.transaction(async transaction => {
+    const token = await this.sequelize.transaction(async transaction => {
       try {
         return await this.repo.create(dto, {
           fields: ['revoked', 'ttl', 'type', 'user'],
@@ -73,10 +72,10 @@ class TokensService {
           validate: true
         })
       } catch (e) {
-        const error = e as SequelizeError
-        const data: ExceptionDataDTO<SequelizeError> = { dto }
+        const error = e as SequelizeErrorType
+        const data: ExceptionDataDTO<SequelizeErrorType> = { dto }
 
-        if (error.name === SequelizeErrorName.ForeignKeyConstraint) {
+        if (error.name === SequelizeError.ForeignKeyConstraint) {
           data.code = ExceptionCode.UNPROCESSABLE_ENTITY
           data.message = `User with id [${dto.user}] does not exist`
         }
@@ -84,6 +83,8 @@ class TokensService {
         throw Exception.fromSequelizeError(error, data)
       }
     })
+
+    return token.reload()
   }
 
   /**
@@ -104,7 +105,7 @@ class TokensService {
       user: user.id
     })
 
-    return await this.jwt.signAsync(payload, {
+    return this.jwt.signAsync(payload, {
       audience: host,
       expiresIn: ttl,
       issuer: host,
@@ -132,7 +133,7 @@ class TokensService {
       user: user.id
     })
 
-    return await this.jwt.signAsync(payload, {
+    return this.jwt.signAsync(payload, {
       audience: host,
       expiresIn: ttl,
       issuer: host,
@@ -162,7 +163,7 @@ class TokensService {
       user: user.id
     })
 
-    return await this.jwt.signAsync(payload, {
+    return this.jwt.signAsync(payload, {
       audience: host,
       expiresIn: ttl,
       issuer: host,
@@ -182,7 +183,7 @@ class TokensService {
    * @return {Promise<PaginatedDTO<Token>>} Paginated `Token` response
    */
   async find(options: SearchOptions<Token> = {}): Promise<PaginatedDTO<Token>> {
-    return await this.sequelize.transaction(async transaction => {
+    return this.sequelize.transaction(async transaction => {
       const { count, rows } = await this.repo.findAndCountAll<Token>({
         ...options,
         transaction
@@ -222,7 +223,7 @@ class TokensService {
     payload: JwtPayload,
     options: SearchOptions<Token> = {}
   ): Promise<OrNull<Token>> {
-    return await this.repo.findByPayload(payload, options)
+    return this.repo.findByPayload(payload, options)
   }
 
   /**
@@ -242,8 +243,8 @@ class TokensService {
     id: Token['id'],
     options: SearchOptions<Token> = {}
   ): Promise<OrNull<Token>> {
-    return await this.sequelize.transaction(async transaction => {
-      return await this.repo.findByPk(id, { ...options, transaction })
+    return this.sequelize.transaction(async transaction => {
+      return this.repo.findByPk(id, { ...options, transaction })
     })
   }
 
@@ -270,7 +271,7 @@ class TokensService {
     payload: JwtPayload,
     options: SearchOptions<User> = {}
   ): Promise<User> {
-    return await this.repo.findOwnerByPayload(payload, options)
+    return this.repo.findOwnerByPayload(payload, options)
   }
 
   /**
@@ -284,21 +285,21 @@ class TokensService {
    */
   async patch(id: number, dto: PatchTokenDTO = {}): Promise<Token> {
     const token = await this.sequelize.transaction(async transaction => {
-      const token = await this.repo.findByPk(id, {
+      const entity = await this.repo.findByPk(id, {
         rejectOnEmpty: true,
         transaction
       })
 
-      return await token!.update(dto, {
+      return entity!.update(dto, {
         fields: ['revoked'],
         silent: false,
         transaction,
         validate: true,
-        where: { id: token!.id }
+        where: { id: entity!.id }
       })
     })
 
-    return await token.reload()
+    return token.reload()
   }
 
   /**
@@ -309,7 +310,7 @@ class TokensService {
    * @return {Promise<Token>} - Promise containing deleted token
    */
   async remove(id: number): Promise<Token> {
-    return await this.sequelize.transaction(async transaction => {
+    return this.sequelize.transaction(async transaction => {
       const token = await this.repo.findByPk(id, {
         rejectOnEmpty: true,
         transaction
@@ -360,7 +361,7 @@ class TokensService {
    * @return {Promise<Token>} Promise containing revoked token
    */
   async revoke(id: number): Promise<Token> {
-    return await this.patch(id, { revoked: true })
+    return this.patch(id, { revoked: true })
   }
 
   /**

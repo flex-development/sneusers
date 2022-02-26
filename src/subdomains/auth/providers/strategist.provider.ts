@@ -1,12 +1,13 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { NullishString, OrUndefined } from '@flex-development/tutils'
+import { isNIL } from '@flex-development/tutils/guards'
 import { Injectable } from '@nestjs/common'
 import { Exception } from '@sneusers/exceptions'
 import { ScryptService } from '@sneusers/modules/crypto/providers'
+import { SearchOptions } from '@sneusers/modules/db/types'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
-import { SearchOptions } from '@sneusers/types'
 import { JwtPayload, ResolvedToken } from '../dtos'
 import { AuthProvider, TokenType } from '../enums'
 import { GitHubProfile } from '../types'
@@ -64,7 +65,7 @@ class Strategist {
   ): Promise<User> {
     const user = (await this.users.findOne(email, { rejectOnEmpty: true }))!
 
-    if (user.provider !== null) {
+    if (!isNIL(user.provider)) {
       const message = 'Provider authentication required'
 
       throw new Exception(ExceptionCode.FORBIDDEN, message, {
@@ -109,7 +110,7 @@ class Strategist {
     payload: JwtPayload,
     options: SearchOptions<User> = {}
   ): Promise<User> {
-    return await this.tokens.findOwnerByPayload(payload, options)
+    return this.tokens.findOwnerByPayload(payload, options)
   }
 
   /**
@@ -126,7 +127,7 @@ class Strategist {
     token: NullishString,
     uid: UserUid
   ): Promise<ResolvedToken> {
-    return await this.tokens.validate(type, token, uid)
+    return this.tokens.validate(type, token, uid)
   }
 }
 

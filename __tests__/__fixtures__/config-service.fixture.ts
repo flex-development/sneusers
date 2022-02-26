@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config'
+import { VALIDATED_ENV_PROPNAME } from '@nestjs/config/dist/config.constants'
+import { ENV } from '@sneusers/config/configuration'
 import type { EnvironmentVariables } from '@sneusers/models'
 
 /**
@@ -6,4 +8,6 @@ import type { EnvironmentVariables } from '@sneusers/models'
  * @module tests/fixtures/ConfigService
  */
 
-export default new ConfigService<EnvironmentVariables, true>()
+export default new ConfigService<EnvironmentVariables, true>({
+  [VALIDATED_ENV_PROPNAME]: ENV
+})

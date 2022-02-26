@@ -19,8 +19,9 @@ import {
   ApiTokenAuth
 } from '@sneusers/decorators'
 import { PaginatedDTO } from '@sneusers/dtos'
-import { EntitySerializer, HttpCacheInterceptor } from '@sneusers/interceptors'
+import { HttpCacheInterceptor } from '@sneusers/interceptors'
 import { QueryParams } from '@sneusers/models'
+import { EntitySerializer } from '@sneusers/modules/db/interceptors'
 import { JwtAuthGuard } from '@sneusers/subdomains/auth/guards'
 import type { OrPaginated } from '@sneusers/types'
 import { PatchUserDTO, UserDTO } from '../dtos'

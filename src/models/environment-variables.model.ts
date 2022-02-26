@@ -1,10 +1,11 @@
 import type { OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
+import { DatabaseDialect } from '@sneusers/modules/db/enums'
 import {
   SameSitePolicy,
   SessionUnset
 } from '@sneusers/modules/middleware/enums'
-import { SameSite } from '@sneusers/modules/middleware/types'
+import type { SameSite } from '@sneusers/modules/middleware/types'
 import {
   IsBoolean,
   IsEmail,
@@ -111,6 +112,14 @@ class EnvironmentVariables {
   CACHE_TTL: number
 
   /**
+   * Indicates if the application is running in a CI environment.
+   *
+   * @default false
+   */
+  @IsBoolean()
+  CI: boolean
+
+  /**
    * Cookie signing secret.
    */
   @IsString()
@@ -203,21 +212,50 @@ class EnvironmentVariables {
   DB_AUTO_LOAD_MODELS: boolean
 
   /**
-   * Hostname of database to connect to.
+   * Database dialect.
    *
-   * @default 'postgres'
+   * **Note**: This value is computed by the application.
+   */
+  @IsEnum(DatabaseDialect)
+  DB_DIALECT: DatabaseDialect
+
+  /**
+   * Hostname of database to connect to.
    */
   @IsString()
-  @IsNotEmpty()
   DB_HOST: string
+
+  /**
+   * Indicates if the database server **should be** running locally.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsBoolean()
+  DB_LOCAL: boolean
 
   /**
    * Show database bind parameters in log.
    *
-   * @default true
+   * @default false
    */
   @IsBoolean()
   DB_LOG_QUERY_PARAMS: boolean
+
+  /**
+   * Database migration file names.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsString({ each: true })
+  DB_MIGRATIONS: string[]
+
+  /**
+   * Run database migrations.
+   *
+   * @default false
+   */
+  @IsBoolean()
+  DB_MIGRATE: boolean
 
   /**
    * Name of database to connect to.
@@ -331,6 +369,14 @@ class EnvironmentVariables {
   DEV: boolean
 
   /**
+   * Indicates if Docker services are running.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsBoolean()
+  DOCKER: boolean
+
+  /**
    * Google service account `client_id`.
    */
   @IsString()
@@ -402,6 +448,23 @@ class EnvironmentVariables {
   GH_CLIENT_SECRET: string
 
   /**
+   * List of GitHub OAuth scopes.
+   *
+   * @see https://docs.github.com/developers/apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes
+   */
+  @IsString()
+  @IsOptional()
+  GH_SCOPES: OrUndefined<string>
+
+  /**
+   * {@link EnvironmentVariables.GH_SCOPES} list separator.
+   *
+   * @default ' '
+   */
+  @IsString()
+  GH_SCOPES_SEPARATOR: string
+
+  /**
    * GitHub OAuth access token URL.
    *
    * @default 'https://github.com/login/oauth/access_token'
@@ -424,23 +487,6 @@ class EnvironmentVariables {
    */
   @IsUrl()
   GH_USER_PROFILE_URL: string
-
-  /**
-   * List of GitHub OAuth scopes.
-   *
-   * @see https://docs.github.com/developers/apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes
-   */
-  @IsString()
-  @IsOptional()
-  GH_SCOPES: string
-
-  /**
-   * {@link EnvironmentVariables.GH_SCOPES} list separator.
-   *
-   * @default ' '
-   */
-  @IsString()
-  GH_SCOPES_SEPARATOR: string
 
   /**
    * Application URL (includes scheme and `PORT` if applicable).
@@ -517,6 +563,17 @@ class EnvironmentVariables {
    */
   @IsEnum(NodeEnv)
   NODE_ENV: NodeEnv
+
+  /**
+   * Postgres application name.
+   *
+   * @see https://postgresql.org/docs/14/libpq-envars.html
+   *
+   * @default undefined
+   */
+  @IsString()
+  @IsOptional()
+  PGAPPNAME: OrUndefined<string>
 
   /**
    * Port to run application on.

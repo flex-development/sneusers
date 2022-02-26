@@ -1,17 +1,24 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnModuleDestroy,
+  OnModuleInit
+} from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { SequelizeModule } from '@nestjs/sequelize'
+import { ModuleRef } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import useGlobal from '@sneusers/hooks/use-global.hook'
 import CryptoModule from '@sneusers/modules/crypto/crypto.module'
+import DatabaseModule from '@sneusers/modules/db/db.module'
 import EmailModule from '@sneusers/modules/email/email.module'
 import MiddlewareModule from '@sneusers/modules/middleware/middleware.module'
 import RedisModule from '@sneusers/modules/redis/redis.module'
 import AppService from '@sneusers/providers/app.service'
 import RedisConfigService from '@sneusers/providers/redis-config.service'
 import CsrfTokenController from '@tests/fixtures/csrf-token-controller.fixture'
-import SequelizeConfig from '@tests/fixtures/sequelize-config-service.fixture'
-import createTestingModule from './creating-testing-module.util'
-import { ModuleMetadataTest, NestAppTest } from './types'
+import createTestingModule from './create-testing-module.util'
+import { ModuleMetadataTest } from './types'
 
 /**
  * @file Global Test Utilities - createApp
@@ -27,13 +34,13 @@ import { ModuleMetadataTest, NestAppTest } from './types'
  * @param {ModuleMetadataTest} [metadata={}] - Module metadata
  * @param {any} [provider] - Test provider
  * @param {any} [value] - Test provider value
- * @return {Promise<NestAppTest>} NestJS test app and module reference
+ * @return {Promise<NestExpressApplication>} NestJS test application
  */
 const createApp = async (
   metadata: ModuleMetadataTest = {},
   provider?: any,
   value?: any
-): Promise<NestAppTest> => {
+): Promise<NestExpressApplication> => {
   const controllers = metadata?.controllers ?? []
   const exports = metadata?.exports ?? []
   const imports = metadata?.imports ?? []
@@ -45,14 +52,16 @@ const createApp = async (
     imports: [
       ConfigModule.forRoot(AppService.configModuleOptions),
       CryptoModule,
+      DatabaseModule,
       EmailModule,
       RedisModule.registerAsync(RedisConfigService.moduleOptions),
-      SequelizeModule.forRoot(SequelizeConfig.createSequelizeOptions()),
       ...imports
     ],
     providers: [...providers]
   })
-  class TModule implements NestModule {
+  class TModule implements NestModule, OnModuleDestroy, OnModuleInit {
+    constructor(protected readonly ref: ModuleRef) {}
+
     /**
      * Configures middleware.
      *
@@ -67,12 +76,31 @@ const createApp = async (
         metadata?.routes
       )
     }
+
+    /**
+     * Calls {@link metadata.onModuleDestroy}.
+     *
+     * @async
+     * @return {Promise<void>} Empty promise when complete
+     */
+    async onModuleDestroy(): Promise<void> {
+      if (metadata.onModuleDestroy) await metadata.onModuleDestroy(this.ref)
+    }
+
+    /**
+     * Calls {@link metadata.onModuleInit}.
+     *
+     * @async
+     * @return {Promise<void>} Empty promise when complete
+     */
+    async onModuleInit(): Promise<void> {
+      if (metadata.onModuleInit) await metadata.onModuleInit(this.ref)
+    }
   }
 
-  const ref = await createTestingModule({ imports: [TModule] }, provider, value)
-  const app = await useGlobal(ref.createNestApplication())
+  const mod = await createTestingModule({ imports: [TModule] }, provider, value)
 
-  return { app, ref }
+  return (await useGlobal(mod.createNestApplication())).init()
 }
 
 export default createApp

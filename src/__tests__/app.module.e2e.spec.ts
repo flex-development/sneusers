@@ -16,9 +16,7 @@ describe('e2e:AppModule', () => {
   let req: ChaiHttp.Agent
 
   before(async () => {
-    const ntapp = await createApp({ imports: [TestSubject] })
-
-    app = await ntapp.app.init()
+    app = await createApp({ imports: [TestSubject] })
     req = chai.request.agent(app.getHttpServer())
   })
 

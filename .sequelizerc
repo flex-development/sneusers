@@ -1,0 +1,28 @@
+const path = require('path')
+
+/**
+ * @file Sequelize CLI Configuration
+ * @see https://sequelize.org/v7/manual/migrations.html#the--code--sequelizerc--code--file
+ */
+
+/** @property {string} DB_ROOT - Path to database files */
+const DB_ROOT = path.resolve('src', 'modules', 'db')
+
+/**
+ * Force `sequelize-cli` to `require` files.
+ *
+ * Fixes `Unknown file extension ".ts"` errors.
+ *
+ * @see https://github.com/sequelize/cli/blob/main/src/helpers/import-helper.js
+ *
+ * @type {undefined}
+ */
+const FORCE_REQUIRE = (() => (require('url').pathToFileURL = undefined))()
+
+module.exports = {
+  config: path.resolve(DB_ROOT, 'config', 'sequelize.config.ts'),
+  debug: true,
+  env: process.env.APP_ENV,
+  'migrations-path': path.resolve(DB_ROOT, 'migrations'),
+  'seeders-path': path.resolve(DB_ROOT, 'seeders')
+}

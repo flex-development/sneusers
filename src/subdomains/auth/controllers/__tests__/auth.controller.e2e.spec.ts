@@ -2,14 +2,11 @@ import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
 import type { NullishString } from '@flex-development/tutils'
 import { CacheModule, HttpStatus } from '@nestjs/common'
+import type { ModuleRef } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import {
-  DatabaseTable,
-  SequelizeErrorName as SequelizeError
-} from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
 import {
   ErrorFilter,
@@ -17,6 +14,7 @@ import {
   HttpExceptionFilter
 } from '@sneusers/filters'
 import { CookieParserMiddleware, CsurfMiddleware } from '@sneusers/middleware'
+import { SequelizeError } from '@sneusers/modules/db/enums'
 import {
   CookieConfigService,
   CsurfConfigService
@@ -40,7 +38,6 @@ import {
   JwtStrategy,
   LocalStrategy
 } from '@sneusers/subdomains/auth/strategies'
-import { CreateUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import { UsersService } from '@sneusers/subdomains/users/providers'
@@ -52,16 +49,15 @@ import createAuthedUser from '@tests/utils/create-authed-user.util'
 import createUsers from '@tests/utils/create-users.util'
 import getCreateUserDTO from '@tests/utils/get-create-user-dto.util'
 import getCsrfToken from '@tests/utils/get-csrf-token.util'
-import resetSequence from '@tests/utils/reset-sequence.util'
-import seedTable from '@tests/utils/seed-table.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
+import tableSeed from '@tests/utils/table-seed.util'
+import tableTruncate from '@tests/utils/table-truncate.util'
 import type {
   AuthedUser,
   MockCreateUserDTO,
   MockCsrfToken
 } from '@tests/utils/types'
 import cookie from 'cookie'
-import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../auth.controller'
 
@@ -74,15 +70,14 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
   const USERS = createUsers(MAGIC_NUMBER)
 
   let app: NestExpressApplication
-  let auth: AuthService
   let csrf: MockCsrfToken
-  let qi: QueryInterface
   let req: ChaiHttp.Agent
-  let table: CreateUserDTO[]
+  let repo: typeof User
+  let table: User[]
   let user_authed: AuthedUser
 
   before(async () => {
-    const ntapp = await createApp({
+    app = await createApp({
       controllers: [CsrfTokenController, TestSubject],
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
@@ -92,6 +87,16 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
         UsersModule
       ],
       middlewares: [CookieParserMiddleware, CsurfMiddleware],
+      async onModuleInit(ref: ModuleRef): Promise<void> {
+        const sequelize = ref.get(Sequelize, { strict: false })
+        const auth = ref.get(AuthService, { strict: false })
+        const qi = sequelize.getQueryInterface()
+
+        repo = ref.get(UsersService, { strict: false }).repository
+
+        table = await tableSeed<User>(repo, USERS)
+        user_authed = await createAuthedUser(qi, auth)
+      },
       providers: [
         AuthService,
         CookieConfigService.createProvider(),
@@ -108,19 +113,12 @@ describe('e2e:subdomains/auth/controllers/AuthController', () => {
       ]
     })
 
-    app = await ntapp.app.init()
-    auth = ntapp.ref.get(AuthService)
-    qi = ntapp.ref.get(Sequelize).getQueryInterface()
     req = chai.request.agent(app.getHttpServer())
-    user_authed = await createAuthedUser(qi, auth, USERS.length + 1)
-
-    table = await seedTable<User>(ntapp.ref.get(UsersService).repository, USERS)
     csrf = await getCsrfToken(req)
   })
 
   after(async () => {
-    await resetSequence(qi, DatabaseTable.TOKENS)
-    await resetSequence(qi, DatabaseTable.USERS)
+    await tableTruncate<User>(repo)
     await app.close()
   })
 

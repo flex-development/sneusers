@@ -1,9 +1,10 @@
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
+import type { ModuleRef } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DatabaseTable, SequelizeErrorName } from '@sneusers/enums'
 import { Exception } from '@sneusers/exceptions'
+import { SequelizeError } from '@sneusers/modules/db/enums'
 import { CacheConfigService } from '@sneusers/providers'
 import { VerifType } from '@sneusers/subdomains/auth/enums'
 import type {
@@ -13,15 +14,12 @@ import type {
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
-import type { SequelizeError } from '@sneusers/types'
 import MAGIC_NUMBER from '@tests/fixtures/magic-number.fixture'
 import createApp from '@tests/utils/create-app.util'
 import createUsers from '@tests/utils/create-users.util'
 import getCreateUserDTO from '@tests/utils/get-create-user-dto.util'
-import resetSequence from '@tests/utils/reset-sequence.util'
-import seedTable from '@tests/utils/seed-table.util'
+import tableSeed from '@tests/utils/table-seed.util'
 import pick from 'lodash.pick'
-import type { QueryInterface } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../users.service'
 
@@ -32,28 +30,27 @@ import TestSubject from '../users.service'
 
 describe('unit:subdomains/users/providers/UsersService', () => {
   let app: NestExpressApplication
-  let queryInterface: QueryInterface
   let subject: TestSubject
   let users: User[]
 
   before(async () => {
-    const ntapp = await createApp({
+    app = await createApp({
       imports: [
         CacheModule.registerAsync(CacheConfigService.moduleOptions),
         SequelizeModule.forFeature([User])
       ],
+      async onModuleInit(ref: ModuleRef): Promise<void> {
+        const sequelize = ref.get(Sequelize, { strict: false })
+        const repo = sequelize.models.User as typeof User
+
+        subject = ref.get(TestSubject, { strict: false })
+        users = await tableSeed<User>(repo, createUsers(MAGIC_NUMBER))
+      },
       providers: [TestSubject]
     })
-
-    app = await ntapp.app.init()
-    subject = ntapp.ref.get(TestSubject)
-    queryInterface = ntapp.ref.get(Sequelize).getQueryInterface()
-
-    users = await seedTable<User>(subject.repository, createUsers(MAGIC_NUMBER))
   })
 
   after(async () => {
-    await resetSequence(queryInterface, DatabaseTable.USERS)
     await app.close()
   })
 
@@ -151,7 +148,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
       // Expect
       expect(exception!).to.be.instanceOf(Exception)
-      expect(exception!.data.error).to.equal(SequelizeErrorName.EmptyResult)
+      expect(exception!.data.error).to.equal(SequelizeError.EmptyResult)
       expect(exception!.data.id).to.equal(uid)
       expect(exception!.message).to.match(new RegExp(uid.toString()))
     })

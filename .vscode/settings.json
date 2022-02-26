@@ -11,6 +11,8 @@
     "*.env*": "shellscript",
     "*.nycrc*": "json",
     ".markdownlintignore": "ignore",
+    ".pg_format": "json",
+    ".sequelizerc": "javascript",
     "commit-msg": "shellscript",
     "mime.types": "nginx",
     "pre-commit": "shellscript",
@@ -109,7 +111,7 @@
       "icon": "mock"
     },
     {
-      "extensions": ["__fixtures__", "adminer", "dtos"],
+      "extensions": ["__fixtures__", "adminer", "dtos", "postgresql"],
       "format": "svg",
       "icon": "db"
     },

@@ -98,12 +98,10 @@ dist
 docs/*.sql
 
 # Data
-db/data/
+__tests__/postgresql/
+postgresql/
 
 ### Docker ###
-# Adminer
-adminer/plugins-enabled/0*.php
-
 # Letsencrypt
 letsencrypt/
 

@@ -10,6 +10,12 @@ import type { ITokenRaw } from '../interfaces'
  * Data used to create a new `Token` instance.
  */
 class CreateTokenDTO {
+  /** When token was created. */
+  readonly created_at?: never
+
+  /** Unique identifier for token */
+  readonly id?: never
+
   /**
    * Revoke token when created.
    *

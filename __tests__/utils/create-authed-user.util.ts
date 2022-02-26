@@ -1,3 +1,6 @@
+import { isNIL } from '@flex-development/tutils/guards'
+import SQL from '@nearform/sql'
+import { DatabaseSequence } from '@sneusers/modules/db/enums'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
 import USER_PASSWORD from '@tests/fixtures/user-password.fixture'
 import pick from 'lodash.pick'
@@ -16,21 +19,28 @@ import { AuthedUser } from './types'
  * @async
  * @param {QueryInterface} qi - Current queryInterface
  * @param {AuthService} auth - Current auth service
- * @param {number} id - Id of authenticated user
+ * @param {number} [id] - Id of authenticated user
  * @return {Promise<AuthedUser>} Promise containing mock authenticated user
  */
 const createAuthedUser = async (
   qi: QueryInterface,
   auth: AuthService,
-  id: number
+  id?: number
 ): Promise<AuthedUser> => {
   // @ts-expect-error Property 'users' is protected and only accessible within
   // class 'AuthService' and its subclasses ts(2445)
   const users = auth.users.repository
 
+  if (isNIL(id)) {
+    const sql = SQL`SELECT nextval('${SQL.unsafe(DatabaseSequence.USERS)}')`
+    const next = await qi.sequelize.query(sql.text, { plain: true, raw: true })
+
+    id = next!.nextval as number
+  }
+
   const dto = { ...getCreateUserDTO(id), password: USER_PASSWORD }
   const entity = await users.create(dto, { isNewRecord: true, silent: true })
-  const user = pick({ ...entity.toJSON(), updated_at: null }, users.RAW_KEYS)
+  const user = pick({ ...entity.toJSON(), updated_at: null }, users.KEYS_RAW)
 
   return {
     ...user,

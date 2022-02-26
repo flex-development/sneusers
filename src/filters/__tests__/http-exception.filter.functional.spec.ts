@@ -23,9 +23,7 @@ describe('functional:filters/HttpExceptionFilter', () => {
   let subject: TestSubject
 
   before(async () => {
-    const ntapp = await createApp()
-
-    app = await ntapp.app.init()
+    app = await createApp()
     subject = new TestSubject(app.get(ConfigService))
   })
 
