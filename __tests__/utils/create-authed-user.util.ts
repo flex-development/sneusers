@@ -1,7 +1,7 @@
 import USER_PASSWORD from '@fixtures/user-password.fixture'
 import { isNIL } from '@flex-development/tutils/guards'
-import SQL from '@nearform/sql'
 import { DatabaseSequence } from '@sneusers/modules/db/enums'
+import { nextval } from '@sneusers/modules/db/utils'
 import { AuthService } from '@sneusers/subdomains/auth/providers'
 import pick from 'lodash.pick'
 import { QueryInterface } from 'sequelize'
@@ -31,12 +31,7 @@ const createAuthedUser = async (
   // class 'AuthService' and its subclasses ts(2445)
   const users = auth.users.repository
 
-  if (isNIL(id)) {
-    const sql = SQL`SELECT nextval('${SQL.unsafe(DatabaseSequence.USERS)}')`
-    const next = await qi.sequelize.query(sql.text, { plain: true, raw: true })
-
-    id = next!.nextval as number
-  }
+  if (isNIL(id)) id = await nextval(qi, DatabaseSequence.USERS)
 
   const dto = { ...getCreateUserDTO(id), password: USER_PASSWORD }
   const entity = await users.create(dto, { isNewRecord: true, silent: true })
