@@ -1,7 +1,8 @@
-import type { NumberString } from '@flex-development/tutils'
+import { NullishString, ObjectPlain } from '@flex-development/tutils'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Is } from '@sneusers/decorators'
 import { OAuthProvider } from '@sneusers/subdomains/auth/enums'
+import { Numeric } from '@sneusers/types'
 import {
   IsEmail,
   IsEnum,
@@ -70,7 +71,7 @@ class CreateUserDTO {
   })
   @Is({ types: ['number', 'string'] })
   @IsOptional()
-  readonly id?: NumberString
+  readonly id?: Numeric | number
 
   @ApiPropertyOptional({
     default: null,
@@ -108,6 +109,36 @@ class CreateUserDTO {
 
   /** When user was last modified. */
   readonly updated_at?: never
+
+  /**
+   * Creates a new dto instance.
+   *
+   * @param {ObjectPlain} [values={}] - DTO values
+   * @param {NullishString} [values.display_name=null] - Display name
+   * @param {string} [values.email] - Unique email address
+   * @param {NullishString} [values.first_name=null] - First name
+   * @param {Numeric | number} [values.id] - Unique identifier
+   * @param {NullishString} [values.last_name=null] - Last name
+   * @param {NullishString} [values.password=null] - Password
+   * @param {NullishString} [values.provider=null] - Authentication provider
+   */
+  constructor({
+    display_name = null,
+    email,
+    first_name = null,
+    id,
+    last_name = null,
+    password = null,
+    provider = null
+  }: ObjectPlain = {}) {
+    this.display_name = display_name
+    this.email = email
+    this.first_name = first_name
+    this.id = id
+    this.last_name = last_name
+    this.password = password
+    this.provider = provider
+  }
 }
 
 export default CreateUserDTO

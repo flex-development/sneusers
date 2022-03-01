@@ -109,11 +109,12 @@ class UsersService {
         const error = e as SequelizeErrorType
         const data: ObjectPlain = { dto }
 
-        if (error.name === SequelizeError.UniqueConstraint) {
-          throw new UniqueEmailException(
-            dto.email,
-            error as UniqueConstraintError
-          )
+        if (error instanceof UniqueConstraintError) {
+          const pre = 'User with'
+          const error_field = error.fields.hasOwnProperty('id') ? 'id' : 'email'
+          const field = `[${error.fields[error_field]}]`
+
+          data.message = [pre, error_field, field, 'already exists'].join(' ')
         }
 
         throw Exception.fromSequelizeError(error, data)

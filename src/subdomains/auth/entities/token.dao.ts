@@ -17,8 +17,6 @@ import {
   Sequelize,
   Table
 } from 'sequelize-typescript'
-import type { Literal } from 'sequelize/types/lib/utils'
-import isDate from 'validator/lib/isDate'
 import { CreateTokenDTO, JwtPayload } from '../dtos'
 import { TokenType } from '../enums'
 import { IToken, ITokenRaw } from '../interfaces'
@@ -45,34 +43,7 @@ import { IToken, ITokenRaw } from '../interfaces'
     raw: false
   },
   deletedAt: false,
-  hooks: {
-    /**
-     * Prepares a {@link Token} instance for validation.
-     *
-     * This includes:
-     *
-     * - Forcing the use of unix timestamps
-     *
-     * @static
-     * @param {Token} instance - Current user instance
-     * @return {void} Nothing when complete
-     */
-    beforeValidate(instance: Token): void {
-      if (instance.isNewRecord || !instance.id) {
-        const NOW = Token.CURRENT_TIMESTAMP
-
-        let created_at = instance.created_at
-
-        if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if ((NOW as Literal).val === (created_at as unknown as Literal).val) {
-          created_at = Date.now()
-        }
-
-        instance.created_at = created_at || Date.now()
-        instance.isNewRecord = true
-      }
-    }
-  },
+  hooks: {},
   omitNull: true,
   paranoid: false,
   tableName: DatabaseTable.TOKENS,

@@ -1,4 +1,4 @@
-import { NullishString, OrNull } from '@flex-development/tutils'
+import { OrNull } from '@flex-development/tutils'
 import { ApiProperty } from '@nestjs/swagger'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { Exception } from '@sneusers/exceptions'
@@ -12,7 +12,8 @@ import {
 import type { SequelizeErrorType } from '@sneusers/modules/db/types'
 import { SearchOptions } from '@sneusers/modules/db/types'
 import { Token } from '@sneusers/subdomains/auth/entities'
-import { OAuthProvider } from '@sneusers/subdomains/auth/enums'
+import { OAuthProvider, TokenType } from '@sneusers/subdomains/auth/enums'
+import { trimmedLowercasedFields } from '@sneusers/utils'
 import {
   Column,
   DataType,
@@ -21,11 +22,7 @@ import {
   Sequelize,
   Table
 } from 'sequelize-typescript'
-import type { HasManyGetAssociationsMixin } from 'sequelize/types'
-import type { Literal } from 'sequelize/types/lib/utils'
-import isDate from 'validator/lib/isDate'
 import isEmail from 'validator/lib/isEmail'
-import isNumeric from 'validator/lib/isNumeric'
 import isStrongPassword from 'validator/lib/isStrongPassword'
 import { CreateUserDTO } from '../dtos'
 import { IUser, IUserRaw } from '../interfaces'
@@ -53,77 +50,23 @@ import { UserUid } from '../types'
   deletedAt: false,
   hooks: {
     /**
-     * Normalizes data before a user is created.
-     *
-     * This includes:
-     *
-     * - Hashing a user's password
-     *
-     * @async
-     * @param {User} instance - Current user instance
-     * @return {Promise<void>} Empty promise when complete
-     */
-    async beforeCreate(instance: User): Promise<void> {
-      if (instance.password) {
-        instance.password = await User.scrypt.hash(instance.password)
-      }
-    },
-
-    /**
      * Normalizes data before a user is persisted to the database.
      *
      * This includes:
      *
-     * - Trimming string fields and forcing a user's display name, email, first
-     *   name, and last name to be lowercased
+     * - Trimming string fields and forcing those fields to be lowercased
      * - Setting defaults for users registered with an {@link OAuthProvider}
      *
      * @param {User} instance - Current user instance
      * @return {void} Nothing when complete
      */
     beforeSave(instance: User): void {
-      const tl = (str?: NullishString) => str?.toLowerCase().trim() ?? null
+      trimmedLowercasedFields(instance.dataValues)
 
-      instance.display_name = tl(instance.display_name)
-      instance.email = tl(instance.email) as string
-      instance.first_name = tl(instance.first_name)
-      instance.last_name = tl(instance.last_name)
-
-      if (instance.id && isNumeric(instance.id.toString())) {
-        instance.id = Number.parseInt(instance.id.toString())
-      }
-
-      if (instance.provider !== null) {
+      if (User.AUTH_PROVIDERS.includes(instance.provider!)) {
         instance.email_verified = true
         instance.password = null
       }
-    },
-
-    /**
-     * Prepares a `instance` for validation.
-     *
-     * This includes:
-     *
-     * - Forcing the use of unix timestamps
-     *
-     * @param {User} instance - Current user instance
-     * @return {void} Nothing when complete
-     */
-    beforeValidate(instance: User): void {
-      if (instance.isNewRecord || (!instance.id && !instance.updated_at)) {
-        const NOW = User.CURRENT_TIMESTAMP
-
-        let created_at: number | Literal = instance.created_at
-
-        if (isDate(`${created_at}`)) created_at = new Date(created_at).getTime()
-        if ((NOW as Literal).val === (created_at as unknown as Literal).val) {
-          created_at = Date.now()
-        }
-
-        instance.created_at = created_at || Date.now()
-        instance.isNewRecord = true
-        instance.updated_at = null
-      } else instance.updated_at = Date.now()
     }
   },
   omitNull: false,
@@ -250,7 +193,7 @@ class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   declare provider: IUser['provider']
 
   @HasMany(() => Token)
-  declare tokens: HasManyGetAssociationsMixin<Token>
+  declare tokens: Token[]
 
   @ApiProperty({
     default: null,
@@ -270,7 +213,7 @@ class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   /**
    * Returns the user's full name.
    *
-   * @return {NullishString} User's full name or `null`
+   * @return {IUser['full_name']} User's full name or `null`
    */
   @ApiProperty({ description: 'Full name (virtual property)' })
   @Column(DataType.VIRTUAL(DataType.STRING, ['first_name', 'last_name']))
@@ -424,6 +367,19 @@ class User extends Entity<IUserRaw, CreateUserDTO, IUser> implements IUser {
   ): Promise<OrNull<User>> {
     if (!isEmail(uid.toString())) return this.findByPk(uid, options)
     return this.findByEmail(uid as string, options)
+  }
+
+  /**
+   * Retrieves a user's most recently issued access token.
+   *
+   * @return {OrNull<Token>} Most recently issued token or `null`
+   */
+  get access_token(): OrNull<Token> {
+    if (this.tokens.length === 0) return null
+
+    const tokens = this.tokens.filter(token => token.type === TokenType.ACCESS)
+
+    return tokens.sort((t1, t2) => t2.created_at - t1.created_at)[0] || null
   }
 }
 

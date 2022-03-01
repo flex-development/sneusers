@@ -19,9 +19,9 @@
   - [x] Middleware
     - [x] `HttpLoggerMiddleware`
 - [x] [ORM Integration][1]
-- [ ] Migrations & Seeding
+- [x] Migrations & Seeding
   - [x] [Database Migrations][2]
-  - [ ] [Seed database][3]
+  - [x] [Seed database][3]
 - [x] Users - Core CRUD & Business Logic
   - [x] `User`
   - [x] `UsersService`

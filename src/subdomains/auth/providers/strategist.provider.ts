@@ -8,6 +8,7 @@ import { SearchOptions } from '@sneusers/modules/db/types'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
+import type { Numeric } from '@sneusers/types'
 import { GoogleCallbackParameters } from 'passport-google-oauth20'
 import { JwtPayload, ResolvedToken } from '../dtos'
 import { OAuthProvider, TokenType } from '../enums'
@@ -70,7 +71,7 @@ class Strategist {
     return this.users.upsert<'internal'>({
       email: profile.email,
       first_name: profile.given_name,
-      id: profile.sub,
+      id: profile.sub as Numeric,
       last_name: profile.family_name,
       provider: OAuthProvider.GOOGLE
     })

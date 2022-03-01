@@ -1,4 +1,5 @@
-import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
+import FIND_OPTIONS_SEEDED_USERS from '@fixtures/find-options-seeded-users'
+import USER_PASSWORD from '@fixtures/user-password.fixture'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
 import type { ModuleRef } from '@nestjs/core'
@@ -15,9 +16,6 @@ import {
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import createApp from '@tests/utils/create-app.util'
-import createUsers from '@tests/utils/create-users.util'
-import tableSeed from '@tests/utils/table-seed.util'
-import tableTruncate from '@tests/utils/table-truncate.util'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../strategist.provider'
 
@@ -28,9 +26,8 @@ import TestSubject from '../strategist.provider'
 
 describe('unit:subdomains/auth/providers/Strategist', () => {
   let app: NestExpressApplication
+  let seeds: User[]
   let subject: TestSubject
-  let repo: typeof User
-  let users: User[]
 
   before(async () => {
     app = await createApp({
@@ -41,18 +38,16 @@ describe('unit:subdomains/auth/providers/Strategist', () => {
       ],
       async onModuleInit(ref: ModuleRef): Promise<void> {
         const sequelize = ref.get(Sequelize, { strict: false })
+        const repo_users = sequelize.models.User as typeof User
 
-        repo = sequelize.models.User as typeof User
         subject = ref.get(TestSubject, { strict: false })
-
-        users = await tableSeed<User>(repo, createUsers(MAGIC_NUMBER))
+        seeds = await repo_users.findAll(FIND_OPTIONS_SEEDED_USERS)
       },
       providers: [TestSubject, TokensService, UsersService]
     })
   })
 
   after(async () => {
-    await tableTruncate<User>(repo)
     await app.close()
   })
 
@@ -69,10 +64,10 @@ describe('unit:subdomains/auth/providers/Strategist', () => {
   describe('#validateLocal', () => {
     it('should return User if login credentials are valid', async () => {
       // Arrange
-      const user = users[0]
+      const user = seeds[0]
 
       // Act
-      const result = await subject.validateLocal(user.email, user.password)
+      const result = await subject.validateLocal(user.email, USER_PASSWORD)
 
       // Expect
       expect(result).to.be.instanceOf(User)
@@ -105,7 +100,7 @@ describe('unit:subdomains/auth/providers/Strategist', () => {
 
     it('should throw if login credentials are invalid', async () => {
       // Arrange
-      const user = users[0]
+      const user = seeds[0]
       const password: NonNullable<User['password']> = 'user.password'
       let exception: Exception
 

@@ -4,11 +4,11 @@
     "noEmit": false,
     "outDir": "./dist",
     "removeComments": true,
-    "rootDir": "./src",
+    "rootDir": "./",
     "sourceMap": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "exclude": ["src/**/*.spec.ts"],
   "extends": "./tsconfig.json",
-  "include": ["src"]
+  "include": ["__fixtures__", "src"]
 }

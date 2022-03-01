@@ -28,6 +28,7 @@ ENV PATH /opt/sneusers/node_modules/.bin:$PATH
 FROM deps As builder
 
 WORKDIR /opt/sneusers
+COPY __fixtures__ ./__fixtures__
 COPY src ./src
 COPY tools/helpers ./tools/helpers
 COPY typings ./typings
@@ -53,6 +54,7 @@ ARG PORT=8080
 ENV PORT $PORT
 
 WORKDIR /opt/sneusers
+COPY --from=builder /opt/sneusers/__fixtures__ ./__fixtures__
 COPY --from=builder /opt/sneusers/dist ./dist
 COPY --from=builder /opt/sneusers/src ./src
 COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers
@@ -79,6 +81,7 @@ ENV PORT $PORT
 RUN yarn global add pm2
 WORKDIR /opt/sneusers
 COPY ecosystem.config.cjs ./ecosystem.config.cjs
+COPY --from=builder /opt/sneusers/__fixtures__ ./__fixtures__
 COPY --from=builder /opt/sneusers/dist ./dist
 COPY --from=builder /opt/sneusers/src ./src
 COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers

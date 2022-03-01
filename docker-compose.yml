@@ -135,6 +135,7 @@ services:
     restart: always
     volumes:
       - ./__doubles__:/opt/sneusers/__doubles__
+      - ./__fixtures__:/opt/sneusers/__fixtures__
       - ./__tests__:/opt/sneusers/__tests__
       - ./src:/opt/sneusers/src
       - ./tools/helpers:/opt/sneusers/tools/helpers
@@ -147,6 +148,7 @@ services:
       - ./package.json:/opt/sneusers/package.json
       - ./tsconfig.app.json:/opt/sneusers/tsconfig.app.json
       - ./tsconfig.json:/opt/sneusers/tsconfig.json
+      - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
     working_dir: /opt/sneusers
   nginx:
     container_name: nginx

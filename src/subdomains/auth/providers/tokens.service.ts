@@ -14,6 +14,7 @@ import { User } from '@sneusers/subdomains/users/entities'
 import { IUserRaw } from '@sneusers/subdomains/users/interfaces'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import { UserUid } from '@sneusers/subdomains/users/types'
+import { Numeric } from '@sneusers/types'
 import type { TokenExpiredError } from 'jsonwebtoken'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { Sequelize } from 'sequelize-typescript'
@@ -53,6 +54,7 @@ class TokensService {
    *
    * @async
    * @param {CreateTokenDTO} dto - Data to create new token
+   * @param {Numeric | number} [dto.id] - Unique identifier for token
    * @param {number} [dto.ttl=86400] - Time to live (in seconds)
    * @param {boolean} [dto.revoked=false] - Revoke token when created
    * @param {TokenType} dto.type - Type of token to create
@@ -64,7 +66,7 @@ class TokensService {
     const token = await this.sequelize.transaction(async transaction => {
       try {
         return await this.repo.create(dto, {
-          fields: ['revoked', 'ttl', 'type', 'user'],
+          fields: ['id', 'revoked', 'ttl', 'type', 'user'],
           isNewRecord: true,
           raw: true,
           silent: true,

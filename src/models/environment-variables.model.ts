@@ -1,6 +1,5 @@
 import type { OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
-import { DatabaseDialect } from '@sneusers/modules/db/enums'
 import {
   SameSitePolicy,
   SessionUnset
@@ -212,14 +211,6 @@ class EnvironmentVariables {
   DB_AUTO_LOAD_MODELS: boolean
 
   /**
-   * Database dialect.
-   *
-   * **Note**: This value is computed by the application.
-   */
-  @IsEnum(DatabaseDialect)
-  DB_DIALECT: DatabaseDialect
-
-  /**
    * Hostname of database to connect to.
    */
   @IsString()
@@ -248,6 +239,14 @@ class EnvironmentVariables {
    */
   @IsString({ each: true })
   DB_MIGRATIONS: string[]
+
+  /**
+   * Database seeder file names.
+   *
+   * **Note**: This value is computed by the application.
+   */
+  @IsString({ each: true })
+  DB_SEEDERS: string[]
 
   /**
    * Run database migrations.

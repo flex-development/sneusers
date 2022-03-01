@@ -1,4 +1,5 @@
 import type { IUserRaw } from '@sneusers/subdomains/users/interfaces'
+import type { Numeric } from '@sneusers/types'
 import type { ITokenRaw } from '../interfaces'
 
 /**
@@ -13,8 +14,10 @@ class CreateTokenDTO {
   /** When token was created. */
   readonly created_at?: never
 
-  /** Unique identifier for token */
-  readonly id?: never
+  /**
+   * Unique identifier for token.
+   */
+  id?: Numeric | number
 
   /**
    * Revoke token when created.

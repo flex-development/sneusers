@@ -20,7 +20,7 @@ class UpsertUserDTO<
 > extends PatchUserDTO<I> {
   @Is({ types: ['number', 'string'] })
   @IsOptional()
-  readonly id?: CreateUserDTO['id']
+  declare readonly id?: CreateUserDTO['id']
 }
 
 export default UpsertUserDTO

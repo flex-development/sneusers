@@ -1,4 +1,4 @@
-import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
+import FIND_OPTIONS_SEEDED_USERS from '@fixtures/find-options-seeded-users'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import type { ModuleRef } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
@@ -8,9 +8,6 @@ import { SequelizeError } from '@sneusers/modules/db/enums'
 import { User } from '@sneusers/subdomains/users/entities'
 import type { IUser } from '@sneusers/subdomains/users/interfaces'
 import createApp from '@tests/utils/create-app.util'
-import createUsers from '@tests/utils/create-users.util'
-import tableSeed from '@tests/utils/table-seed.util'
-import tableTruncate from '@tests/utils/table-truncate.util'
 import type { Testcase } from '@tests/utils/types'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../user.dao'
@@ -22,8 +19,8 @@ import TestSubject from '../user.dao'
 
 describe('unit:subdomains/users/entities/User', () => {
   let app: NestExpressApplication
+  let seeds: TestSubject[]
   let subject: typeof TestSubject
-  let users: TestSubject[]
 
   before(async () => {
     app = await createApp({
@@ -32,13 +29,12 @@ describe('unit:subdomains/users/entities/User', () => {
         const sequelize = ref.get(Sequelize, { strict: false })
 
         subject = sequelize.models.User as typeof TestSubject
-        users = await tableSeed<TestSubject>(subject, createUsers(MAGIC_NUMBER))
+        seeds = await subject.findAll(FIND_OPTIONS_SEEDED_USERS)
       }
     })
   })
 
   after(async () => {
-    await tableTruncate<TestSubject>(subject)
     await app.close()
   })
 
@@ -101,7 +97,7 @@ describe('unit:subdomains/users/entities/User', () => {
   describe('.findByEmail', () => {
     it('should return User given email of existing user', async () => {
       // Arrange
-      const user = users[3]
+      const user = seeds[3]
 
       // Act
       const result = await subject.findByEmail(user.email)
@@ -122,7 +118,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should return null if user is not found', async function (this) {
       // Arrange
-      const email: User['email'] = this.faker.internet.exampleEmail()
+      const email: TestSubject['email'] = this.faker.internet.exampleEmail()
 
       // Act + Expect
       expect(await subject.findByEmail(email)).to.be.null
@@ -130,7 +126,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should throw if user is not found', async function (this) {
       // Arrange
-      const email: User['email'] = this.faker.internet.exampleEmail()
+      const email: TestSubject['email'] = this.faker.internet.exampleEmail()
       const emessage: string = `User with email [${email}] not found`
       let exception: Exception<SequelizeError>
 
@@ -154,7 +150,7 @@ describe('unit:subdomains/users/entities/User', () => {
   describe('.findByPk', () => {
     it('should return User given id of existing user', async () => {
       // Arrange
-      const user = users[4]
+      const user = seeds[4]
 
       // Act
       const result = await subject.findByPk(user.id)
@@ -174,12 +170,12 @@ describe('unit:subdomains/users/entities/User', () => {
     })
 
     it('should return null if user is not found', async () => {
-      expect(await subject.findByPk(users.length * -420)).to.be.null
+      expect(await subject.findByPk(seeds.length * -420)).to.be.null
     })
 
     it('should throw if user is not found', async function (this) {
       // Arrange
-      const pk: User['id'] = this.faker.datatype.number(-5)
+      const pk: TestSubject['id'] = this.faker.datatype.number(-5)
       let exception: Exception<SequelizeError>
 
       // Act
@@ -203,7 +199,7 @@ describe('unit:subdomains/users/entities/User', () => {
   describe('.findByUid', () => {
     it('should return User given email of existing user', async () => {
       // Arrange
-      const user = users[5]
+      const user = seeds[5]
 
       // Act
       const result = await subject.findByUid(user.email)
@@ -224,7 +220,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should return User given id of existing user', async () => {
       // Arrange
-      const user = users[5]
+      const user = seeds[5]
 
       // Act
       const result = await subject.findByUid(user.id)
@@ -245,7 +241,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should return null given unknown email', async function (this) {
       // Arrange
-      const uid: User['email'] = 'foofoobaby@email.com'
+      const uid: TestSubject['email'] = 'foofoobaby@email.com'
 
       // Act + Expect
       expect(await subject.findByUid(uid)).to.be.null
@@ -253,7 +249,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should return null given unknown id', async function (this) {
       // Arrange
-      const uid: User['id'] = this.faker.datatype.number() * -4200
+      const uid: TestSubject['id'] = this.faker.datatype.number() * -4200
 
       // Act + Expect
       expect(await subject.findByUid(uid)).to.be.null
@@ -261,7 +257,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should throw given unknown email', async function (this) {
       // Arrange
-      const uid: User['email'] = this.faker.internet.exampleEmail()
+      const uid: TestSubject['email'] = this.faker.internet.exampleEmail()
       let exception: Exception<SequelizeError>
 
       // Act
@@ -278,7 +274,7 @@ describe('unit:subdomains/users/entities/User', () => {
 
     it('should throw given unknown id', async function (this) {
       // Arrange
-      const uid: User['id'] = Date.now()
+      const uid: TestSubject['id'] = Date.now()
       let exception: Exception<SequelizeError>
 
       // Act

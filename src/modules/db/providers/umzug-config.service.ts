@@ -1,7 +1,8 @@
 import { ClassProvider, Injectable } from '@nestjs/common'
+import { ENV } from '@sneusers/config/configuration'
 import * as SequelizeModule from 'sequelize'
 import { QueryInterface } from 'sequelize'
-import { Sequelize as Sequelize } from 'sequelize-typescript'
+import { Sequelize } from 'sequelize-typescript'
 import {
   InputMigrations,
   MigrationParams,
@@ -9,8 +10,8 @@ import {
   SequelizeStorage,
   UmzugOptions
 } from 'umzug'
+import SEQUELIZE_CONFIG from '../config/sequelize.config'
 import { UmzugOptionsFactory } from '../factories'
-import SequelizeConfigService from './sequelize-config.service'
 
 /**
  * @file DatabaseModule Providers - UmzugConfigService
@@ -19,10 +20,7 @@ import SequelizeConfigService from './sequelize-config.service'
 
 @Injectable()
 class UmzugConfigService implements UmzugOptionsFactory {
-  constructor(
-    protected readonly config: SequelizeConfigService,
-    protected readonly sequelize: Sequelize
-  ) {}
+  constructor(protected readonly sequelize: Sequelize) {}
 
   /**
    * Creates a {@link UmzugOptionsFactory} provider.
@@ -35,14 +33,74 @@ class UmzugConfigService implements UmzugOptionsFactory {
   }
 
   /**
-   * Creates migration options.
+   * Creates a logger.
+   *
+   * @static
+   * @return {UmzugOptions['logger']} Umzug logger
+   */
+  static get logger(): UmzugOptions['logger'] {
+    return ENV.TEST ? undefined : console
+  }
+
+  /**
+   * Creates migration file options.
    *
    * @return {InputMigrations<QueryInterface>} Input migration options
    */
   createInputMigrations(): InputMigrations<QueryInterface> {
     return {
       glob: './src/modules/db/migrations/*.ts',
-      resolve: params => this.migrationResolver(this, params)
+      resolve: params => this.resolver(this, 'migrations', params)
+    }
+  }
+
+  /**
+   * Creates seed file options.
+   *
+   * @return {InputMigrations<QueryInterface>} Input migration options
+   */
+  createInputSeeds(): InputMigrations<QueryInterface> {
+    return {
+      glob: './src/modules/db/seeders/*.ts',
+      resolve: params => this.resolver(this, 'seeders', params)
+    }
+  }
+
+  /**
+   * Get [`umzug`][1] migrator options.
+   *
+   * [1]: https://github.com/sequelize/umzug
+   *
+   * @return {UmzugOptions<QueryInterface>} `umzug` options
+   */
+  createMigratorOptions(): UmzugOptions<QueryInterface> {
+    return {
+      context: this.sequelize.getQueryInterface(),
+      logger: UmzugConfigService.logger,
+      migrations: this.createInputMigrations(),
+      storage: new SequelizeStorage({
+        sequelize: new Sequelize(this.sequelize.options),
+        tableName: SEQUELIZE_CONFIG[ENV.APP_ENV].migrationStorageTableName
+      })
+    }
+  }
+
+  /**
+   * Get [`umzug`][1] seeder options.
+   *
+   * [1]: https://github.com/sequelize/umzug
+   *
+   * @return {UmzugOptions<QueryInterface>} `umzug` options
+   */
+  createSeederOptions(): UmzugOptions<QueryInterface> {
+    return {
+      context: this.sequelize.getQueryInterface(),
+      logger: UmzugConfigService.logger,
+      migrations: this.createInputSeeds(),
+      storage: new SequelizeStorage({
+        sequelize: new Sequelize(this.sequelize.options),
+        tableName: SEQUELIZE_CONFIG[ENV.APP_ENV].seederStorageTableName
+      })
     }
   }
 
@@ -57,33 +115,19 @@ class UmzugConfigService implements UmzugOptionsFactory {
   }
 
   /**
-   * Get [`umzug`][1] options.
-   *
-   * [1]: https://github.com/sequelize/umzug
-   *
-   * @return {UmzugOptions<QueryInterface>} `umzug` options
-   */
-  createUmzugOptions(): UmzugOptions<QueryInterface> {
-    return {
-      context: this.sequelize.getQueryInterface(),
-      logger: console,
-      migrations: this.createInputMigrations(),
-      storage: new SequelizeStorage({ sequelize: this.sequelize })
-    }
-  }
-
-  /**
    * Resolves a migration.
    *
    * @param {UmzugConfigService} self - Current service
+   * @param {'migrations' | 'seeders'} directory - Directory to search for files
    * @param {MigrationParams<QueryInterface>} params - Migration parameters
    * @return {RunnableMigration<QueryInterface>} Migration object
    */
-  migrationResolver(
+  resolver(
     self: UmzugConfigService,
+    directory: 'migrations' | 'seeders',
     params: MigrationParams<QueryInterface>
   ): RunnableMigration<QueryInterface> {
-    const migration = require(`../migrations/${params.name}`).default
+    const migration = require(`../${directory}/${params.name}`).default
     const runnable = { name: params.name }
 
     return Object.assign(runnable, {

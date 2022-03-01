@@ -1,6 +1,7 @@
 import sequelize from '@fixtures/sequelize.fixture'
 import umzug from '@fixtures/umzug.fixture'
 import { ENV } from '@sneusers/config/configuration'
+import { SequelizeConfigService } from '@sneusers/modules/db/providers'
 import initdb from '@tests/utils/initdb.util'
 import chai, { expect } from 'chai'
 import { spawn } from 'child_process'
@@ -31,7 +32,7 @@ global.sandbox = sinon.createSandbox()
  * This includes:
  *
  * - Starting a PostgreSQL server in non-Docker/CI environments
- * - Running database migrations
+ * - Running database migrations and seeders
  *
  * @async
  * @return {Promise<void>} Empty promise when complete
@@ -39,8 +40,10 @@ global.sandbox = sinon.createSandbox()
 export const mochaGlobalSetup = async (): Promise<void> => {
   if (ENV.DB_LOCAL) initdb()
 
-  await umzug.up({ migrations: ENV.DB_MIGRATIONS, rerun: 'ALLOW' })
-  await sequelize.sync(sequelize.options.sync)
+  sequelize.options.logging = SequelizeConfigService.logging
+
+  await umzug.migrator.up()
+  await umzug.seeder.up()
 }
 
 /**
@@ -55,7 +58,11 @@ export const mochaGlobalSetup = async (): Promise<void> => {
  * @return {Promise<void>} Empty promise when complete
  */
 export const mochaGlobalTeardown = async (): Promise<void> => {
-  await umzug.down({ migrations: ENV.DB_MIGRATIONS, rerun: 'ALLOW' })
+  const migrations = (await umzug.migrator.executed()).map(meta => meta.name)
+  const seeders = (await umzug.seeder.executed()).map(meta => meta.name)
+
+  await umzug.seeder.down({ migrations: seeders })
+  await umzug.migrator.down({ migrations })
 
   if (ENV.DB_LOCAL) {
     spawn('pg_ctl', ['stop'], {

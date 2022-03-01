@@ -45,6 +45,7 @@ const config = (config: Configuration): Configuration => {
           exclude: /node_modules/,
           include: [
             path.join(config.context, '__doubles__'),
+            path.join(config.context, '__fixtures__'),
             path.join(config.context, '__tests__'),
             path.join(config.context, 'src'),
             path.join(config.context, 'webpack.config.ts')

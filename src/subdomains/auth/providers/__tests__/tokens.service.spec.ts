@@ -1,4 +1,4 @@
-import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
+import FIND_OPTIONS_SEEDED_USERS from '@fixtures/find-options-seeded-users'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
 import type { ModuleRef } from '@nestjs/core'
@@ -18,10 +18,7 @@ import { JwtConfigService } from '@sneusers/subdomains/auth/providers'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
 import createApp from '@tests/utils/create-app.util'
-import createTokens from '@tests/utils/create-tokens.util'
-import createUsers from '@tests/utils/create-users.util'
-import tableSeed from '@tests/utils/table-seed.util'
-import tableTruncate from '@tests/utils/table-truncate.util'
+import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../tokens.service'
 
 /**
@@ -31,9 +28,8 @@ import TestSubject from '../tokens.service'
 
 describe('unit:subdomains/auth/providers/TokensService', () => {
   let app: NestExpressApplication
+  let seeds: { tokens: Token[]; users: User[] }
   let subject: TestSubject
-  let tokens: Token[]
-  let users: User[]
 
   before(async () => {
     app = await createApp({
@@ -43,20 +39,21 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
         SequelizeModule.forFeature([Token, User])
       ],
       async onModuleInit(ref: ModuleRef): Promise<void> {
-        const seed_users = createUsers(MAGIC_NUMBER)
+        const sequelize = ref.get(Sequelize, { strict: false })
+        const repo_users = sequelize.models.User as typeof User
 
         subject = ref.get(TestSubject, { strict: false })
 
-        users = await tableSeed<User>(subject.repository.User, seed_users)
-        tokens = await tableSeed<Token>(subject.repository, createTokens(users))
+        seeds = {
+          tokens: await subject.repository.findAll(),
+          users: await repo_users.findAll(FIND_OPTIONS_SEEDED_USERS)
+        }
       },
       providers: [TestSubject, UsersService]
     })
   })
 
   after(async () => {
-    await tableTruncate<User>(subject.repository.User)
-    await tableTruncate<Token>(subject.repository)
     await app.close()
   })
 
@@ -66,7 +63,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
       const dto: CreateTokenDTO = {
         ttl: 86_400 * 2,
         type: TokenType.VERIFICATION,
-        user: users[0].id
+        user: seeds.users[0].id
       }
 
       // Act
@@ -155,7 +152,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
 
   describe('#findOne', () => {
     it('should return Token given id of existing token', async () => {
-      expect(await subject.findOne(tokens[0].id)).to.be.instanceOf(Token)
+      expect(await subject.findOne(seeds.tokens[0].id)).to.be.instanceOf(Token)
     })
 
     it('should return null if token is not found', async function (this) {
@@ -168,7 +165,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
 
     it('should throw if token is not found', async () => {
       // Arrange
-      const id: Token['id'] = tokens.length * -72
+      const id: Token['id'] = seeds.tokens.length * -72
       let exception: Exception<SequelizeError>
 
       // Act
@@ -207,7 +204,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
   describe('#patch', () => {
     it('should return Token if token was updated', async () => {
       // Arrange
-      const id: Token['id'] = tokens[tokens.length - 1].id
+      const id: Token['id'] = seeds.tokens[seeds.tokens.length - 1].id
       const dto: PatchTokenDTO = { revoked: true }
 
       // Act
@@ -247,7 +244,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
   describe('#remove', () => {
     it('should return Token if token was deleted', async () => {
       // Arrange
-      const id: Token['id'] = tokens[4].id
+      const id: Token['id'] = seeds.tokens[4].id
 
       // Act
       const result = await subject.remove(id)
@@ -296,7 +293,7 @@ describe('unit:subdomains/auth/providers/TokensService', () => {
   describe('#revoke', () => {
     it('should return revoked Token', async () => {
       // Arrange
-      const id: Token['id'] = tokens[1].id
+      const id: Token['id'] = seeds.tokens[1].id
 
       // Act
       const result = await subject.revoke(id)

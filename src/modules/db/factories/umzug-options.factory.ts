@@ -19,7 +19,8 @@ import type { UmzugOptions } from 'umzug'
  * @abstract
  */
 abstract class UmzugOptionsFactory<Q extends QueryInterface = QueryInterface> {
-  abstract createUmzugOptions(): OrPromise<UmzugOptions<Q>>
+  abstract createMigratorOptions(): OrPromise<UmzugOptions<Q>>
+  abstract createSeederOptions(): OrPromise<UmzugOptions<Q>>
 }
 
 export default UmzugOptionsFactory

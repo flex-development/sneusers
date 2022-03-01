@@ -1,7 +1,7 @@
 declare global {
   namespace Mocha {
     interface Context {
-      faker: NodeJS.TestingGlobal['faker']
+      faker: typeof import('@faker-js/faker')['faker']
       inspect: NodeJS.TestingGlobal['inspect']
       pf: NodeJS.TestingGlobal['pf']
       sandbox: NodeJS.TestingGlobal['sandbox']

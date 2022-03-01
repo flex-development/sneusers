@@ -28,6 +28,7 @@ module.exports = {
         ...RULES_SPELLCHECKER[1],
         skipWords: [
           ...RULES_SPELLCHECKER[1].skipWords,
+          'appleseed',
           'authed',
           'axios',
           'bcc',
@@ -58,10 +59,12 @@ module.exports = {
           'keyof',
           'localhost',
           'lowercased',
+          'lowercases',
           'mariadb',
           'matcher',
           'matchers',
           'maxvalue',
+          'migrator',
           'minvalue',
           'mssql',
           'mysql',
@@ -70,6 +73,7 @@ module.exports = {
           'nextval',
           'nginx',
           'nodemailer',
+          'nullable',
           'nullish',
           'oauth',
           'openapi',
@@ -154,7 +158,7 @@ module.exports = {
       files: [
         '__tests__/utils/initdb.util.ts',
         'src/models/environment-variables.model.ts',
-        'src/modules/db/config/sequelize.config.ts'
+        'src/modules/db/hooks/before-connect.hook.ts'
       ],
       rules: {
         'unicorn/consistent-function-scoping': 0
@@ -165,6 +169,12 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-var-requires': 0,
         'unicorn/prefer-module': 0
+      }
+    },
+    {
+      files: ['src/modules/db/seeders/*create-tokens.ts'],
+      rules: {
+        'unicorn/no-array-push-push': 0
       }
     },
     {
@@ -201,6 +211,12 @@ module.exports = {
       files: ['src/subdomains/users/interceptors/user.interceptor.ts'],
       rules: {
         'prefer-const': 0
+      }
+    },
+    {
+      files: ['src/subdomains/users/providers/users.service.ts'],
+      rules: {
+        'no-prototype-builtins': 0
       }
     },
     {

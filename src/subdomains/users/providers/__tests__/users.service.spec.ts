@@ -1,3 +1,4 @@
+import FIND_OPTIONS_SEEDED_USERS from '@fixtures/find-options-seeded-users'
 import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { CacheModule } from '@nestjs/common'
@@ -8,18 +9,13 @@ import { Exception } from '@sneusers/exceptions'
 import { SequelizeError } from '@sneusers/modules/db/enums'
 import { CacheConfigService } from '@sneusers/providers'
 import { VerifType } from '@sneusers/subdomains/auth/enums'
-import type {
+import {
   CreateUserDTO,
   PatchUserDTO,
   UpsertUserDTO
 } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
-import { UniqueEmailException } from '@sneusers/subdomains/users/exceptions'
 import createApp from '@tests/utils/create-app.util'
-import createUsers from '@tests/utils/create-users.util'
-import getCreateUserDTO from '@tests/utils/get-create-user-dto.util'
-import tableSeed from '@tests/utils/table-seed.util'
-import pick from 'lodash.pick'
 import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../users.service'
 
@@ -30,8 +26,8 @@ import TestSubject from '../users.service'
 
 describe('unit:subdomains/users/providers/UsersService', () => {
   let app: NestExpressApplication
+  let seeds: User[]
   let subject: TestSubject
-  let users: User[]
 
   before(async () => {
     app = await createApp({
@@ -44,7 +40,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
         const repo = sequelize.models.User as typeof User
 
         subject = ref.get(TestSubject, { strict: false })
-        users = await tableSeed<User>(repo, createUsers(MAGIC_NUMBER))
+        seeds = await repo.findAll(FIND_OPTIONS_SEEDED_USERS)
       },
       providers: [TestSubject]
     })
@@ -55,9 +51,9 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   })
 
   describe('#create', () => {
-    it('should return User if user was created', async () => {
+    it('should return User if user was created', async function (this) {
       // Arrange
-      const dto = getCreateUserDTO()
+      const dto = new CreateUserDTO({ email: this.faker.internet.email() })
 
       // Act
       const result = await subject.create(dto)
@@ -68,9 +64,9 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       expect(result.display_name).to.be.null
       expect(result.email).to.equal(dto.email.toLowerCase())
       expect(result.email_verified).to.be.false
-      expect(result.first_name).to.equal(dto.first_name.toLowerCase())
+      expect(result.first_name).to.be.null
       expect(result.id).to.be.a('number')
-      expect(result.last_name).to.equal(dto.last_name.toLowerCase())
+      expect(result.last_name).to.be.null
       expect(result.password).to.be.null
       expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
@@ -78,8 +74,8 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      const dto: CreateUserDTO = pick(users[2], ['email'])
-      let exception: UniqueEmailException
+      const dto = new CreateUserDTO({ email: seeds[2].email })
+      let exception: Exception
 
       // Act
       try {
@@ -89,7 +85,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       }
 
       // Expect
-      expect(exception!).to.be.instanceOf(UniqueEmailException)
+      expect(exception!).to.be.instanceOf(Exception)
     })
   })
 
@@ -111,7 +107,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#findOne', () => {
     it('should return User given uid of existing user', async () => {
       // Arrange
-      const uid: User['email'] = users[0].email
+      const uid: User['email'] = seeds[0].email
 
       // Act
       const result = await subject.findOne(uid)
@@ -119,13 +115,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result!.created_at).to.be.a('number')
-      expect(result!.display_name).to.be.null
+      expect(result!.display_name).to.be.a('string')
       expect(result!.email).to.equal(uid.toLowerCase())
       expect(result!.email_verified).to.be.false
       expect(result!.first_name).to.be.a('string')
       expect(result!.id).to.be.a('number')
       expect(result!.last_name).to.be.a('string')
-      expect(result!.password).to.be.null
+      expect(result!.password).to.be.a('string')
       expect(result!.provider).to.be.null
       expect(result!.updated_at).to.be.null
     })
@@ -136,7 +132,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should throw if user is not found', async () => {
       // Arrange
-      const uid: User['id'] = users.length * -72
+      const uid: User['id'] = seeds.length * -72
       let exception: Exception<SequelizeError>
 
       // Act
@@ -157,8 +153,8 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#patch', () => {
     it('should return User if user was updated', async function (this) {
       // Arrange
-      const uid: User['email'] = users[users.length - 1].email
-      const dto: PatchUserDTO = { last_name: this.faker.name.lastName() }
+      const uid: User['email'] = seeds[MAGIC_NUMBER].email
+      const dto = new PatchUserDTO({ last_name: this.faker.name.lastName() })
 
       // Act
       const result = await subject.patch(uid, dto)
@@ -166,32 +162,33 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
-      expect(result.display_name).to.be.null
+      expect(result.display_name).to.be.a('string')
       expect(result.email).to.equal(uid.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.equal(dto.last_name!.toLowerCase())
-      expect(result.password).to.be.null
+      expect(result.password).to.be.a('string')
       expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })
 
     it('should throw if dto.email is not unique', async () => {
       // Arrange
-      let exception: UniqueEmailException
+      const uid: User['email'] = seeds[MAGIC_NUMBER].email
+      const dto = new PatchUserDTO({ email: seeds[0].email })
+
+      let exception: Exception
 
       // Act
       try {
-        await subject.patch(users[users.length - 2].email, {
-          email: users[0].email
-        })
+        await subject.patch(uid, dto)
       } catch (error) {
         exception = error as typeof exception
       }
 
       // Expect
-      expect(exception!).to.be.instanceOf(UniqueEmailException)
+      expect(exception!).to.be.instanceOf(Exception)
       expect(exception!.code).to.equal(ExceptionCode.CONFLICT)
       expect(exception!.message).to.match(/already exists/)
     })
@@ -215,7 +212,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#remove', () => {
     it('should return User if user was deleted', async () => {
       // Arrange
-      const uid: User['email'] = users[3].email
+      const uid: User['email'] = seeds[seeds.length - 1].email
 
       // Act
       const result = await subject.remove(uid)
@@ -223,13 +220,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
-      expect(result.display_name).to.be.null
+      expect(result.display_name).to.be.a('string')
       expect(result.email).to.equal(uid.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.be.a('string')
-      expect(result.password).to.be.null
+      expect(result.password).to.be.a('string')
       expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
     })
@@ -253,7 +250,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#sendEmail', () => {
     it('should return email sent and recipient', async function (this) {
       // Arrange
-      const uid: User['email'] = users[5].email
+      const uid: User['email'] = seeds[5].email
       const url = this.faker.internet.url()
 
       // Act
@@ -274,7 +271,12 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#upsert', () => {
     it('should return new User', async () => {
       // Arrange
-      const dto = getCreateUserDTO()
+      const dto = new UpsertUserDTO({
+        display_name: 'john',
+        email: 'john@appleseed.com',
+        first_name: 'john',
+        last_name: 'appleseed'
+      })
 
       // Act
       const result = await subject.upsert(dto)
@@ -282,12 +284,12 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
-      expect(result.display_name).to.be.null
-      expect(result.email).to.equal(dto.email.toLowerCase())
+      expect(result.display_name).to.equal(dto.display_name!.toLowerCase())
+      expect(result.email).to.equal(dto.email!.toLowerCase())
       expect(result.email_verified).to.be.false
-      expect(result.first_name).to.equal(dto.first_name.toLowerCase())
+      expect(result.first_name).to.equal(dto.first_name!.toLowerCase())
       expect(result.id).to.be.a('number')
-      expect(result.last_name).to.equal(dto.last_name.toLowerCase())
+      expect(result.last_name).to.equal(dto.last_name!.toLowerCase())
       expect(result.password).to.be.null
       expect(result.provider).to.be.null
       expect(result.updated_at).to.be.null
@@ -295,8 +297,8 @@ describe('unit:subdomains/users/providers/UsersService', () => {
 
     it('should return updated user', async function (this) {
       // Arrange
-      const id: User['id'] = users[users.length - 3].id
-      const dto: UpsertUserDTO = { email: this.faker.internet.email(), id }
+      const id: User['id'] = seeds[seeds.length - 4].id
+      const dto = new UpsertUserDTO({ email: this.faker.internet.email(), id })
 
       // Act
       const result = await subject.upsert(dto)
@@ -304,13 +306,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Expect
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
-      expect(result.display_name).to.be.null
+      expect(result.display_name).to.be.a('string')
       expect(result.email).to.equal(dto.email!.toLowerCase())
       expect(result.email_verified).to.be.false
       expect(result.first_name).to.be.a('string')
       expect(result.id).to.be.a('number')
       expect(result.last_name).to.be.a('string')
-      expect(result.password).to.be.null
+      expect(result.password).to.be.a('string')
       expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })
@@ -319,7 +321,7 @@ describe('unit:subdomains/users/providers/UsersService', () => {
   describe('#verifyEmail', () => {
     it('should return verified User', async () => {
       // Arrange
-      const uid: User['id'] = users[1].id
+      const uid: User['id'] = seeds[1].id
 
       // Act
       const result = await subject.verifyEmail(uid)
@@ -327,13 +329,13 @@ describe('unit:subdomains/users/providers/UsersService', () => {
       // Act
       expect(result).to.be.instanceOf(User)
       expect(result.created_at).to.be.a('number')
-      expect(result.display_name).to.be.null
+      expect(result.display_name).to.be.a('string')
       expect(result.email).to.be.a('string')
       expect(result.email_verified).to.be.true
       expect(result.first_name).to.be.a('string')
       expect(result.id).to.equal(uid)
       expect(result.last_name).to.be.a('string')
-      expect(result.password).to.be.null
+      expect(result.password).to.be.a('string')
       expect(result.provider).to.be.null
       expect(result.updated_at).to.not.be.null
     })

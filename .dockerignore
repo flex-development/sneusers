@@ -30,6 +30,15 @@
 **/*.spec.ts
 
 ### Misc ###
+# Fixtures
+__fixtures__
+!__fixtures__/config-service.fixture.ts
+!__fixtures__/magic-number.fixture.ts
+!__fixtures__/sequelize-config-service.fixture.ts
+!__fixtures__/sequelize-service.fixture.ts
+!__fixtures__/sequelize.fixture.ts
+!__fixtures__/user-password.fixture.ts
+
 # Project tools
 tools/helpers
 !tools/helpers/match-specifier.cjs

@@ -1,4 +1,4 @@
-import { SequelizeConfigService } from '@sneusers/modules/db/providers'
+import SequelizeConfigService from '@sneusers/modules/db/providers/sequelize-config.service'
 import config from './config-service.fixture'
 
 /**

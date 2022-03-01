@@ -3,12 +3,10 @@ import { ConfigService } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import type { EnvironmentVariables } from '@sneusers/models'
 import { Sequelize } from 'sequelize-typescript'
-import { Umzug } from 'umzug'
-import { UmzugOptionsFactory } from './factories'
 import {
   SequelizeConfigService,
   UmzugConfigService,
-  UmzugProvider
+  UmzugService
 } from './providers'
 
 /**
@@ -18,35 +16,33 @@ import {
 
 @Global()
 @Module({
-  exports: [SequelizeConfigService, Umzug, UmzugOptionsFactory],
   imports: [SequelizeModule.forRootAsync(SequelizeConfigService.moduleOptions)],
   providers: [
     SequelizeConfigService,
+    UmzugConfigService,
     UmzugConfigService.createProvider(),
-    UmzugProvider()
+    UmzugService
   ]
 })
 export default class DatabaseModule implements OnModuleInit {
   constructor(
     protected readonly config: ConfigService<EnvironmentVariables, true>,
-    protected readonly umzug: Umzug,
+    protected readonly umzug: UmzugService,
     protected readonly sequelize: Sequelize
   ) {}
 
   /**
-   * Runs database migrations.
+   * Runs database migrations and seeders.
    *
    * @async
    * @return {Promise<void>} Empty promise when complete
    */
   async onModuleInit(): Promise<void> {
     if (this.config.get<boolean>('DB_MIGRATE')) {
-      await this.umzug.up({
-        migrations: (await this.umzug.pending()).map(meta => meta.name),
-        rerun: 'ALLOW'
-      })
-
+      await this.umzug.migrator.up()
       await this.sequelize.sync(this.sequelize.options.sync)
     }
+
+    if (this.config.get<boolean>('DEV')) await this.umzug.seeder.up()
   }
 }

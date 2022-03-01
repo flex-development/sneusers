@@ -1,18 +1,18 @@
-import type { NumberString, ObjectPlain } from '@flex-development/tutils'
-import { OrNull, PathValue } from '@flex-development/tutils'
+import type { ObjectPlain } from '@flex-development/tutils'
+import { NumberString, OrNull, PathValue } from '@flex-development/tutils'
 import { isUnixTimestamp } from '@flex-development/tutils/guards'
 import { ENV } from '@sneusers/config/configuration'
 import type { ExceptionDataDTO } from '@sneusers/dtos'
 import { Exception } from '@sneusers/exceptions'
 import { QueryParams } from '@sneusers/models'
-import { ScryptService } from '@sneusers/modules/crypto/providers'
+import ScryptService from '@sneusers/modules/crypto/providers/scrypt.service'
 import isPlainObject from 'lodash.isplainobject'
 import { BuildOptions, Sequelize } from 'sequelize'
 import { Model, ModelStatic } from 'sequelize-typescript'
-import type { Literal } from 'sequelize/types/lib/utils'
+import { Literal } from 'sequelize/types/lib/utils'
 import { LOCK, SequelizeError } from '../enums'
 import type { EntityAttributes } from '../namespaces'
-import { SearchOptions, SequelizeErrorType } from '../types'
+import { SearchOptions, SequelizeErrorType, Timestamp } from '../types'
 
 /**
  * @file DatabaseModule Entities - Entity
@@ -38,6 +38,13 @@ abstract class Entity<
   TCreationAttributes extends ObjectPlain = TModelAttributes,
   VirtualFields extends ObjectPlain = never
 > extends Model<TModelAttributes, TCreationAttributes> {
+  /**
+   * @static
+   * @readonly
+   * @property {string[]} AUTOHASH - Fields to be automatically hashed
+   */
+  static readonly AUTOHASH: string[] = ['password']
+
   /**
    * @static
    * @readonly
@@ -89,12 +96,24 @@ abstract class Entity<
    */
   static readonly sequelize: Sequelize
 
+  /** @property {BuildOptions} _options - Sequelize `build` options */
+  declare readonly _options: BuildOptions
+
+  /** @property {Timestamp} created_at - When entity was created */
+  declare created_at?: Timestamp
+
+  /** @property {OrNull<Timestamp>} deleted_at - When entity was deleted */
+  declare deleted_at?: OrNull<Timestamp>
+
+  /** @property {OrNull<Timestamp>} updated_at - When entity was last updated */
+  declare updated_at?: OrNull<Timestamp>
+
   /**
    * Creates a new `Entity` instance.
    *
    * [1]: https://sequelize.org/v7/class/src/model.js~Model#static-method-build
    *
-   * @param {TCreationAttributes} values - Data transfer object
+   * @param {TCreationAttributes} [values] - Data transfer object
    * @param {BuildOptions} [options] - Sequelize [`build`][1] options
    */
   constructor(values?: TCreationAttributes, options?: BuildOptions) {

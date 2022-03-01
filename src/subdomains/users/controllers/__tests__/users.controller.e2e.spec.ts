@@ -1,3 +1,4 @@
+import FIND_OPTIONS_SEEDED_USERS from '@fixtures/find-options-seeded-users'
 import MAGIC_NUMBER from '@fixtures/magic-number.fixture'
 import { ExceptionCode } from '@flex-development/exceptions/enums'
 import { isExceptionJSON } from '@flex-development/exceptions/guards'
@@ -25,17 +26,13 @@ import {
   VerificationService
 } from '@sneusers/subdomains/auth/providers'
 import { JwtStrategy } from '@sneusers/subdomains/auth/strategies'
-import type { PatchUserDTO } from '@sneusers/subdomains/users/dtos'
+import { PatchUserDTO } from '@sneusers/subdomains/users/dtos'
 import { User } from '@sneusers/subdomains/users/entities'
 import { UsersService } from '@sneusers/subdomains/users/providers'
+import createAccessToken from '@tests/utils/create-access-token.util'
 import createApp from '@tests/utils/create-app.util'
-import createAuthedUser from '@tests/utils/create-authed-user.util'
-import createUsers from '@tests/utils/create-users.util'
 import stubURLPath from '@tests/utils/stub-url-path.util'
-import tableSeed from '@tests/utils/table-seed.util'
-import tableTruncate from '@tests/utils/table-truncate.util'
 import type { AuthedUser } from '@tests/utils/types'
-import { Sequelize } from 'sequelize-typescript'
 import TestSubject from '../users.controller'
 
 /**
@@ -45,16 +42,14 @@ import TestSubject from '../users.controller'
 
 describe('e2e:subdomains/users/controllers/UsersController', () => {
   const URL = stubURLPath('users')
-  const USERS = createUsers(MAGIC_NUMBER)
 
   let app: NestExpressApplication
   let repo: typeof User
   let req: ChaiHttp.Agent
-  let table: User[]
-  let users: UsersService
-  let user_authed_1: AuthedUser
-  let user_authed_2: AuthedUser
-  let user_authed_3: AuthedUser
+  let seeds: User[]
+  let user_1: AuthedUser
+  let user_2: AuthedUser
+  let user_3: AuthedUser
 
   before(async () => {
     app = await createApp({
@@ -65,17 +60,14 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         SequelizeModule.forFeature([Token, User])
       ],
       async onModuleInit(ref: ModuleRef): Promise<void> {
-        const sequelize = ref.get(Sequelize, { strict: false })
         const auth = ref.get(AuthService, { strict: false })
-        const qi = sequelize.getQueryInterface()
 
-        users = ref.get(UsersService, { strict: false })
-        repo = users.repository
+        repo = ref.get(UsersService, { strict: false }).repository
 
-        table = await tableSeed<User>(repo, USERS)
-        user_authed_1 = await createAuthedUser(qi, auth)
-        user_authed_2 = await createAuthedUser(qi, auth)
-        user_authed_3 = await createAuthedUser(qi, auth)
+        seeds = await repo.findAll(FIND_OPTIONS_SEEDED_USERS)
+        user_1 = await createAccessToken(auth, seeds[1])
+        user_2 = await createAccessToken(auth, seeds[2])
+        user_3 = await createAccessToken(auth, seeds[3])
       },
       providers: [
         AuthService,
@@ -94,7 +86,6 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   })
 
   after(async () => {
-    await tableTruncate<User>(repo)
     await app.close()
   })
 
@@ -105,7 +96,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         const query: QueryParams<User> = {
           attributes: 'email',
           group: 'email,id',
-          limit: Math.floor(table.length / 2),
+          limit: MAGIC_NUMBER,
           order: 'id,ASC|last_name,DESC'
         }
 
@@ -126,25 +117,22 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
   describe('/users/{uid}', () => {
     describe('DELETE', () => {
       it('should send back deleted user', async () => {
-        // Arrange
-        const user = Object.assign({}, user_authed_1)
-
         // Act
         const res = await req
-          .delete([URL, user.email].join('/'))
-          .set('Authorization', `Bearer ${user.access_token}`)
+          .delete([URL, user_1.email].join('/'))
+          .set('Authorization', `Bearer ${user_1.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK)
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
-        expect(res.body.display_name).to.be.null
-        expect(res.body.email).to.equal(user.email.toLowerCase())
+        expect(res.body.display_name).to.be.a('string')
+        expect(res.body.email).to.equal(user_1.email.toLowerCase())
         expect(res.body.email_verified).to.be.false
-        expect(res.body.first_name).to.equal(user.first_name.toLowerCase())
+        expect(res.body.first_name).to.equal(user_1.first_name.toLowerCase())
         expect(res.body.full_name).to.be.a('string')
         expect(res.body.id).to.be.a('number')
-        expect(res.body.last_name).to.equal(user.last_name.toLowerCase())
+        expect(res.body.last_name).to.equal(user_1.last_name.toLowerCase())
         expect(res.body.password).to.be.undefined
         expect(res.body.provider).to.be.null
         expect(res.body.updated_at).to.be.null
@@ -153,7 +141,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       it('should send error if access token is invalid', async () => {
         // Act
         const res = await req
-          .delete([URL, user_authed_1.email].join('/'))
+          .delete([URL, user_1.email].join('/'))
           .set('Authorization', 'Bearer user_access_token')
 
         // Expect
@@ -169,7 +157,7 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
         // Act
         const res = await req
           .delete([URL, uid].join('/'))
-          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
+          .set('Authorization', `Bearer ${user_2.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.NOT_FOUND, 'object')
@@ -183,48 +171,48 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
     describe('GET', () => {
       it('should send UserDTO given email of existing user', async () => {
         // Arrange
-        const email: User['email'] = table[0].email
+        const seed: User = seeds[4]
 
         // Act
-        const res = await req.get([URL, email].join('/'))
+        const res = await req.get([URL, seed.email].join('/'))
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
-        expect(res.body.created_at).to.be.a('number')
-        expect(res.body.display_name).to.be.null
-        expect(res.body.email).to.equal(email)
+        expect(res.body.created_at).to.equal(seed.created_at)
+        expect(res.body.display_name).to.equal(seed.display_name)
+        expect(res.body.email).to.equal(seed.email)
         expect(res.body.email_verified).to.be.undefined
-        expect(res.body.first_name).to.be.a('string')
+        expect(res.body.first_name).to.equal(seed.first_name)
         expect(res.body.full_name).to.be.a('string')
-        expect(res.body.id).to.be.a('number')
-        expect(res.body.last_name).to.be.a('string')
+        expect(res.body.id).to.equal(seed.id)
+        expect(res.body.last_name).to.equal(seed.last_name)
         expect(res.body.password).to.be.undefined
         expect(res.body.provider).to.be.undefined
-        expect(res.body.updated_at).to.be.null
+        expect(res.body.updated_at).to.equal(seed.updated_at)
       })
 
       it('should send UserDTO given id of existing user', async () => {
         // Arrange
-        const id: User['id'] = table[0].id
+        const seed: User = seeds[4]
 
         // Act
-        const res = await req.get([URL, id].join('/'))
+        const res = await req.get([URL, seed.id].join('/'))
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
-        expect(res.body.created_at).to.be.a('number')
-        expect(res.body.display_name).to.be.null
-        expect(res.body.email).to.be.a('string')
+        expect(res.body.created_at).to.equal(seed.created_at)
+        expect(res.body.display_name).to.equal(seed.display_name)
+        expect(res.body.email).to.equal(seed.email)
         expect(res.body.email_verified).to.be.undefined
-        expect(res.body.first_name).to.be.a('string')
+        expect(res.body.first_name).to.equal(seed.first_name)
         expect(res.body.full_name).to.be.a('string')
-        expect(res.body.id).to.equal(id)
-        expect(res.body.last_name).to.be.a('string')
+        expect(res.body.id).to.equal(seed.id)
+        expect(res.body.last_name).to.equal(seed.last_name)
         expect(res.body.password).to.be.undefined
         expect(res.body.provider).to.be.undefined
-        expect(res.body.updated_at).to.be.null
+        expect(res.body.updated_at).to.equal(seed.updated_at)
       })
 
       it('should send error if user is not found', async function (this) {
@@ -245,37 +233,36 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
 
     describe('PATCH', () => {
       before(async () => {
-        const dto: PatchUserDTO<'internal'> = { email_verified: true }
+        const dto = new PatchUserDTO<'internal'>({ email_verified: true })
 
-        await users.repository.update(dto, {
+        await repo.update(dto, {
           fields: ['email_verified'],
           silent: true,
-          where: { id: user_authed_2.id }
+          where: { id: user_2.id }
         })
       })
 
       it('should send back updated user', async function (this) {
         // Arrange
-        const dto: PatchUserDTO = {
-          email: this.faker.internet.exampleEmail()
-        }
+        const email: User['email'] = this.faker.internet.exampleEmail()
+        const dto = new PatchUserDTO({ email })
 
         // Act
         const res = await req
-          .patch([URL, user_authed_2.id].join('/'))
+          .patch([URL, user_2.id].join('/'))
           .send(dto)
-          .set('Authorization', `Bearer ${user_authed_2.access_token}`)
+          .set('Authorization', `Bearer ${user_2.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(HttpStatus.OK, 'object')
         expect(res.body).not.to.be.instanceOf(User)
         expect(res.body.created_at).to.be.a('number')
-        expect(res.body.display_name).to.be.null
+        expect(res.body.display_name).to.be.a('string')
         expect(res.body.email).to.equal(dto.email!.toLowerCase())
         expect(res.body.email_verified).to.be.true
         expect(res.body.first_name).to.be.a('string')
         expect(res.body.full_name).to.be.a('string')
-        expect(res.body.id).to.be.a('number')
+        expect(res.body.id).to.equal(user_2.id)
         expect(res.body.last_name).to.be.a('string')
         expect(res.body.password).to.be.undefined
         expect(res.body.provider).to.be.null
@@ -283,10 +270,13 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
       })
 
       it('should send error if access token is invalid', async function (this) {
+        // Arrange
+        const dto = new PatchUserDTO({ last_name: this.faker.name.lastName() })
+
         // Act
         const res = await req
-          .patch([URL, user_authed_2.id].join('/'))
-          .send({ last_name: this.faker.name.lastName() } as PatchUserDTO)
+          .patch([URL, user_2.id].join('/'))
+          .send(dto)
           .set('Authorization', `Bearer ${this.faker.datatype.uuid()}`)
 
         // Expect
@@ -297,24 +287,23 @@ describe('e2e:subdomains/users/controllers/UsersController', () => {
 
       it('should send error if email is not verified', async function (this) {
         // Arrange
-        const { access_token, email, id } = user_authed_3
+        const password = this.faker.internet.password(MAGIC_NUMBER)
+        const dto = new PatchUserDTO({ password })
 
         // Act
         const res = await req
-          .patch([URL, id].join('/'))
-          .send({
-            password: this.faker.internet.password(MAGIC_NUMBER)
-          } as PatchUserDTO)
-          .set('Authorization', `Bearer ${access_token}`)
+          .patch([URL, user_3.id].join('/'))
+          .send(dto)
+          .set('Authorization', `Bearer ${user_3.access_token}`)
 
         // Expect
         expect(res).to.be.jsonResponse(ExceptionCode.UNAUTHORIZED, 'object')
         expect(res.body).not.to.be.instanceOf(Exception)
         expect(isExceptionJSON(res.body)).to.be.true
         expect(res.body.errors[0]).to.be.an('object')
-        expect(res.body.errors[0].email).to.equal(email)
+        expect(res.body.errors[0].email).to.equal(user_3.email)
         expect(res.body.data.user).to.be.an('object')
-        expect(res.body.data.user.id).to.equal(id)
+        expect(res.body.data.user.id).to.equal(user_3.id)
         expect(res.body.message).to.equal('Email not verified')
       })
     })

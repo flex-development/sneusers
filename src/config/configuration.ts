@@ -2,7 +2,6 @@ import { OrNil, OrUndefined } from '@flex-development/tutils'
 import { AppEnv, NodeEnv } from '@flex-development/tutils/enums'
 import { isNIL } from '@flex-development/tutils/guards'
 import { EnvironmentVariables, ServerInfo } from '@sneusers/models'
-import { DatabaseDialect } from '@sneusers/modules/db/enums'
 import { SessionUnset } from '@sneusers/modules/middleware/enums'
 import { isDockerEnv } from '@sneusers/utils'
 import { instanceToPlain } from 'class-transformer'
@@ -187,7 +186,6 @@ const validate = ({
   env.CSURF_COOKIE_SECURE = parse(CSURF_COOKIE_SECURE)
   env.CSURF_COOKIE_SIGNED = parse(CSURF_COOKIE_SIGNED)
   env.DB_AUTO_LOAD_MODELS = parse(DB_AUTO_LOAD_MODELS)
-  env.DB_DIALECT = DatabaseDialect[env.TEST ? 'SQLITE' : 'POSTGRES']
   env.DB_HOST = env.DB_LOCAL ? process.env.PGHOST || DB_HOST : DB_HOST
   env.DB_LOG_QUERY_PARAMS = parse(DB_LOG_QUERY_PARAMS)
   env.DB_MIGRATIONS = ((): string[] => {
@@ -200,6 +198,10 @@ const validate = ({
   env.DB_PORT = parse(env.DB_LOCAL ? process.env.PGPORT || DB_PORT : DB_PORT)
   env.DB_RETRY_ATTEMPTS = parse(DB_RETRY_ATTEMPTS)
   env.DB_RETRY_DELAY = parse(DB_RETRY_DELAY)
+  env.DB_SEEDERS = ((): string[] => {
+    const migrations = fs.readdirSync('./src/modules/db/seeders')
+    return migrations.filter(migration => migration.endsWith('.ts'))
+  })()
   env.DB_SYNC_ALTER = parse(DB_SYNC_ALTER)
   env.DB_SYNC_FORCE = parse(DB_SYNC_FORCE)
   env.DB_SYNCHRONIZE = parse(DB_SYNCHRONIZE)
