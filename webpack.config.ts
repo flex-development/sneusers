@@ -79,7 +79,7 @@ const config = (config: Configuration): Configuration => {
       emitOnErrors: false,
       mangleExports: true,
       mergeDuplicateChunks: true,
-      minimize: config.mode === NodeEnv.PROD,
+      minimize: false,
       nodeEnv: NODE_ENV,
       removeAvailableModules: true,
       removeEmptyChunks: true,
