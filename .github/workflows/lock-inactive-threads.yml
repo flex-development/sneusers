@@ -15,7 +15,7 @@ jobs:
     steps:
       - id: lock-threads
         name: Lock inactive issues and pull requests
-        uses: dessant/lock-threads@v2
+        uses: dessant/lock-threads@v3
         with:
           github-token: ${{ github.token }}
           issue-lock-comment: >
