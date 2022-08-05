@@ -16,7 +16,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - id: automate-review
         name: Automate reviews
         uses: flex-development/flautoreview@v1.0.1
