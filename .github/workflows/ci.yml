@@ -57,7 +57,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - id: node
         name: Setup Node ${{ matrix.node }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           scope: '@${{ github.repository_owner }}'
