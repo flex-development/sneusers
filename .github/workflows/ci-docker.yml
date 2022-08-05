@@ -87,7 +87,7 @@ jobs:
           ref: ${{ github.ref }}
       - id: ghcr-login
         name: Login to GitHub Container Registry
-        uses: docker/login-action@v1.10.0
+        uses: docker/login-action@v2.0.0
         with:
           password: ${{ secrets.PAT_CPR_ADMIN }}
           registry: ghcr.io
