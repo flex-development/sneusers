@@ -34,7 +34,7 @@ jobs:
     steps:
       - id: release
         name: Get release details
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             let tag
@@ -76,7 +76,7 @@ jobs:
     steps:
       - id: publish
         name: Publish GitHub release
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         env:
           tag: ${{ needs.release-info.outputs.tag }}
         with:
