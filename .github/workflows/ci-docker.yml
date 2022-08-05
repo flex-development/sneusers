@@ -124,7 +124,7 @@ jobs:
           target: ecosystem
       - id: scp-sync-docker-app-files
         name: Upload docker app files to VM
-        uses: appleboy/scp-action@v0.1.2
+        uses: appleboy/scp-action@v0.1.3
         with:
           debug: true
           host: ${{ secrets.SSH_HOST_STG }}
