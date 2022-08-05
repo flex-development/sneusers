@@ -72,7 +72,7 @@ jobs:
     steps:
       - id: ci-wait
         name: Wait for ci job to succeed
-        uses: lewagon/wait-on-check-action@v1.1.1
+        uses: lewagon/wait-on-check-action@v1.1.2
         if: github.event_name != 'workflow_dispatch'
         with:
           allowed-conclusions: success
