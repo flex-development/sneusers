@@ -222,7 +222,7 @@
     "umzug": "3.2.1",
     "validator": "13.9.0",
     "version-bump-prompt": "6.1.0",
-    "vite": "4.2.0",
+    "vite": "4.2.1",
     "vite-tsconfig-paths": "4.0.7",
     "vitest": "0.29.3",
     "vitest-github-actions-reporter": "0.10.0",
