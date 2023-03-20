@@ -1,239 +1,76 @@
-# USED FOR LOCAL DEVELOPMENT ONLY.
-# SEE: https://github.com/BretFisher/node-docker-good-defaults
-# SEE: https://github.com/kyhsa93/nestjs-rest-cqrs-example
+# DOCKER COMPOSE (DEVELOPMENT)
+# https://docs.docker.com/compose/compose-file/compose-file-v3
+# https://github.com/BretFisher/node-docker-good-defaults
 
 version: '3.9'
 
 services:
-  adminer:
-    container_name: adminer
-    image: adminer
-    depends_on:
-      - postgres
-    environment:
-      ADMINER_DEFAULT_SERVER: ${DB_HOST}
-      ADMINER_DESIGN: dracula
-      ADMINER_PLUGINS:
-        dump-alter dump-date dump-json edit-foreign email-table enum-option
-        enum-types file-upload foreign-system table-indexes-structure
-        table-structure tables-filter
-    ports:
-      - ${ADMINER_PORT}:8080
-    restart: always
-  app:
-    container_name: app
-    # NOTE: Used to enhance DX ONLY. Production image is prefixed by ghcr.io/
-    image: ${DOCKER_IMAGE}
+  api:
+    container_name: api
+    image: ghcr.io/${DOCKER_IMAGE}
     build:
       args:
-        GH_PAT: ${GH_PAT}
+        CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
         NODE_ENV: ${NODE_ENV}
-        NPM_TOKEN: ${NPM_TOKEN}
         PORT: ${PORT}
       context: .
       dockerfile: ./Dockerfile
       target: runner
-    depends_on:
-      - postgres
-      - redis
+    depends_on: []
     environment:
-      API_SERVER_DESCRIP_DEV: ${API_SERVER_DESCRIP_DEV}
-      API_SERVER_DESCRIP_PROD: ${API_SERVER_DESCRIP_PROD}
-      API_SERVER_DESCRIP_STG: ${API_SERVER_DESCRIP_STG}
-      API_SERVER_URL_DEV: ${API_SERVER_URL_DEV}
-      API_SERVER_URL_PROD: ${API_SERVER_URL_PROD}
-      API_SERVER_URL_STG: ${API_SERVER_URL_STG}
       APP_ENV: ${APP_ENV}
-      CACHE_MAX: ${CACHE_MAX}
-      CACHE_TTL: ${CACHE_TTL}
-      CI: ${CI}
-      COOKIE_SECRET: ${COOKIE_SECRET}
-      CSURF_COOKIE_HTTP_ONLY: ${CSURF_COOKIE_HTTP_ONLY}
-      CSURF_COOKIE_KEY: ${CSURF_COOKIE_KEY}
-      CSURF_COOKIE_MAX_AGE: ${CSURF_COOKIE_MAX_AGE}
-      CSURF_COOKIE_PATH: ${CSURF_COOKIE_PATH}
-      CSURF_COOKIE_SAME_SITE: ${CSURF_COOKIE_SAME_SITE}
-      CSURF_COOKIE_SECURE: ${CSURF_COOKIE_SECURE}
-      CSURF_COOKIE_SIGNED: ${CSURF_COOKIE_SIGNED}
-      DB_AUTO_LOAD_MODELS: ${DB_AUTO_LOAD_MODELS}
-      DB_HOST: ${DB_HOST}
-      DB_LOG_QUERY_PARAMS: ${DB_LOG_QUERY_PARAMS}
-      DB_MIGRATE: ${DB_MIGRATE}
-      DB_NAME: ${DB_NAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_PORT: ${DB_PORT}
-      DB_RETRY_ATTEMPTS: ${DB_RETRY_ATTEMPTS}
-      DB_RETRY_DELAY: ${DB_RETRY_DELAY}
-      DB_SYNC_ALTER: ${DB_SYNC_ALTER}
-      DB_SYNC_FORCE: ${DB_SYNC_FORCE}
-      DB_SYNCHRONIZE: ${DB_SYNCHRONIZE}
-      DB_TIMEZONE: ${DB_TIMEZONE}
-      DB_USERNAME: ${DB_USERNAME}
-      DEBUG: ${DEBUG}
-      DEBUG_COLORS: ${DEBUG_COLORS}
-      EMAIL_CLIENT: ${EMAIL_CLIENT}
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_PORT: ${EMAIL_PORT}
-      EMAIL_SEND_AS: ${EMAIL_SEND_AS}
-      EMAIL_PRIVATE_KEY: ${EMAIL_PRIVATE_KEY}
-      EMAIL_USER: ${EMAIL_USER}
       FORCE_COLOR: ${FORCE_COLOR}
-      GH_AUTHORIZATION_URL: ${GH_AUTHORIZATION_URL}
-      GH_CLIENT_ID: ${GH_CLIENT_ID}
-      GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
-      GH_PAT: ${GH_PAT}
-      GH_SCOPES: ${GH_SCOPES}
-      GH_SCOPES_SEPARATOR: ${GH_SCOPES_SEPARATOR}
-      GH_TOKEN_URL: ${GH_TOKEN_URL}
-      GH_USER_EMAIL_URL: ${GH_USER_EMAIL_URL}
-      GH_USER_PROFILE_URL: ${GH_USER_PROFILE_URL}
-      GOOGLE_AUTHORIZATION_URL: ${GOOGLE_AUTHORIZATION_URL}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_SCOPES: ${GOOGLE_SCOPES}
-      GOOGLE_SCOPES_SEPARATOR: ${GOOGLE_SCOPES_SEPARATOR}
-      GOOGLE_TOKEN_URL: ${GOOGLE_TOKEN_URL}
-      GOOGLE_USER_PROFILE_URL: ${GOOGLE_USER_PROFILE_URL}
-      HOST: ${HOST}
-      HOSTNAME: ${HOSTNAME}
-      JWT_EXP_ACCESS: ${JWT_EXP_ACCESS}
-      JWT_EXP_REFRESH: ${JWT_EXP_REFRESH}
-      JWT_EXP_VERIFICATION: ${JWT_EXP_VERIFICATION}
-      JWT_SECRET_ACCESS: ${JWT_SECRET_ACCESS}
-      JWT_SECRET_REFRESH: ${JWT_SECRET_REFRESH}
-      JWT_SECRET_VERIFICATION: ${JWT_SECRET_VERIFICATION}
       NEST_DEBUG: ${NEST_DEBUG}
       NODE_ENV: ${NODE_ENV}
-      NPM_TOKEN: ${NPM_TOKEN}
-      PGAPPNAME: ${PGAPPNAME}
       PORT: ${PORT}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_USERNAME: ${REDIS_USERNAME}
-      SESSION_COOKIE_HTTP_ONLY: ${SESSION_COOKIE_HTTP_ONLY}
-      SESSION_COOKIE_MAX_AGE: ${SESSION_COOKIE_MAX_AGE}
-      SESSION_COOKIE_PATH: ${SESSION_COOKIE_PATH}
-      SESSION_COOKIE_SAME_SITE: ${SESSION_COOKIE_SAME_SITE}
-      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE}
-      SESSION_NAME: ${SESSION_NAME}
-      SESSION_PROXY: ${SESSION_PROXY}
-      SESSION_RESAVE: ${SESSION_RESAVE}
-      SESSION_ROLLING: ${SESSION_ROLLING}
-      SESSION_SAVE_UNINITIALIZED: ${SESSION_SAVE_UNINITIALIZED}
-      SESSION_SECRET: ${SESSION_SECRET}
-      SESSION_UNSET: ${SESSION_UNSET}
-      THROTTLE_LIMIT: ${THROTTLE_LIMIT}
-      THROTTLE_TTL: ${THROTTLE_TTL}
-      TLD: ${TLD}
-    links:
-      - postgres:${DB_HOST}
-      - redis:${REDIS_HOST}
+    healthcheck:
+      test: curl -f http://localhost:${PORT} || exit 1
+    links: []
     ports:
       - ${PORT}:${PORT}
-      - 9229:9229
-    restart: always
+    pull_policy: build
+    restart: unless-stopped
     volumes:
-      - ./__doubles__:/opt/sneusers/__doubles__
-      - ./__fixtures__:/opt/sneusers/__fixtures__
-      - ./__tests__:/opt/sneusers/__tests__
-      - ./src:/opt/sneusers/src
-      - ./tools/helpers:/opt/sneusers/tools/helpers
-      - ./typings:/opt/sneusers/typings
-      - ./views:/opt/sneusers/views
-      - ./.mocharc.base.cjs:/opt/sneusers/.mocharc.base.cjs
-      - ./.mocharc.cjs:/opt/sneusers/.mocharc.cjs
-      - ./.nycrc:/opt/sneusers/.nycrc
-      - ./.sequelizerc:/opt/sneusers/.sequelizerc
-      - ./package.json:/opt/sneusers/package.json
-      - ./tsconfig.app.json:/opt/sneusers/tsconfig.app.json
-      - ./tsconfig.json:/opt/sneusers/tsconfig.json
-      - ./webpack.config.ts:/opt/sneusers/webpack.config.ts
-    working_dir: /opt/sneusers
-  nginx:
-    container_name: nginx
+      - ./package.json:/app/${CLOUDSDK_CORE_PROJECT}/package.json
+      - ./src:/app/${CLOUDSDK_CORE_PROJECT}/src
+      - ./tsconfig.build.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.build.json
+      - ./tsconfig.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.json
+    working_dir: /app/${CLOUDSDK_CORE_PROJECT}
+  proxy:
+    container_name: proxy
     image: nginx:alpine-perl
-    command: ['nginx-debug', '-g', 'daemon off;']
+    command:
+      - nginx-debug
+      - -g
+      - daemon off;
     environment:
-      ADMINER_PORT: 8080
-      ADMINER_SERVER_NAME: ${ADMINER_SERVER_NAME}
+      CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
+      GCE_SERVICE_ACCOUNT_FILE: ${GCE_SERVICE_ACCOUNT_FILE}
+      LEGO_ACCOUNT_EMAIL: ${LEGO_ACCOUNT_EMAIL}
+      LEGO_DOMAINS: ${LEGO_DOMAINS}
+      LEGO_PATH: /etc/nginx/${LEGO_PATH}
       PORT: ${PORT}
-      REDIS_PORT: ${REDIS_COMMANDER_PORT}
-      REDIS_SERVER_NAME: ${REDIS_SERVER_NAME}
       SERVER_NAME: ${SERVER_NAME}
       TLD: ${TLD}
     depends_on:
-      - adminer
-      - app
-      - redis-commander
+      api:
+        condition: service_started
     links:
-      - adminer:adminer
-      - app:app
-      - redis-commander:redis-commander
+      - api:api
     ports:
       - 443:443
       - 80:80
-    restart: always
+    restart: unless-stopped
     tty: true
     volumes:
-      - ./nginx/templates:/etc/nginx/templates
-      - ./nginx/general.conf:/etc/nginx/general.conf
-      - ./nginx/mime.types:/etc/nginx/mime.types
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/proxy.conf:/etc/nginx/proxy.conf
-      - ./nginx/security.conf:/etc/nginx/security.conf
-      - ./nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
-      - /etc/letsencrypt/archive/${TLD}:/etc/letsencrypt/archive/${TLD}
-      - /etc/letsencrypt/live/${TLD}:/etc/letsencrypt/live/${TLD}
-      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
-      - /etc/nginx/conf.d:/etc/nginx/conf.d
-      - /etc/nginx/logs:/etc/nginx/logs
-      - /etc/nginx/run:/etc/nginx/run
-  postgres:
-    container_name: ${DB_HOST}
-    image: postgres:${POSTGRES_IMAGE_TAG}
-    environment:
-      PGAPPNAME: ${PGAPPNAME}
-      PGPORT: ${PGPORT}
-      PGTZ: ${PGTZ}
-      PGUSER: ${PGUSER}
-      PG_COLOR: ${PG_COLOR}
-      POSTGRES_DATABASES: ${POSTGRES_DATABASES}
-      POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
-      POSTGRES_INITDB_ARGS: ${POSTGRES_INITDB_ARGS}
-      POSTGRES_INITDB_WALDIR: ${POSTGRES_INITDB_WALDIR}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-    ports:
-      - ${DB_PORT}:${PGPORT}
-    restart: always
-    volumes:
-      - ${PGDATA}:/var/lib/postgresql/data
-      - ./docker/entrypoint/initdb.d:/docker-entrypoint-initdb.d
-  redis:
-    container_name: ${REDIS_HOST}
-    image: redis:alpine
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    ports:
-      - ${REDIS_PORT}:6379
-    restart: always
-    volumes:
-      - ./redis:/data
-  redis-commander:
-    container_name: redis-commander
-    image: rediscommander/redis-commander:latest
-    environment:
-      HTTP_USER: ${REDIS_USER}
-      HTTP_PASSWORD: ${REDIS_PASSWORD}
-      PORT: ${REDIS_COMMANDER_PORT}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_HOSTS: local:redis:${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      REDIS_PORT: ${REDIS_PORT}
-    depends_on:
-      - redis
-    links:
-      - redis
-    ports:
-      - ${REDIS_COMMANDER_PORT}:${REDIS_COMMANDER_PORT}
-    restart: always
+      - ./docker-entrypoint.d/lego.sh:/docker-entrypoint.d/lego.sh
+      - ./scripts/lego/crontab:/etc/crontab
+      - ./scripts/lego/renew.sh:/lego-renew.sh
+      - ./src/nginx/general.conf:/etc/nginx/general.conf
+      - ./src/nginx/mime.types:/etc/nginx/mime.types
+      - ./src/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./src/nginx/proxy.conf:/etc/nginx/proxy.conf
+      - ./src/nginx/security.conf:/etc/nginx/security.conf
+      - ./src/nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
+      - ./src/nginx/templates:/etc/nginx/templates

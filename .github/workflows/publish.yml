@@ -1,0 +1,140 @@
+# Publish
+#
+# Publish container image to the GitHub Container Registry when a new tag is created or on workflow
+# dispatch.
+#
+# References:
+#
+# - https://dbdocs.io/docs/ci-integration
+# - https://docs.github.com/actions/learn-github-actions/contexts
+# - https://docs.github.com/actions/learn-github-actions/expressions
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#release
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#release
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
+# - https://github.com/actions/checkout
+# - https://github.com/actions/setup-node
+# - https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#yarn2-configuration
+# - https://github.com/actions/upload-artifact
+# - https://github.com/docker/build-push-action
+# - https://github.com/docker/login-action
+# - https://github.com/docker/metadata-action
+# - https://github.com/hmarr/debug-action
+# - https://github.com/opencontainers/image-spec/blob/main/annotations.md
+
+---
+name: publish
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: release tag
+        required: true
+env:
+  TAG: ${{ github.event.inputs.tag || github.event.ref_name }}
+  REF: ${{ format('refs/tags/{0}', env.TAG) }}
+  REPO_URL: ${{ format('{0}/{1}', github.server_url, github.repository) }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - id: debug
+        name: Print environment variables and event payload
+        uses: hmarr/debug-action@v2.1.0
+  ghcr:
+    needs: metadata
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    env:
+      CONTAINER_URL: |
+        ${{ format('{0}/pkgs/container/{1}', env.REPO_URL, secrets.CLOUDSDK_CORE_PROJECT) }}
+    environment:
+      name: container
+      url: ${{ env.CONTAINER_URL }}
+    steps:
+      - id: checkout
+        name: Checkout ${{ env.TAG }}
+        uses: actions/checkout@v3.4.0
+        with:
+          ref: ${{ env.REF }}
+      - id: login
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v2.1.0
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+      - id: version
+        name: Get container image version
+        run: echo "result=$(jq .version package.json -r)" >> $GITHUB_OUTPUT
+      - id: metadata
+        name: Extract container image metadata
+        uses: docker/metadata-action@v4.3.0
+        with:
+          flavor: latest=true
+          images: ghcr.io/${{ github.repository }}
+          labels: |
+            org.opencontainers.image.authors=@unicornware
+            org.opencontainers.image.licenses=$(jq .license package.json -r)
+            org.opencontainers.image.title=$(jq .name package.json -r)
+            org.opencontainers.image.revision=${{ env.SHA }}
+            org.opencontainers.image.source=${{ env.REPO_URL }}
+            org.opencontainers.image.url=${{ env.CONTAINER_URL }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.result }}
+          tags: |
+            type=ref,event=${{ github.event_name === 'push' && 'tag' || github.event_name }}
+            type=semver,pattern={{raw}},value=${{ steps.version.outputs.result }}
+            type=sha
+            type=sha,format=long
+      - id: build-push
+        name: Build and push container image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          build-args: |
+            CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            PORT=${{ secrets.PORT }}
+          context: .
+          file: ./Dockerfile
+          labels: ${{ steps.metadata.outputs.labels }}
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          target: ecosystem
+  dbdocs:
+    needs: ghcr
+    runs-on: ubuntu-latest
+    env:
+      DB_ARCHITECTURE_FILE: ./DATABASE.dbml
+    environment:
+      name: dbdocs
+      url: https://dbdocs.io/unicornware/${{ secrets.CLOUDSDK_CORE_PROJECT }}
+    steps:
+      - id: checkout
+        name: Checkout ${{ env.TAG }}
+        uses: actions/checkout@v3.4.0
+        with:
+          ref: ${{ env.REF }}
+      - id: install
+        name: Install dbdocs
+        run: npm install --global dbdocs
+      - id: build
+        name: Update dbdocs project
+        run: dbdocs build $DB_ARCHITECTURE_FILE
+        env:
+          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+      - id: archive
+        name: Archive database schema file
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: DATABASE.dbml
+          path: ${{ env.DB_ARCHITECTURE_FILE }}

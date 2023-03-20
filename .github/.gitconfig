@@ -1,157 +1,116 @@
-# Git Configuration
-# See: http://michaelwales.com/articles/make-gitconfig-work-for-you/
+# GIT CONFIGURATION
+# http://michaelwales.com/articles/make-gitconfig-work-for-you
 
-# Git Helpers
+# aliases - basic helpers
 [alias]
-# Git add and commit - all in one step
-ac = "!f() { git add .; git cm \"$@\"; }; f"
+# add and commit
+ac = "!f() { git add . && git cm \"$@\"; }; f"
 
-# Add new git remote
+# add new remote
 ar = "!f() { git remote add \"$0\" \"$1\"; }; f"
 
-# Execute git branch command
-b = "!f() { git branch $@; }; f"
+# delete branch locally
+bdel = "!f() { git branch -d $@; }; f"
 
-# Delete branch locally
-bdel= "!f() { git b -D $@; }; f"
+# delete branch remotely
+bdelr = "!f() { git push origin --no-verify --delete $@; }; f"
 
-# Delete branch remotely
-bdelr= "!f() { git push origin --no-verify --delete $@; }; f"
+# rename branch
+bren = "!f() { git branch -m $@ && git pou $@; }; f"
 
-# Rename branch
-bren= "!f() { git b -m $@; git puo $@; }; f"
+# checkout and push new branch to origin
+chb = "!f() { git checkout -b \"$@\" && git pou \"$@\"; }; f"
 
-# Checkout branch
-ch = "!f() { git checkout $@; }; f"
+# checkout branch and pull latest version
+chp = "!f() { git checkout $@ && git pull; }; f"
 
-# Checkout and push new branch to origin
-chb = "!f() { git ch -b \"$@\"; git puo \"$@\"; }; f"
+# commit with message
+cm = "!f() { git commit -s -m \"$@\"; }; f"
 
-# Checkout branch and pull latest version
-chp = "!f() { git ch $@; git pull; }; f"
+# tell git to start tracking branch and push to origin
+pou = "!f() { git push origin --no-verify -u $@; }; f"
 
-# Commit with message
-cm = "!f() { git commit -S -m \"$@\"; }; f"
-
-# Create new local repo, perform initial commit, and push
-launch = "!f() { git init; git chore \"first commit\"; git b -M next; git rao $1; git puo next; }; f"
-
-# Tell Git to start tracking branch and push to origin
-puo = "!f() { git push origin --no-verify -u $@; }; f"
-
-# Add new remote origin
-rao = "!f() { git remote add origin $@; }; f"
-
-# Rebase branch
-rb = "!f() { git rebase $@; }; f"
-
-# Remove local .git directory
+# remove local .git directory
 restart = "!f() { rm -rf .git; echo \"removed .git directory.\"; }; f"
 
-# Undo last commit
-ulc = "!f() { git reset HEAD~1 --soft; }; f"
+# create new local repo and perform initial commit
+setup = "!f() { git init && git config branch.autosetuprebase always && git config core.ignorecase false && git config pull.rebase true && git config rebase.autoStash true && git ac \"chore: initial commit\"; }; f"
 
-# Conventional Commits
-# See: https://www.conventionalcommits.org/
-# See: https://github.com/angular/angular/blob/master/CONTRIBUTING.md#type
+# undo last commit
+ulc = "!f() { git reset head~1 --soft; }; f"
+
+# aliases - branch naming conventions
 [alias]
-# Changes that affect the build system or external dependencies
-build = "!f() { git ac \"build: $@\"; }; f"
+# create new feature branch and push upstream
+chbfeat = "!f() { git chb feat/$@; }; f"
 
-# Changes to our CI configuration files and scripts
-ci = "!f() { git ac \"ci: $@\"; }; f"
+# create new bugfix (feature) branch and push upstream
+chbfix = "!f() { git chb feat/fix/$@; }; f"
 
-# Changes that don't impact external users
-chore = "!f() { git ac \"chore: $@\"; }; f"
+# create new hotfix branch and push upstream
+chbhotfix = "!f() { git chb hotfix/$@; }; f"
 
-# Documentation only changes
-docs = "!f() { git ac \"docs: $@\"; }; f"
+# create new release branch and push upstream
+chbrelease = "!f() { git chb release/$@; }; f"
 
-# New features
-feat = "!f() { git ac \"feat: $@\"; }; f"
-
-# Bug fixes
-fix = "!f() { git ac \"fix: $@\"; }; f"
-
-# Performance improvements
-perf = "!f() { git ac \"perf: $@\"; }; f"
-
-# Code improvements
-refactor = "!f() { git ac \"refactor: $@\"; }; f"
-
-# Revert past changes
-revert = "!f() { git ac \"revert: $@\"; }; f"
-
-# Changes that do not affect the meaning of the code
-style = "!f() { git ac \"style: $@\"; }; f"
-
-# Adding missing tests or correcting existing tests
-test = "!f() { git ac \"test: $@\"; }; f"
-
-# Work in progress (i.e feature implemented, but not tested)
-wip = "!f() { git ac \"wip: $@\"; }; f"
-
-# Branch Naming Conventions Aliases
+# aliases - husky
 [alias]
-# Create a new bugfix branch and push upstream
-chbb = "!f() { git chb bugfix/$@; }; f"
-
-# Create a new hotfix branch and push upstream
-chbh = "!f() { git chb hotfix/$@; }; f"
-
-# Create a new feature branch and push upstream
-chbf = "!f() { git chb feat/$@; }; f"
-
-# Create a new release branch and push upstream
-chbr = "!f() { git chb release/$@; }; f"
-
-# Create a new support branch and push upstream
-chbs = "!f() { git chb support/$@; }; f"
-
-# Helper Aliases
-[alias]
-# Generate a SSH key
-keygen = "!f() { ssh-keygen -t rsa -b 4096 -C \"$@\"; }; f"
-
-# Recursively delete files matching a pattern
-pdel = "!f() { find . -type f -name \"$@\" -delete; }; f"
-
-# Generate a secret signing key
-signingkey = "!f() { openssl rand -base64 32; }; f"
-
-# Husky
-[alias]
-# Force push commits without running `pre-push` hook
+# force push commits without running `pre-push` hook
 fpnv = "!f() { git pnv --force ; }; f"
 
-# Push commits without running `pre-push` hook
+# push commits without running `pre-push` hook
 pnv = "!f() { git push --no-verify $@; }; f"
 
+[branch]
+autosetuprebase = always
+
+[checkout]
+defaultRemote = origin
+
+[color]
+ui = true
+
 [commit]
-gpgSign = true
+gpgsign = true
 
 [core]
-autocrlf = input
+autocrlf = false
+editor = code-insiders --wait
 ignorecase = false
+safecrlf = false
+
+[diff]
+tool = vscode
+
+[difftool "vscode"]
+cmd = code-insiders --wait --diff $LOCAL $REMOTE
 
 [gitflow "prefix"]
 feature = feat/
 hotfix = hotfix/
 release = release/
-support = support/
-versiontag = v
+support = feat/fix/
 
 [gpg]
-program = /usr/local/bin/gpg
+program = gpg2
 
 [init]
-defaultBranch = next
+defaultBranch = main
+
+[merge]
+tool = vscode
+
+[mergetool "vscode"]
+cmd = code-insiders --wait --merge $REMOTE $LOCAL $BASE $MERGED
 
 [pull]
 rebase = true
 
-[url "git@bitbucket.org:"]
-insteadOf = bb:
+[rebase]
+autoStash = true
+
+[tag]
+forceSignAnnotated = true
 
 [url "git@github.com:"]
 insteadOf = gh:

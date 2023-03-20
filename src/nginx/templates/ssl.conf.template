@@ -1,0 +1,2 @@
+ssl_certificate .lego/certificates/_.${TLD}.crt;
+ssl_certificate_key .lego/certificates/_.${TLD}.key;

@@ -1,96 +1,73 @@
-# DOCKERFILE REFERENCE: https://docs.docker.com/engine/reference/builder
-# SEE: https://github.com/BretFisher/node-docker-good-defaults
-# SEE: https://github.com/nodejs/docker-node#nodealpine
+# DOCKERFILE
+# https://docs.docker.com/engine/reference/builder
+# https://github.com/BretFisher/node-docker-good-defaults
+# https://github.com/nodejs/docker-node#nodealpine
 
 # deps
 # INSTALL DEPENDENCIES ONLY WHEN NEEDED
-FROM node:14-alpine As deps
+FROM node:19-alpine As deps
 
-ARG GH_PAT
+ARG CLOUDSDK_CORE_PROJECT
+ARG GITHUB_TOKEN
 ARG NODE_ENV=production
-ARG NPM_TOKEN
 
-ENV GH_PAT $GH_PAT
+ENV CLOUDSDK_CORE_PROJECT $CLOUDSDK_CORE_PROJECT
+ENV GITHUB_TOKEN $GITHUB_TOKEN
 ENV NODE_ENV $NODE_ENV
-ENV NPM_TOKEN $NPM_TOKEN
 
-WORKDIR /opt/sneusers
+WORKDIR /app/$CLOUDSDK_CORE_PROJECT
 COPY .yarn ./.yarn
 COPY .yarnrc.yml ./.yarnrc.yml
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
-RUN yarn workspaces focus @flex-development/sneusers
-ENV NODE_OPTIONS -r ts-node/register
-ENV PATH /opt/sneusers/node_modules/.bin:$PATH
+RUN yarn
 
 # builder
 # REBUILD SOURCE CODE ONLY WHEN NEEDED
 FROM deps As builder
 
-WORKDIR /opt/sneusers
-COPY __fixtures__ ./__fixtures__
+WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+COPY build.config.ts ./build.config.ts
 COPY src ./src
-COPY tools/helpers ./tools/helpers
-COPY typings ./typings
-COPY views ./views
-COPY .sequelizerc ./.sequelizerc
-COPY nest-cli.json ./nest-cli.json
-COPY tsconfig.app.json ./tsconfig.app.json
+COPY tsconfig.build.json ./tsconfig.build.json
 COPY tsconfig.json ./tsconfig.json
-COPY webpack.config.ts ./webpack.config.ts
-COPY --from=deps /opt/sneusers/.yarn ./.yarn
-COPY --from=deps /opt/sneusers/node_modules ./node_modules
-COPY --from=deps /opt/sneusers/.yarnrc.yml ./.yarnrc.yml
-COPY --from=deps /opt/sneusers/package.json ./package.json
-COPY --from=deps /opt/sneusers/yarn.lock ./yarn.lock
-RUN nest build
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/.yarn ./.yarn
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/.yarnrc.yml ./.yarnrc.yml
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/yarn.lock ./yarn.lock
+ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
+RUN mkbuild
 
 # runner
-# APPLICATION RUNNER
+# DEVELOPMENT SERVER
 FROM builder As runner
 
 ARG PORT=8080
 
 ENV PORT $PORT
 
-WORKDIR /opt/sneusers
-COPY --from=builder /opt/sneusers/__fixtures__ ./__fixtures__
-COPY --from=builder /opt/sneusers/dist ./dist
-COPY --from=builder /opt/sneusers/src ./src
-COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers
-COPY --from=builder /opt/sneusers/typings ./typings
-COPY --from=builder /opt/sneusers/views ./views
-COPY --from=builder /opt/sneusers/.sequelizerc ./.sequelizerc
-COPY --from=builder /opt/sneusers/nest-cli.json ./nest-cli.json
-COPY --from=builder /opt/sneusers/tsconfig.app.json ./tsconfig.app.json
-COPY --from=builder /opt/sneusers/tsconfig.json ./tsconfig.json
-COPY --from=builder /opt/sneusers/webpack.config.ts ./webpack.config.ts
-COPY --from=deps /opt/sneusers/node_modules ./node_modules
-COPY --from=deps /opt/sneusers/package.json ./package.json
-EXPOSE $PORT 9229
-CMD ["nest", "start", "-wd"]
+WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
+EXPOSE $PORT
+CMD ["node", "--enable-source-maps", "./dist/main.mjs"]
 
 # ecosystem
-# APPLICATION RUNNER (PRODUCTION)
-FROM node:14-alpine As ecosystem
+# PRODUCTION SERVER
+FROM node:19-alpine As ecosystem
 
 ARG PORT=8080
 
 ENV PORT $PORT
 
-RUN yarn global add pm2
-WORKDIR /opt/sneusers
+WORKDIR /app/$CLOUDSDK_CORE_PROJECT
 COPY ecosystem.config.cjs ./ecosystem.config.cjs
-COPY --from=builder /opt/sneusers/__fixtures__ ./__fixtures__
-COPY --from=builder /opt/sneusers/dist ./dist
-COPY --from=builder /opt/sneusers/src ./src
-COPY --from=builder /opt/sneusers/tools/helpers ./tools/helpers
-COPY --from=builder /opt/sneusers/views ./views
-COPY --from=builder /opt/sneusers/.sequelizerc ./.sequelizerc
-COPY --from=builder /opt/sneusers/tsconfig.json ./tsconfig.json
-COPY --from=deps /opt/sneusers/node_modules ./node_modules
-COPY --from=deps /opt/sneusers/package.json ./package.json
-ENV NODE_OPTIONS -r ts-node/register
-ENV PATH /opt/sneusers/node_modules/.bin:$PATH
-EXPOSE $PORT 9229
-CMD ["pm2-docker", "start", "ecosystem.config.cjs"]
+COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
+COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/src ./src
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
+COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
+ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
+EXPOSE $PORT
+CMD ["pm2-docker", "start", "ecosystem.config.cjs", "-i", "max"]
