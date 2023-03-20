@@ -1,18 +1,16 @@
-const pkg = require('./package.json')
-
 /**
  * @file PM2 Configuration
+ * @module config/pm2
  * @see https://pm2.keymetrics.io/docs/usage/application-declaration
  */
 
 module.exports = {
   apps: [
     {
-      name: pkg.name.split('/')[1],
-      script: './dist/main.js',
-      node_args: '-r ts-node/register',
-      watch: true,
-      ignore_watch: ['db/data', 'node_modules']
+      interpreter: 'node',
+      interpreter_args: '--enable-source-maps',
+      name: require('./package.json').name.replace(/.+?\//, ''),
+      script: './dist/main.mjs'
     }
   ]
 }

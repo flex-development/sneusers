@@ -2,28 +2,35 @@
 
 <!-- A clear and concise description of your changes. -->
 
-## Tests
+## Linked issues
 
 <!--
-What did you test? List tests, include snippet from test suites, or write "N/A"
-if tests were not needed.
+A list of linked issues and/or pull requests.
+
+- <closes|fixes|resolves> #<issue-number>
+- <prereleases|releases> #<pr-number>
 -->
+
+## Related documents
+
+<!-- A list of related documents (e.g. docs, proposals, specs, etc), if any. -->
+
+-
+-
+-
 
 ## Additional context
 
 <!--
-Add any other information (docs, files, issue references, etc) about the pull
-request here.
+Include additional details here. Be sure to note if any tolerable vulnerabilities or warnings have been introduced.
 -->
-
-## Linked issues
-
-<!-- closes #[issue number], fixes #[issue number] -->
 
 ## Submission checklist
 
-- [ ] pr title prefixed with `PR:` (e.g: `PR: User authentication`)
-- [ ] pr title describes functionality (not vague title like `Update index.md`)
-- [ ] pr targets branch `next`
-- [ ] project was run locally to verify that there are no errors
+- [ ] self-review performed
+- [ ] tests added and/or updated
 - [ ] documentation added or updated
+- [ ] new, **tolerable** vulnerabilities and/or warnings documented, if any
+- [ ] [pr naming conventions][1]
+
+[1]: https://github.com/flex-development/sneusers/blob/main/CONTRIBUTING.md#pull-request-titles

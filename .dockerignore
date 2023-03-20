@@ -1,45 +1,47 @@
-# SEE: https://docs.docker.com/engine/reference/builder#dockerignore-file
+# DOCKER IGNORE
+# https://docs.docker.com/engine/reference/builder#dockerignore-file
 
-### macOS ###
-# General
-**/.DS_*
-**/.AppleDouble
-**/.LSOverride
+# macOS
+# ------------------------------------------------------------------------------
+.DS_*
+._*
 
-# Thumbnails
-**/._*
+# Node
+# ------------------------------------------------------------------------------
+*.log
+*.pid
+*.pid.lock
+*.seed
+*.tgz
+*.zip
+.npm
+.yarn-integrity
+logs
+npm-debug.log*
+pids
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+yarn-debug.log*
+yarn-error.log*
 
-### Node ###
-# Logs
-**/logs
-**/*.log*
-
-# Yarn v2 (Not using Zero-Installs)
-# see: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.yarn
-!.yarn/patches
+# Yarn 2 (Not using Zero-Installs)
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+# ------------------------------------------------------------------------------
+.pnp.*
+.yarn/*
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
 
-### Testing ###
-# General
-**/__doubles__
-**/__tests__
-**/*.spec.ts
+# Environment
+# ------------------------------------------------------------------------------
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
 
-### Misc ###
-# Fixtures
-__fixtures__
-!__fixtures__/config-service.fixture.ts
-!__fixtures__/magic-number.fixture.ts
-!__fixtures__/sequelize-config-service.fixture.ts
-!__fixtures__/sequelize-service.fixture.ts
-!__fixtures__/sequelize.fixture.ts
-!__fixtures__/user-password.fixture.ts
-
-# Project tools
-tools/helpers
-!tools/helpers/match-specifier.cjs
-!tools/helpers/tsconfig-paths.cjs
+# Testing
+# ------------------------------------------------------------------------------
+**/__mocks__/
+**/__snapshots__/
+**/__tests__/

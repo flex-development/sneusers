@@ -1,8 +1,0 @@
-# DOPPLER CONFIG
-# SEE: https://docs.doppler.com/docs/install-cli#project-setup
-
-setup:
-  api-host: https://api.doppler.com
-  config: dev
-  dashboard-host: https://dashboard.doppler.com
-  project: sneusers

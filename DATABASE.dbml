@@ -1,0 +1,25 @@
+// DATABASE ARCHITECTURE
+// https://dbml.org
+
+Project sneusers {
+  database_type: 'postgresql'
+  note: 'demo users system api'
+}
+
+Table users {
+  created_at bigint [not null, default: `EXTRACT(epoch FROM now())`]
+  display_name text [not null]
+  email varchar(254) [unique, not null]
+  id int [pk, increment]
+  updated_at bigint [default: null]
+
+  indexes {
+    created_at [name: 'created_at']
+    display_name [name: 'display_name']
+    email [name: 'email', unique]
+    id [pk]
+    updated_at [name: 'updated_at']
+  }
+
+  note: 'user info'
+}

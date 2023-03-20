@@ -4,31 +4,35 @@
 #
 # References:
 #
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#issue_comment
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#schedule
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#issue_comment
 # - https://github.com/lee-dohm/no-response
 
 ---
 name: no-response-handler
 on:
   issue_comment:
-    types: [created]
+    types:
+      - created
   schedule:
-    # Schedule for five minutes after the hour, every hour
-    - cron: '5 * * * *'
+    # five minutes after the hour, every hour
+    - cron: 5 * * * *
+permissions:
+  issues: write
 jobs:
-  close-issues:
+  no-response-handler:
     runs-on: ubuntu-latest
     steps:
       - id: close
-        name: Close issues after 7 days
-        uses: lee-dohm/no-response@9bb0a4b5e6a45046f00353d5de7d90fb8bd773bb
+        name: Close issues after 14 days
+        uses: lee-dohm/no-response@v0.5.0
         with:
-          closeComment: >
-            This issue has been automatically closed because there has been no
-            response to our request for more information from the original
-            author. With only the information that is currently available, there
-            isn't enough information to take action. Please reach out if you
-            have or find the answers needed so next steps, if any, can be
-            determined.
-          daysUntilClose: 7
+          closeComment: |
+            This issue has been automatically closed because there has been no response to our
+            request for more information from the original author. With only the information that is
+            currently available, there isn't enough information to take action. Please reach out if
+            you have or find the answers needed so next steps, if any, can be determined.
+          daysUntilClose: 14
           responseRequiredLabel: status:awaiting-answers
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}

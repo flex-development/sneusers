@@ -1,8 +1,9 @@
-# Pre Commit Hook
+#!/bin/sh
+
+# Pre-Commit Workflow
 #
 # References:
 #
-# - https://typicode.github.io/husky
 # - https://github.com/okonet/lint-staged#command-line-flags
 
-lint-staged
+cross-env LINT_STAGED=1 lint-staged --config=.lintstagedrc.json --relative --verbose

@@ -1,193 +1,141 @@
 # Contributing Guide
 
-This document aims to describe the workflows and rules used for developing this
-project. This includes, but is not limited to:
+This document aims to describe the workflows and rules used for developing this project.
+
+This includes, but is not limited to:
 
 - how to contribute code (coding standards, testing, documenting source code)
-- how to open new issues
 - how pull requests are handled
-
-## Overview
-
-[Getting Started](#getting-started)  
-[Contributing Code](#contributing-code)  
-[Labels](#labels)  
-[Opening Issues](#opening-issues)  
-[Pull Requests & Code Reviews](#pull-requests-&-code-reviews)  
-[Merge Strategies](#merge-strategies)  
-[Releasing](#releasing)  
-[Integrations](docs/INTEGRATIONS.md)
+- how to file bug reports
 
 ## Getting Started
 
-### Integrations
+Follow the steps below to setup your local development environment:
 
-Frameworks, libraries, tools, and other integrations used in this project.
+1. Clone repository
 
-#### Dbdocs
+   ```sh
+   git clone https://github.com/flex-development/sneusers
+   cd sneusers
+   ```
 
-[Dbdocs][1] is a tool for creating web-based database documentation using
-[database markup language (DBML)][2].
+2. Install binaries with [Homebrew][1]
 
-#### Docker
+   ```sh
+   brew bundle --file ./Brewfile
+   ```
 
-> Docker is an open platform for developing, shipping, and running applications.
-> Docker enables you to separate your applications from your infrastructure so
-> you can deliver software quickly. With Docker, you can manage your
-> infrastructure in the same ways you manage your applications.
->
-> \- <https://docs.docker.com/get-started/overview>
+3. Set node version
 
-Docker containerizes each piece of `sneuser`'s infrastructure.
+   ```sh
+   nvm use
+   ```
 
-See [`docker-compose.yml`](docker-compose.yml) for a list of related services.
+4. [Configure commit signing][2]
 
-See [Get Docker][3] for help installing Docker on your platform.
+5. Update `~/.gitconfig`
 
-#### Doppler
+   ```sh
+   git config --global commit.gpgsign true
+   git config --global user.email <email>
+   git config --global user.name <name>
+   git config --global user.username <username>
+   ```
 
-[Doppler][4] is a tool used for managing environment variables. The [CLI][5] is
-used to inject variables into `process.env`.
+   See [`.gitconfig`](.github/.gitconfig) for a global Git config example.
 
-Contact a maintainer to get added to the `sneusers` [Doppler][4] project.
+6. Install dependencies
 
-Afterwards, see the [installation docs][6] to begin managing project secrets.
+   ```sh
+   yarn
+   ```
 
-#### NestJS
+   **Note**: This project uses [Yarn 2][3]. Consult [`.yarnrc.yml`](.yarnrc.yml) for an overview of configuration
+   options and required environment variables. Furthermore, if you already have a global Yarn configuration, or any
+   `YARN_*` environment variables set, an error will be thrown if any settings conflict with the project's Yarn
+   configuration, or the Yarn 2 API. Missing environment variables will also yield an error.
 
-> Nest (NestJS) is a framework for building efficient, scalable [Node.js][7]
-> server-side applications. It uses progressive JavaScript, is built with and
-> fully supports [TypeScript][8] (yet still enables developers to code in pure
-> JavaScript) and combines elements of OOP (Object Oriented Programming), FP
-> (Functional Programming), and FRP (Functional Reactive Programming).
->
-> \- <https://docs.nestjs.com>
+7. [ZSH][4] setup
 
-#### TypeScript
+8. Update `$ZDOTDIR/.zprofile`:
 
-> TypeScript is **JavaScript with syntax for types.**
->
-> TypeScript is a strongly typed programming language that builds on JavaScript,
-> giving you better tooling at any scale.
->
-> \- <https://typescriptlang.org>
+   ```sh
+   # PATH
+   # 1. local node_modules
+   [ -d $PWD/node_modules/.bin ] && export PATH=$PWD/node_modules/.bin:$PATH
 
-#### Yarn
+   # DOTENV ZSH PLUGIN
+   # - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv
+   export ZSH_DOTENV_FILE=.env.zsh
 
-This project uses Yarn 2. The Yarn configuration for this project can be found
-in [`.yarnrc.yml`](.yarnrc.yml).
+   # NVM
+   # - https://github.com/nvm-sh/nvm
+   export NVM_DIR=$HOME/.nvm
 
-If you're already using Yarn globally, see the [Yarn 2 Migration docs][9].
+   # ---------------------------------------------------------------------------
+
+   # LOAD ENVIRONMENT VARIABLES IN CURRENT WORKING DIRECTORY
+   # 1. $GITHUB_WORKSPACE
+   [ -d $PWD/.git ] && export GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+   ```
+
+9. Load `dotenv` plugin via `$ZDOTDIR/.zshrc`:
+
+   ```zsh
+   plugins=(dotenv)
+   ```
+
+10. Reload shell
+
+   ```sh
+   exec $SHELL
+   ```
 
 ### Environment Variables
 
-#### Docker Compose
+#### Adding New Environment Variables
 
-Default values are located in `.env`.
+**TODO**: adding new environment variables.
 
-See [Environment Variables](README.md#environment-variables) in the `README` for
-more details.
+#### Development
+
+| name                       |
+| -------------------------- |
+| `APP_ENV`                  |
+| `CLOUDSDK_CORE_PROJECT`    |
+| `CODECOV_TOKEN`            |
+| `DBDOCS_TOKEN`             |
+| `DOCKER_IMAGE`             |
+| `FORCE_COLOR`              |
+| `GCE_SERVICE_ACCOUNT_FILE` |
+| `GITHUB_TOKEN`             |
+| `LEGO_ACCOUNT_EMAIL`       |
+| `LEGO_DOMAINS`             |
+| `LEGO_PATH`                |
+| `NEST_DEBUG`               |
+| `NODE_ENV`                 |
+| `NODE_NO_WARNINGS`         |
+| `PAT_BOT`                  |
+| `PORT`                     |
+| `SERVER_NAME`              |
+| `TLD`                      |
+| `URL`                      |
 
 #### GitHub Actions
 
 Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 
-#### [`package.json`](package.json) scripts
-
-| name               | required | development        | test               | production         | release            |
-| ------------------ | -------- | ------------------ | ------------------ | ------------------ | ------------------ |
-| `DBDOCS_TOKEN`     | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
-| `DOPPLER_PROJECT`  | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `DOPPLER_TOKEN`    | `true`   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `GH_PAT`           | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
-| `INIT_CWD`         | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
-| `NPM_TOKEN`        | `true`   | :white_check_mark: | :x:                | :x:                | :white_check_mark: |
-| `npm_package_name` | `true`   | :x:                | :x:                | :x:                | :white_check_mark: |
-
-#### Sourcing Environment Variables
-
-Follow the steps below to autosource environment variables:
-
-1. Configure the [Doppler CLI][6]
-
-2. Open `~/.doppler/.doppler.yaml`; copy the value of `token`:
-
-   ```yaml
-   scoped:
-     /:
-       api-host: https://api.doppler.com
-       dashboard-host: https://dashboard.doppler.com
-       token: secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-   ```
-
-   or:
-
-   ```yaml
-   scoped:
-     /:
-       api-host: https://api.doppler.com
-       dashboard-host: https://dashboard.doppler.com
-       token: dp.ct.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   ```
-
-3. Open a shell startup file
-
-   - e.g: `~/.bash_profile` `~/.bashrc`, `~/.profile`, `~/.zprofile`,
-     `~/.zshenv`, `~/.zshrc`
-
-4. Add the following to your chosen shell startup file:
-
-   ```shell
-   [ -f $PWD/.env ] && . $PWD/.env
-   [ -f $PWD/.env.local ] && . $PWD/.env.local
-   
-   export DOPPLER_TOKEN=secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # doppler / scope token
-   export GH_PAT=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx           # github personal access token with at least read:packages scope
-   export NPM_TOKEN=npm_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        # npm registry auth token
-   ```
-
-5. Save shell startup file and re-launch shell
-
-#### Adding New Environment Variables
-
-Follow the steps below to add new environment variables:
-
-1. Update [Usage - Environment Variables](README.md#environment-variables)
-2. Add new variables to [Doppler](#doppler)
-3. Update [`docker-compose.yml`](docker-compose.yml): `services.app.environment`
-4. Update [`docker-cloud.yml`](docker-cloud.yml): `services.app.environment`
-5. Update [`EnvironmentVariables`](src/models/environment-variables.model.ts)
-6. Update app [configuration](src/config/configuration.ts) module
-7. Restart Docker
-   - `yarn restart:dev`, `yarn restart:dev -d`
-   - `yarn restart`, `yarn restart -d`
-
-### Git Configuration
+### Git Config
 
 The examples in this guide contain references to custom Git aliases.
 
-See our [`.gitconfig`](.git/config) for an exhausive list of aliases.
-
-### Clone & Install
-
-```zsh
-git clone https://github.com/flex-development/sneusers
-cd sneusers
-yarn
-```
-
-Note that if you have a global Yarn configuration (or any `YARN_*` environment
-variables set), an error will be displayed in the terminal if any settings
-conflict with the project's Yarn configuration, or the Yarn 2 API.
+See [`.github/.gitconfig`](.github/.gitconfig) for an exhaustive list.
 
 ## Contributing Code
 
-[Husky][10] is used to run Git hooks that locally enforce coding and commit
-message standards, as well run tests associated with any files changed since the
-last commit.
+[Husky][5] is used to locally enforce coding and commit message standards, as well as run tests pre-push.
 
-Any code merged into the [development and production branches](#branching-model)
-must confront the following criteria:
+Any code merged into the [trunk](#branching-model) must confront the following criteria:
 
 - changes should be discussed prior to implementation
 - changes have been tested properly
@@ -196,294 +144,296 @@ must confront the following criteria:
 
 ### Branching Model
 
-- Development: `next`
-- Production: `main`
+This project follows a [Trunk Based Development][6] workflow, specifically the [short-lived branch style][7].
 
-### Branch Prefixes
+- Trunk Branch: `main`
+- Short-Lived Branches: `feat/*`, `hotfix/*`, `release/*`
+
+#### Branch Naming Conventions
 
 When creating a new branch, the name should match the following format:
 
 ```zsh
-[prefix]/<TICKET-ID>-<branch_name>
- │           │      │
- │           │      └─⫸ a short, memorable name (possibly the future PR title)
- │           │
- │           └─⫸ check github issue
+[prefix]/<issue-number>-<branch_name>
+ │        │              │
+ │        │              │
+ │        │              │
+ │        │              └─⫸ a short, memorable name
+ │        │
+ │        └─⫸ check github issue
  │
- └─⫸ bugfix|feat|hotfix|release
+ └─⫸ feat|feat/fix|hotfix|release
 ```
-
-For example:
-
-```zsh
-git chbf 4-authentication
-```
-
-will create a new branch titled `feat/4-authentication`.
 
 ### Commit Messages
 
-This project follows [Conventional Commit][11] standards and uses
-[commitlint][12] to enforce those standards.
+This project follows [Conventional Commit][8] standards and uses [commitlint][9] to enforce those standards.
 
 This means every commit must conform to the following format:
 
 ```zsh
-<type>[optional scope]: <description>
- │     │                │
- │     │                └─⫸ summary in present tense; lowercase without period at the end
+<type>[scope][!]: <description>
+ │     │      │    │
+ │     │      │    │
+ │     │      │    └─⫸ summary in present tense (lowercase without punctuation)
+ │     │      │
+ │     │      └─⫸ optional breaking change flag
  │     │
- │     └─⫸ see .commitlintrc.ts
+ │     └─⫸ see .commitlintrc.cts
  │
  └─⫸ build|ci|chore|docs|feat|fix|perf|refactor|revert|style|test|wip
 
-[optional body]
+[body]
 
-[optional footer(s)]
+[BREAKING CHANGE: <change>]
+
+[footer(s)]
 ```
 
 `<type>` must be one of the following values:
 
 - `build`: Changes that affect the build system or external dependencies
-- `ci`: Changes to our CI configuration files and scripts
-- `chore`: Changes that don't impact external users
-- `docs`: Documentation only changes
+- `ci`: Changes to our CI/CD configuration files and scripts
+- `chore`: Housekeeping tasks / changes that don't impact external users
+- `docs`: Documentation improvements
 - `feat`: New features
 - `fix`: Bug fixes
 - `perf`: Performance improvements
 - `refactor`: Code improvements
 - `revert`: Revert past changes
 - `style`: Changes that do not affect the meaning of the code
-- `test`: Adding missing tests or correcting existing tests
+- `test`: Change that impact the test suite
 - `wip`: Working on changes, but you need to go to bed :wink:
 
 e.g:
 
-- `git docs 'update contributing guide'` -> `docs: update contributing guide`
-- `git ac 'refactor(api)!: user queries'` -> `refactor(api)!: user queries`
+- `build(deps-dev): bump cspell from 6.7.0 to 6.8.0`
+- `perf: lighten initial load`
 
-See [`.commitlintrc.ts`](.commitlintrc.ts) for an exhasutive list of valid
-commit scopes and types.
+See [`.commitlintrc.cts`](.commitlintrc.cts) to view all commit guidelines.
 
 ### Code Style
 
-[Prettier][13] is used to format code, and [ESLint][14] to lint files.
-
-#### Prettier Configuration
-
-- [`.prettierrc.cjs`](.prettierrc.cjs)
-- [`.prettierignore`](.prettierignore)
+[Prettier][10] is used to format code and [ESLint][11] to lint files.
 
 #### ESLint Configuration
 
+- [`.eslintrc.base.cjs`](.eslintrc.base.cjs)
 - [`.eslintrc.cjs`](.eslintrc.cjs)
 - [`.eslintignore`](.eslintignore)
 
+#### Prettier Configuration
+
+- [`.prettierrc.json`](.prettierrc.json)
+- [`.prettierignore`](.prettierignore)
+
 ### Making Changes
 
-Source code is located in the [`src`](src) directory.
-
-The purpose of each file should be documented using the `@file` annotation,
-along with an accompanying `@module` annotation.
+Source code is located in [`src`](src) directory.
 
 #### Database Migrations
 
-**TODO**: Update documentation.
+**TODO**: database migrations.
 
 #### Docker Compose Services
 
-- `adminer`: <https://hub.docker.com/_/adminer>
-- `nginx`: <https://hub.docker.com/_/nginx>
-- `postgres`: <https://hub.docker.com/_/postgres>
-- `redis`: <https://hub.docker.com/_/redis>
-- `redis-commander`: <https://github.com/joeferner/redis-commander#docker>
+**TODO**: docker compose services.
 
-#### NestJS App
+#### NestJS
 
-See the [NestJS docs][15] for help developing NestJS applications.
+**TODO**: nestjs.
 
 ### Documentation
 
-- JavaScript & TypeScript: [JSDoc][16], linted with [`eslint-plugin-jsdoc`][17]
+- JavaScript & TypeScript: [JSDoc][12]; linted with [`eslint-plugin-jsdoc`][13]
 
-Before making a pull request, be sure your code is well documented, as it will
-be part of your code review.
+Before making a pull request, be sure your code is well documented, as it will be part of your code review.
 
 ### Testing
 
-This project uses a [Mocha][18] x [Chai][19] testing workflow.
+This project uses [Vitest][14] to run tests.
 
-- run all test suites: `yarn test`
+[Husky](#contributing-code) is configured to run tests against changed files.
 
-Husky is configured to run tests before every push. If you need to create a new
-issue regarding a test, or need to make a `wip` commit, use Mocha's [inclusive
-tests feature][20] to mark your tests or suites as pending.
+Be sure to use [`it.skip`][15] or [`it.todo`][16] where appropriate.
 
-For more details on testing NestJS applications, see [Testing docs][21].
+#### Running Tests
 
-#### Database Hosts & Migrations
+- `yarn test`
+- `yarn test:cov`
+  - See terminal for coverage output
 
-**TODO**: Update documentation.
+#### Code Coverage
+
+Code coverage is reported using [Codecov][17].
+
+To manually upload coverage reports:
+
+1. Retrieve `CODECOV_TOKEN` from a maintainer
+
+2. Add `CODECOV_TOKEN` to `.env.local`
+
+3. Reload shell
+
+   ```sh
+   exec $SHELL
+   ```
+
+4. Install the [Codecov Uploader][18]
+
+5. Run `yarn codecov`
 
 ### Getting Help
 
-If you need help, make note of any issues in their respective files. Whenever
-possible, create a test to reproduce the error. Make sure to label your issue as
-`type:question` and `status:help-wanted`.
+If you need help, make note of any issues in their respective files in the form of a [JSDoc comment][12]. If you need
+help with a test, don't forget to use [`it.skip`][15] and/or [`it.todo`][16]. Afterwards, [start a discussion in the
+Q&A category][19].
 
 ## Labels
 
-This project uses a well-defined list of labels to organize tickets and pull
-requests. Most labels are grouped into different categories (identified by the
-prefix, eg: `status:`).
+This project uses a well-defined list of labels to organize issues and pull requests. Most labels are scoped (i.e:
+`status:`).
 
-A list of labels can be found in [`.github/labels.yml`](.github/labels.yml).
+A list of labels can be found in [`.github/infrastructure.yml`](.github/infrastructure.yml).
 
 ## Opening Issues
 
-Before opening an issue please make sure, you have:
+Before opening an issue, make sure you have:
 
 - read the documentation
-- searched open issues for an existing issue with the same topic
-- search closed issues for a solution or feedback
+- checked that the issue hasn't already been filed by searching open issues
+- searched closed issues for solution(s) or feedback
 
-If you haven't found a related open issue, or feel that a closed issue should be
-re-visited, please open a new issue. A well-written issue has the following
-traits:
+If you haven't found a related open issue, or feel that a closed issue should be re-visited, open a new issue.
 
-- follows an [issue template](.github/ISSUE_TEMPLATE)
-- is [labeled](#labels) appropriately
-- contains a well-written summary of the feature, bug, or problem statement
-- contains a minimal, inlined code example (if applicable)
-- includes links to prior discussion if you've found any
+A well-written issue
 
-## Pull Requests & Code Reviews
+- contains a well-written summary of the bug, feature, or improvement
+- contains a [minimal, reproducible example][20] (if applicable)
+- includes links to related articles and documentation (if any)
+- includes an emoji in the title :wink:
 
-When you're ready to have your changes reviewed, open a pull request against the
-`next` branch.
+## Pull Requests
 
-Every opened PR should:
+When you're ready to submit your changes, open a pull request (PR) against `main`:
 
-- use [**this template**](.github/PULL_REQUEST_TEMPLATE.md)
-- reference it's ticket id
-- be [labeled](#labels) appropriately
-- be assigned to yourself
-- give maintainers push access so quick fixes can be pushed to your branch
-
-### Pull Request URL Format
-
-```zsh
-https://github.com/flex-development/sneusers/compare/next...<branch>
+```sh
+https://github.com/flex-development/sneusers/compare/main...$branch
 ```
 
-where `<branch>` is the name of the branch you'd like to merge into `next`.
+where `$branch` is the name of the branch you'd like to merge into `main`.
 
-### Code Reviews
+All PRs are subject to review before being merged into `main`.
 
-All pull requests are subject to code reviews before being merged into `next`
-and `main`. During code reviews, code-style and documentation will be reviewed.
+Before submitting a PR, be sure you have:
 
-If any changes are requested, those changes will need to be implemented and
-approved before the pull request is merged.
+- performed a self-review of your changes
+- added and/or updated relevant tests
+- added and/or updated relevant documentation
+
+Every PR you open should:
+
+- [follow this template](.github/PULL_REQUEST_TEMPLATE.md)
+- [be titled appropriately](#pull-request-titles)
+
+### Pull Request Titles
+
+To keep in line with [commit message standards](#commit-messages) after PRs are merged, PR titles are expected to adhere
+to the same rules.
 
 ## Merge Strategies
 
-In every repository, the `create a merge commit` and `squash and merge` options
-are enabled.
+In every repository, the `rebase and merge` and `squash and merge` options are enabled.
 
-- if a PR has a single commit, or the changes across commits are logically
-  grouped, use `squash and merge`
-- if a PR has multiple commits, not logically grouped, `create a merge commit`
+- **rebase and merge**: PR has one commit or commits that are not grouped
+- **squash and merge**: PR has one commit or a group of commits
 
-When merging, please make sure to use the following commit message format:
+When squashing, be sure to follow [commit message standards](#commit-messages):
 
-```txt
-<type>[optional scope]: <pull-request-title> (#pull-request-n)
- │     │                │
- │     │                └─⫸ check your pull request
+```zsh
+<type>[scope][!]:<pull-request-title> (#pull-request-n)
+ │     │      │   │                    │
+ │     │      │   │                    │
+ │     │      │   │                    └─⫸ check pull request
+ │     │      │   │
+ │     │      │   └─⫸ lowercase title
+ │     │      │
+ │     │      └─⫸ optional breaking change flag
  │     │
- │     └─⫸ see .commitlintrc.ts
+ │     └─⫸ see .commitlintrc.cts
  │
- └─⫸ build|ci|chore|docs|feat|fix|merge|perf|refactor|release|revert|style|test
+ └─⫸ build|ci|chore|docs|feat|fix|perf|refactor|release|revert|style|test
 ```
 
 e.g:
 
-- `refactor(api): github oauth flow #52`
-- `merge: update contributing guides and tsconfigs #39`
-- `release: @flex-development/sneusers@1.0.0 #13`
+- `ci(workflows): simplify release workflow #24`
+- `refactor: project architecture #21`
+- `release: 1.0.0 #13`
 
-## Releasing
+## Deployment
 
-This repository is configured to publish packages and releases when a
-`release/*` branch is merged.
+> Note: Container and release publication is executed via GitHub workflow.\
+> This is so invalid or malicious versions cannot be published without merging those changes into `main` first.
 
-> Note: Publishing is executed via the
-> [Continuous Deployment](./.github/workflows/continous-deployment.yml)
-> workflow. This is so invalid or malicious versions cannot be released without
-> merging those changes into `next` first.
-
-Before releasing, the following steps must be completed:
+Before deploying, the following steps must be completed:
 
 1. Schedule a code freeze
-2. Create a new `release/*` branch
-   - where `*` is `<package.json#name-no-scope>@<package.json#version>`
-     - e.g: `sneusers@1.1.0`
-   - branch naming conventions **must be followed exactly**. the branch name is
-     used to create distribution tags, locate drafted releases, as well as
-     generate the correct build and publish commands
-3. Decide what version bump the release needs (major, minor, patch)
-   - versioning
-     - `yarn release` (determines [bumps based on commits][22])
-     - `yarn release --first-release`
-     - `yarn release --release-as major`
-     - `yarn release --release-as minor`
-     - `yarn release --release-as patch`
-   - a new release will be drafted
-4. Open a new pull request from `release/*` into `next`
-   - title the PR `release: <package.json#name>@<package.json#version>`
-     - e.g: `release: @flex-development/sneusers@1.1.0`
+2. Decide what type of version bump the package needs
+   - `yarn recommended-bump`
+3. Bump version
+   - `bump <new-version>`
+   - `bump major`
+   - `bump minor`
+   - `bump patch`
+   - `bump premajor --preid <dist-tag>`
+   - `bump preminor --preid <dist-tag>`
+   - `bump prepatch --preid <dist-tag>`
+   - `bump prerelease --preid <dist-tag>`
+4. Update `CHANGELOG.md`
+   - `yarn changelog -sw` (remove `w` to do a dry-run, i.e. `yarn changelog -s`)
+5. `yarn release`
+6. Open PR from `release/*` into `main`
+   - PR title should match `release: <release-tag>`
+     - e.g: `release: 1.1.0`
    - link all issues being released
-   - after review, `squash and merge` the PR:
-     `release: @flex-development/sneusers@1.1.0 (#pull-request-n)`
-     - e.g: `release: @flex-development/sneusers@1.1.0 (#3)`
-   - once the PR is merged, the deployment workflow will be triggered
-   - the maintainer who approved the PR should check to make sure the workflow
-     completes all jobs as expected. if successful, the workflow will:
-     - **TODO** wait for [`ci`](.github/workflows/ci.yml) job to succeed
-     - **TODO** deploy database design doc to [dbdocs][1]
-     - **TODO** push container image to the [GitHub Container Registry][23]
-     - **TODO** tag latest container image
-     - **TODO** upload docker app files to [production vm instance][24]
-     - update production branch (merge branch `next` into `main`)
-     - publish previously drafted release
-     - delete release branch
-   - the maintainer who approved the PR should go through linked issues and:
-     - make sure all issues are closed and have the label `status:merged`
-     - add the `status:released` label to all issues (and PRs)
+   - after review, `squash and merge` PR
+     - `release: <release-tag> (#pull-request-n)`
+       - e.g: `release: 1.1.0 (#3)`
+   - on PR merge, [release workflow](.github/workflows/release.yml) will fire
+     - if successful, the workflow will:
+       - pack project
+       - create and push new tag
+       - create and publish github release
+       - make sure all prereleased or released issues are closed
+       - delete the release branch
+     - on release tag push, [publish workflow](.github/workflows/publish.yml) will fire
+       - if successful, the workflow will:
+         - publish container image to [github container registry][21]
+         - publish database architecture to [dbdocs][22]
+         - **TODO** upload files to [production vm instance][23]
 
-[1]: https://dbdocs.io
-[2]: https://dbml.org/docs
-[3]: https://docs.docker.com/get-docker
-[4]: https://doppler.com
-[5]: https://docs.doppler.com/docs/install-cli#usage
-[6]: https://docs.doppler.com/docs/install-cli
-[7]: https://nodejs.org
-[8]: https://typescriptlang.org
-[9]: https://yarnpkg.com/getting-started/migration
-[10]: https://github.com/typicode/husky
-[11]: https://www.conventionalcommits.org
-[12]: https://github.com/conventional-changelog/commitlint
-[13]: https://prettier.io
-[14]: https://eslint.org
-[15]: https://docs.nestjs.com
-[16]: https://jsdoc.app
-[17]: https://github.com/gajus/eslint-plugin-jsdoc
-[18]: https://mochajs.org
-[19]: https://www.chaijs.com
-[20]: https://mochajs.org/#inclusive-tests
-[21]: https://docs.nestjs.com/fundamentals/testing
-[22]: https://www.conventionalcommits.org/en/v1.0.0
-[23]:
-  https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-[24]: https://cloud.google.com/compute
+[1]: https://brew.sh
+[2]:
+  https://docs.github.com/authentication/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification
+[3]: https://yarnpkg.com/getting-started
+[4]: https://github.com/ohmyzsh/ohmyzsh
+[5]: https://github.com/typicode/husky
+[6]: https://trunkbaseddevelopment.com
+[7]: https://trunkbaseddevelopment.com/styles/#short-lived-feature-branches
+[8]: https://conventionalcommits.org
+[9]: https://github.com/conventional-changelog/commitlint
+[10]: https://prettier.io
+[11]: https://eslint.org
+[12]: https://jsdoc.app
+[13]: https://github.com/gajus/eslint-plugin-jsdoc
+[14]: https://vitest.dev
+[15]: https://vitest.dev/api/#test-skip
+[16]: https://vitest.dev/api/#test-todo
+[17]: https://codecov.io
+[18]: https://docs.codecov.com/docs/codecov-uploader
+[19]: https://github.com/flex-development/sneusers/discussions/new?category=q-a
+[20]: https://stackoverflow.com/help/minimal-reproducible-example
+[21]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+[22]: https://dbdocs.io/
+[23]: https://cloud.google.com/compute

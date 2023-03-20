@@ -1,4 +1,7 @@
-# markdownlint ignore patterns
-# see: https://github.com/DavidAnson/vscode-markdownlint#markdownlintignore
+# MARKDOWNLINT IGNORE
+# https://github.com/DavidAnson/vscode-markdownlint#markdownlintignore
 
-CHANGELOG.md
+# DIRECTORIES & FILES
+**/CHANGELOG.md
+**/LICENSE.md
+**/RELEASE_NOTES.md
