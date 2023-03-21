@@ -62,10 +62,9 @@ ENV CLOUDSDK_CORE_PROJECT $CLOUDSDK_CORE_PROJECT
 ENV PORT $PORT
 
 WORKDIR /app/$CLOUDSDK_CORE_PROJECT
-COPY ecosystem.config.cjs ./ecosystem.config.cjs
 COPY --from=build /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
+COPY --from=build /app/$CLOUDSDK_CORE_PROJECT/src ./src
 COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
 COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
-ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
 EXPOSE $PORT
-CMD ["pm2-docker", "start", "ecosystem.config.cjs", "-i", "max"]
+CMD ["node", "--enable-source-maps", "./dist/main.mjs"]
