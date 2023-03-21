@@ -6,6 +6,9 @@
 
 version: '3.9'
 
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
 services:
   api:
     container_name: api
@@ -13,11 +16,12 @@ services:
     build:
       args:
         CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
-        GITHUB_TOKEN: ${GITHUB_TOKEN}
         NODE_ENV: ${NODE_ENV}
         PORT: ${PORT}
       context: .
       dockerfile: ./Dockerfile
+      secrets:
+        - GITHUB_TOKEN
       target: development
     command: node --enable-source-maps ./dist/main.mjs
     depends_on: []

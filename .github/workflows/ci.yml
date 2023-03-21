@@ -440,13 +440,14 @@ jobs:
         with:
           build-args: |
             CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             NODE_ENV=${{ secrets.NODE_ENV }}
             PORT=${{ secrets.PORT }}
           context: .
           file: ./Dockerfile
           labels: ${{ steps.metadata.outputs.labels }}
           push: true
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
           target: ecosystem
   dbdocs:

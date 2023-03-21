@@ -8,11 +8,8 @@
 FROM node:19-alpine As dependencies
 
 ARG CLOUDSDK_CORE_PROJECT
-ARG GITHUB_TOKEN
 ARG NODE_ENV=production
 
-ENV CLOUDSDK_CORE_PROJECT $CLOUDSDK_CORE_PROJECT
-ENV GITHUB_TOKEN $GITHUB_TOKEN
 ENV HUSKY 0
 ENV NODE_ENV $NODE_ENV
 
@@ -22,7 +19,7 @@ COPY .yarn ./.yarn
 COPY .yarnrc.yml ./.yarnrc.yml
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
-RUN yarn
+RUN --mount=type=secret,id=GITHUB_TOKEN,required GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) yarn
 
 # development
 # REBUILD SOURCE CODE

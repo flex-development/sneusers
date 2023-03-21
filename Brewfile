@@ -12,6 +12,7 @@ tap 'homebrew/services'
 
 # formulae
 brew 'curl'
+brew 'docker-compose'
 brew 'gh'
 brew 'git'
 brew 'gnupg'
