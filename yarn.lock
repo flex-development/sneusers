@@ -1306,7 +1306,7 @@ __metadata:
     "@vitest/ui": "npm:0.29.7"
     add-stream: "npm:1.0.0"
     axios: "npm:1.3.4"
-    cache-manager: "npm:5.1.7"
+    cache-manager: "npm:5.2.0"
     chai: "npm:4.3.7"
     chai-http: "npm:4.3.0"
     class-transformer: "npm:0.5.1"
@@ -4113,13 +4113,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cache-manager@npm:5.1.7":
-  version: 5.1.7
-  resolution: "cache-manager@npm:5.1.7"
+"cache-manager@npm:5.2.0":
+  version: 5.2.0
+  resolution: "cache-manager@npm:5.2.0"
   dependencies:
     lodash.clonedeep: "npm:^4.5.0"
-    lru-cache: "npm:^7.17.0"
-  checksum: 02dead178d670ff2408432a450df4d52c0f3ae72d0e9628efde22d800599fe925c6c513ee06f4308d323746ca4fba06716ca1e16f97df34fc6171edc31686ed6
+    lru-cache: "npm:~7.18.3"
+  checksum: aee2beb2df119d85c2c45d516e8f3e344da66c9989bc3ef73bd730fc80791fe62ef01e7411ce5005a2a6a9b9068c8fc850163af80f9be3c94402701c1f4dd63b
   languageName: node
   linkType: hard
 
@@ -8700,7 +8700,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^7.17.0, lru-cache@npm:^7.7.1":
+"lru-cache@npm:^7.7.1, lru-cache@npm:~7.18.3":
   version: 7.18.3
   resolution: "lru-cache@npm:7.18.3"
   checksum: 884c7cb51963cc45bc0d864c704d141c904c93db1bbc236be0eed759e35fc44b5e794a34b0666e193926e5a4320b66e787b1cf531f4f89ed8514a97156f07cb1
