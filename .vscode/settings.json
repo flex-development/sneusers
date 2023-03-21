@@ -189,8 +189,6 @@
     "yaml"
   ],
   "files.associations": {
-    "*.conf": "nginx",
-    "*.conf.template": "nginx",
     "*.env*": "shellscript",
     "*.log": "log",
     "*.snap": "jest-snapshot",
@@ -200,7 +198,6 @@
     ".pg_format": "json",
     ".sequelizerc": "javascript",
     "commit-msg": "shellscript",
-    "mime.types": "nginx",
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
   },
@@ -320,11 +317,6 @@
       "icon": "commitlint"
     },
     {
-      "extensions": [".conf", ".conf.template"],
-      "format": "svg",
-      "icon": "nginx"
-    },
-    {
       "extensions": [".dbml"],
       "format": "svg",
       "icon": "db"
@@ -338,11 +330,6 @@
       "extensions": [".graphqlrc.yml"],
       "format": "svg",
       "icon": "graphql"
-    },
-    {
-      "extensions": [".types"],
-      "format": "svg",
-      "icon": "nginx"
     },
     {
       "extensions": ["build.json", "cjs.json", "typecheck.json"],

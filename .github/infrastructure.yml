@@ -221,16 +221,17 @@ repository:
     - cloud-dns
     - compute-engine
     - docker
+    - docker-compose
     - gcp
     - nestjs
-    - nginx
-    - nginx-reverse-proxy
     - postgres
     - postgresql
     - redis
     - sequelize
     - sql
     - sqlite
+    - traefik
+    - traefik-reverse-proxy
     - typescript
   visibility: public
   vulnerability_alerts: true

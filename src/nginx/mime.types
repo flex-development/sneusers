@@ -1,6 +1,0 @@
-types {
-  application/json json;
-  application/x-x509-ca-cert der pem crt;
-  image/x-icon ico;
-  text/plain txt;
-}

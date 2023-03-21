@@ -3,9 +3,9 @@
 # https://github.com/BretFisher/node-docker-good-defaults
 # https://github.com/nodejs/docker-node#nodealpine
 
-# deps
-# INSTALL DEPENDENCIES ONLY WHEN NEEDED
-FROM node:19-alpine As deps
+# dependencies
+# INSTALL DEPENDENCIES
+FROM node:19-alpine As dependencies
 
 ARG CLOUDSDK_CORE_PROJECT
 ARG GITHUB_TOKEN
@@ -17,43 +17,39 @@ ENV HUSKY 0
 ENV NODE_ENV $NODE_ENV
 
 WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+RUN apk --no-cache add curl
 COPY .yarn ./.yarn
 COPY .yarnrc.yml ./.yarnrc.yml
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
 RUN yarn
 
-# builder
-# REBUILD SOURCE CODE ONLY WHEN NEEDED
-FROM deps As builder
+# development
+# REBUILD SOURCE CODE
+# TODO: try enabling watch mode
+FROM dependencies As development
 
 WORKDIR /app/$CLOUDSDK_CORE_PROJECT
 COPY build.config.ts ./build.config.ts
 COPY src ./src
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY tsconfig.json ./tsconfig.json
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/.yarn ./.yarn
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/.yarnrc.yml ./.yarnrc.yml
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/yarn.lock ./yarn.lock
+COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
 ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
 RUN mkbuild
 
-# runner
-# DEVELOPMENT SERVER
-FROM builder As runner
-
-ARG PORT=8080
-
-ENV PORT $PORT
+# build
+# BUILD SOURCE CODE FOR PRODUCTION SERVER
+FROM development As build
 
 WORKDIR /app/$CLOUDSDK_CORE_PROJECT
-COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
-EXPOSE $PORT
-CMD ["node", "--enable-source-maps", "./dist/main.mjs"]
+COPY build.config.ts ./build.config.ts
+COPY src ./src
+COPY tsconfig.build.json ./tsconfig.build.json
+COPY tsconfig.json ./tsconfig.json
+COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
+ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
+RUN mkbuild
 
 # ecosystem
 # PRODUCTION SERVER
@@ -67,10 +63,9 @@ ENV PORT $PORT
 
 WORKDIR /app/$CLOUDSDK_CORE_PROJECT
 COPY ecosystem.config.cjs ./ecosystem.config.cjs
-COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
-COPY --from=builder /app/$CLOUDSDK_CORE_PROJECT/src ./src
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-COPY --from=deps /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
+COPY --from=build /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
+COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
+COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
 ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
 EXPOSE $PORT
 CMD ["pm2-docker", "start", "ecosystem.config.cjs", "-i", "max"]

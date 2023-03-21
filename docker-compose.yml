@@ -1,4 +1,6 @@
 # DOCKER COMPOSE (DEVELOPMENT)
+# https://doc.traefik.io/traefik/providers/docker/#provider-configuration
+# https://doc.traefik.io/traefik/reference/dynamic-configuration/docker
 # https://docs.docker.com/compose/compose-file/compose-file-v3
 # https://github.com/BretFisher/node-docker-good-defaults
 
@@ -7,7 +9,7 @@ version: '3.9'
 services:
   api:
     container_name: api
-    image: ghcr.io/${DOCKER_IMAGE}
+    image: dev.ghcr.io/${DOCKER_IMAGE}
     build:
       args:
         CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
@@ -16,7 +18,8 @@ services:
         PORT: ${PORT}
       context: .
       dockerfile: ./Dockerfile
-      target: runner
+      target: development
+    command: node --enable-source-maps ./dist/main.mjs
     depends_on: []
     environment:
       APP_ENV: ${APP_ENV}
@@ -26,6 +29,17 @@ services:
       PORT: ${PORT}
     healthcheck:
       test: curl -f http://localhost:${PORT} || exit 1
+    labels:
+      traefik.enable: true
+      traefik.http.middlewares.api.compress: true
+      traefik.http.middlewares.api.headers.browserXssFilter: true
+      traefik.http.middlewares.api.headers.contentTypeNosniff: true
+      traefik.http.middlewares.api.headers.frameDeny: true
+      traefik.http.middlewares.api.headers.stsIncludeSubdomains: true
+      traefik.http.middlewares.api.headers.stsPreload: true
+      traefik.http.middlewares.api.headers.stsSeconds: 31536000
+      traefik.http.routers.api.entrypoints: https
+      traefik.http.routers.api.rule: Host(`${SERVER_NAME}`)
     links: []
     ports:
       - ${PORT}:${PORT}
@@ -37,40 +51,43 @@ services:
       - ./tsconfig.build.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.build.json
       - ./tsconfig.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.json
     working_dir: /app/${CLOUDSDK_CORE_PROJECT}
-  proxy:
-    container_name: proxy
-    image: nginx:alpine-perl
+  traefik:
+    container_name: traefik
+    image: traefik:v2.9
+    # https://doc.traefik.io/traefik/reference/static-configuration/cli
     command:
-      - nginx-debug
-      - -g
-      - daemon off;
-    environment:
-      CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
-      GCE_SERVICE_ACCOUNT_FILE: ${GCE_SERVICE_ACCOUNT_FILE}
-      LEGO_ACCOUNT_EMAIL: ${LEGO_ACCOUNT_EMAIL}
-      LEGO_DOMAINS: ${LEGO_DOMAINS}
-      LEGO_PATH: /etc/nginx/${LEGO_PATH}
-      PORT: ${PORT}
-      SERVER_NAME: ${SERVER_NAME}
-      TLD: ${TLD}
+      - --api.dashboard
+      - --api.debug
+      - --api.insecure
+      - --certificatesresolvers.lego.acme.caserver=${LEGO_CA_SERVER}
+      - --certificatesresolvers.lego.acme.dnschallenge.provider=gcloud
+      - --certificatesresolvers.lego.acme.dnschallenge.resolvers=8.8.8.8,8.8.4.4
+      - --certificatesresolvers.lego.acme.dnschallenge
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.http.redirections.entrypoint.scheme=https
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entrypoints.https.address=:443
+      - --entrypoints.https.http.tls.certresolver=lego
+      - --entrypoints.https.http.tls
+      - --log.level=DEBUG
+      - --ping
+      - --providers.docker
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.watch
     depends_on:
       api:
-        condition: service_started
-    links:
-      - api:api
+        condition: service_healthy
+    environment:
+      GCE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
+      GCE_SERVICE_ACCOUNT: ${GCE_SERVICE_ACCOUNT}
+      LEGO_ACCOUNT_EMAIL: ${LEGO_ACCOUNT_EMAIL}
+    healthcheck:
+      test: traefik healthcheck --log.level=DEBUG --ping
     ports:
       - 443:443
       - 80:80
-    restart: unless-stopped
+      - 8080:8080
+    restart: on-failure
     tty: true
     volumes:
-      - ./docker-entrypoint.d/lego.sh:/docker-entrypoint.d/lego.sh
-      - ./scripts/lego/crontab:/etc/crontab
-      - ./scripts/lego/renew.sh:/lego-renew.sh
-      - ./src/nginx/general.conf:/etc/nginx/general.conf
-      - ./src/nginx/mime.types:/etc/nginx/mime.types
-      - ./src/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./src/nginx/proxy.conf:/etc/nginx/proxy.conf
-      - ./src/nginx/security.conf:/etc/nginx/security.conf
-      - ./src/nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
-      - ./src/nginx/templates:/etc/nginx/templates
+      - /var/run/docker.sock:/var/run/docker.sock

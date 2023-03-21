@@ -93,12 +93,6 @@ Follow the steps below to setup your local development environment:
 
 ### Environment Variables
 
-#### Adding New Environment Variables
-
-**TODO**: adding new environment variables.
-
-#### Development
-
 | name                       |
 | -------------------------- |
 | `APP_ENV`                  |
@@ -107,11 +101,10 @@ Follow the steps below to setup your local development environment:
 | `DBDOCS_TOKEN`             |
 | `DOCKER_IMAGE`             |
 | `FORCE_COLOR`              |
-| `GCE_SERVICE_ACCOUNT_FILE` |
+| `GCE_SERVICE_ACCOUNT`      |
 | `GITHUB_TOKEN`             |
 | `LEGO_ACCOUNT_EMAIL`       |
-| `LEGO_DOMAINS`             |
-| `LEGO_PATH`                |
+| `LEGO_CA_SERVER`           |
 | `NEST_DEBUG`               |
 | `NODE_ENV`                 |
 | `NODE_NO_WARNINGS`         |
@@ -124,6 +117,10 @@ Follow the steps below to setup your local development environment:
 #### GitHub Actions
 
 Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
+
+#### Updating Environment Variables
+
+**TODO**: updating environment variables.
 
 ### Git Config
 

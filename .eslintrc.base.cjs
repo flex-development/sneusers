@@ -1138,7 +1138,11 @@ const config = {
       }
     },
     {
-      files: ['.github/workflows/no-response-handler.yml', '.yarnrc.yml'],
+      files: [
+        '.github/workflows/no-response-handler.yml',
+        '.yarnrc.yml',
+        'docker*.yml'
+      ],
       rules: {
         'yml/key-name-casing': 0
       }

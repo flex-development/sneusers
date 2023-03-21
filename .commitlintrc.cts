@@ -32,9 +32,9 @@ const config: UserConfig = {
         'env',
         'gcp',
         'nestjs',
-        'nginx',
-        'users',
         'ssl',
+        'traefik',
+        'users',
         'vm'
       ])
     ]
