@@ -1264,7 +1264,7 @@ __metadata:
     "@nestjs/core": "npm:9.3.10"
     "@nestjs/jwt": "npm:10.0.2"
     "@nestjs/passport": "npm:9.0.3"
-    "@nestjs/platform-express": "npm:9.3.10"
+    "@nestjs/platform-express": "npm:9.3.12"
     "@nestjs/sequelize": "npm:9.0.0"
     "@nestjs/swagger": "npm:6.2.1"
     "@nestjs/terminus": "npm:9.2.1"
@@ -1998,9 +1998,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/platform-express@npm:9.3.10":
-  version: 9.3.10
-  resolution: "@nestjs/platform-express@npm:9.3.10"
+"@nestjs/platform-express@npm:9.3.12":
+  version: 9.3.12
+  resolution: "@nestjs/platform-express@npm:9.3.12"
   dependencies:
     body-parser: "npm:1.20.2"
     cors: "npm:2.8.5"
@@ -2010,7 +2010,7 @@ __metadata:
   peerDependencies:
     "@nestjs/common": ^9.0.0
     "@nestjs/core": ^9.0.0
-  checksum: d5b62c179a97e20b93be2e87a5677e1872c5a0f4e65466358ffad9efe43d4d3703769e8892e708ed13e7aec3a6479f1609947f156375c6e697ec6dc50423e27f
+  checksum: 690926270d4d9a752cb4933ef9013d8139ebdd8ef947c6c907bf763823949f950d0dcbf882ffe592478dbbf268a432c2783cf97c0fb6a9ca45cbf18521b0e028
   languageName: node
   linkType: hard
 
