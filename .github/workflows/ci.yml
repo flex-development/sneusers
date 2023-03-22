@@ -50,8 +50,8 @@ env:
   REF: ${{ github.head_ref || github.ref_name }}
   SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   metadata:
     if: |
@@ -60,9 +60,6 @@ jobs:
       && !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     outputs:
-      container-image-url: ${{ steps.container-image-url.outputs.result }}
-      dbdocs-url: ${{ steps.dbdocs-url.outputs.result }}
-      repository-url: ${{ steps.repository-url.outputs.result }}
       version: ${{ steps.version.outputs.result }}
     steps:
       - id: debug
@@ -92,20 +89,6 @@ jobs:
       - id: version
         name: Get project version
         run: echo "result=$(jq .version package.json -r)" >> $GITHUB_OUTPUT
-      - id: repository-url
-        name: Get repository URL
-        run: |
-          echo "result=${{format('{0}/{1}',github.server_url,github.repository)}}" >> $GITHUB_OUTPUT
-      - id: container-image-url
-        name: Get container image URL
-        run: |
-          echo "result=${{format('{0}/pkgs/container/{1}',steps.repository-url.outputs.result,
-          secrets.CLOUDSDK_CORE_PROJECT)}}" >> $GITHUB_OUTPUT
-      - id: dbdocs-url
-        name: Get dbdocs URL
-        env:
-          BASE_URL: https://dbdocs.io/unicornware
-        run: echo "result=$BASE_URL/${{secrets.CLOUDSDK_CORE_PROJECT}}" >> $GITHUB_OUTPUT
   commitlint:
     needs: metadata
     runs-on: ubuntu-latest
@@ -377,26 +360,15 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: container
-      url: ${{ needs.metadata.outputs.container-image-url }}
+      url: |
+        ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
+        github.event.repository.name )}}
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
         uses: actions/checkout@v3.4.0
         with:
           ref: ${{ env.REF }}
-      - id: node
-        name: Setup Node.js
-        uses: actions/setup-node@v3.6.0
-        with:
-          cache: yarn
-          cache-dependency-path: yarn.lock
-          node-version-file: .nvmrc
-      - id: cache
-        name: Restore dependencies cache
-        uses: actions/cache@v3.3.1
-        with:
-          key: ${{ runner.os }}-${{ github.run_id }}
-          path: ${{ env.CACHE_PATH }}
       - id: login
         name: Login to GitHub Container Registry
         uses: docker/login-action@v2.1.0
@@ -407,6 +379,11 @@ jobs:
       - id: image-title
         name: Get container image title
         run: echo "result=$(jq .name package.json -r)" >> $GITHUB_OUTPUT
+      - id: image-url
+        name: Get container image URL
+        run: |
+          echo "result=${{format('{0}/{1}/pkgs/container/{2}',github.server_url,github.repository,
+          github.event.repository.name)}}" >> $GITHUB_OUTPUT
       - id: image-licenses
         name: Get container image licenses
         run: echo "result=$(jq .license package.json -r)" >> $GITHUB_OUTPUT
@@ -415,6 +392,7 @@ jobs:
         uses: docker/metadata-action@v4.3.0
         env:
           DOCKER_METADATA_PR_HEAD_SHA: ${{ github.event_name == 'pull_request' }}
+          SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
           VERSION: ${{ format('{0}+{1}', needs.metadata.outputs.version, env.SHA) }}
         with:
           flavor: latest=false
@@ -424,8 +402,8 @@ jobs:
             org.opencontainers.image.licenses=${{ steps.image-licenses.outputs.result }}
             org.opencontainers.image.title=${{ steps.image-title.outputs.result }}
             org.opencontainers.image.revision=${{ env.SHA }}
-            org.opencontainers.image.source=${{ needs.metadata.outputs.repository-url }}
-            org.opencontainers.image.url=${{ needs.metadata.outputs.container-image-url }}
+            org.opencontainers.image.source=${{ env.SOURCE }}
+            org.opencontainers.image.url=${{ steps.image-url.outputs.result }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ env.VERSION }}
           tags: |
@@ -466,7 +444,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: dbdocs
-      url: ${{ needs.metadata.outputs.dbdocs-url }}
+      url: https://dbdocs.io/unicornware/${{ github.event.repository.name }}
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
@@ -496,4 +474,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: DATABASE.dbml
-          path: DATABASE.dbml
+          path: ./DATABASE.dbml

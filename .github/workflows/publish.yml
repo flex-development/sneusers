@@ -35,36 +35,18 @@ on:
         description: release tag
         required: true
 env:
+  REF: ${{ format('refs/tags/{0}',  github.event.inputs.tag || github.event.ref_name) }}
   TAG: ${{ github.event.inputs.tag || github.event.ref_name }}
-  REF: ${{ format('refs/tags/{0}', env.TAG) }}
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   metadata:
     runs-on: ubuntu-latest
-    outputs:
-      container-image-url: ${{ steps.container-image-url.outputs.result }}
-      dbdocs-url: ${{ steps.dbdocs-url.outputs.result }}
-      repository-url: ${{ steps.repository-url.outputs.result }}
     steps:
       - id: debug
         name: Print environment variables and event payload
         uses: hmarr/debug-action@v2.1.0
-      - id: repository-url
-        name: Get repository URL
-        run: |
-          echo "result=${{format('{0}/{1}',github.server_url,github.repository)}}" >> $GITHUB_OUTPUT
-      - id: container-image-url
-        name: Get container image URL
-        run: |
-          echo "result=${{format('{0}/pkgs/container/{1}',steps.repository-url.outputs.result,
-          secrets.CLOUDSDK_CORE_PROJECT)}}" >> $GITHUB_OUTPUT
-      - id: dbdocs-url
-        name: Get dbdocs URL
-        env:
-          BASE_URL: https://dbdocs.io/unicornware
-        run: echo "result=$BASE_URL/${{secrets.CLOUDSDK_CORE_PROJECT}}" >> $GITHUB_OUTPUT
   ghcr:
     needs: metadata
     permissions:
@@ -72,7 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: container
-      url: ${{ needs.metadata.outputs.container-image-url }}
+      url: |
+        ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
+        github.event.repository.name )}}
     steps:
       - id: checkout
         name: Checkout ${{ env.TAG }}
@@ -95,9 +79,16 @@ jobs:
       - id: licenses
         name: Get container image licenses
         run: echo "result=$(jq .license package.json -r)" >> $GITHUB_OUTPUT
+      - id: url
+        name: Get container image URL
+        run: |
+          echo "result=${{format('{0}/{1}/pkgs/container/{2}',github.server_url,github.repository,
+          github.event.repository.name)}}" >> $GITHUB_OUTPUT
       - id: metadata
         name: Extract container image metadata
         uses: docker/metadata-action@v4.3.0
+        env:
+          SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
         with:
           flavor: latest=true
           images: ghcr.io/${{ github.repository }}
@@ -105,9 +96,9 @@ jobs:
             org.opencontainers.image.authors=@unicornware
             org.opencontainers.image.licenses=${{ steps.licenses.outputs.result }}
             org.opencontainers.image.title=${{ steps.title.outputs.result }}
-            org.opencontainers.image.revision=${{ env.SHA }}
-            org.opencontainers.image.source=${{ needs.metadata.outputs.repository-url }}
-            org.opencontainers.image.url=${{ needs.metadata.outputs.container-image-url }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ env.SOURCE }}
+            org.opencontainers.image.url=${{ steps.url.outputs.result }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
           tags: |
@@ -132,15 +123,11 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           target: ecosystem
   dbdocs:
-    needs:
-      - ghcr
-      - metadata
+    needs: ghcr
     runs-on: ubuntu-latest
-    env:
-      DB_ARCHITECTURE_FILE: ./DATABASE.dbml
     environment:
       name: dbdocs
-      url: ${{ needs.metadata.outputs.dbdocs-url }}
+      url: https://dbdocs.io/unicornware/${{ github.event.repository.name }}
     steps:
       - id: checkout
         name: Checkout ${{ env.TAG }}
@@ -160,4 +147,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: DATABASE.dbml
-          path: ${{ env.DB_ARCHITECTURE_FILE }}
+          path: ./DATABASE.dbml
