@@ -1259,7 +1259,7 @@ __metadata:
     "@flex-development/tutils": "npm:6.0.0-alpha.10"
     "@graphql-eslint/eslint-plugin": "npm:3.16.1"
     "@nestjs/axios": "npm:2.0.0"
-    "@nestjs/common": "npm:9.3.10"
+    "@nestjs/common": "npm:9.3.12"
     "@nestjs/config": "npm:2.3.1"
     "@nestjs/core": "npm:9.3.10"
     "@nestjs/jwt": "npm:10.0.2"
@@ -1891,9 +1891,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:9.3.10":
-  version: 9.3.10
-  resolution: "@nestjs/common@npm:9.3.10"
+"@nestjs/common@npm:9.3.12":
+  version: 9.3.12
+  resolution: "@nestjs/common@npm:9.3.12"
   dependencies:
     iterare: "npm:1.2.1"
     tslib: "npm:2.5.0"
@@ -1911,7 +1911,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 5dc3380dde1dfe8f40450639a084102921c993c7627c1ead3abc6bae681952e864258f83136eea56b332320175fe7703c7bcaf0064b3492c683ade6cb86e639c
+  checksum: 239792b7cc1014ef50ebe6608a0a71fcc95d004dbe00f4e6fa71ea630681cece153c5fea3c2b2da698da2d54441621d145e0c35b304aa8c17a282ee10ee29fdf
   languageName: node
   linkType: hard
 
