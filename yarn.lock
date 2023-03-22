@@ -1261,7 +1261,7 @@ __metadata:
     "@nestjs/axios": "npm:2.0.0"
     "@nestjs/common": "npm:9.3.12"
     "@nestjs/config": "npm:2.3.1"
-    "@nestjs/core": "npm:9.3.10"
+    "@nestjs/core": "npm:9.3.12"
     "@nestjs/jwt": "npm:10.0.2"
     "@nestjs/passport": "npm:9.0.3"
     "@nestjs/platform-express": "npm:9.3.12"
@@ -1931,9 +1931,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:9.3.10":
-  version: 9.3.10
-  resolution: "@nestjs/core@npm:9.3.10"
+"@nestjs/core@npm:9.3.12":
+  version: 9.3.12
+  resolution: "@nestjs/core@npm:9.3.12"
   dependencies:
     "@nuxtjs/opencollective": "npm:0.3.2"
     fast-safe-stringify: "npm:2.1.1"
@@ -1955,7 +1955,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 79627377c3abbdf8fc41a366d0517d241bcf954393e677d3a97df83b72388c605ca1dfc13cb50ffc886057cfa3da60e42c2d18d24ef711212e834dbb2fec1084
+  checksum: 4e29304fac099778503a6af99330c258eccecd657b6c849ee86144d7cb6f25dd7d1e8f4c732ef927b18a6f91ccc4fcd9f177aacc6ad499ba42c708174d362b03
   languageName: node
   linkType: hard
 
