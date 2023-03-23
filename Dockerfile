@@ -56,6 +56,7 @@ ARG PORT=8080
 ENV PORT $PORT
 
 WORKDIR /app
+RUN apk --no-cache add curl
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/src ./src
 COPY --from=dependencies /app/node_modules ./node_modules
