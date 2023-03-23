@@ -98,8 +98,8 @@ Follow the steps below to setup your local development environment:
 | `APP_ENV`                  |
 | `CLOUDSDK_CORE_PROJECT`    |
 | `CODECOV_TOKEN`            |
+| `CONTAINER_IMAGE`          |
 | `DBDOCS_TOKEN`             |
-| `DOCKER_IMAGE`             |
 | `FORCE_COLOR`              |
 | `GCE_SERVICE_ACCOUNT`      |
 | `GITHUB_TOKEN`             |

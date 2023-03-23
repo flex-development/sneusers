@@ -7,13 +7,12 @@
 # INSTALL DEPENDENCIES
 FROM node:19-alpine As dependencies
 
-ARG CLOUDSDK_CORE_PROJECT
-ARG NODE_ENV=production
+ARG NODE_ENV production
 
 ENV HUSKY 0
 ENV NODE_ENV $NODE_ENV
 
-WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+WORKDIR /app
 RUN apk --no-cache add curl
 COPY .yarn ./.yarn
 COPY .yarnrc.yml ./.yarnrc.yml
@@ -26,42 +25,40 @@ RUN --mount=type=secret,id=GITHUB_TOKEN,required GITHUB_TOKEN=$(cat /run/secrets
 # TODO: try enabling watch mode
 FROM dependencies As development
 
-WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+WORKDIR /app
 COPY build.config.ts ./build.config.ts
 COPY src ./src
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY tsconfig.json ./tsconfig.json
-COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
+COPY --from=dependencies /app/node_modules ./node_modules
+ENV PATH /app/node_modules/.bin:$PATH
 RUN mkbuild
 
 # build
 # BUILD SOURCE CODE FOR PRODUCTION SERVER
 FROM development As build
 
-WORKDIR /app/$CLOUDSDK_CORE_PROJECT
+WORKDIR /app
 COPY build.config.ts ./build.config.ts
 COPY src ./src
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY tsconfig.json ./tsconfig.json
-COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-ENV PATH /app/$CLOUDSDK_CORE_PROJECT/node_modules/.bin:$PATH
+COPY --from=dependencies /app/node_modules ./node_modules
+ENV PATH /app/node_modules/.bin:$PATH
 RUN mkbuild
 
 # ecosystem
 # PRODUCTION SERVER
 FROM node:19-alpine As ecosystem
 
-ARG CLOUDSDK_CORE_PROJECT
 ARG PORT=8080
 
-ENV CLOUDSDK_CORE_PROJECT $CLOUDSDK_CORE_PROJECT
 ENV PORT $PORT
 
-WORKDIR /app/$CLOUDSDK_CORE_PROJECT
-COPY --from=build /app/$CLOUDSDK_CORE_PROJECT/dist ./dist
-COPY --from=build /app/$CLOUDSDK_CORE_PROJECT/src ./src
-COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/node_modules ./node_modules
-COPY --from=dependencies /app/$CLOUDSDK_CORE_PROJECT/package.json ./package.json
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/src ./src
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /app/package.json ./package.json
 EXPOSE $PORT
 CMD ["node", "--enable-source-maps", "./dist/main.mjs"]

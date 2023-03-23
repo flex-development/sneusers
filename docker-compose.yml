@@ -12,11 +12,10 @@ secrets:
 services:
   api:
     container_name: api
-    image: dev.ghcr.io/${DOCKER_IMAGE}
+    image: dev.ghcr.io/${CONTAINER_IMAGE}
     build:
       args:
-        CLOUDSDK_CORE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
-        NODE_ENV: ${NODE_ENV}
+        NODE_ENV: development
         PORT: ${PORT}
       context: .
       dockerfile: ./Dockerfile
@@ -26,10 +25,10 @@ services:
     command: node --enable-source-maps ./dist/main.mjs
     depends_on: []
     environment:
-      APP_ENV: ${APP_ENV}
-      FORCE_COLOR: ${FORCE_COLOR}
-      NEST_DEBUG: ${NEST_DEBUG}
-      NODE_ENV: ${NODE_ENV}
+      APP_ENV: development
+      FORCE_COLOR: 3
+      NEST_DEBUG: 1
+      NODE_ENV: development
       PORT: ${PORT}
     healthcheck:
       test: curl -f http://localhost:${PORT} || exit 1
@@ -50,11 +49,11 @@ services:
     pull_policy: build
     restart: unless-stopped
     volumes:
-      - ./package.json:/app/${CLOUDSDK_CORE_PROJECT}/package.json
-      - ./src:/app/${CLOUDSDK_CORE_PROJECT}/src
-      - ./tsconfig.build.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.build.json
-      - ./tsconfig.json:/app/${CLOUDSDK_CORE_PROJECT}/tsconfig.json
-    working_dir: /app/${CLOUDSDK_CORE_PROJECT}
+      - ./package.json:/app/package.json
+      - ./src:/app/src
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+      - ./tsconfig.json:/app/tsconfig.json
+    working_dir: /app
   traefik:
     container_name: traefik
     image: traefik:v2.9

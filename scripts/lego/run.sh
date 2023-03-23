@@ -33,7 +33,7 @@ set -e
 #
 # - https://go-acme.github.io/lego/dns/gcloud/
 
-LEGO_DOMAINS="*.$TLD,*.dev.$TLD,*.stg.$TLD"
+LEGO_DOMAINS=*.$TLD,*.dev.$TLD,*.stg.$TLD
 LEGO_PATH=./.lego
 
 if [ ! -f "$LEGO_PATH/certificates/_.$TLD.json" ]; then

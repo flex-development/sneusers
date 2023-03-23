@@ -111,7 +111,6 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           build-args: |
-            CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
             NODE_ENV=${{ secrets.NODE_ENV }}
             PORT=${{ secrets.PORT }}
           context: .
