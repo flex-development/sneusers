@@ -18,8 +18,7 @@ on:
   workflow_dispatch:
 env:
   BRANCH: |
-    ${{ github.event_name == 'workflow_dispatch' && github.ref_name || 'refs/pull/${{
-    github.event.pull_request.number }}/merge' }}
+    ${{ github.event_name == 'workflow_dispatch' && github.ref_name || format('refs/pull/${0}/merge', github.event.pull_request.number) }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 concurrency:
   cancel-in-progress: true
