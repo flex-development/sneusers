@@ -1,4 +1,14 @@
 {
+  "[dockercompose]": {
+    "editor.rulers": [
+      {
+        "color": "var(--vscode-editorRuler-foreground)",
+        "column": 100
+      }
+    ],
+    "editor.wordWrapColumn": 100,
+    "rewrap.wrappingColumn": 100
+  },
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
@@ -198,6 +208,7 @@
     ".pg_format": "json",
     ".sequelizerc": "javascript",
     "commit-msg": "shellscript",
+    "docker-cloud.yml": "dockercompose",
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
   },

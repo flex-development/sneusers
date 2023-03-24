@@ -116,6 +116,7 @@ Follow the steps below to setup your local development environment:
 | `PORT`                        |
 | `SERVER_NAME`                 |
 | `TLD`                         |
+| `WHOAMI_PORT_NUMBER`          |
 
 #### GitHub Actions
 
