@@ -1,6 +1,7 @@
 # :tipping_hand_person: sneusers
 
 [![github release](https://img.shields.io/github/v/release/flex-development/sneusers.svg)](https://github.com/flex-development/sneusers/releases/latest)
+[![healthcheck](https://github.com/flex-development/sneusers/actions/workflows/healthcheck.yml/badge.svg)](https://github.com/flex-development/sneusers/actions/workflows/healthcheck.yml)
 [![module type: esm](https://img.shields.io/badge/module%20type-esm-brightgreen)](https://github.com/voxpelli/badges-cjs-esm)
 [![license](https://img.shields.io/github/license/flex-development/sneusers.svg)](LICENSE.md)
 [![conventional commits](https://img.shields.io/badge/-conventional%20commits-fe5196?logo=conventional-commits&logoColor=ffffff)](https://conventionalcommits.org/)
