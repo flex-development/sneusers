@@ -9,7 +9,7 @@
 name: lock-inactive-threads
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: 0 0 * * *
 permissions:
   issues: write
   pull-requests: write
