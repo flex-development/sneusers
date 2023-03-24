@@ -60,7 +60,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.TAG }}
-        uses: actions/checkout@v3.4.0
+        uses: actions/checkout@v3.5.0
         with:
           ref: ${{ env.REF }}
       - id: login
@@ -130,7 +130,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.TAG }}
-        uses: actions/checkout@v3.4.0
+        uses: actions/checkout@v3.5.0
         with:
           ref: ${{ env.REF }}
       - id: install
