@@ -92,7 +92,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.5.0",
     "@commitlint/types": "17.4.4",
-    "@faker-js/faker": "8.0.0-alpha.1",
+    "@faker-js/faker": "8.0.0-alpha.2",
     "@flex-development/commitlint-config": "1.0.1",
     "@flex-development/esm-types": "1.0.0",
     "@flex-development/exceptions": "8.0.0-alpha.5",
