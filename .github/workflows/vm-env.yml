@@ -1,0 +1,76 @@
+# Virtual Machine Environment
+#
+# Upload virtual machine environment file to project storage bucket when the Docker Compose or
+# startup script files are modified, or on workflow dispatch.
+#
+# References:
+#
+# - https://cloud.google.com/sdk/gcloud/reference/storage/cp
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#push
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#push
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
+# - https://github.com/actions/checkout
+# - https://github.com/google-github-actions/auth
+# - https://github.com/google-github-actions/setup-gcloud
+# - https://github.com/hmarr/debug-action
+
+---
+name: vm-env
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docker-cloud.yml
+      - scripts/vm/startup-script.sh
+  workflow_dispatch:
+env:
+  ENVIRONMENT_FILE: ./.env.vm
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  vm-env:
+    if: startsWith(github.event.head_commit.message, 'release:') == false
+    runs-on: ubuntu-latest
+    steps:
+      - id: debug
+        name: Print environment variables and event payload
+        uses: hmarr/debug-action@v2.1.0
+      - id: checkout
+        name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v3.4.0
+        with:
+          ref: ${{ github.ref_name }}
+      - id: gcloud-auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.0.0
+        with:
+          credentials_json: ${{ secrets.GCE_SERVICE_ACCOUNT }}
+          project_id: ${{ secrets.CLOUDSDK_CORE_PROJECT }}
+      - id: gcloud-setup
+        name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.0
+        with:
+          project_id: ${{ secrets.CLOUDSDK_CORE_PROJECT }}
+          skip_install: true
+      - id: create
+        name: Create environment file
+        run: |
+          echo "export CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
+          export TLD=${{ secrets.TLD }}
+          export APP_ENV=production
+          export CLOUDSDK_COMPUTE_ZONE=${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
+          export CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
+          export CONTAINER_IMAGE=${{ secrets.CONTAINER_IMAGE }}
+          export CONTAINER_IMAGE_TAG=${{ secrets.CONTAINER_IMAGE_TAG }}
+          export GCE_SERVICE_ACCOUNT='${{ secrets.GCE_SERVICE_ACCOUNT }}'
+          export LEGO_ACCOUNT_EMAIL=${{ secrets.LEGO_ACCOUNT_EMAIL }}
+          export LEGO_CA_SERVER=${{ secrets.LEGO_CA_SERVER }}
+          export NODE_ENV=production
+          export PORT=${{ secrets.PORT }}
+          export SERVER_NAME=${{ secrets.SERVER_NAME }}" >>$ENVIRONMENT_FILE
+      - id: upload
+        name: Upload environment file to storage bucket
+        run: gcloud storage cp $ENVIRONMENT_FILE gs://$CLOUDSDK_CORE_PROJECT/etc/profile.d/env.sh

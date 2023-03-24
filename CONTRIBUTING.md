@@ -93,26 +93,29 @@ Follow the steps below to setup your local development environment:
 
 ### Environment Variables
 
-| name                       |
-| -------------------------- |
-| `APP_ENV`                  |
-| `CLOUDSDK_CORE_PROJECT`    |
-| `CODECOV_TOKEN`            |
-| `CONTAINER_IMAGE`          |
-| `DBDOCS_TOKEN`             |
-| `FORCE_COLOR`              |
-| `GCE_SERVICE_ACCOUNT`      |
-| `GITHUB_TOKEN`             |
-| `LEGO_ACCOUNT_EMAIL`       |
-| `LEGO_CA_SERVER`           |
-| `NEST_DEBUG`               |
-| `NODE_ENV`                 |
-| `NODE_NO_WARNINGS`         |
-| `PAT_BOT`                  |
-| `PORT`                     |
-| `SERVER_NAME`              |
-| `TLD`                      |
-| `URL`                      |
+| name                          |
+| ----------------------------- |
+| `APP_ENV`                     |
+| `CLOUDSDK_ACTIVE_CONFIG_NAME` |
+| `CLOUDSDK_COMPUTE_ZONE`       |
+| `CLOUDSDK_CORE_ACCOUNT`       |
+| `CLOUDSDK_CORE_PROJECT`       |
+| `CLOUDSDK_PYTHON`             |
+| `CODECOV_TOKEN`               |
+| `CONTAINER_IMAGE_TAG`         |
+| `CONTAINER_IMAGE`             |
+| `DBDOCS_TOKEN`                |
+| `FORCE_COLOR`                 |
+| `GCE_SERVICE_ACCOUNT`         |
+| `GITHUB_TOKEN`                |
+| `LEGO_ACCOUNT_EMAIL`          |
+| `LEGO_CA_SERVER`              |
+| `NODE_ENV`                    |
+| `NODE_NO_WARNINGS`            |
+| `PAT_BOT`                     |
+| `PORT`                        |
+| `SERVER_NAME`                 |
+| `TLD`                         |
 
 #### GitHub Actions
 
