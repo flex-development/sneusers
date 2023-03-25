@@ -1,14 +1,16 @@
 # Virtual Machine Startup Script
 #
-# Upload virtual machine startup script when the startup script file is modified, or on workflow
-# dispatch.
+# Upload virtual machine startup script when on startup script file modification, workflow call, or
+# workflow dispatch.
 #
 # References:
 #
 # - https://cloud.google.com/compute/docs/instances/startup-scripts/linux
 # - https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#push
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_call
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/reusing-workflows
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#push
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
 # - https://github.com/actions/checkout
@@ -25,6 +27,7 @@ on:
     paths:
       - .github/workflows/vm-startup-script.yml
       - scripts/vm/startup-script.sh
+  workflow_call:
   workflow_dispatch:
 env:
   CLOUDSDK_COMPUTE_ZONE: ${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
@@ -41,9 +44,9 @@ jobs:
         uses: hmarr/debug-action@v2.1.0
       - id: checkout
         name: Checkout ${{ github.ref_name }}
-        uses: actions/checkout@v3.4.0
+        uses: actions/checkout@v3.5.0
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.ref }}
       - id: gcloud-auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1.0.0

@@ -1,13 +1,15 @@
 # Virtual Machine Docker Compose
 #
-# Upload Docker Compose file for virtual machine to project storage bucket when the Docker Compose
-# or startup script files are modified, or on workflow dispatch.
+# Upload Docker Compose file for virtual machine to project storage bucket on Docker Compose file
+# modification, workflow call, or workflow dispatch.
 #
 # References:
 #
 # - https://cloud.google.com/sdk/gcloud/reference/storage/cp
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#push
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_call
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/reusing-workflows
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#push
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
 # - https://github.com/actions/checkout
@@ -24,7 +26,7 @@ on:
     paths:
       - .github/workflows/vm-compose.yml
       - docker-cloud.yml
-      - scripts/vm/startup-script.sh
+  workflow_call:
   workflow_dispatch:
 concurrency:
   cancel-in-progress: true
@@ -39,9 +41,9 @@ jobs:
         uses: hmarr/debug-action@v2.1.0
       - id: checkout
         name: Checkout ${{ github.ref_name }}
-        uses: actions/checkout@v3.4.0
+        uses: actions/checkout@v3.5.0
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.ref }}
       - id: gcloud-auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1.0.0

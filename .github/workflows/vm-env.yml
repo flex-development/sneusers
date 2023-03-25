@@ -1,13 +1,15 @@
 # Virtual Machine Environment
 #
-# Upload virtual machine environment file to project storage bucket when the Docker Compose or
-# startup script files are modified, or on workflow dispatch.
+# Upload virtual machine environment file to project storage bucket when on Docker Compose or
+# startup script file modification, workflow call, or workflow dispatch.
 #
 # References:
 #
 # - https://cloud.google.com/sdk/gcloud/reference/storage/cp
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#push
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_call
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/reusing-workflows
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#push
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
 # - https://github.com/actions/checkout
@@ -25,7 +27,18 @@ on:
       - .github/workflows/vm-env.yml
       - docker-cloud.yml
       - scripts/vm/startup-script.sh
+  workflow_call:
+    inputs:
+      container-image-tag:
+        default: ''
+        description: container image tag
+        type: string
   workflow_dispatch:
+    inputs:
+      container-image-tag:
+        default: ''
+        description: container image tag
+        type: string
 env:
   ENVIRONMENT_FILE: ./.env.vm
 concurrency:
@@ -33,7 +46,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   vm-env:
-    if: startsWith(github.event.head_commit.message, 'release:') == false
+    if: |
+      github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'release:')
+      || github.ref == 'refs/heads/main'
+      || startsWith('refs/tags/', github.ref)
     runs-on: ubuntu-latest
     steps:
       - id: debug
@@ -43,7 +59,7 @@ jobs:
         name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3.5.0
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.ref }}
       - id: gcloud-auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1.0.0
@@ -64,8 +80,8 @@ jobs:
           export APP_ENV=production
           export CLOUDSDK_COMPUTE_ZONE=${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
           export CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
-          export CONTAINER_IMAGE=${{ secrets.CONTAINER_IMAGE }}
-          export CONTAINER_IMAGE_TAG=${{ secrets.CONTAINER_IMAGE_TAG }}
+          export CONTAINER_IMAGE=${{ github.repository }}
+          export CONTAINER_IMAGE_TAG=${{ inputs.container-image-tag || github.ref_name }}
           export GCE_SERVICE_ACCOUNT='${{ secrets.GCE_SERVICE_ACCOUNT }}'
           export LEGO_ACCOUNT_EMAIL=${{ secrets.LEGO_ACCOUNT_EMAIL }}
           export LEGO_CA_SERVER=${{ secrets.LEGO_CA_SERVER }}
