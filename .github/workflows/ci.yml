@@ -376,14 +376,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-      - id: image-title
-        name: Get container image title
-        run: echo "result=$(jq .name package.json -r)" >> $GITHUB_OUTPUT
-      - id: image-url
-        name: Get container image URL
-        run: |
-          echo "result=${{format('{0}/{1}/pkgs/container/{2}',github.server_url,github.repository,
-          github.event.repository.name)}}" >> $GITHUB_OUTPUT
       - id: image-licenses
         name: Get container image licenses
         run: echo "result=$(jq .license package.json -r)" >> $GITHUB_OUTPUT
@@ -391,6 +383,9 @@ jobs:
         name: Extract container image metadata
         uses: docker/metadata-action@v4.3.0
         env:
+          CONTAINER_IMAGE_URL: |
+            ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
+            github.event.repository.name) }}
           DOCKER_METADATA_PR_HEAD_SHA: ${{ github.event_name == 'pull_request' }}
           SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
           VERSION: ${{ format('{0}+{1}', needs.metadata.outputs.version, env.SHA) }}
@@ -400,10 +395,10 @@ jobs:
           labels: |
             org.opencontainers.image.authors=@unicornware
             org.opencontainers.image.licenses=${{ steps.image-licenses.outputs.result }}
-            org.opencontainers.image.title=${{ steps.image-title.outputs.result }}
+            org.opencontainers.image.title=${{ format('@{0}', github.repository) }}
             org.opencontainers.image.revision=${{ env.SHA }}
             org.opencontainers.image.source=${{ env.SOURCE }}
-            org.opencontainers.image.url=${{ steps.image-url.outputs.result }}
+            org.opencontainers.image.url=${{ env.CONTAINER_IMAGE_URL }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ env.VERSION }}
           tags: |
@@ -416,9 +411,6 @@ jobs:
         name: Build and push container image
         uses: docker/build-push-action@v4.0.0
         with:
-          build-args: |
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            PORT=${{ secrets.PORT }}
           context: .
           file: ./Dockerfile
           labels: ${{ steps.metadata.outputs.labels }}

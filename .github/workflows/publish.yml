@@ -35,20 +35,20 @@ on:
         description: release tag
         required: true
 env:
-  REF: ${{ format('refs/tags/{0}',  github.event.inputs.tag || github.event.ref_name) }}
-  TAG: ${{ github.event.inputs.tag || github.event.ref_name }}
+  REF: ${{ format('refs/tags/{0}',  inputs.tag || github.ref_name) }}
+  TAG: ${{ inputs.tag || github.ref_name }}
 concurrency:
   cancel-in-progress: true
   group: ${{ github.workflow }}-${{ github.ref }}
 jobs:
-  metadata:
+  preflight:
     runs-on: ubuntu-latest
     steps:
       - id: debug
         name: Print environment variables and event payload
         uses: hmarr/debug-action@v2.1.0
   ghcr:
-    needs: metadata
+    needs: preflight
     permissions:
       packages: write
     runs-on: ubuntu-latest
@@ -73,21 +73,16 @@ jobs:
       - id: version
         name: Get container image version
         run: echo "result=$(jq .version package.json -r)" >> $GITHUB_OUTPUT
-      - id: title
-        name: Get container image title
-        run: echo "result=$(jq .name package.json -r)" >> $GITHUB_OUTPUT
       - id: licenses
         name: Get container image licenses
         run: echo "result=$(jq .license package.json -r)" >> $GITHUB_OUTPUT
-      - id: url
-        name: Get container image URL
-        run: |
-          echo "result=${{format('{0}/{1}/pkgs/container/{2}',github.server_url,github.repository,
-          github.event.repository.name)}}" >> $GITHUB_OUTPUT
       - id: metadata
         name: Extract container image metadata
         uses: docker/metadata-action@v4.3.0
         env:
+          CONTAINER_IMAGE_URL: |
+            ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
+            github.event.repository.name) }}
           SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
         with:
           flavor: latest=true
@@ -95,10 +90,10 @@ jobs:
           labels: |
             org.opencontainers.image.authors=@unicornware
             org.opencontainers.image.licenses=${{ steps.licenses.outputs.result }}
-            org.opencontainers.image.title=${{ steps.title.outputs.result }}
+            org.opencontainers.image.title=${{ format('@{0}', github.repository) }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ env.SOURCE }}
-            org.opencontainers.image.url=${{ steps.url.outputs.result }}
+            org.opencontainers.image.url=${{ env.CONTAINER_IMAGE_URL }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
           tags: |
@@ -110,9 +105,6 @@ jobs:
         name: Build and push container image
         uses: docker/build-push-action@v4.0.0
         with:
-          build-args: |
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            PORT=${{ secrets.PORT }}
           context: .
           file: ./Dockerfile
           labels: ${{ steps.metadata.outputs.labels }}
