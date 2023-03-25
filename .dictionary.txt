@@ -2,6 +2,7 @@ adminer
 ardatan
 axios
 bdougie
+buildx
 caserver
 cefc
 cloudsdk
@@ -32,6 +33,7 @@ lintstagedrc
 mkbuild
 mlly
 msie
+myip
 nestjs
 neusers
 nocheck
