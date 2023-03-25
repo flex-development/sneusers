@@ -22,6 +22,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/vm-env.yml
       - docker-cloud.yml
       - scripts/vm/startup-script.sh
   workflow_dispatch:

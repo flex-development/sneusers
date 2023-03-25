@@ -23,6 +23,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/vm-startup-script.yml
       - scripts/vm/startup-script.sh
   workflow_dispatch:
 env:
