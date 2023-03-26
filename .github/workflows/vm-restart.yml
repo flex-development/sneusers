@@ -1,0 +1,93 @@
+# Virtual Machine Restart
+#
+# Restart virtual machine startup on workflow call or dispatch.
+#
+# References:
+#
+# - https://docs.github.com/actions/learn-github-actions/contexts
+# - https://docs.github.com/actions/learn-github-actions/expressions
+# - https://docs.github.com/actions/managing-workflow-runs/manually-running-a-workflow
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_call
+# - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/reusing-workflows
+# - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
+# - https://github.com/actions/checkout
+# - https://github.com/google-github-actions/auth
+# - https://github.com/google-github-actions/setup-gcloud
+# - https://github.com/hmarr/debug-action
+
+---
+name: vm-restart
+on:
+  workflow_call:
+    inputs:
+      container-image-tag:
+        default: ''
+        description: container image tag
+        type: string
+  workflow_dispatch:
+    inputs:
+      container-image-tag:
+        default: ''
+        description: container image tag
+        type: string
+concurrency:
+  cancel-in-progress: true
+  group: vm-restart-${{ github.ref }}
+jobs:
+  preflight:
+    if: startsWith('refs/tags/', github.ref) || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - id: debug
+        name: Print environment variables and event payload
+        uses: hmarr/debug-action@v2.1.0
+  compose-file:
+    needs: preflight
+    uses: ./.github/workflows/vm-compose.yml
+    secrets: inherit
+  env-file:
+    needs: preflight
+    uses: ./.github/workflows/vm-env.yml
+    with:
+      container-image-tag: ${{ inputs.container-image-tag || github.ref_name }}
+    secrets: inherit
+  startup-script:
+    needs:
+      - compose-file
+      - env-file
+    uses: ./.github/workflows/vm-startup-script.yml
+    secrets: inherit
+  restart:
+    needs:
+      - preflight
+      - startup-script
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://api.sneusers.app
+    env:
+      CLOUDSDK_COMPUTE_ZONE: ${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
+    steps:
+      - id: checkout
+        name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v3.5.0
+        with:
+          ref: ${{ github.ref }}
+      - id: gcloud-auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.0.0
+        with:
+          credentials_json: ${{ secrets.GCE_SERVICE_ACCOUNT }}
+          project_id: ${{ secrets.CLOUDSDK_CORE_PROJECT }}
+      - id: gcloud-setup
+        name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1.1.0
+        with:
+          project_id: ${{ secrets.CLOUDSDK_CORE_PROJECT }}
+          skip_install: true
+      - id: restart
+        name: Restart virtual machine instance
+        run: |
+          gcloud compute instances stop ${{ secrets.VM }}
+          gcloud compute instances start ${{ secrets.VM }}

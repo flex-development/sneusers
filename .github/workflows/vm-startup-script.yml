@@ -33,10 +33,10 @@ env:
   CLOUDSDK_COMPUTE_ZONE: ${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: vm-startup-script-${{ github.ref }}
 jobs:
   vm-startup-script:
-    if: startsWith(github.event.head_commit.message, 'release:') == false
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     steps:
       - id: debug

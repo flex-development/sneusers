@@ -42,6 +42,7 @@ branches:
 environments:
   - environment_name: container
   - environment_name: dbdocs
+  - environment_name: production
   - environment_name: release
 # https://docs.github.com/rest/issues/labels#create-a-label
 labels:

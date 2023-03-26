@@ -43,11 +43,11 @@ env:
   ENVIRONMENT_FILE: ./.env.vm
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: vm-env-${{ github.ref }}
 jobs:
   vm-env:
     if: |
-      github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'release:')
+      (github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'release:'))
       || github.ref == 'refs/heads/main'
       || startsWith('refs/tags/', github.ref)
     runs-on: ubuntu-latest

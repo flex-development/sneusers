@@ -30,10 +30,10 @@ on:
   workflow_dispatch:
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: vm-compose-${{ github.ref }}
 jobs:
   vm-compose:
-    if: startsWith(github.event.head_commit.message, 'release:') == false
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     steps:
       - id: debug
