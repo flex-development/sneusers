@@ -36,8 +36,8 @@ sudo apt-get install curl -y
 sudo apt-get install gnupg -y
 sudo apt-get install lsb-release -y
 mkdir -m 0755 -p /etc/apt/keyrings
-curl -fsSL $DOCKER_DOWNLOAD_URL/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $DOCKER_DOWNLOAD_URL $(lsb_release -cs) stable | tee /etc/apt/sources.list.d/docker.list > /dev/null
+curl -fsSL $DOCKER_DOWNLOAD_URL/gpg | sudo gpg --dearmor --output /etc/apt/keyrings/docker.gpg --yes
+echo deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] $DOCKER_DOWNLOAD_URL $(lsb_release -cs) stable | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 sudo apt-get update
 sudo apt-get install containerd.io -y
 sudo apt-get install docker-buildx-plugin -y
@@ -49,8 +49,8 @@ sudo usermod -aG docker $USER
 grep docker /etc/group
 sudo gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT$ENVIRONMENT_FILE $ENVIRONMENT_FILE
 sudo chmod 666 $ENVIRONMENT_FILE
-echo "export ENVIRONMENT_FILE=$ENVIRONMENT_FILE" >> $ENVIRONMENT_FILE
-echo "export IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >> $ENVIRONMENT_FILE
-source $ENVIRONMENT_FILE
-gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT/$DOCKER_COMPOSE_FILE ~/$DOCKER_COMPOSE_FILE
-docker compose --project-directory ~/$WORKDIR up --detach
+echo "export ENVIRONMENT_FILE=$ENVIRONMENT_FILE" >>$ENVIRONMENT_FILE
+echo "export IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >>$ENVIRONMENT_FILE
+cp $ENVIRONMENT_FILE $WORKDIR/.env
+gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT/$DOCKER_COMPOSE_FILE $DOCKER_COMPOSE_FILE
+docker compose --project-directory $WORKDIR up
