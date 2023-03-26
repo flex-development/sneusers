@@ -43,10 +43,16 @@ concurrency:
 jobs:
   preflight:
     runs-on: ubuntu-latest
+    outputs:
+      container-image-url: ${{ steps.container-image-url.outputs.result }}
     steps:
       - id: debug
         name: Print environment variables and event payload
         uses: hmarr/debug-action@v2.1.0
+      - id: container-image-url
+        name: Get container image URL
+        run: |
+          echo "result=${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository, github.event.repository.name) }}" >> $GITHUB_OUTPUT
   ghcr:
     needs: preflight
     permissions:
@@ -54,9 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: container
-      url: |
-        ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
-        github.event.repository.name )}}
+      url: ${{ needs.preflight.outputs.container-image-url }}
     steps:
       - id: checkout
         name: Checkout ${{ env.TAG }}
@@ -80,9 +84,6 @@ jobs:
         name: Extract container image metadata
         uses: docker/metadata-action@v4.3.0
         env:
-          CONTAINER_IMAGE_URL: |
-            ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository,
-            github.event.repository.name) }}
           SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
         with:
           flavor: latest=true
@@ -93,7 +94,7 @@ jobs:
             org.opencontainers.image.title=${{ format('@{0}', github.repository) }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ env.SOURCE }}
-            org.opencontainers.image.url=${{ env.CONTAINER_IMAGE_URL }}
+            org.opencontainers.image.url=${{ needs.preflight.outputs.container-image-url }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
           tags: |
