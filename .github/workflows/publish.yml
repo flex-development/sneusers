@@ -10,6 +10,7 @@
 # - https://docs.github.com/actions/learn-github-actions/expressions
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#release
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+# - https://docs.github.com/actions/using-workflows/reusing-workflows#calling-a-reusable-workflow
 # - https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#release
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
@@ -140,3 +141,9 @@ jobs:
         with:
           name: DATABASE.dbml
           path: ./DATABASE.dbml
+  vm:
+    needs:
+      - dbdocs
+      - ghcr
+    uses: ./.github/workflows/vm-restart.yml
+    secrets: inherit
