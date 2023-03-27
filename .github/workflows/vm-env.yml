@@ -75,20 +75,19 @@ jobs:
       - id: create
         name: Create environment file
         run: |
-          echo "export APP_ENV=production
-          export CLOUDSDK_COMPUTE_REGION=${{ secrets.CLOUDSDK_COMPUTE_REGION }}
-          export CLOUDSDK_COMPUTE_ZONE=${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
-          export CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
-          export CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
-          export CONTAINER_IMAGE=${{ github.repository }}
-          export CONTAINER_IMAGE_TAG=${{ inputs.container-image-tag || github.ref_name }}
-          export GCE_SERVICE_ACCOUNT='${{ secrets.GCE_SERVICE_ACCOUNT }}'
-          export LEGO_ACCOUNT_EMAIL=${{ secrets.LEGO_ACCOUNT_EMAIL }}
-          export LEGO_CA_SERVER=${{ secrets.LEGO_CA_SERVER }}
-          export NODE_ENV=production
-          export PORT=${{ secrets.PORT }}
-          export SERVER_NAME=${{ secrets.SERVER_NAME }}
-          export TLD=${{ secrets.TLD }}" >>$ENVIRONMENT_FILE
+          echo "APP_ENV=production
+          CLOUDSDK_COMPUTE_REGION=${{ secrets.CLOUDSDK_COMPUTE_REGION }}
+          CLOUDSDK_COMPUTE_ZONE=${{ secrets.CLOUDSDK_COMPUTE_ZONE }}
+          CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
+          CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
+          CONTAINER_IMAGE_TAG=${{ inputs.container-image-tag || github.ref_name }}
+          GCE_SERVICE_ACCOUNT='${{ secrets.GCE_SERVICE_ACCOUNT }}'
+          LEGO_ACCOUNT_EMAIL=${{ secrets.LEGO_ACCOUNT_EMAIL }}
+          LEGO_CA_SERVER=${{ secrets.LEGO_CA_SERVER }}
+          NODE_ENV=production
+          PORT=${{ secrets.PORT }}
+          SERVER_NAME=${{ secrets.SERVER_NAME }}
+          TLD=${{ secrets.TLD }}" >>$ENVIRONMENT_FILE
       - id: upload
         name: Upload environment file to storage bucket
         run: gcloud storage cp $ENVIRONMENT_FILE gs://$CLOUDSDK_CORE_PROJECT/etc/profile.d/env.sh

@@ -7,16 +7,18 @@
 version: '3.9'
 
 secrets:
+  GCE_SERVICE_ACCOUNT:
+    environment: GCE_SERVICE_ACCOUNT
   GITHUB_TOKEN:
     environment: GITHUB_TOKEN
 services:
   api:
     container_name: api
-    image: dev.ghcr.io/${CONTAINER_IMAGE}
+    image: dev.ghcr.io/flex-development/sneusers
     build:
       args:
         NODE_ENV: development
-        PORT: ${PORT}
+        PORT: $PORT
       context: .
       dockerfile: ./Dockerfile
       secrets:
@@ -29,9 +31,9 @@ services:
       FORCE_COLOR: 3
       NEST_DEBUG: 1
       NODE_ENV: development
-      PORT: ${PORT}
+      PORT: $PORT
     healthcheck:
-      test: curl --fail http://localhost:${PORT} || exit 1
+      test: curl --fail http://localhost:$PORT || exit 1
     labels:
       traefik.enable: true
       traefik.http.middlewares.gzip.compress: true
@@ -44,10 +46,10 @@ services:
       traefik.http.middlewares.security.headers.stsPreload: true
       traefik.http.middlewares.security.headers.stsSeconds: 31536000
       traefik.http.routers.api.entrypoints: https
-      traefik.http.routers.api.rule: Host(`${SERVER_NAME}`)
+      traefik.http.routers.api.rule: Host(`$SERVER_NAME`)
     links: []
     ports:
-      - ${PORT}:${PORT}
+      - $PORT:$PORT
     pull_policy: build
     restart: always
     volumes:
@@ -65,42 +67,50 @@ services:
       - --api.dashboard
       - --api.debug
       - --api.insecure
-      - --certificatesresolvers.gcloud.acme.caserver=${LEGO_CA_SERVER}
+      - --certificatesresolvers.gcloud.acme.caserver=$LEGO_CA_SERVER
+      - --certificatesresolvers.gcloud.acme.dnschallenge
       - --certificatesresolvers.gcloud.acme.dnschallenge.provider=gcloud
       - --certificatesresolvers.gcloud.acme.dnschallenge.resolvers=8.8.8.8,8.8.4.4
-      - --certificatesresolvers.gcloud.acme.dnschallenge
+      - --certificatesresolvers.gcloud.acme.email=$LEGO_ACCOUNT_EMAIL
+      - --certificatesresolvers.gcloud.acme.preferredchain='ISRG Root X1'
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
-      - --entrypoints.https.http.tls.certresolver=gcloud
       - --entrypoints.https.http.tls
+      - --entrypoints.https.http.tls.certresolver=gcloud
+      - --entrypoints.https.http.tls.domains[0].main=*.$TLD
+      - --entrypoints.https.http.tls.domains[0].sans=*.dev.$TLD
       - --log.level=DEBUG
       - --ping
       - --providers.docker
       - --providers.docker.exposedByDefault=false
+      - --providers.docker.swarmMode=false
       - --providers.docker.watch
     depends_on:
       api:
         condition: service_healthy
     environment:
-      GCE_PROJECT: ${CLOUDSDK_CORE_PROJECT}
-      GCE_SERVICE_ACCOUNT: ${GCE_SERVICE_ACCOUNT}
-      LEGO_ACCOUNT_EMAIL: ${LEGO_ACCOUNT_EMAIL}
+      GCE_PROJECT: $CLOUDSDK_CORE_PROJECT
+      GCE_SERVICE_ACCOUNT_FILE: /run/secrets/GCE_SERVICE_ACCOUNT
+      LEGO_DISABLE_CNAME_SUPPORT: true
     healthcheck:
       test: traefik healthcheck --log.level=DEBUG --ping
     ports:
       - 443:443
       - 80:80
       - 8080:8080
-    restart: always
+    restart: unless-stopped
+    secrets:
+      - GCE_SERVICE_ACCOUNT
     tty: true
     volumes:
+      - ./acme.json:/acme.json
       - /var/run/docker.sock:/var/run/docker.sock:ro
   whoami:
     container_name: whoami
     image: traefik/whoami
     environment:
-      WHOAMI_PORT_NUMBER: ${WHOAMI_PORT_NUMBER}
+      WHOAMI_PORT_NUMBER: $WHOAMI_PORT_NUMBER
     ports:
-      - ${WHOAMI_PORT_NUMBER}:${WHOAMI_PORT_NUMBER}
+      - $WHOAMI_PORT_NUMBER:$WHOAMI_PORT_NUMBER
 volumes:
   node_modules: {}

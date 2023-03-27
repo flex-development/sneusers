@@ -61,6 +61,7 @@ if [ ! -f "$LEGO_PATH/certificates/_.$TLD.json" ]; then
     --accept-tos \
     --dns=gcloud \
     --email=$LEGO_ACCOUNT_EMAIL \
+    --key-type=rsa4096 \
     --path=$LEGO_PATH \
     run
 fi

@@ -49,8 +49,12 @@ sudo usermod -aG docker $USER
 grep docker /etc/group
 sudo gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT$ENVIRONMENT_FILE $ENVIRONMENT_FILE
 sudo chmod 666 $ENVIRONMENT_FILE
-echo "export ENVIRONMENT_FILE=$ENVIRONMENT_FILE" >>$ENVIRONMENT_FILE
-echo "export IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >>$ENVIRONMENT_FILE
 cp $ENVIRONMENT_FILE $WORKDIR/.env
+echo "DOCKER_COMPOSE_FILE=$DOCKER_COMPOSE_FILE" >>$ENVIRONMENT_FILE
+echo "ENVIRONMENT_FILE=$ENVIRONMENT_FILE" >>$ENVIRONMENT_FILE
+echo "IP=$(dig +short myip.opendns.com @resolver1.opendns.com)" >>$ENVIRONMENT_FILE
+echo "WORKDIR=$WORKDIR" >>$ENVIRONMENT_FILE
 gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT/$DOCKER_COMPOSE_FILE $DOCKER_COMPOSE_FILE
-docker compose --project-directory $WORKDIR up
+touch $WORKDIR/acme.json
+chmod 600 $WORKDIR/acme.json
+docker compose --project-directory $WORKDIR up --detach

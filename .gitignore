@@ -73,6 +73,7 @@ DATABASE.sql
 ./redis/
 .lego/
 .service-accounts/
+acme.json
 
 # Releases
 # ------------------------------------------------------------------------------

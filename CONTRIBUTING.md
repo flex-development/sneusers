@@ -103,7 +103,6 @@ Follow the steps below to setup your local development environment:
 | `CLOUDSDK_PYTHON`             |
 | `CODECOV_TOKEN`               |
 | `CONTAINER_IMAGE_TAG`         |
-| `CONTAINER_IMAGE`             |
 | `DBDOCS_TOKEN`                |
 | `FORCE_COLOR`                 |
 | `GCE_SERVICE_ACCOUNT`         |
