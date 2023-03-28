@@ -1267,7 +1267,7 @@ __metadata:
     "@nestjs/platform-express": "npm:9.3.12"
     "@nestjs/sequelize": "npm:9.0.0"
     "@nestjs/swagger": "npm:6.2.1"
-    "@nestjs/terminus": "npm:9.2.1"
+    "@nestjs/terminus": "npm:9.2.2"
     "@nestjs/testing": "npm:9.3.12"
     "@nestjs/throttler": "npm:4.0.0"
     "@octokit/types": "npm:9.0.0"
@@ -2057,9 +2057,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:9.2.1":
-  version: 9.2.1
-  resolution: "@nestjs/terminus@npm:9.2.1"
+"@nestjs/terminus@npm:9.2.2":
+  version: 9.2.2
+  resolution: "@nestjs/terminus@npm:9.2.2"
   dependencies:
     boxen: "npm:5.1.2"
     check-disk-space: "npm:3.3.1"
@@ -2105,7 +2105,7 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: cc5c45456662597838bd78f8cd88cd388bb9173b857e49427ad4294b9769f217003b63d34368e5424fbb694b008ad7a07a270c981025d05d1723c65e97f05b4a
+  checksum: 264048472f254e03949c413218c94ee9d62febaf85a1a6d418dc0fa1cb23a995dbf8e7ef2c9e54d760643c66f48418da3ff3bcdea599c4982f1f3e9656246610
   languageName: node
   linkType: hard
 
