@@ -1262,7 +1262,7 @@ __metadata:
     "@nestjs/common": "npm:9.3.12"
     "@nestjs/config": "npm:2.3.1"
     "@nestjs/core": "npm:9.3.12"
-    "@nestjs/jwt": "npm:10.0.2"
+    "@nestjs/jwt": "npm:10.0.3"
     "@nestjs/passport": "npm:9.0.3"
     "@nestjs/platform-express": "npm:9.3.12"
     "@nestjs/sequelize": "npm:9.0.0"
@@ -1959,15 +1959,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/jwt@npm:10.0.2":
-  version: 10.0.2
-  resolution: "@nestjs/jwt@npm:10.0.2"
+"@nestjs/jwt@npm:10.0.3":
+  version: 10.0.3
+  resolution: "@nestjs/jwt@npm:10.0.3"
   dependencies:
     "@types/jsonwebtoken": "npm:9.0.1"
     jsonwebtoken: "npm:9.0.0"
   peerDependencies:
     "@nestjs/common": ^8.0.0 || ^9.0.0
-  checksum: 6ac72c083d2bf5d68193791c24f2e1074ad990f92e80b050775d726f8022fea19eb73827ae65d9b2f77c4bd6627a0f55e5f5282058b8fd395e69893f72148bad
+  checksum: b46fcaa259896b6cf8b24267ca10c075fe8fc57da6267511da646a75f3cbdb47c163fbb4aca7588515fd601935dd248bf279f0ed9f0697d96f1503b9901c8140
   languageName: node
   linkType: hard
 
