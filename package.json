@@ -217,7 +217,7 @@
     "tempfile": "5.0.0",
     "trash-cli": "5.0.0",
     "ts-dedent": "2.2.0",
-    "typescript": "5.1.0-dev.20230328",
+    "typescript": "5.1.0-dev.20230329",
     "umzug": "3.2.1",
     "validator": "13.9.0",
     "version-bump-prompt": "6.1.0",
