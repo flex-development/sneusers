@@ -102,7 +102,7 @@
     "@flex-development/pathe": "1.0.3",
     "@flex-development/tsconfig-utils": "1.1.2",
     "@flex-development/tutils": "6.0.0-alpha.10",
-    "@graphql-eslint/eslint-plugin": "3.17.0",
+    "@graphql-eslint/eslint-plugin": "3.18.0",
     "@nestjs/axios": "2.0.0",
     "@nestjs/common": "9.3.12",
     "@nestjs/config": "2.3.1",
