@@ -111,7 +111,7 @@
     "@nestjs/passport": "9.0.3",
     "@nestjs/platform-express": "9.3.12",
     "@nestjs/sequelize": "9.0.0",
-    "@nestjs/swagger": "6.2.1",
+    "@nestjs/swagger": "6.3.0",
     "@nestjs/terminus": "9.2.2",
     "@nestjs/testing": "9.3.12",
     "@nestjs/throttler": "4.0.0",
