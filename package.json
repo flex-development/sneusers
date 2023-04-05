@@ -104,7 +104,7 @@
     "@flex-development/tutils": "6.0.0-alpha.10",
     "@graphql-eslint/eslint-plugin": "3.18.0",
     "@nestjs/axios": "2.0.0",
-    "@nestjs/common": "9.3.12",
+    "@nestjs/common": "9.4.0",
     "@nestjs/config": "2.3.1",
     "@nestjs/core": "9.3.12",
     "@nestjs/jwt": "10.0.3",
