@@ -1265,7 +1265,7 @@ __metadata:
     "@nestjs/jwt": "npm:10.0.3"
     "@nestjs/passport": "npm:9.0.3"
     "@nestjs/platform-express": "npm:9.4.0"
-    "@nestjs/sequelize": "npm:9.0.0"
+    "@nestjs/sequelize": "npm:9.0.2"
     "@nestjs/swagger": "npm:6.3.0"
     "@nestjs/terminus": "npm:9.2.2"
     "@nestjs/testing": "npm:9.3.12"
@@ -2014,11 +2014,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/sequelize@npm:9.0.0":
-  version: 9.0.0
-  resolution: "@nestjs/sequelize@npm:9.0.0"
+"@nestjs/sequelize@npm:9.0.2":
+  version: 9.0.2
+  resolution: "@nestjs/sequelize@npm:9.0.2"
   dependencies:
-    uuid: "npm:8.3.2"
+    uuid: "npm:9.0.0"
   peerDependencies:
     "@nestjs/common": ^8.0.0 || ^9.0.0
     "@nestjs/core": ^8.0.0 || ^9.0.0
@@ -2026,7 +2026,7 @@ __metadata:
     rxjs: ^7.2.0
     sequelize: ^6.3.5
     sequelize-typescript: ^2.0.0
-  checksum: 5cba029de8f13110b24cf74ed53777ad4600ea8341dbe13e4834f7684db43696433d58778e975545ff6751e22dc5e9dba9b634cefd5e49e11d6eaa6c75c3bbaf
+  checksum: e85e6ddec938cad409ba8f91398ddbcfaaf5a256365891e10553c942d42d7348fd8a8efe0cbe703664744df3e9f47059e804948bfd96db6e6bd6d7794db3cf1b
   languageName: node
   linkType: hard
 
@@ -12554,21 +12554,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:8.3.2, uuid@npm:^8.3.2":
-  version: 8.3.2
-  resolution: "uuid@npm:8.3.2"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 236a12282c6fa32f326aa1b6d5699a843572e9ab7de84a1507a6b7c315fdcf55bf6ed333fd37d35c5c656f4cb96af998844e1c8cae281c442a1ec3b66df62962
-  languageName: node
-  linkType: hard
-
 "uuid@npm:9.0.0, uuid@npm:^9.0.0":
   version: 9.0.0
   resolution: "uuid@npm:9.0.0"
   bin:
     uuid: dist/bin/uuid
   checksum: e1f76aff372e430bb129157360fd4cd3b393411b245604ea78e178a822ab7874ec2ebecec03ce94422b0b80bbd24733c6fa1df166c9cbad5086ef4b4843140bb
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 236a12282c6fa32f326aa1b6d5699a843572e9ab7de84a1507a6b7c315fdcf55bf6ed333fd37d35c5c656f4cb96af998844e1c8cae281c442a1ec3b66df62962
   languageName: node
   linkType: hard
 
