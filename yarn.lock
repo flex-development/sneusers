@@ -1268,7 +1268,7 @@ __metadata:
     "@nestjs/sequelize": "npm:9.0.2"
     "@nestjs/swagger": "npm:6.3.0"
     "@nestjs/terminus": "npm:9.2.2"
-    "@nestjs/testing": "npm:9.3.12"
+    "@nestjs/testing": "npm:9.4.0"
     "@nestjs/throttler": "npm:4.0.0"
     "@octokit/types": "npm:9.0.0"
     "@sequelize/core": "npm:7.0.0-alpha.25"
@@ -2109,9 +2109,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:9.3.12":
-  version: 9.3.12
-  resolution: "@nestjs/testing@npm:9.3.12"
+"@nestjs/testing@npm:9.4.0":
+  version: 9.4.0
+  resolution: "@nestjs/testing@npm:9.4.0"
   dependencies:
     tslib: "npm:2.5.0"
   peerDependencies:
@@ -2124,7 +2124,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: f3582e2afa59db5f6d92fdfa1099bf9fd7b1c2ff766de15669ba2f9f7bd41b0a5646a805cf7a9e1bf2bc89c9faff14ed20457be2f79eb81c88124687996ba11b
+  checksum: cfda9e36285134c70de72f6c3ffd84f7a6d7f24acf968884892a2a5c4f5541f9d1392a6a2451734935a33849c0afd2e0c80af6af30be9da41bc0dd3c2f9d1355
   languageName: node
   linkType: hard
 

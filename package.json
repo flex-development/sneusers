@@ -113,7 +113,7 @@
     "@nestjs/sequelize": "9.0.2",
     "@nestjs/swagger": "6.3.0",
     "@nestjs/terminus": "9.2.2",
-    "@nestjs/testing": "9.3.12",
+    "@nestjs/testing": "9.4.0",
     "@nestjs/throttler": "4.0.0",
     "@octokit/types": "9.0.0",
     "@sequelize/core": "7.0.0-alpha.25",
