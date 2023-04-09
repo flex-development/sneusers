@@ -15,6 +15,7 @@ import tsconfig from './tsconfig.json' assert { type: 'json' }
  */
 const config: Config = defineBuildConfig({
   bundle: true,
+  charset: 'utf8',
   conditions: tsconfig.compilerOptions.customConditions,
   external: [
     '@nestjs/microservices',
