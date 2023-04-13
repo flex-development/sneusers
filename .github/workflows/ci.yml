@@ -67,7 +67,7 @@ jobs:
         uses: hmarr/debug-action@v2.1.0
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
@@ -99,7 +99,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           ref: ${{ env.REF }}
@@ -126,7 +126,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           fetch-depth: 0
           ref: ${{ env.REF }}
@@ -149,7 +149,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
@@ -176,7 +176,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
@@ -203,7 +203,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
@@ -230,7 +230,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: test-files-check
@@ -272,7 +272,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: test-files-check
@@ -329,7 +329,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
@@ -379,7 +379,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: login
@@ -448,7 +448,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ env.REF }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ env.REF }}
       - id: node
