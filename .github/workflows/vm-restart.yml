@@ -71,7 +71,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout ${{ github.ref_name }}
-        uses: actions/checkout@v3.5.1
+        uses: actions/checkout@v3.5.2
         with:
           ref: ${{ github.ref }}
       - id: gcloud-auth
