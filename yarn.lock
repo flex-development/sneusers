@@ -1341,7 +1341,7 @@ __metadata:
     graphql: "npm:16.6.0"
     graphql-config: "npm:4.5.0"
     growl: "npm:1.10.5"
-    helmet: "npm:6.0.1"
+    helmet: "npm:6.1.5"
     husky: "npm:8.0.3"
     is-ci: "npm:3.0.1"
     jsonc-eslint-parser: "npm:2.2.0"
@@ -7342,10 +7342,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helmet@npm:6.0.1":
-  version: 6.0.1
-  resolution: "helmet@npm:6.0.1"
-  checksum: a323b75c7b9afe431981e32555db48c70c2985005ab34ee2188a60fa887c97469bdf05f44c34fac5d50f4c69431f847c231996e8cdd897a68c53c1fc46eef571
+"helmet@npm:6.1.5":
+  version: 6.1.5
+  resolution: "helmet@npm:6.1.5"
+  checksum: 0c6b62e3a71591144abe2f1522889fd4cba6867615a80ef8f1efe3e1f5edac71839b74a11f9ea00367baebffd175cfb8d625538f132c2ac5861a635d24fc9cd0
   languageName: node
   linkType: hard
 
