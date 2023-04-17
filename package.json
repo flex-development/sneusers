@@ -168,7 +168,7 @@
     "dbdocs": "0.7.3",
     "dotenv-vault": "1.19.0",
     "esbuild": "0.17.17",
-    "eslint": "8.37.0",
+    "eslint": "8.38.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-chai-expect": "3.0.0",
     "eslint-plugin-jest-formatting": "3.1.0",
