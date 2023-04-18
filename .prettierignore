@@ -15,6 +15,7 @@
 **/tsconfig*temp.json
 .husky/_/
 .lego/
+.service-accounts/
 .yarn/
 yarn.lock
 

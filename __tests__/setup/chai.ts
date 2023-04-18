@@ -7,10 +7,6 @@
 import chaiHttp from 'chai-http'
 import { chai } from 'vitest'
 
-// configure chai
-chai.config.includeStack = true
-chai.config.truncateThreshold = 0
-
 /**
  * initialize chai plugins.
  *

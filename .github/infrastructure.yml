@@ -200,7 +200,7 @@ repository:
   archived: false
   automated_security_fixes: true
   default_branch: main
-  delete_branch_on_merge: false
+  delete_branch_on_merge: true
   description: 🚧 Demo users system API
   has_issues: true
   has_projects: true

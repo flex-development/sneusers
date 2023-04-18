@@ -1,6 +1,6 @@
 # :tipping_hand_person: sneusers
 
-[![github release](https://img.shields.io/github/v/release/flex-development/sneusers.svg)](https://github.com/flex-development/sneusers/releases/latest)
+[![github release](https://img.shields.io/github/v/release/flex-development/sneusers.svg?include_prereleases&sort=semver)](https://github.com/flex-development/sneusers/releases/latest)
 [![healthcheck](https://github.com/flex-development/sneusers/actions/workflows/healthcheck.yml/badge.svg)](https://github.com/flex-development/sneusers/actions/workflows/healthcheck.yml)
 [![module type: esm](https://img.shields.io/badge/module%20type-esm-brightgreen)](https://github.com/voxpelli/badges-cjs-esm)
 [![license](https://img.shields.io/github/license/flex-development/sneusers.svg)](LICENSE.md)
@@ -54,7 +54,7 @@ Firebase Realtime Database.
 
 ## Types
 
-This action is fully typed with [TypeScript][12].
+This project is fully typed with [TypeScript][12].
 
 ## Contribute
 

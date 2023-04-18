@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "customConditions": ["import", "default"],
     "declaration": true,
     "noEmitOnError": true,
     "skipLibCheck": false,
-    "target": "es2021"
+    "target": "es2022"
   },
   "exclude": ["**/__mocks__", "**/__tests__"],
   "extends": "./tsconfig.json",

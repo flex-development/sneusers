@@ -4,10 +4,8 @@
 # DIRECTORIES & FILES
 **/*.snap
 **/*config.*.timestamp*
-**/.DS_Store
 **/__tests__/report.json
 **/coverage/
-**/.temp/
 **/dist/
 **/node_modules/
 **/tsconfig*temp.json

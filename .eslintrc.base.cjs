@@ -46,7 +46,7 @@ const config = {
       parser: '@typescript-eslint/parser',
       parserOptions: {
         extraFileExtensions: [],
-        project: ['./tsconfig.json', 'tsconfig.cjs.json'],
+        project: ['./tsconfig.json', './tsconfig.cjs.json'],
         sourceType: require('./package.json').type,
         tsconfigRootDir: process.cwd(),
         warnOnUnsupportedTypeScriptVersion: true
@@ -421,6 +421,7 @@ const config = {
               'maximum',
               'minimum',
               'next',
+              'packageManager',
               'visibleName'
             ],
             jsxTags: false
@@ -430,10 +431,12 @@ const config = {
         'jsdoc/check-values': 1,
         'jsdoc/empty-tags': 1,
         'jsdoc/implements-on-classes': 1,
-        'jsdoc/match-description': 0,
+        'jsdoc/match-description': [
+          1,
+          { matchDescription: '/^\\S.+?\\n\\n?$/su' }
+        ],
         'jsdoc/match-name': 0,
         'jsdoc/multiline-blocks': 1,
-        'jsdoc/newline-after-description': [1, 'always'],
         'jsdoc/no-bad-blocks': [1, { preventAllMultiAsteriskBlocks: true }],
         'jsdoc/no-defaults': 0,
         'jsdoc/no-missing-syntax': 0,
@@ -556,9 +559,10 @@ const config = {
           1,
           'any',
           {
+            applyToEndTag: true,
             count: 1,
-            dropEndLines: true,
-            noEndLines: false,
+            endLines: 0,
+            startLines: null,
             tags: {}
           }
         ],
@@ -839,6 +843,7 @@ const config = {
         '@typescript-eslint/no-empty-function': 0,
         '@typescript-eslint/no-unused-expressions': 0,
         '@typescript-eslint/prefer-ts-expect-error': 0,
+        '@typescript-eslint/require-await': 0,
         '@typescript-eslint/restrict-template-expressions': 0,
         '@typescript-eslint/unbound-method': 0,
         'chai-expect/missing-assertion': 2,
@@ -884,7 +889,7 @@ const config = {
       }
     },
     {
-      extends: ['plugin:@graphql-eslint/operations-recommended'],
+      extends: ['plugin:@graphql-eslint/operations-all'],
       files: '**/*.gql',
       rules: {
         '@graphql-eslint/no-anonymous-operations': 0,
@@ -1138,11 +1143,7 @@ const config = {
       }
     },
     {
-      files: [
-        '.github/workflows/no-response-handler.yml',
-        '.yarnrc.yml',
-        'docker*.yml'
-      ],
+      files: ['.github/workflows/*.yml', '.yarnrc.yml', 'docker*.yml'],
       rules: {
         'yml/key-name-casing': 0
       }
@@ -1156,9 +1157,13 @@ const config = {
   settings: {
     jsdoc: {
       augmentsExtendsReplacesDocs: true,
+      ignoreInternal: false,
       ignorePrivate: false,
       implementsReplacesDocs: true,
       overrideReplacesDocs: true,
+      preferredTypes: {
+        '*': false
+      },
       structuredTags: {
         const: {
           name: 'namepath-defining',
@@ -1194,6 +1199,10 @@ const config = {
         next: {
           name: 'namepath-defining',
           required: ['type']
+        },
+        packageManager: {
+          name: 'text',
+          required: ['name']
         },
         param: {
           name: 'namepath-defining',

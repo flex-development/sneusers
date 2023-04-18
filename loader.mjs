@@ -4,6 +4,7 @@
  * @see https://nodejs.org/api/esm.html#loaders
  */
 
+import { DECORATOR_REGEX } from '@flex-development/decorator-regex'
 import * as esm from '@flex-development/esm-types'
 import * as mlly from '@flex-development/mlly'
 import * as pathe from '@flex-development/pathe'
@@ -11,6 +12,7 @@ import * as tscu from '@flex-development/tsconfig-utils'
 import * as tutils from '@flex-development/tutils'
 import * as esbuild from 'esbuild'
 import { URL, fileURLToPath, pathToFileURL } from 'node:url'
+import ts from 'typescript'
 
 // add support for extensionless files in "bin" scripts
 // https://github.com/nodejs/modules/issues/488
@@ -38,6 +40,7 @@ const compilerOptions = tscu.loadCompilerOptions(tsconfig)
  *
  * @see {@linkcode esm.LoadHookContext}
  * @see {@linkcode esm.LoadHookResult}
+ * @see {@linkcode esm.LoadHook}
  * @see {@linkcode esm.ResolvedModuleUrl}
  * @see https://nodejs.org/api/esm.html#loadurl-context-nextload
  *
@@ -93,6 +96,16 @@ export const load = async (url, context) => {
       parent: url
     })
 
+    // emit decorator metadata
+    if (DECORATOR_REGEX.test(source)) {
+      const { outputText } = ts.transpileModule(source, {
+        compilerOptions: { ...compilerOptions, sourceMap: false },
+        fileName: url
+      })
+
+      source = outputText
+    }
+
     // transpile source code
     const { code } = await esbuild.transform(source, {
       format: 'esm',
@@ -110,6 +123,7 @@ export const load = async (url, context) => {
 
   return { format: context.format, shortCircuit: true, source }
 }
+
 /**
  * Resolves the given module `specifier`, and its module format as a hint to the
  * {@linkcode load} hook.
@@ -121,6 +135,7 @@ export const load = async (url, context) => {
  *
  * @see {@linkcode esm.ResolveHookContext}
  * @see {@linkcode esm.ResolveHookResult}
+ * @see {@linkcode esm.ResolveHook}
  * @see https://nodejs.org/api/esm.html#resolvespecifier-context-nextresolve
  *
  * @async

@@ -267,7 +267,7 @@
   "rewrap.doubleSentenceSpacing": true,
   "rewrap.reformat": true,
   "rewrap.wrappingColumn": 80,
-  "shellformat.flag": "-ci -fn -i=2 -sr",
+  "shellformat.flag": "-ci -fn -i=2 -ln=bash -sr",
   "shellformat.useEditorConfig": true,
   "terminal.integrated.copyOnSelection": true,
   "todo-tree.filtering.ignoreGitSubmodules": true,
@@ -358,11 +358,6 @@
       "icon": "tsconfig"
     },
     {
-      "extensions": ["key", "keytmp", "pass"],
-      "format": "svg",
-      "icon": "key"
-    },
-    {
       "extensions": ["repository.ts"],
       "format": "svg",
       "icon": "nest_service_ts"
@@ -372,7 +367,6 @@
       "format": "svg",
       "icon": "vitest"
     },
-
     {
       "extensions": ["spec-d.ts"],
       "format": "svg",
