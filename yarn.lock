@@ -1273,7 +1273,7 @@ __metadata:
     "@nestjs/testing": "npm:9.4.0"
     "@nestjs/throttler": "npm:4.0.0"
     "@octokit/types": "npm:9.0.0"
-    "@sequelize/core": "npm:7.0.0-alpha.25"
+    "@sequelize/core": "npm:7.0.0-alpha.26"
     "@types/body-parser": "npm:1.19.2"
     "@types/cache-manager": "npm:4.0.2"
     "@types/chai": "npm:4.3.4"
@@ -2519,13 +2519,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sequelize/core@npm:7.0.0-alpha.25":
-  version: 7.0.0-alpha.25
-  resolution: "@sequelize/core@npm:7.0.0-alpha.25"
+"@sequelize/core@npm:7.0.0-alpha.26":
+  version: 7.0.0-alpha.26
+  resolution: "@sequelize/core@npm:7.0.0-alpha.26"
   dependencies:
     "@types/debug": "npm:^4.1.7"
     "@types/validator": "npm:^13.7.5"
-    bnf-parser: "npm:3.1.1"
+    bnf-parser: "npm:3.1.4"
     dayjs: "npm:^1.11.5"
     debug: "npm:^4.3.4"
     dottie: "npm:^2.0.2"
@@ -2533,6 +2533,7 @@ __metadata:
     inflection: "npm:^2.0.0"
     lodash: "npm:^4.17.21"
     pg-connection-string: "npm:^2.5.0"
+    pg-hstore: "npm:^2.3.4"
     retry-as-promised: "npm:^7.0.3"
     semver: "npm:^7.3.7"
     sequelize-pool: "npm:^8.0.0"
@@ -2552,15 +2553,13 @@ __metadata:
       optional: true
     pg:
       optional: true
-    pg-hstore:
-      optional: true
     snowflake-sdk:
       optional: true
     sqlite3:
       optional: true
     tedious:
       optional: true
-  checksum: a457d9e3f5d77acfac8852b37bb4aba61062e5a24b519e405c5b849636c99120a020c41e78032ec10c04ab2890339983187ed62eda2af5fd2afba51246fc3bf3
+  checksum: fe06b08aba711d26d1688c32ba9c9a497842fcef68d91b15638b110e71ab1cd5a10a7b76a62a5ee46fd55741c63a6e3f839aad724f83ad53b2ba3444b838c718
   languageName: node
   linkType: hard
 
@@ -3876,10 +3875,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bnf-parser@npm:3.1.1":
-  version: 3.1.1
-  resolution: "bnf-parser@npm:3.1.1"
-  checksum: b1742f8b4cb687762e0f660732365d5e2440af3c2053fcea45eace2e94c205908b66d1cfe5ded7befc8fc3743b7c86c02db68c685b011ddaa0a50165889eebd5
+"bnf-parser@npm:3.1.4":
+  version: 3.1.4
+  resolution: "bnf-parser@npm:3.1.4"
+  checksum: 8f9e5dc9bed69c4ee1b25f77d94afd6d4efdb7a4249f4cd20736c9c17d18d0edad9dfab6693655b4095474035fa1a84cff12745b73a9075fa882a287b7c6d4e4
   languageName: node
   linkType: hard
 
@@ -10241,7 +10240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-hstore@npm:2.3.4":
+"pg-hstore@npm:2.3.4, pg-hstore@npm:^2.3.4":
   version: 2.3.4
   resolution: "pg-hstore@npm:2.3.4"
   dependencies:
