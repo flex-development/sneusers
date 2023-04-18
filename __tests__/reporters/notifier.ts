@@ -4,6 +4,7 @@
  */
 
 import type { OneOrMany } from '@flex-development/tutils'
+import ci from 'is-ci'
 import notifier from 'node-notifier'
 import type NotificationCenter from 'node-notifier/notifiers/notificationcenter'
 import { performance } from 'node:perf_hooks'
@@ -20,28 +21,38 @@ import type { File, Reporter, Task, Test, Vitest } from 'vitest'
  */
 class Notifier implements Reporter {
   /**
+   * Test reporter context.
+   *
    * @public
-   * @member {Vitest} ctx - Test reporter context
+   * @instance
+   * @member {Vitest} ctx
    */
   public ctx: Vitest = {} as Vitest
 
   /**
+   * Test run end time (in milliseconds).
+   *
    * @public
-   * @member {number} end - Test run end time (in milliseconds)
+   * @instance
+   * @member {number} end
    */
   public end: number = 0
 
   /**
+   * Test run start time (in milliseconds).
+   *
    * @public
-   * @member {number} start - Test run start time (in milliseconds)
+   * @instance
+   * @member {number} start
    */
   public start: number = 0
 
   /**
    * Sends a notification.
    *
-   * @protected
+   * **Note**: Does nothing in CI environments.
    *
+   * @protected
    * @async
    *
    * @param {File[]} [files=this.ctx.state.getFiles()] - File objects
@@ -52,19 +63,42 @@ class Notifier implements Reporter {
     files: File[] = this.ctx.state.getFiles(),
     errors: unknown[] = this.ctx.state.getUnhandledErrors()
   ): Promise<void> {
-    /** @const {Test[]} tests - Tests run */
+    // do nothing in ci environments
+    if (ci) return void ci
+
+    /**
+     * Test objects.
+     *
+     * @const {Test[]} tests
+     */
     const tests: Test[] = this.tests(files)
 
-    /** @const {number} fails - Total number of failed tests */
+    /**
+     * Total number of failed tests.
+     *
+     * @const {number} fails
+     */
     const fails: number = tests.filter(t => t.result?.state === 'fail').length
 
-    /** @const {number} passes - Total number of passed tests */
+    /**
+     * Total number of passed tests.
+     *
+     * @const {number} passes
+     */
     const passes: number = tests.filter(t => t.result?.state === 'pass').length
 
-    /** @var {string} message - Notification message */
+    /**
+     * Notification message.
+     *
+     * @var {string} message
+     */
     let message: string = ''
 
-    /** @var {string} title - Notification title */
+    /**
+     * Notification title.
+     *
+     * @var {string} title
+     */
     let title: string = ''
 
     // get notification title and message based on number of failed tests
@@ -76,7 +110,11 @@ class Notifier implements Reporter {
 
       title = '\u274C Failed'
     } else {
-      /** @const {number} time - Time to run all tests (in milliseconds) */
+      /**
+       * Total time to run all tests (in milliseconds).
+       *
+       * @const {number} time
+       */
       const time: number = this.end - this.start
 
       message = dedent`
@@ -100,10 +138,9 @@ class Notifier implements Reporter {
   }
 
   /**
-   * Sends a notification after all tests have ran (in non ci/cd environments).
+   * Sends a notification after all tests have ran.
    *
    * @public
-   *
    * @async
    *
    * @param {File[]} [files=this.ctx.state.getFiles()] - File objects

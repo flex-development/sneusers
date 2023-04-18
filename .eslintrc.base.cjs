@@ -431,10 +431,7 @@ const config = {
         'jsdoc/check-values': 1,
         'jsdoc/empty-tags': 1,
         'jsdoc/implements-on-classes': 1,
-        'jsdoc/match-description': [
-          1,
-          { matchDescription: '/^\\S.+?\\n\\n?$/su' }
-        ],
+        'jsdoc/match-description': 0,
         'jsdoc/match-name': 0,
         'jsdoc/multiline-blocks': 1,
         'jsdoc/no-bad-blocks': [1, { preventAllMultiAsteriskBlocks: true }],
@@ -562,7 +559,7 @@ const config = {
             applyToEndTag: true,
             count: 1,
             endLines: 0,
-            startLines: null,
+            startLines: 1,
             tags: {}
           }
         ],
