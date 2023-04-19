@@ -5,7 +5,7 @@
 
 # dependencies
 # INSTALL DEPENDENCIES
-FROM node:19-alpine As dependencies
+FROM node:19.9.0-alpine As dependencies
 
 ARG NODE_ENV production
 
