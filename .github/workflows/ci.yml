@@ -412,7 +412,7 @@ jobs:
         run: echo "result=$(jq .license package.json -r)" >>$GITHUB_OUTPUT
       - id: metadata
         name: Extract container image metadata
-        uses: docker/metadata-action@v4.3.0
+        uses: docker/metadata-action@v4.4.0
         env:
           DOCKER_METADATA_PR_HEAD_SHA: ${{ github.event_name == 'pull_request' }}
           SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
