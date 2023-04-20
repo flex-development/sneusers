@@ -1272,7 +1272,7 @@ __metadata:
     "@nestjs/terminus": "npm:9.2.2"
     "@nestjs/testing": "npm:9.4.0"
     "@nestjs/throttler": "npm:4.0.0"
-    "@octokit/types": "npm:9.0.0"
+    "@octokit/types": "npm:9.1.0"
     "@sequelize/core": "npm:7.0.0-alpha.26"
     "@types/body-parser": "npm:1.19.2"
     "@types/cache-manager": "npm:4.0.2"
@@ -2430,19 +2430,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/openapi-types@npm:^16.0.0":
-  version: 16.0.0
-  resolution: "@octokit/openapi-types@npm:16.0.0"
-  checksum: 7bae7649e87e09fc4a064ccaa98568951fd2929f4128d108da86f82d35ccdde19930d57bbd0240ac92db2a196f11cdce5471c05f6d3d3492d4dba486c5af65e7
+"@octokit/openapi-types@npm:^16.1.0":
+  version: 16.1.0
+  resolution: "@octokit/openapi-types@npm:16.1.0"
+  checksum: 7bd007f703b7927bf706e18f3a45d936f15d62016e2d145734730d35a36850e22d4740980d5f5fa4b1c287f0967c1840d22750684832bfd8c05f08943a4b0322
   languageName: node
   linkType: hard
 
-"@octokit/types@npm:9.0.0":
-  version: 9.0.0
-  resolution: "@octokit/types@npm:9.0.0"
+"@octokit/types@npm:9.1.0":
+  version: 9.1.0
+  resolution: "@octokit/types@npm:9.1.0"
   dependencies:
-    "@octokit/openapi-types": "npm:^16.0.0"
-  checksum: 377a08749434012c78fdc849765c3e11d0358d3bc49e83779da95488257aaffec7351ecb8dd9565a81c68be51976b9b20f544098c66d162f88dafdcc095d159f
+    "@octokit/openapi-types": "npm:^16.1.0"
+  checksum: 023e71f212a6fcf7b6cfcb78aee5705ffebcdd5a18b54c7bc677cba63a5d8c06e7d24ef0cc115053fbd18dcf5cad30a7760bf7cfb6420ff8a1c1fb388819fad7
   languageName: node
   linkType: hard
 
