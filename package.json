@@ -115,7 +115,7 @@
     "@nestjs/terminus": "9.2.2",
     "@nestjs/testing": "9.4.0",
     "@nestjs/throttler": "4.0.0",
-    "@octokit/types": "9.0.0",
+    "@octokit/types": "9.1.1",
     "@sequelize/core": "7.0.0-alpha.26",
     "@types/body-parser": "1.19.2",
     "@types/cache-manager": "4.0.2",
