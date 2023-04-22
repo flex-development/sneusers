@@ -23,6 +23,7 @@ const SCOPE_ENUM: string[] = scopes([
   'docker',
   'docker-compose',
   'dockerfile',
+  'docs',
   'env',
   'gcp',
   'nestjs',

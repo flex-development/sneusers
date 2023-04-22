@@ -6,4 +6,5 @@
 import './chai'
 import './faker'
 import './matchers'
+import './request'
 import './serializers'
