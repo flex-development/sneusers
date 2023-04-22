@@ -8,13 +8,15 @@ import { HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { DocumentBuilder } from '@nestjs/swagger'
 import type { Express, NextFunction, Request, Response } from 'express'
 import * as http from 'node:http'
 import * as https from 'node:https'
 import AppModule from './app.module'
 import { PaginatedDTO } from './dtos'
+import { Endpoint } from './enums'
 import type { IConfig } from './interfaces'
+import { DocsModule } from './subdomains'
 
 /**
  * Application runner.
@@ -58,15 +60,15 @@ const bootstrap = async (): Promise<NestExpressApplication> => {
   // redirect /api to documentation endpoint
   app.use((req: Request, res: Response, next: NextFunction): void => {
     return req.path === '/api'
-      ? void res.redirect(HttpStatus.PERMANENT_REDIRECT, '/')
+      ? void res.redirect(HttpStatus.PERMANENT_REDIRECT, Endpoint.DOCS)
       : void next()
   })
 
   // configure openapi endpoints
-  SwaggerModule.setup(
+  DocsModule.setup(
     '/api',
     app,
-    SwaggerModule.createDocument(app, documentation.build(), {
+    DocsModule.createDocument(app, documentation.build(), {
       deepScanRoutes: true,
       extraModels: [PaginatedDTO],
       ignoreGlobalPrefix: false,
@@ -84,7 +86,7 @@ const bootstrap = async (): Promise<NestExpressApplication> => {
       }
     }),
     {
-      jsonDocumentUrl: '/',
+      jsonDocumentUrl: '/api/json',
       useGlobalPrefix: false,
       yamlDocumentUrl: '/api/yaml'
     }

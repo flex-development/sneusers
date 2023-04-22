@@ -92,6 +92,7 @@ ignore:
   - src/app.module.ts
   - src/interfaces/
   - src/main.ts
+  - src/subdomains/**/*.module.ts
   - src/types/
 
 profiling:

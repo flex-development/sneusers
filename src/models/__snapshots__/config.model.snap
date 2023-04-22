@@ -1,0 +1,30 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`unit:models/Config > #validate > should throw if schema is invalid 1`] = `
+[
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isEnum": "APP_ENV must be one of the following values: ci, development, production, staging, test",
+    },
+    "property": "APP_ENV",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isEnum": "NODE_ENV must be one of the following values: development, production, test",
+    },
+    "property": "NODE_ENV",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isUrl": "URL must be a URL address",
+    },
+    "property": "URL",
+    "value": "",
+  },
+]
+`;

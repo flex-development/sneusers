@@ -4,4 +4,4 @@
  * @see https://docs.nestjs.com/providers
  */
 
-export {}
+export { default as RxJSProvider } from './rxjs.provider'

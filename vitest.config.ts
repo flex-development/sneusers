@@ -56,6 +56,7 @@ const config: UserConfigExport = defineConfig((): UserConfig => {
           'src/app.module.ts',
           'src/interfaces/',
           'src/main.ts',
+          'src/subdomains/**/*.module.ts',
           'src/types/'
         ],
         extension: ['.ts'],
