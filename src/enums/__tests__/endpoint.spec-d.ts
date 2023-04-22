@@ -11,4 +11,10 @@ describe('unit-d:enums/Endpoint', () => {
       .toHaveProperty('DOCS')
       .toMatchTypeOf<'/'>()
   })
+
+  it('should match [HEALTH = "/health"]', () => {
+    expectTypeOf<typeof TestSubject>()
+      .toHaveProperty('HEALTH')
+      .toMatchTypeOf<'/health'>()
+  })
 })

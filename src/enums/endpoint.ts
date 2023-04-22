@@ -9,7 +9,8 @@
  * @enum {Lowercase<string>}
  */
 enum Endpoint {
-  DOCS = '/'
+  DOCS = '/',
+  HEALTH = '/health'
 }
 
 export default Endpoint

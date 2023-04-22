@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`e2e:subdomains/health/controllers/HealthController > /health > GET > should respond with health check result 1`] = `
+{
+  "details": {
+    "docs": {
+      "status": "up",
+    },
+  },
+  "error": {},
+  "info": {
+    "docs": {
+      "status": "up",
+    },
+  },
+  "status": "ok",
+}
+`;

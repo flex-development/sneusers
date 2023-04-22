@@ -32,7 +32,7 @@ services:
       NODE_NO_WARNINGS: 1
       URL: $URL
     healthcheck:
-      test: curl --fail http://localhost || exit 1
+      test: curl --fail http://localhost/health || exit 1
     ports:
       - 80:80
       - 443:443

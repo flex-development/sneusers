@@ -4,6 +4,7 @@
 #
 # References:
 #
+# - https://docs.github.com/actions/learn-github-actions/contexts
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#schedule
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
@@ -27,4 +28,4 @@ jobs:
         uses: hmarr/debug-action@v2.1.0
       - id: healthcheck
         name: Run healthcheck
-        run: curl --fail ${{ format('https://{0}', secrets.SERVER_NAME)}}
+        run: curl --fail ${{ secrets.URL }}/health

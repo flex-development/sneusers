@@ -7,7 +7,7 @@ import { AppEnv, NodeEnv } from '@flex-development/tutils'
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { Config } from './models'
-import { DocsModule } from './subdomains'
+import { DocsModule, HealthModule } from './subdomains'
 
 /**
  * Main application module.
@@ -26,7 +26,8 @@ import { DocsModule } from './subdomains'
       isGlobal: true,
       load: [() => new Config(process.env).validate()]
     }),
-    DocsModule
+    DocsModule,
+    HealthModule
   ]
 })
 class AppModule {}
