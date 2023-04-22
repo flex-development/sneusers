@@ -27,7 +27,6 @@ const SCOPE_ENUM: string[] = scopes([
   'gcp',
   'nestjs',
   'ssl',
-  'traefik',
   'users',
   'vm'
 ])

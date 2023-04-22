@@ -109,6 +109,7 @@ export const load = async (url, context) => {
     // transpile source code
     const { code } = await esbuild.transform(source, {
       format: 'esm',
+      keepNames: true,
       loader: ext.slice(/^\.[cm]/.test(ext) ? 2 : 1),
       minify: false,
       sourcefile: fileURLToPath(url),

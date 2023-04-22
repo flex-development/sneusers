@@ -1,6 +1,6 @@
 /**
- * @file Entry Point - Models
+ * @file Entry Point - Data Models
  * @module sneusers/models
  */
 
-export { default as EnvironmentVariables } from './environment-variables'
+export { default as Config } from './config.model'

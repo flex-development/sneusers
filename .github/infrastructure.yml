@@ -35,6 +35,7 @@ branches:
           - context: test (16)
           - context: test (18)
           - context: test (19)
+          - context: test (20)
           - context: typescript
         strict: true
       restrictions: null
@@ -218,21 +219,13 @@ repository:
   squash_merge_commit_message: BLANK
   squash_merge_commit_title: PR_TITLE
   topics:
-    - adminer
     - cloud-dns
     - compute-engine
     - docker
     - docker-compose
     - gcp
     - nestjs
-    - postgres
-    - postgresql
     - redis
-    - sequelize
-    - sql
-    - sqlite
-    - traefik
-    - traefik-reverse-proxy
     - typescript
   visibility: public
   vulnerability_alerts: true

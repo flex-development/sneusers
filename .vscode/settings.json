@@ -215,8 +215,6 @@
     ".env.zsh": "shellscript",
     ".markdownlintignore": "ignore",
     ".npmrc": "ini",
-    ".pg_format": "json",
-    ".sequelizerc": "javascript",
     "commit-msg": "shellscript",
     "docker-cloud.yml": "dockercompose",
     "pre-commit": "shellscript",
@@ -380,12 +378,7 @@
   ],
   "vsicons.associations.folders": [
     {
-      "extensions": [
-        "__fixtures__",
-        "__tests__/baselines",
-        "adminer",
-        "postgresql"
-      ],
+      "extensions": ["__fixtures__", "__tests__/baselines"],
       "format": "svg",
       "icon": "db"
     },

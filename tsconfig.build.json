@@ -4,6 +4,7 @@
     "declaration": true,
     "noEmitOnError": true,
     "skipLibCheck": false,
+    "sourceMap": true,
     "target": "es2022"
   },
   "exclude": ["**/__mocks__", "**/__tests__"],

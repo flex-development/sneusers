@@ -24,7 +24,6 @@ set -e
 # export GCE_SERVICE_ACCOUNT_FILE=./.service-accounts/$CLOUDSDK_CORE_ACCOUNT.json
 # export LEGO_ACCOUNT_EMAIL=<email>
 # export LEGO_PATH=[lego-folder-path]
-# export SUBDOMAINS=[subdomains-list]
 # export TLD=<top-level-domain>
 # bash ./scripts/lego/run.sh
 #
@@ -51,7 +50,7 @@ if [ ! -f "$LEGO_PATH/certificates/_.$TLD.json" ]; then
   LEGO_DOMAIN_OPTS=''
 
   # get domain options
-  for domain in $(echo *.$TLD,$SUBDOMAINS | tr "," "\n"); do
+  for domain in $(echo *.$TLD,*.dev.$TLD | tr "," "\n"); do
     LEGO_DOMAIN_OPTS="$LEGO_DOMAIN_OPTS --domains=$domain"
   done
 

@@ -3,4 +3,4 @@
  * @module sneusers/dtos
  */
 
-export { default as PaginatedDTO } from './paginated'
+export { default as PaginatedDTO } from './paginated.dto'

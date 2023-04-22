@@ -14,17 +14,11 @@ import tsconfig from './tsconfig.build.json' assert { type: 'json' }
  * @const {Config} config
  */
 const config: Config = defineBuildConfig({
-  bundle: true,
   charset: 'utf8',
-  conditions: tsconfig.compilerOptions.customConditions,
-  external: [
-    '@nestjs/microservices',
-    '@nestjs/websockets/socket-module',
-    'class-transformer/storage'
-  ],
-  platform: 'node',
-  source: 'src/main.ts',
-  sourcemap: true,
+  dts: false,
+  ignore: ['**/interfaces/**', '**/types/**'],
+  keepNames: true,
+  sourcemap: tsconfig.compilerOptions.sourceMap,
   sourcesContent: false,
   target: pkg.engines.node.replace(/^\D+/, 'node'),
   tsconfig: 'tsconfig.build.json'

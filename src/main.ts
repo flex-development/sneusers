@@ -3,54 +3,48 @@
  * @module sneusers/main
  */
 
-import type { ObjectPlain } from '@flex-development/tutils'
+import pkg from '#pkg' assert { type: 'json' }
+import { HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
-import {
-  DocumentBuilder,
-  SwaggerModule,
-  type OpenAPIObject
-} from '@nestjs/swagger'
-import type { Request, Response } from 'express'
-import { set } from 'radash'
-import sortKeys from 'sort-keys'
-import pkg from '../package.json'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import type { Express, NextFunction, Request, Response } from 'express'
+import * as http from 'node:http'
+import * as https from 'node:https'
 import AppModule from './app.module'
 import { PaginatedDTO } from './dtos'
-import type { EnvironmentVariables } from './models'
-import { AppService } from './providers'
+import type { IConfig } from './interfaces'
 
 /**
- * Bootstraps the NestJS application.
+ * Application runner.
  *
  * @async
  *
- * @return {Promise<void>} Nothing when complete
+ * @return {Promise<NestExpressApplication>} NestJS Express application
  */
-const bootstrap = async (): Promise<void> => {
+const bootstrap = async (): Promise<NestExpressApplication> => {
   /**
-   * NestJS application.
+   * NestJS Express application.
    *
    * @const {NestExpressApplication} app
    */
-  const app: NestExpressApplication = await NestFactory.create(
-    AppModule,
-    AppService.options
-  )
+  const app: NestExpressApplication = await NestFactory.create(AppModule, {
+    bodyParser: true,
+    cors: {
+      allowedHeaders: '*',
+      methods: ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST'],
+      optionsSuccessStatus: HttpStatus.ACCEPTED,
+      origin: '*',
+      preflightContinue: true
+    },
+    rawBody: false
+  })
 
   /**
-   * Configuration service instance.
+   * OpenAPI specification document builder.
    *
-   * @const {ConfigService<EnvironmentVariables, true>} config
-   */
-  const config: ConfigService<EnvironmentVariables, true> =
-    app.get(ConfigService)
-
-  /**
-   * Documentation builder.
-   *
-   * @see https://docs.nestjs.com/openapi/introduction
+   * @see https://docs.nestjs.com/openapi/introduction#bootstrap
    *
    * @const {DocumentBuilder} documentation
    */
@@ -61,15 +55,18 @@ const bootstrap = async (): Promise<void> => {
     .setExternalDoc('GitHub Repository', pkg.homepage)
     .setLicense(pkg.license, pkg.homepage + '/blob/main/LICENSE.md')
 
-  /**
-   * OpenAPI documentation object.
-   *
-   * @const {OpenAPIObject} openapi
-   */
-  const openapi: OpenAPIObject = SwaggerModule.createDocument(
+  // redirect /api to documentation endpoint
+  app.use((req: Request, res: Response, next: NextFunction): void => {
+    return req.path === '/api'
+      ? void res.redirect(HttpStatus.PERMANENT_REDIRECT, '/')
+      : void next()
+  })
+
+  // configure openapi endpoints
+  SwaggerModule.setup(
+    '/api',
     app,
-    documentation.build(),
-    {
+    SwaggerModule.createDocument(app, documentation.build(), {
       deepScanRoutes: true,
       extraModels: [PaginatedDTO],
       ignoreGlobalPrefix: false,
@@ -85,45 +82,46 @@ const bootstrap = async (): Promise<void> => {
       operationIdFactory(controller: string, method: string): string {
         return `${controller}#${method}`
       }
+    }),
+    {
+      jsonDocumentUrl: '/',
+      useGlobalPrefix: false,
+      yamlDocumentUrl: '/api/yaml'
     }
   )
 
-  /** trust proxy: @see https://expressjs.com/guide/behind-proxies.html */
-  app.enable('trust proxy')
+  // initialize nest application
+  await app.init()
 
-  // add handler to view docs from root path
-  app.getHttpAdapter().get('', (req: Request, res: Response) => {
-    const {
-      components = {},
-      externalDocs = {},
-      info = {},
-      paths = {},
-      security = {},
-      servers = [],
-      tags = []
-    } = openapi
+  /**
+   * Configuration service.
+   *
+   * @const {ConfigService<IConfig, true>} config
+   */
+  const config: ConfigService<IConfig, true> = app.get(ConfigService)
 
-    /**
-     * Response body.
-     *
-     * @var {ObjectPlain} body
-     */
-    let body: ObjectPlain = {}
+  /**
+   * Underlying request listener.
+   *
+   * @const {Express} listener
+   */
+  const listener: Express = app.getHttpAdapter().getInstance()
 
-    body = set(body, 'openapi', openapi.openapi)
-    body = set(body, 'info', info)
-    body = set(body, 'servers', servers)
-    body = set(body, 'security', security)
-    body = set(body, 'tags', tags)
-    body = set(body, 'externalDocs', externalDocs)
-    body = set(body, 'paths', paths)
-    body = set(body, 'components', sortKeys(components, { deep: true }))
+  /**
+   * HTTPS server options.
+   *
+   * @const {https.ServerOptions} https_options
+   */
+  const https_options: https.ServerOptions = {
+    cert: config.get<string>('HTTPS_CERT'),
+    key: config.get<string>('HTTPS_KEY')
+  }
 
-    res.json(body)
-    return res.end()
-  })
+  // start servers
+  http.createServer(listener).listen(80)
+  https.createServer(https_options, listener).listen(443)
 
-  return void (await app.listen(config.get<number>('PORT')))
+  return app
 }
 
-void (await bootstrap())
+export default await bootstrap()

@@ -1,0 +1,20 @@
+{
+  "env": {
+    "NEST_DEBUG": 1,
+    "NODEMON": 1
+  },
+  "execMap": {
+    "ts": "node --enable-source-maps --loader=./loader.mjs"
+  },
+  "events": {},
+  "ext": "ts",
+  "ignore": [
+    "**/__mocks__/**",
+    "**/__tests__/**",
+    "**/interfaces/**",
+    "**/types/**"
+  ],
+  "restartable": "rs",
+  "watch": ["./src"],
+  "verbose": true
+}

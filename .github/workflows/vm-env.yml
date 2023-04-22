@@ -81,13 +81,11 @@ jobs:
           CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
           CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
           CONTAINER_IMAGE_TAG=${{ inputs.container-image-tag || github.ref_name }}
-          GCE_SERVICE_ACCOUNT='${{ secrets.GCE_SERVICE_ACCOUNT }}'
-          LEGO_ACCOUNT_EMAIL=${{ secrets.LEGO_ACCOUNT_EMAIL }}
-          LEGO_CA_SERVER=${{ secrets.LEGO_CA_SERVER }}
+          HTTPS_CERT=${{ secrets.HTTPS_CERT }}
+          HTTPS_KEY=${{ secrets.HTTPS_KEY }}
+          NEST_DEBUG=1
           NODE_ENV=production
-          PORT=${{ secrets.PORT }}
-          SERVER_NAME=${{ secrets.SERVER_NAME }}
-          TLD=${{ secrets.TLD }}" >>$ENVIRONMENT_FILE
+          URL=${{ secrets.URL }}" >>$ENVIRONMENT_FILE
       - id: upload
         name: Upload environment file to storage bucket
         run: gcloud storage cp $ENVIRONMENT_FILE gs://$CLOUDSDK_CORE_PROJECT/etc/profile.d/env.sh

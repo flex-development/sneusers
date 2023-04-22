@@ -115,15 +115,14 @@ Follow the steps below to setup your local development environment:
 | `FORCE_COLOR`                 |
 | `GCE_SERVICE_ACCOUNT`         |
 | `GITHUB_TOKEN`                |
+| `HTTPS_CERT`                  |
+| `HTTPS_KEY`                   |
 | `LEGO_ACCOUNT_EMAIL`          |
-| `LEGO_CA_SERVER`              |
 | `NODE_ENV`                    |
 | `NODE_NO_WARNINGS`            |
 | `PAT_BOT`                     |
-| `PORT`                        |
-| `SERVER_NAME`                 |
 | `TLD`                         |
-| `WHOAMI_PORT_NUMBER`          |
+| `URL`                         |
 
 #### GitHub Actions
 
@@ -279,7 +278,7 @@ To manually upload coverage reports:
 
 1. Retrieve `CODECOV_TOKEN` from a maintainer
 
-2. Add `CODECOV_TOKEN` to `.env.repo`
+2. Add `CODECOV_TOKEN` to `.env.ci` and `.env.local`
 
 3. Reload shell
 

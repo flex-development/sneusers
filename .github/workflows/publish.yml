@@ -114,7 +114,7 @@ jobs:
           secrets: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
-          target: ecosystem
+          target: production
   dbdocs:
     needs: ghcr
     runs-on: ubuntu-latest

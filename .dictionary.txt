@@ -1,9 +1,7 @@
-adminer
 ardatan
 axios
 bdougie
 buildx
-caserver
 cefc
 cloudsdk
 codecov
@@ -39,13 +37,8 @@ pathe
 pkgs
 preid
 rrdatas
-sequelize
 sneusers
-sneusers
-traefik
-traefik
 tscu
-umzug
 unstub
 upserts
 vates

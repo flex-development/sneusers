@@ -3,18 +3,30 @@
  * @module sneusers/AppModule
  */
 
-import { Module } from '@nestjs/common'
+import { AppEnv, NodeEnv } from '@flex-development/tutils'
+import { Global, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { AppService } from './providers'
+import { Config } from './models'
 
 /**
  * Main application module.
  *
  * @class
  */
+@Global()
 @Module({
-  controllers: [],
-  imports: [ConfigModule.forRoot(AppService.optionsConfigModule)],
-  providers: []
+  imports: [
+    ConfigModule.forRoot({
+      cache:
+        process.env.APP_ENV === AppEnv.PROD &&
+        process.env.NODE_ENV === NodeEnv.PROD,
+      ignoreEnvFile: true,
+      ignoreEnvVars: false,
+      isGlobal: true,
+      load: [() => new Config(process.env).validate()]
+    })
+  ]
 })
-export default class AppModule {}
+class AppModule {}
+
+export default AppModule

@@ -28,33 +28,17 @@ Sneusers is a demo users system API built with [NestJS][1], a framework for buil
 The project is a re-implementation of [`neusers`][2], an older Flex Development project. The main goal for this project
 was learning how to use [Docker][3] and [Google Compute Engine][4].
 
-Docker is used to manage project infrastructure: [Adminer][5], [Postgres][6], [Redis][7], [Redis Commander][8], and the
-[NestJS][1] application itself. A [`Dockerfile`](Dockerfile) was created to containerize the API. The serverless
-architecture found in [`neusers`][2] was replaced with a [Compute Engine][4] instance; a [Traefik][9] reverse proxy is
-in charge of handling web traffic. A traditional [PostgreSQL][6] database was used for data persistence in lieu of the
-Firebase Realtime Database.
-
 ## Use
 
 **TODO**: usage documentation.
 
 ## Built With
 
-- [Adminer][5]
-- [Docker][3]
-- [Google Cloud DNS][10]
-- [Google Compute Engine][4]
-- [NestJS][1]
-- [PostgreSQL][6]
-- [Redis Commander][8]
-- [Redis][7]
-- [Sequelize][11]
-- [Traefik][9]
-- [TypeScript][12]
+**TODO**: dependency overview.
 
 ## Types
 
-This project is fully typed with [TypeScript][12].
+This project is fully typed with [TypeScript][5].
 
 ## Contribute
 
@@ -64,11 +48,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 [2]: https://github.com/flex-development/neusers
 [3]: https://docker.com
 [4]: https://cloud.google.com/compute
-[5]: https://hub.docker.com/_/adminer
-[6]: https://hub.docker.com/_/postgres
-[7]: https://hub.docker.com/_/redis
-[8]: https://github.com/joeferner/redis-commander
-[9]: https://doc.traefik.io
-[10]: https://cloud.google.com/dns
-[11]: https://sequelize.org/docs/v7/
-[12]: https://typescriptlang.org
+[5]: https://typescriptlang.org

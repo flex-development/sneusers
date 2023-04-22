@@ -63,8 +63,8 @@ jobs:
       && !startsWith(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     outputs:
-      container-edge-check: ${{ steps.container-edge-check.outputs.only_modified }}
       container-image-url: ${{ steps.container-image-url.outputs.result }}
+      edge: ${{ steps.container-edge-check.outputs.modified_files != '' }}
       version: ${{ steps.version.outputs.result }}
     steps:
       - id: debug
@@ -117,8 +117,9 @@ jobs:
           since_last_remote_commit: true
       - id: print-container-edge-check
         name: Print ghcr.io/${{ github.repository }}:edge check
-        if: github.event_name != 'workflow_dispatch'
-        run: echo '${{ toJSON(steps.container-edge-check.outputs) }}'
+        run: |
+          echo edge: ${{ steps.container-edge-check.outputs.modified_files != '' }}
+          echo '${{ toJSON(steps.container-edge-check.outputs) }}'
   commitlint:
     needs: preflight
     runs-on: ubuntu-latest
@@ -298,6 +299,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
+          - 20
           - 19
           - 18
           - 16
@@ -403,7 +405,7 @@ jobs:
     if: |
       github.actor != 'dependabot[bot]'
       && github.actor != 'flexdevelopment'
-      && needs.preflight.outputs.container-edge-check != 'false'
+      && needs.preflight.outputs.edge != 'false'
     runs-on: ubuntu-latest
     environment:
       name: container
@@ -460,7 +462,7 @@ jobs:
           secrets: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
-          target: ecosystem
+          target: production
   dbdocs:
     needs:
       - build

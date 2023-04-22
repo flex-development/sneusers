@@ -4,4 +4,4 @@
  * @see https://docs.nestjs.com/providers
  */
 
-export { default as AppService } from './app.service'
+export {}
