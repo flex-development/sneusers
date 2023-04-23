@@ -4,15 +4,18 @@
  * @see https://docs.nestjs.com/middleware
  */
 
+import { HelmetOptionsProvider } from '#src/providers'
 import {
   Global,
   Module,
+  RequestMethod,
   type MiddlewareConsumer,
   type NestMiddleware,
   type NestModule,
   type Type
 } from '@nestjs/common'
 import type { RouteInfo } from '@nestjs/common/interfaces'
+import HelmetMiddleware from './helmet.middleware'
 
 /**
  * Global middleware module.
@@ -21,7 +24,7 @@ import type { RouteInfo } from '@nestjs/common/interfaces'
  * @implements {NestModule}
  */
 @Global()
-@Module({})
+@Module({ providers: [HelmetOptionsProvider] })
 class MiddlewareModule implements NestModule {
   /**
    * Middleware configurations.
@@ -31,7 +34,9 @@ class MiddlewareModule implements NestModule {
    * @readonly
    * @member {[Type<NestMiddleware>, RouteInfo][]} middlewares
    */
-  public static readonly middlewares: [Type<NestMiddleware>, RouteInfo][] = []
+  public static readonly middlewares: [Type<NestMiddleware>, RouteInfo][] = [
+    [HelmetMiddleware, { method: RequestMethod.ALL, path: '*' }]
+  ]
 
   /**
    * Helper for configuring global middleware.
