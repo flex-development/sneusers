@@ -50,4 +50,4 @@ grep docker /etc/group
 sudo gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT$ENVIRONMENT_FILE $ENVIRONMENT_FILE
 cp $ENVIRONMENT_FILE $WORKDIR/.env
 gcloud storage cp gs://$CLOUDSDK_CORE_PROJECT/$DOCKER_COMPOSE_FILE $DOCKER_COMPOSE_FILE
-docker compose --project-directory $WORKDIR up --detach
+docker compose --project-directory $WORKDIR up
