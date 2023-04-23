@@ -86,8 +86,8 @@ jobs:
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           DB_PORT=${{ secrets.DB_PORT }}
           DB_USERNAME=${{ secrets.DB_USERNAME }}
-          HTTPS_CERT=${{ secrets.HTTPS_CERT }}
-          HTTPS_KEY=${{ secrets.HTTPS_KEY }}
+          HTTPS_CERT='${{ secrets.HTTPS_CERT }}'
+          HTTPS_KEY='${{ secrets.HTTPS_KEY }}'
           NEST_DEBUG=1
           NODE_ENV=production
           URL=${{ secrets.URL }}" >>$ENVIRONMENT_FILE

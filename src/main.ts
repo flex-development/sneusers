@@ -3,7 +3,6 @@
  * @module sneusers/main
  */
 
-import pkg from '#pkg' assert { type: 'json' }
 import { HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
@@ -12,6 +11,7 @@ import { DocumentBuilder } from '@nestjs/swagger'
 import type { Express, NextFunction, Request, Response } from 'express'
 import * as http from 'node:http'
 import * as https from 'node:https'
+import pkg from '../package.json' assert { type: 'json' }
 import AppModule from './app.module'
 import { PaginatedDTO } from './dtos'
 import { Endpoint } from './enums'
