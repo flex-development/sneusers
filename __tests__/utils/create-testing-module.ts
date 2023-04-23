@@ -3,7 +3,7 @@
  * @module tests/utils/createTestingModule
  */
 
-import type { ModuleMetadata } from '@nestjs/common'
+import type { TestModuleMetadata } from '#tests/interfaces'
 import type { TestingModule } from '@nestjs/testing'
 import createTestingModuleBuilder from './create-testing-module-builder'
 
@@ -14,11 +14,11 @@ import createTestingModuleBuilder from './create-testing-module-builder'
  *
  * @async
  *
- * @param {ModuleMetadata} metadata - Module metadata
+ * @param {TestModuleMetadata} metadata - Module metadata
  * @return {Promise<TestingModule>} Testing module
  */
 const createTestingModule = async (
-  metadata: ModuleMetadata
+  metadata: TestModuleMetadata
 ): Promise<TestingModule> => createTestingModuleBuilder(metadata).compile()
 
 export default createTestingModule
