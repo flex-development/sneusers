@@ -3,7 +3,7 @@
  * @module sneusers/subdomains/docs/controllers/tests/e2e/Docs
  */
 
-import pkg from '#pkg' assert { type: 'json' }
+import pkg from '#package.json' assert { type: 'json' }
 import { Endpoint } from '#src/enums'
 import { RxJSProvider } from '#src/providers'
 import createTestingModule from '#tests/utils/create-testing-module'
