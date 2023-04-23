@@ -34,6 +34,20 @@ import { template } from 'radash'
         config: ConfigService<IConfig, true>
       ): Omit<MikroOrmModuleOptions, 'contextName'> => {
         /**
+         * Database hostname.
+         *
+         * @const {string} DB_HOSTNAME
+         */
+        const DB_HOSTNAME: string = config.get<string>('DB_HOSTNAME')
+
+        /**
+         * Boolean indicating if database is deployed via MongoDB Atlas.
+         *
+         * @const {boolean} MONGODB_ATLAS
+         */
+        const MONGODB_ATLAS: boolean = DB_HOSTNAME.endsWith('mongodb.net')
+
+        /**
          * Test environment check.
          *
          * @const {boolean} TEST
@@ -43,12 +57,13 @@ import { template } from 'radash'
         return {
           allowGlobalContext: false,
           autoLoadEntities: true,
-          clientUrl: template('mongodb://{{0}}:{{1}}@{{2}}:{{3}}/', {
-            0: config.get<string>('DB_USERNAME'),
-            1: config.get<string>('DB_PASSWORD'),
-            2: config.get<string>('DB_HOSTNAME'),
-            3: config.get<number>('DB_PORT')
-          }),
+          clientUrl: template('mongodb{{0}}://{{1}}:{{2}}@{{3}}:{{4}}/', {
+            0: MONGODB_ATLAS ? '+srv' : '',
+            1: config.get<string>('DB_USERNAME'),
+            2: config.get<string>('DB_PASSWORD'),
+            3: DB_HOSTNAME,
+            4: MONGODB_ATLAS ? '' : config.get<number>('DB_PORT')
+          }).replace(/:\/$/, '/'),
           connect: !TEST,
           dbName: config.get<string>('DB_NAME'),
           debug: !TEST,
