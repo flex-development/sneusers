@@ -3,9 +3,12 @@
  * @module tests/utils/createTestingModuleBuilder
  */
 
-import type { ModuleMetadata } from '@nestjs/common'
+import { Config } from '#src/models'
+import { Module, type ModuleMetadata } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import type { TestingModuleBuilder } from '@nestjs/testing'
 import { Test } from '@nestjs/testing'
+import ci from 'is-ci'
 
 /**
  * Creates a testing module builder.
@@ -18,7 +21,33 @@ import { Test } from '@nestjs/testing'
 const createTestingModuleBuilder = (
   metadata: ModuleMetadata
 ): TestingModuleBuilder => {
-  return Test.createTestingModule(metadata)
+  metadata.imports = metadata.imports ?? []
+
+  /**
+   * Test application module.
+   *
+   * @class
+   */
+  @Module({
+    ...metadata,
+    imports: [
+      ...metadata.imports,
+      ConfigModule.forRoot({
+        cache: false,
+        envFilePath: ['.env.test', '.env'],
+        expandVariables: { ignoreProcessEnv: !ci },
+        ignoreEnvFile: ci,
+        ignoreEnvVars: !ci,
+        isGlobal: true,
+        validate: (config: Record<string, any>): Config => {
+          return new Config(config).validate()
+        }
+      })
+    ]
+  })
+  class TestAppModule {}
+
+  return Test.createTestingModule({ imports: [TestAppModule] })
 }
 
 export default createTestingModuleBuilder

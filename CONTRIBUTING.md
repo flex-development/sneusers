@@ -112,6 +112,11 @@ Follow the steps below to setup your local development environment:
 | `CODECOV_TOKEN`               |
 | `CONTAINER_IMAGE_TAG`         |
 | `DBDOCS_TOKEN`                |
+| `DB_HOSTNAME`                 |
+| `DB_NAME`                     |
+| `DB_PASSWORD`                 |
+| `DB_PORT`                     |
+| `DB_USERNAME`                 |
 | `FORCE_COLOR`                 |
 | `GCE_SERVICE_ACCOUNT`         |
 | `GITHUB_TOKEN`                |

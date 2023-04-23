@@ -22,9 +22,16 @@ services:
         - GITHUB_TOKEN
       target: build
     command: nodemon ./src/main.ts
-    depends_on: []
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       APP_ENV: development
+      DB_HOSTNAME: db
+      DB_NAME: $DB_NAME
+      DB_PASSWORD: $DB_PASSWORD
+      DB_PORT: $DB_PORT
+      DB_USERNAME: $DB_USERNAME
       FORCE_COLOR: 3
       HTTPS_CERT: $HTTPS_CERT
       HTTPS_KEY: $HTTPS_KEY
@@ -47,3 +54,30 @@ services:
       - ./tsconfig.build.json:/app/tsconfig.build.json
       - ./tsconfig.json:/app/tsconfig.json
     working_dir: /app
+  db:
+    container_name: db
+    image: mongo:6.0.5-jammy
+    environment:
+      MONGO_INITDB_DATABASE: $DB_NAME
+      MONGO_INITDB_ROOT_PASSWORD: $DB_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME: $DB_USERNAME
+    healthcheck:
+      test: |
+        mongosh $DB_NAME --eval='quit(db.runCommand({ ping: 1 }).ok ? 0 : 1)'
+    ports:
+      - $DB_PORT:27017
+    restart: always
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:1.0.0-alpha.4
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+      ME_CONFIG_MONGODB_URL: mongodb://$DB_USERNAME:$DB_PASSWORD@mongo:$DB_PORT/
+    links:
+      - db:mongo
+    ports:
+      - 5000:8081
+    restart: always

@@ -13,6 +13,46 @@ exports[`unit:models/Config > #validate > should throw if schema is invalid 1`] 
   ValidationError {
     "children": [],
     "constraints": {
+      "isNotEmpty": "DB_HOSTNAME should not be empty",
+    },
+    "property": "DB_HOSTNAME",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isNotEmpty": "DB_NAME should not be empty",
+    },
+    "property": "DB_NAME",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isNotEmpty": "DB_PASSWORD should not be empty",
+    },
+    "property": "DB_PASSWORD",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isNumber": "DB_PORT must be a number conforming to the specified constraints",
+    },
+    "property": "DB_PORT",
+    "value": NaN,
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isNotEmpty": "DB_USERNAME should not be empty",
+    },
+    "property": "DB_USERNAME",
+    "value": "",
+  },
+  ValidationError {
+    "children": [],
+    "constraints": {
       "isEnum": "NODE_ENV must be one of the following values: development, production, test",
     },
     "property": "NODE_ENV",

@@ -9,6 +9,7 @@
  * @enum {Lowercase<string>}
  */
 enum Subdomain {
+  DATABASE = 'database',
   DOCS = 'docs',
   HEALTH = 'health'
 }

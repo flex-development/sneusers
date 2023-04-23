@@ -10,8 +10,12 @@ import {
   ApiServiceUnavailableResponse,
   ApiTags
 } from '@nestjs/swagger'
-import type { HealthCheckResult } from '@nestjs/terminus'
-import { HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus'
+import {
+  HealthCheckService,
+  HttpHealthIndicator,
+  MikroOrmHealthIndicator,
+  type HealthCheckResult
+} from '@nestjs/terminus'
 import { getHealthCheckSchema } from '@nestjs/terminus/dist/health-check/health-check.schema'
 
 /**
@@ -29,10 +33,15 @@ class HealthController {
    *
    * @param {HealthCheckService} health - Health check service
    * @param {HttpHealthIndicator} http - HTTP health indicator
+   * @param {MikroOrmHealthIndicator} mikro - MikroORM health indicator
    */
   constructor(
-    @Inject(HealthCheckService) private readonly health: HealthCheckService,
-    @Inject(HttpHealthIndicator) private readonly http: HttpHealthIndicator
+    @Inject(HealthCheckService)
+    private readonly health: HealthCheckService,
+    @Inject(HttpHealthIndicator)
+    private readonly http: HttpHealthIndicator,
+    @Inject(MikroOrmHealthIndicator)
+    private readonly mikro: MikroOrmHealthIndicator
   ) {}
 
   /**
@@ -56,6 +65,7 @@ class HealthController {
   })
   public async get(): Promise<HealthCheckResult> {
     return this.health.check([
+      async () => this.mikro.pingCheck(Subdomain.DATABASE),
       async () => this.http.pingCheck(Subdomain.DOCS, Endpoint.DOCS)
     ])
   }

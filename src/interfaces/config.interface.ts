@@ -19,6 +19,39 @@ interface IConfig {
   APP_ENV: AppEnv
 
   /**
+   * Database hostname.
+   *
+   * @default 'mongo'
+   */
+  DB_HOSTNAME: string
+
+  /**
+   * Database name.
+   *
+   * @default APP_ENV
+   */
+  DB_NAME: string
+
+  /**
+   * Database password.
+   */
+  DB_PASSWORD: string
+
+  /**
+   * Database port.
+   *
+   * @default 27017
+   */
+  DB_PORT: number
+
+  /**
+   * Database username.
+   *
+   * @default 'admin'
+   */
+  DB_USERNAME: string
+
+  /**
    * HTTPS certfile content.
    *
    * @default ''

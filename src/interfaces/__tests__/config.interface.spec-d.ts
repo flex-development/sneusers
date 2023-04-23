@@ -13,6 +13,26 @@ describe('unit-d:interfaces/IConfig', () => {
       .toEqualTypeOf<AppEnv>()
   })
 
+  it('should match [DB_HOSTNAME: string]', () => {
+    expectTypeOf<TestSubject>().toHaveProperty('DB_HOSTNAME').toBeString()
+  })
+
+  it('should match [DB_NAME: string]', () => {
+    expectTypeOf<TestSubject>().toHaveProperty('DB_NAME').toBeString()
+  })
+
+  it('should match [DB_PASSWORD: string]', () => {
+    expectTypeOf<TestSubject>().toHaveProperty('DB_PASSWORD').toBeString()
+  })
+
+  it('should match [DB_PORT: number]', () => {
+    expectTypeOf<TestSubject>().toHaveProperty('DB_PORT').toBeNumber()
+  })
+
+  it('should match [DB_USERNAME: string]', () => {
+    expectTypeOf<TestSubject>().toHaveProperty('DB_USERNAME').toBeString()
+  })
+
   it('should match [HTTPS_CERT: string]', () => {
     expectTypeOf<TestSubject>().toHaveProperty('HTTPS_CERT').toBeString()
   })

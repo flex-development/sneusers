@@ -5,6 +5,8 @@
 **/*.hbs
 **/*.md
 **/*.snap
+**/*.yaml
+**/*.yml
 **/*config.*.timestamp*
 **/.temp/
 **/.vercel/

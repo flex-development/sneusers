@@ -8,6 +8,8 @@ import { Exception } from '@flex-development/exceptions'
 import { AppEnv, NodeEnv, isUndefined } from '@flex-development/tutils'
 import {
   IsEnum,
+  IsNotEmpty,
+  IsNumber,
   IsString,
   IsUrl,
   validateSync,
@@ -35,6 +37,68 @@ class Config implements IConfig {
    */
   @IsEnum(AppEnv)
   public APP_ENV: AppEnv
+
+  /**
+   * Database hostname.
+   *
+   * @default 'mongo'
+   *
+   * @public
+   * @instance
+   * @member {string} DB_HOSTNAME
+   */
+  @IsString()
+  @IsNotEmpty()
+  public DB_HOSTNAME: string
+
+  /**
+   * Database name.
+   *
+   * @default APP_ENV
+   *
+   * @public
+   * @instance
+   * @member {string} DB_NAME
+   */
+  @IsString()
+  @IsNotEmpty()
+  public DB_NAME: string
+
+  /**
+   * Database password.
+   *
+   * @public
+   * @instance
+   * @member {string} DB_PASSWORD
+   */
+  @IsString()
+  @IsNotEmpty()
+  public DB_PASSWORD: string
+
+  /**
+   * Database port.
+   *
+   * @default 27017
+   *
+   * @public
+   * @instance
+   * @member {number} DB_PORT
+   */
+  @IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 0 })
+  public DB_PORT: number
+
+  /**
+   * Database username.
+   *
+   * @default 'admin'
+   *
+   * @public
+   * @instance
+   * @member {string} DB_USERNAME
+   */
+  @IsString()
+  @IsNotEmpty()
+  public DB_USERNAME: string
 
   /**
    * HTTPS certfile content.
@@ -93,12 +157,22 @@ class Config implements IConfig {
    */
   constructor({
     APP_ENV = AppEnv.DEV,
+    DB_HOSTNAME = 'mongo',
+    DB_NAME = APP_ENV,
+    DB_PASSWORD = '',
+    DB_PORT = '27017',
+    DB_USERNAME = 'admin',
     HTTPS_CERT = '',
     HTTPS_KEY = '',
     NODE_ENV = NodeEnv.DEV,
     URL = 'http://localhost'
   }: NodeJS.ProcessEnv = {}) {
     this.APP_ENV = APP_ENV as AppEnv
+    this.DB_HOSTNAME = DB_HOSTNAME
+    this.DB_NAME = DB_NAME
+    this.DB_PASSWORD = DB_PASSWORD
+    this.DB_PORT = +DB_PORT
+    this.DB_USERNAME = DB_USERNAME
     this.HTTPS_CERT = HTTPS_CERT
     this.HTTPS_KEY = HTTPS_KEY
     this.NODE_ENV = NODE_ENV as NodeEnv

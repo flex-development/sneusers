@@ -224,6 +224,9 @@ repository:
     - docker
     - docker-compose
     - gcp
+    - mikro
+    - mikro-orm
+    - mongodb
     - nestjs
     - redis
     - typescript

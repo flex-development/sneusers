@@ -6,6 +6,7 @@
 # - https://docs.github.com/actions/automating-builds-and-tests/building-and-testing-nodejs
 # - https://docs.github.com/actions/learn-github-actions/contexts
 # - https://docs.github.com/actions/learn-github-actions/expressions
+# - https://docs.github.com/actions/using-containerized-services/about-service-containers
 # - https://docs.github.com/actions/using-jobs/using-a-matrix-for-your-jobs
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#pull_request
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#push
@@ -303,6 +304,29 @@ jobs:
           - 19
           - 18
           - 16
+    env:
+      APP_ENV: ci
+      DB_HOSTNAME: localhost
+      DB_NAME: ci
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: 27017
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      NODE_ENV: test
+      URL: ${{ secrets.URL }}
+    services:
+      mongo:
+        image: mongo:6.0.5-jammy
+        env:
+          MONGO_INITDB_DATABASE: ci
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.DB_USERNAME }}
+        options: >-
+          --health-cmd "mongosh ci --eval='quit(db.runCommand({ ping: 1 }).ok ? 0 : 1)'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
     steps:
       - id: checkout
         name: Checkout ${{ env.REF_NAME }}
@@ -446,7 +470,8 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ env.VERSION }}
           tags: |
-            type=edge,branch=${{ env.REF }}
+            type=raw,value=edge
+            type=raw,value=${{ env.VERSION }}
             type=ref,event=${{ github.event_name == 'pull_request' && 'pr' || 'branch' }}
             type=semver,pattern={{raw}},value=${{ env.VERSION }}
             type=sha,prefix=

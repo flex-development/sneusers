@@ -21,11 +21,13 @@ gserviceaccount
 hmarr
 iife
 infile
+initdb
 jsonifiable
 keyid
 larsgw
 lcov
 lintstagedrc
+mikro
 mkbuild
 mlly
 myip

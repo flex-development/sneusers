@@ -81,6 +81,11 @@ jobs:
           CLOUDSDK_CORE_ACCOUNT=${{ secrets.CLOUDSDK_CORE_ACCOUNT }}
           CLOUDSDK_CORE_PROJECT=${{ secrets.CLOUDSDK_CORE_PROJECT }}
           CONTAINER_IMAGE_TAG=${{ inputs.container-image-tag || github.ref_name }}
+          DB_HOSTNAME=${{ secrets.DB_HOSTNAME }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
           HTTPS_CERT=${{ secrets.HTTPS_CERT }}
           HTTPS_KEY=${{ secrets.HTTPS_KEY }}
           NEST_DEBUG=1

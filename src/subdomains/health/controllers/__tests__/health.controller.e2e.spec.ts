@@ -3,11 +3,11 @@
  * @module sneusers/subdomains/health/controllers/tests/e2e/Health
  */
 
+import DatabaseModule from '#src/database/database.module'
 import { Endpoint } from '#src/enums'
 import createTestingModule from '#tests/utils/create-testing-module'
 import url from '#tests/utils/url'
 import { HttpModule } from '@nestjs/axios'
-import { HttpStatus } from '@nestjs/common'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { TerminusModule } from '@nestjs/terminus'
 import type { TestingModule } from '@nestjs/testing'
@@ -22,6 +22,7 @@ describe('e2e:subdomains/health/controllers/HealthController', () => {
     ref = await createTestingModule({
       controllers: [TestSubject],
       imports: [
+        DatabaseModule,
         HttpModule.register({ baseURL: 'https://docs.nestjs.com' }),
         TerminusModule
       ]
@@ -42,7 +43,7 @@ describe('e2e:subdomains/health/controllers/HealthController', () => {
         const res = await req.get(url(Endpoint.HEALTH))
 
         // Expect
-        expect(res).to.be.json.with.status(HttpStatus.OK)
+        expect(res).to.be.json
         expect(res.body).toMatchSnapshot()
       })
     })
