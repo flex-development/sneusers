@@ -1268,7 +1268,7 @@ __metadata:
     "@flex-development/tutils": "npm:6.0.0-alpha.10"
     "@graphql-eslint/eslint-plugin": "npm:3.18.0"
     "@mikro-orm/core": "npm:5.7.2"
-    "@mikro-orm/mongodb": "npm:5.7.2"
+    "@mikro-orm/mongodb": "npm:5.7.3"
     "@mikro-orm/nestjs": "npm:5.1.8"
     "@mikro-orm/seeder": "npm:5.7.2"
     "@nestjs/axios": "npm:2.0.0"
@@ -1917,9 +1917,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/mongodb@npm:5.7.2":
-  version: 5.7.2
-  resolution: "@mikro-orm/mongodb@npm:5.7.2"
+"@mikro-orm/mongodb@npm:5.7.3":
+  version: 5.7.3
+  resolution: "@mikro-orm/mongodb@npm:5.7.3"
   dependencies:
     bson: "npm:^5.2.0"
     mongodb: "npm:5.3.0"
@@ -1938,7 +1938,7 @@ __metadata:
       optional: true
     "@mikro-orm/seeder":
       optional: true
-  checksum: 34e654e0c8ff9452cd62b5a2e42cad076083f5d09af19a625a49093af617005c6c53774f7e571309a0724375ef72501eaa0901585cb971891e8578310cf08cbf
+  checksum: 1597d2f438f1139079099f4c35889f8a4151e0dbca84fe9d138626b4843cf27a65822194a6cf8ac097056704c8b1d8ef28e77851c7405c367e7835bc037cc1df
   languageName: node
   linkType: hard
 
