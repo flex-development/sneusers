@@ -89,13 +89,13 @@ ignore:
   - '**/__mocks__/**'
   - '**/__tests__/**'
   - '**/index.ts'
+  - '**/interfaces'
+  - '**/types'
   - src/app.module.ts
   - src/database/database.module.ts
-  - src/interfaces/
   - src/main.ts
   - src/middleware/middleware.module.ts
   - src/subdomains/**/*.module.ts
-  - src/types/
 
 profiling:
   critical_files_paths: []

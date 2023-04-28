@@ -50,16 +50,16 @@ const config: UserConfigExport = defineConfig((): UserConfig => {
         clean: true,
         cleanOnRerun: true,
         exclude: [
-          '**/__mocks__/**',
-          '**/__tests__/**',
+          '**/__mocks__/',
+          '**/__tests__/',
           '**/index.ts',
+          '**/interfaces/',
+          '**/types/',
           'src/app.module.ts',
           'src/database/database.module.ts',
-          'src/interfaces/',
           'src/main.ts',
           'src/middleware/middleware.module.ts',
-          'src/subdomains/**/*.module.ts',
-          'src/types/'
+          'src/subdomains/**/*.module.ts'
         ],
         extension: ['.ts'],
         include: ['src'],
