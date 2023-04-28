@@ -59,7 +59,8 @@ const config: UserConfigExport = defineConfig((): UserConfig => {
           'src/database/database.module.ts',
           'src/main.ts',
           'src/middleware/middleware.module.ts',
-          'src/subdomains/**/*.module.ts'
+          'src/subdomains/**/*.module.ts',
+          'src/subdomains/users/dtos/user.dto.ts'
         ],
         extension: ['.ts'],
         include: ['src'],

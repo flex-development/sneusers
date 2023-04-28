@@ -26,7 +26,9 @@ import { DocsModule, HealthModule } from './subdomains'
       ignoreEnvFile: true,
       ignoreEnvVars: false,
       isGlobal: true,
-      load: [() => new Config(process.env).validate()]
+      validate: (config: Record<string, any>): Config => {
+        return new Config(config).validate()
+      }
     }),
     DatabaseModule,
     DocsModule,

@@ -10,6 +10,7 @@ import {
   ReflectMetadataProvider,
   UnderscoreNamingStrategy
 } from '@mikro-orm/core'
+import { MongoDriver } from '@mikro-orm/mongodb'
 import { MikroOrmModule, type MikroOrmModuleOptions } from '@mikro-orm/nestjs'
 import { Global, Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -72,7 +73,8 @@ import { template } from 'radash'
             requireEntitiesArray: true,
             warnWhenNoEntities: false
           },
-          ensureDatabase: false,
+          driver: MongoDriver,
+          ensureDatabase: true,
           ensureIndexes: false,
           forceEntityConstructor: true,
           forceUndefined: false,
@@ -93,7 +95,7 @@ import { template } from 'radash'
           },
           namingStrategy: UnderscoreNamingStrategy,
           password: config.get<string>('DB_PASSWORD'),
-          persistOnCreate: false,
+          persistOnCreate: true,
           seeder: {
             path: pathe.resolve('dist/database/seeders'),
             pathTs: pathe.resolve('src/database/seeders')

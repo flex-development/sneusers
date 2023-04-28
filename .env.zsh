@@ -5,6 +5,7 @@
 # - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv
 # - https://homebrew-file.readthedocs.io/en/latest/usage.html
 
+[ -f $PWD/.env ] && source $PWD/.env
 [ -f $PWD/.env.local ] && source $PWD/.env.local
 
 CLOUDSDK_CORE_PROJECT=sneusers
@@ -17,7 +18,6 @@ CLOUDSDK_COMPUTE_ZONE=$CLOUDSDK_COMPUTE_REGION-a
 CLOUDSDK_CORE_ACCOUNT=$CLOUDSDK_CORE_PROJECT@$CLOUDSDK_CORE_PROJECT.iam.gserviceaccount.com
 CLOUDSDK_PYTHON=python3
 CONTAINER_IMAGE_TAG=edge
-DB_HOSTNAME=db
 DB_NAME=$APP_ENV
 DB_PORT=27017
 DB_USERNAME=$CLOUDSDK_CORE_PROJECT
