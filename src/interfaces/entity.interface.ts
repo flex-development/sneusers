@@ -20,14 +20,14 @@ interface IEntity {
   /**
    * [Unix timestamp][1] indicating when entity was created.
    *
-   * [1]: https://www.unixtimestamp.com
+   * [1]: https://unixtimestamp.com
    */
   created_at: number
 
   /**
    * [Unix timestamp][1] indicating when entity was last modified.
    *
-   * [1]: https://www.unixtimestamp.com
+   * [1]: https://unixtimestamp.com
    *
    * @default null
    */

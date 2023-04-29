@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`functional:decorators/IsTimestamp > should cause validation failure if validation fails 1`] = `
+[
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isTimestamp": "updated_at must be a valid unix timestamp",
+    },
+    "property": "updated_at",
+    "target": TestModel {
+      "updated_at": null,
+    },
+    "value": null,
+  },
+]
+`;

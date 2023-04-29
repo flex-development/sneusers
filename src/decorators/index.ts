@@ -7,3 +7,4 @@
  */
 
 export { default as IsNullable } from './is-nullable.decorator'
+export { default as IsTimestamp } from './is-timestamp.decorator'
