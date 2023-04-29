@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config'
 import DatabaseModule from './database/database.module'
 import MiddlewareModule from './middleware/middleware.module'
 import { Config } from './models'
+import { RxJSProvider, ValidationProvider } from './providers'
 import { DocsModule, HealthModule } from './subdomains'
 
 /**
@@ -18,6 +19,7 @@ import { DocsModule, HealthModule } from './subdomains'
  */
 @Global()
 @Module({
+  exports: [RxJSProvider],
   imports: [
     ConfigModule.forRoot({
       cache:
@@ -34,7 +36,8 @@ import { DocsModule, HealthModule } from './subdomains'
     DocsModule,
     HealthModule,
     MiddlewareModule
-  ]
+  ],
+  providers: [ValidationProvider, RxJSProvider]
 })
 class AppModule {}
 

@@ -8,11 +8,15 @@ import { isObjectPlain } from '@flex-development/tutils'
 import TestSubject from '../helmet-options.provider'
 
 describe('unit:providers/HelmetOptionsProvider', () => {
-  it('should provide HELMET_OPTIONS', () => {
-    expect(TestSubject).to.have.property('provide').deep.equal(HELMET_OPTIONS)
+  describe('.provide', () => {
+    it('should provide HELMET_OPTIONS', () => {
+      expect(TestSubject).to.have.property('provide').deep.equal(HELMET_OPTIONS)
+    })
   })
 
-  it('should use HelmetOptions object as value', () => {
-    expect(TestSubject).to.have.property('useValue').satisfy(isObjectPlain)
+  describe('.useValue', () => {
+    it('should use HelmetOptions object', () => {
+      expect(TestSubject).to.have.property('useValue').satisfy(isObjectPlain)
+    })
   })
 })

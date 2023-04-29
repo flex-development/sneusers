@@ -4,7 +4,6 @@
  */
 
 import type { IConfig } from '#src/interfaces'
-import { RxJSProvider } from '#src/providers'
 import { HttpModule, type HttpModuleOptions } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -27,8 +26,7 @@ import { DocsController } from './controllers'
         transitional: { clarifyTimeoutError: true, silentJSONParsing: false }
       })
     })
-  ],
-  providers: [RxJSProvider]
+  ]
 })
 class DocsModule extends SwaggerModule {}
 

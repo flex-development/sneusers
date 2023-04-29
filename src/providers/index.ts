@@ -6,3 +6,4 @@
 
 export { default as HelmetOptionsProvider } from './helmet-options.provider'
 export { default as RxJSProvider } from './rxjs.provider'
+export { default as ValidationProvider } from './validation.provider'
