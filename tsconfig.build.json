@@ -9,6 +9,9 @@
   },
   "exclude": ["**/__mocks__", "**/__tests__"],
   "extends": "./tsconfig.json",
-  "files": ["./typings/typescript/lib/lib.es5.d.ts"],
+  "files": [
+    "./typings/class-validator/esm2015/metadata/ValidationMetadata.d.ts",
+    "./typings/typescript/lib/lib.es5.d.ts"
+  ],
   "include": ["./dist/*", "./src/*"]
 }

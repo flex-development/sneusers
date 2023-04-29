@@ -19,6 +19,12 @@ const config = {
       rules: {
         'sort-keys': 0
       }
+    },
+    {
+      files: ['typings/class-validator/**/*.d.ts'],
+      rules: {
+        'unicorn/filename-case': 0
+      }
     }
   ],
   root: true

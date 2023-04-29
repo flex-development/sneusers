@@ -417,6 +417,7 @@ const config = {
           1,
           {
             definedTags: [
+              'decorator',
               'experimental',
               'maximum',
               'minimum',
@@ -835,6 +836,7 @@ const config = {
       },
       plugins: ['chai-expect', 'jest-formatting'],
       rules: {
+        '@typescript-eslint/class-literal-property-style': 0,
         '@typescript-eslint/consistent-indexed-object-style': 0,
         '@typescript-eslint/no-base-to-string': 0,
         '@typescript-eslint/no-empty-function': 0,
@@ -1165,6 +1167,9 @@ const config = {
         const: {
           name: 'namepath-defining',
           required: ['name']
+        },
+        decorator: {
+          name: 'none'
         },
         enum: {
           name: 'namepath-defining',

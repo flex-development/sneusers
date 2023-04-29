@@ -167,8 +167,17 @@ export const resolve = async (specifier, context) => {
     parent: parent?.startsWith('file:') ? parent : specifier
   })
 
+  /**
+   * Boolean indicating module should be considered an ESM module, regardless of
+   * the result of {@linkcode mlly.getFormat}.
+   *
+   * @type {boolean}
+   * @const is_esm
+   */
+  const is_esm = /node_modules\/class-validator\/esm2015/.test(url.href)
+
   return {
-    format: await mlly.getFormat(url),
+    format: is_esm ? mlly.Format.MODULE : await mlly.getFormat(url),
     shortCircuit: true,
     url: url.href
   }
