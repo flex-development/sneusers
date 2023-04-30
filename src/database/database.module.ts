@@ -4,6 +4,7 @@
  */
 
 import type { IConfig } from '#src/interfaces'
+import { Repository } from '#src/models'
 import * as pathe from '@flex-development/pathe'
 import { NodeEnv } from '@flex-development/tutils'
 import {
@@ -70,12 +71,16 @@ import { template } from 'radash'
           debug: !TEST,
           discovery: {
             alwaysAnalyseProperties: false,
+            disableDynamicFileAccess: true,
             requireEntitiesArray: true,
             warnWhenNoEntities: false
           },
           driver: MongoDriver,
           ensureDatabase: true,
           ensureIndexes: false,
+          entities: [],
+          entitiesTs: [],
+          entityRepository: Repository,
           forceEntityConstructor: true,
           forceUndefined: false,
           forceUtcTimezone: true,

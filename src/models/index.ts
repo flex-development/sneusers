@@ -4,3 +4,4 @@
  */
 
 export { default as Config } from './config.model'
+export { default as Repository } from './repository.model'

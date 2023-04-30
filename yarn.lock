@@ -1017,13 +1017,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:7.6.0":
-  version: 7.6.0
-  resolution: "@faker-js/faker@npm:7.6.0"
-  checksum: 8dfdb631c3c420d8352d5ff5bc97d97d8d6890c8c74d7385ae9838cb47bef5e56ce611f4052ce414a55320426ffff4135fe927f46417c44b1b3301b7fd93851a
-  languageName: node
-  linkType: hard
-
 "@faker-js/faker@npm:8.0.0-alpha.2":
   version: 8.0.0-alpha.2
   resolution: "@faker-js/faker@npm:8.0.0-alpha.2"
@@ -1267,10 +1260,10 @@ __metadata:
     "@flex-development/tsconfig-utils": "npm:1.1.2"
     "@flex-development/tutils": "npm:6.0.0-alpha.10"
     "@graphql-eslint/eslint-plugin": "npm:3.18.0"
-    "@mikro-orm/core": "npm:5.7.2"
-    "@mikro-orm/mongodb": "npm:5.7.2"
+    "@mikro-orm/core": "npm:5.7.3"
+    "@mikro-orm/mongodb": "npm:5.7.3"
     "@mikro-orm/nestjs": "npm:5.1.8"
-    "@mikro-orm/seeder": "npm:5.7.2"
+    "@mikro-orm/seeder": "npm:5.7.3"
     "@nestjs/axios": "npm:2.0.0"
     "@nestjs/common": "npm:9.4.0"
     "@nestjs/config": "npm:2.3.1"
@@ -1317,6 +1310,7 @@ __metadata:
     axios: "npm:1.3.6"
     cache-manager: "npm:5.2.0"
     chai: "npm:5.0.0-alpha.0"
+    chai-each: "npm:0.0.1"
     chai-http: "npm:4.3.0"
     class-transformer: "npm:0.5.1"
     class-transformer-validator: "npm:0.9.1"
@@ -1363,6 +1357,7 @@ __metadata:
     passport-jwt: "npm:4.0.1"
     passport-local: "npm:1.0.0"
     passport-oauth2: "npm:1.7.0"
+    plur: "npm:5.1.0"
     prettier: "npm:2.8.7"
     prettier-plugin-sh: "npm:0.12.8"
     query-string: "npm:8.1.0"
@@ -1870,16 +1865,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/core@npm:5.7.2":
-  version: 5.7.2
-  resolution: "@mikro-orm/core@npm:5.7.2"
+"@mikro-orm/core@npm:5.7.3":
+  version: 5.7.3
+  resolution: "@mikro-orm/core@npm:5.7.3"
   dependencies:
     acorn-loose: "npm:8.3.0"
     acorn-walk: "npm:8.2.0"
     dotenv: "npm:16.0.3"
     fs-extra: "npm:11.1.1"
     globby: "npm:11.1.0"
-    mikro-orm: "npm:~5.7.2"
+    mikro-orm: "npm:~5.7.3"
     reflect-metadata: "npm:0.1.13"
   peerDependencies:
     "@mikro-orm/better-sqlite": ^5.0.0
@@ -1913,13 +1908,13 @@ __metadata:
       optional: true
     "@mikro-orm/sqlite":
       optional: true
-  checksum: 1de42e4cb874962a91eac31cda4a1ff61398750ea10b3328f88048879e18bd27b3d6d04092605415e9cf41bfd8905a652473a846bd821aedddc63752e694e327
+  checksum: ec03b779689bda60e1c5b4160c430c1d66481eb5b93cad8c9f63cf1f469d46febeadb47cf8faaad4336d0e6c28ccc5f12d8e5ed44e68ff4da94873275f6a7881
   languageName: node
   linkType: hard
 
-"@mikro-orm/mongodb@npm:5.7.2":
-  version: 5.7.2
-  resolution: "@mikro-orm/mongodb@npm:5.7.2"
+"@mikro-orm/mongodb@npm:5.7.3":
+  version: 5.7.3
+  resolution: "@mikro-orm/mongodb@npm:5.7.3"
   dependencies:
     bson: "npm:^5.2.0"
     mongodb: "npm:5.3.0"
@@ -1938,7 +1933,7 @@ __metadata:
       optional: true
     "@mikro-orm/seeder":
       optional: true
-  checksum: 34e654e0c8ff9452cd62b5a2e42cad076083f5d09af19a625a49093af617005c6c53774f7e571309a0724375ef72501eaa0901585cb971891e8578310cf08cbf
+  checksum: 1597d2f438f1139079099f4c35889f8a4151e0dbca84fe9d138626b4843cf27a65822194a6cf8ac097056704c8b1d8ef28e77851c7405c367e7835bc037cc1df
   languageName: node
   linkType: hard
 
@@ -1953,16 +1948,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/seeder@npm:5.7.2":
-  version: 5.7.2
-  resolution: "@mikro-orm/seeder@npm:5.7.2"
+"@mikro-orm/seeder@npm:5.7.3":
+  version: 5.7.3
+  resolution: "@mikro-orm/seeder@npm:5.7.3"
   dependencies:
     "@faker-js/faker": "npm:7.6.0"
     fs-extra: "npm:11.1.1"
     globby: "npm:11.1.0"
   peerDependencies:
     "@mikro-orm/core": ^5.0.0
-  checksum: b0db7311f0b910d5db0c43598ce1c24163a5b26fcab3187de940df66df8e33d624f02bb71c7f8a2ab0ffcc95e76450d2fed2596c206e5a3b6177e5908118e3fb
+  checksum: 9cc5296829c0b04c9ec138d6ab4e4e1532a02b28860f054d8aed020be1f5824e1fe4f8bb954d392c18adabefe778c7ce3d7b00ad51ce568447d58000aa78756e
   languageName: node
   linkType: hard
 
@@ -4387,6 +4382,13 @@ __metadata:
   bin:
     cdl: ./bin/cdl.js
   checksum: 9e9716cde2c12612625cc1114d883c00ff19d511924772a5caad0646ef4fbf4912b52c8e35e990100ab3f08c7e8db81fce996b8407c198f7932e23ff7a79a829
+  languageName: node
+  linkType: hard
+
+"chai-each@npm:0.0.1":
+  version: 0.0.1
+  resolution: "chai-each@npm:0.0.1"
+  checksum: 545be493fb9eace3aea28ef9556a0433dd1467bd0bf96d1bb50212c0f12b833ae033fd50b56b6ca739a58868fab060ef794bca14da3b36347f4f8574d66fc2a8
   languageName: node
   linkType: hard
 
@@ -7831,6 +7833,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"irregular-plurals@npm:^3.3.0":
+  version: 3.5.0
+  resolution: "irregular-plurals@npm:3.5.0"
+  checksum: 169bbc92fb036c65e8ccd8a345599764cb90b3bd98049df7f3bdc49bd84bc649d6e610672d911acab43bccfd69952cacdc48abf95ede317f79866615d62e0197
+  languageName: node
+  linkType: hard
+
 "is-alphabetical@npm:^1.0.0":
   version: 1.0.4
   resolution: "is-alphabetical@npm:1.0.4"
@@ -9124,10 +9133,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mikro-orm@npm:~5.7.2":
-  version: 5.7.2
-  resolution: "mikro-orm@npm:5.7.2"
-  checksum: 5081e037c063bf8e665b3b384a1930b1436e5ac0873b409d6ec63b945a370c278659a59d35d1d15de60b093471607d1487dcd1e07f13b8fbba37231ad6a66c64
+"mikro-orm@npm:~5.7.3":
+  version: 5.7.3
+  resolution: "mikro-orm@npm:5.7.3"
+  checksum: 3c8a36b9deba0a5f340dd16f05a3fa528bcd5a2a8ae350504c7dfff14839810ffacc8cdb168f65a4a355fa0cf8af40cfffa1b8582b13c077b11fc13f78afc6c7
   languageName: node
   linkType: hard
 
@@ -10369,6 +10378,15 @@ __metadata:
     mlly: "npm:^1.1.1"
     pathe: "npm:^1.1.0"
   checksum: e5da078c585c235cd3bdbb8a203c6e7620782abd3bb5c617ed6003ca42eacc10e5782f1030bcac2c3cc5c5f03e5989e6b936f5935733cc14b3e50cb83b95eda3
+  languageName: node
+  linkType: hard
+
+"plur@npm:5.1.0":
+  version: 5.1.0
+  resolution: "plur@npm:5.1.0"
+  dependencies:
+    irregular-plurals: "npm:^3.3.0"
+  checksum: d10f83a5d3b37ade27d0230de0e4aa61968ffb48cae5da5cfc6ba3f11a262cda60bbd58433cf1884553cf3d69cc82abaae999bbfc4b99667caca2732f08acdcd
   languageName: node
   linkType: hard
 
