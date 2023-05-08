@@ -46,7 +46,7 @@ jobs:
           ref: ${{ github.ref }}
       - id: gcloud-auth
         name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1.1.0
+        uses: google-github-actions/auth@v1.1.1
         with:
           credentials_json: ${{ secrets.GCE_SERVICE_ACCOUNT }}
           project_id: ${{ secrets.CLOUDSDK_CORE_PROJECT }}
