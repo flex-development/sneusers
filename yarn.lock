@@ -1347,7 +1347,7 @@ __metadata:
     is-ci: "npm:3.0.1"
     jsonc-eslint-parser: "npm:2.2.0"
     jsonwebtoken: "npm:9.0.0"
-    lint-staged: "npm:13.2.1"
+    lint-staged: "npm:13.2.3"
     mri: "npm:1.2.0"
     node-notifier: "npm:10.0.1"
     nodemon: "npm:2.0.22"
@@ -8602,9 +8602,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:13.2.1":
-  version: 13.2.1
-  resolution: "lint-staged@npm:13.2.1"
+"lint-staged@npm:13.2.3":
+  version: 13.2.3
+  resolution: "lint-staged@npm:13.2.3"
   dependencies:
     chalk: "npm:5.2.0"
     cli-truncate: "npm:^3.1.0"
@@ -8618,10 +8618,10 @@ __metadata:
     object-inspect: "npm:^1.12.3"
     pidtree: "npm:^0.6.0"
     string-argv: "npm:^0.3.1"
-    yaml: "npm:^2.2.1"
+    yaml: "npm:^2.2.2"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 973a3ef29dbe145a2b3c1a2c3b94d689e610d954a5d5c57c41d539f7dabe4634b4b15a3f1fae2a7a87608f3bea097b67fe2bc40d55c8bae25b03bfca35ade3c5
+  checksum: d2d468b17628ac81a71f50863585b09e4edec34d75b71ca7ca9a22b532f982fcb850af044a7c0e7028a1925e96c0d95ad3905dfffb065d027c39c38490be6c95
   languageName: node
   linkType: hard
 
@@ -13086,10 +13086,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.0.0, yaml@npm:^2.2.1":
+"yaml@npm:^2.0.0":
   version: 2.2.1
   resolution: "yaml@npm:2.2.1"
   checksum: 6a9e540d14030184df84ea8b79adbfe5c40fad79d10cb9fef28625cd6cfcfa3f28e09eda1b9f0d6f2f8354878f71ed3e6bf972d8d787bea1e8c6bf468f2c9cca
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.2.2":
+  version: 2.3.1
+  resolution: "yaml@npm:2.3.1"
+  checksum: f33e26b726061603f7a55870726cd5225a2868ea9accec41ff57f42e0398b1bdabf15b122ac724601fe41b978d5a46e7c3c43d3361f20f82047f054b2bf64621
   languageName: node
   linkType: hard
 
