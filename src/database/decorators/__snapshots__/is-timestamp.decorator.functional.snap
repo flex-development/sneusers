@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`functional:database/decorators/IsTimestamp > should fail if property value is not valid timestamp (0) 1`] = `
+[
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isTimestamp": "value must be a unix timestamp",
+    },
+    "property": "value",
+    "value": -13,
+  },
+]
+`;
+
+exports[`functional:database/decorators/IsTimestamp > should fail if property value is not valid timestamp (1) 1`] = `
+[
+  ValidationError {
+    "children": [],
+    "constraints": {
+      "isTimestamp": "value must be a unix timestamp",
+    },
+    "property": "value",
+    "value": null,
+  },
+]
+`;

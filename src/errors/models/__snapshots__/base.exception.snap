@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`unit:errors/models/Exception > #toJSON > should return error as json object 1`] = `
+{
+  "code": 409,
+  "id": "sneusers/email-conflict",
+  "message": "Email address must be unique",
+  "reason": {
+    "email": "unicornware@sneusers.app",
+  },
+}
+`;

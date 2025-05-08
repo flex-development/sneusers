@@ -1,149 +1,54 @@
 # Publish
 #
-# Publish container image to the GitHub Container Registry when a new tag is created or on workflow
-# dispatch.
-#
 # References:
 #
-# - https://dbdocs.io/docs/ci-integration
 # - https://docs.github.com/actions/learn-github-actions/contexts
 # - https://docs.github.com/actions/learn-github-actions/expressions
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#release
 # - https://docs.github.com/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
-# - https://docs.github.com/actions/using-workflows/reusing-workflows#calling-a-reusable-workflow
 # - https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#release
 # - https://docs.github.com/webhooks-and-events/webhooks/webhook-events-and-payloads#workflow_dispatch
 # - https://github.com/actions/checkout
-# - https://github.com/actions/setup-node
-# - https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#yarn2-configuration
-# - https://github.com/actions/upload-artifact
-# - https://github.com/docker/build-push-action
-# - https://github.com/docker/login-action
-# - https://github.com/docker/metadata-action
 # - https://github.com/hmarr/debug-action
-# - https://github.com/opencontainers/image-spec/blob/main/annotations.md
 
 ---
 name: publish
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types:
+      - published
   workflow_dispatch:
     inputs:
       tag:
         description: release tag
         required: true
-env:
-  REF: ${{ format('refs/tags/{0}',  inputs.tag || github.ref_name) }}
-  TAG: ${{ inputs.tag || github.ref_name }}
+        type: string
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ inputs.tag || github.ref_name }}
 jobs:
   preflight:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
-      container-image-url: ${{ steps.container-image-url.outputs.result }}
+      version: ${{ steps.version.outputs.result }}
     steps:
       - id: debug
         name: Print environment variables and event payload
-        uses: hmarr/debug-action@v2.1.0
-      - id: container-image-url
-        name: Get container image URL
-        run: |
-          echo "result=${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository, github.event.repository.name) }}" >>$GITHUB_OUTPUT
-  ghcr:
-    needs: preflight
-    permissions:
-      packages: write
-    runs-on: ubuntu-latest
-    environment:
-      name: container
-      url: ${{ needs.preflight.outputs.container-image-url }}
-    steps:
+        uses: hmarr/debug-action@v3.0.0
       - id: checkout
-        name: Checkout ${{ env.TAG }}
-        uses: actions/checkout@v3.5.2
+        name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v4.2.2
         with:
-          ref: ${{ env.REF }}
-      - id: login
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v2.1.0
-        with:
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          persist-credentials: false
+          ref: ${{ github.ref }}
       - id: version
-        name: Get container image version
+        name: Get version
         run: echo "result=$(jq .version package.json -r)" >>$GITHUB_OUTPUT
-      - id: licenses
-        name: Get container image licenses
-        run: echo "result=$(jq .license package.json -r)" >>$GITHUB_OUTPUT
-      - id: metadata
-        name: Extract container image metadata
-        uses: docker/metadata-action@v4.4.0
-        env:
-          SOURCE: ${{ format('{0}/{1}', github.server_url, github.repository) }}
+      - id: dist-tag
+        name: Get dist tag
+        uses: flex-development/dist-tag-action@1.1.2
         with:
-          flavor: latest=true
-          images: ghcr.io/${{ github.repository }}
-          labels: |
-            org.opencontainers.image.authors=@unicornware
-            org.opencontainers.image.licenses=${{ steps.licenses.outputs.result }}
-            org.opencontainers.image.title=${{ format('@{0}', github.repository) }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.source=${{ env.SOURCE }}
-            org.opencontainers.image.url=${{ needs.preflight.outputs.container-image-url }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ steps.version.outputs.result }}
-          tags: |
-            type=ref,event=tag
-            type=semver,pattern={{raw}},value=${{ steps.version.outputs.result }}
-            type=sha,prefix=
-            type=sha,prefix=,format=long
-      - id: build-push
-        name: Build and push container image
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: .
-          file: ./Dockerfile
-          labels: ${{ steps.metadata.outputs.labels }}
-          push: true
-          secrets: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          tags: ${{ steps.metadata.outputs.tags }}
-          target: production
-  dbdocs:
-    needs: ghcr
-    runs-on: ubuntu-latest
-    environment:
-      name: dbdocs
-      url: https://dbdocs.io/unicornware/${{ github.event.repository.name }}
-    steps:
-      - id: checkout
-        name: Checkout ${{ env.TAG }}
-        uses: actions/checkout@v3.5.2
-        with:
-          ref: ${{ env.REF }}
-      - id: install
-        name: Install dbdocs
-        run: npm install --global dbdocs
-      - id: build
-        name: Update dbdocs project
-        run: dbdocs build $DB_ARCHITECTURE_FILE
-        env:
-          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
-      - id: archive
-        name: Archive database schema file
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: DATABASE.dbml
-          path: ./DATABASE.dbml
-  vm:
-    needs:
-      - dbdocs
-      - ghcr
-    uses: ./.github/workflows/vm-restart.yml
-    secrets: inherit
+          target: ${{ steps.version.outputs.result }}

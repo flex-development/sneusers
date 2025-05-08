@@ -19,24 +19,20 @@ Follow the steps below to setup your local development environment:
    cd sneusers
    ```
 
-2. Install binaries with [Homebrew][1]
+2. Install binaries with [Homebrew][]
 
    ```sh
    brew bundle --file ./Brewfile
+   brew install terminal-notifier # macos only
    ```
 
-3. Set node version
+3. [Configure commit signing][gpg-commit-signature-verification]
 
-   ```sh
-   nvm use
-   ```
-
-4. [Configure commit signing][2]
-
-5. Update `~/.gitconfig`
+4. Update `~/.gitconfig`
 
    ```sh
    git config --global commit.gpgsign true
+   git config --global tag.gpgsign true
    git config --global user.email <email>
    git config --global user.name <name>
    git config --global user.username <username>
@@ -44,20 +40,17 @@ Follow the steps below to setup your local development environment:
 
    See [`.gitconfig`](.github/.gitconfig) for a global Git config example.
 
-6. Install dependencies
+5. Install dependencies
 
    ```sh
-   yarn
+   bun install
    ```
 
-   **Note**: This project uses [Yarn 2][3]. Consult [`.yarnrc.yml`](.yarnrc.yml) for an overview of configuration
-   options and required environment variables. Furthermore, if you already have a global Yarn configuration, or any
-   `YARN_*` environment variables set, an error will be thrown if any settings conflict with the project's Yarn
-   configuration, or the Yarn 2 API. Missing environment variables will also yield an error.
+   **Note**: This project uses [bun][].
 
-7. [ZSH][4] setup
+6. [ZSH][ohmyzsh] setup
 
-8. Update `$ZDOTDIR/.zprofile`:
+7. Update `$ZDOTDIR/.zprofile`:
 
    ```sh
    # PATH
@@ -78,22 +71,15 @@ Follow the steps below to setup your local development environment:
    # HOMEBREW
    # https://brew.sh
    export HOMEBREW_PREFIX=$(brew --prefix)
-
-   # NVM
-   # https://github.com/nvm-sh/nvm
-   export NVM_DIR=$HOME/.nvm
-
-   # YARN
-   export YARN_RC_FILENAME=.yarnrc.yml
    ```
 
-9. Load `dotenv` plugin via `$ZDOTDIR/.zshrc`:
+8. Load `dotenv` plugin via `$ZDOTDIR/.zshrc`:
 
    ```zsh
    plugins=(dotenv)
    ```
 
-10. Reload shell
+9. Reload shell
 
    ```sh
    exec $SHELL
@@ -101,41 +87,19 @@ Follow the steps below to setup your local development environment:
 
 ### Environment Variables
 
-| name                          |
-| ----------------------------- |
-| `APP_ENV`                     |
-| `CLOUDSDK_ACTIVE_CONFIG_NAME` |
-| `CLOUDSDK_COMPUTE_ZONE`       |
-| `CLOUDSDK_CORE_ACCOUNT`       |
-| `CLOUDSDK_CORE_PROJECT`       |
-| `CLOUDSDK_PYTHON`             |
-| `CODECOV_TOKEN`               |
-| `CONTAINER_IMAGE_TAG`         |
-| `DBDOCS_TOKEN`                |
-| `DB_HOSTNAME`                 |
-| `DB_NAME`                     |
-| `DB_PASSWORD`                 |
-| `DB_PORT`                     |
-| `DB_USERNAME`                 |
-| `FORCE_COLOR`                 |
-| `GCE_SERVICE_ACCOUNT`         |
-| `GITHUB_TOKEN`                |
-| `HTTPS_CERT`                  |
-| `HTTPS_KEY`                   |
-| `LEGO_ACCOUNT_EMAIL`          |
-| `NODE_ENV`                    |
-| `NODE_NO_WARNINGS`            |
-| `PAT_BOT`                     |
-| `TLD`                         |
-| `URL`                         |
+| name                |
+| ------------------- |
+| `GITHUB_ENV`        |
+| `HOMEBREW_BREWFILE` |
+| `HOST`              |
+| `NEST_DEBUG`        |
+| `NODE_ENV`          |
+| `PORT`              |
+| `ZSH_DOTENV_FILE`   |
 
 #### GitHub Actions
 
-Variables are prefixed by `secrets.` in [workflow](.github/workflows/) files.
-
-#### Updating Environment Variables
-
-**TODO**: updating environment variables.
+Secrets are prefixed by `secrets.` in [workflow](.github/workflows/) files.
 
 ### Git Config
 
@@ -145,7 +109,7 @@ See [`.github/.gitconfig`](.github/.gitconfig) for an exhaustive list.
 
 ## Contributing Code
 
-[Husky][5] is used to locally enforce coding and commit message standards, as well as run tests pre-push.
+[Husky][] is used to locally enforce coding and commit message standards, as well as run tests pre-push.
 
 Any code merged into the [trunk](#branching-model) must confront the following criteria:
 
@@ -156,7 +120,8 @@ Any code merged into the [trunk](#branching-model) must confront the following c
 
 ### Branching Model
 
-This project follows a [Trunk Based Development][6] workflow, specifically the [short-lived branch style][7].
+This project follows a [Trunk Based Development][tbd] workflow, specifically the [short-lived branch
+style][tbd-short-lived-feature-branches].
 
 - Trunk Branch: `main`
 - Short-Lived Branches: `feat/*`, `hotfix/*`, `release/*`
@@ -179,7 +144,8 @@ When creating a new branch, the name should match the following format:
 
 ### Commit Messages
 
-This project follows [Conventional Commit][8] standards and uses [commitlint][9] to enforce those standards.
+This project follows [Conventional Commit][conventionalcommits] standards and uses [commitlint][] to enforce those
+standards.
 
 This means every commit must conform to the following format:
 
@@ -191,7 +157,7 @@ This means every commit must conform to the following format:
  │     │      │
  │     │      └─⫸ optional breaking change flag
  │     │
- │     └─⫸ see .commitlintrc.cts
+ │     └─⫸ see .commitlintrc.ts
  │
  └─⫸ build|ci|chore|docs|feat|fix|perf|refactor|revert|style|test|wip
 
@@ -215,91 +181,51 @@ This means every commit must conform to the following format:
 - `revert`: Revert past changes
 - `style`: Changes that do not affect the meaning of the code
 - `test`: Change that impact the test suite
-- `wip`: Working on changes, but you need to go to bed :wink:
+- `wip`: Working on changes, but you need to go to bed \:wink:
 
 e.g:
 
 - `build(deps-dev): bump cspell from 6.7.0 to 6.8.0`
 - `perf: lighten initial load`
 
-See [`.commitlintrc.cts`](.commitlintrc.cts) to view all commit guidelines.
+See [`.commitlintrc.ts`](.commitlintrc.ts) to view all commit guidelines.
 
 ### Code Style
 
-[Prettier][10] is used to format code and [ESLint][11] to lint files.
+[dprint][] is used to format code and [ESLint][] to lint files.
 
-#### ESLint Configuration
-
-- [`.eslintrc.base.cjs`](.eslintrc.base.cjs)
-- [`.eslintrc.cjs`](.eslintrc.cjs)
-- [`.eslintignore`](.eslintignore)
-
-#### Prettier Configuration
-
-- [`.prettierrc.json`](.prettierrc.json)
-- [`.prettierignore`](.prettierignore)
+- [`.dprint.jsonc`](.dprint.jsonc)
+- [`eslint.config.mjs`](eslint.config.mjs)
 
 ### Making Changes
 
 Source code is located in [`src`](src) directory.
 
-#### Database Migrations
-
-**TODO**: database migrations.
-
-#### Docker Compose Services
-
-**TODO**: docker compose services.
-
-#### NestJS
-
-**TODO**: nestjs.
-
 ### Documentation
 
-- JavaScript & TypeScript: [JSDoc][12]; linted with [`eslint-plugin-jsdoc`][13]
+- JavaScript & TypeScript: [JSDoc][]; linted with [`eslint-plugin-jsdoc`][eslint-plugin-jsdoc]
 
 Before making a pull request, be sure your code is well documented, as it will be part of your code review.
 
 ### Testing
 
-This project uses [Vitest][14] to run tests.
+This project uses [Vitest][] to run tests.
 
 [Husky](#contributing-code) is configured to run tests against changed files.
 
-Be sure to use [`it.skip`][15] or [`it.todo`][16] where appropriate.
+Be sure to use [`it.skip`][vitest-test-skip] or [`it.todo`][vitest-test-todo] where appropriate.
 
 #### Running Tests
 
-- `yarn test`
-- `yarn test:cov`
-- `yarn typecheck`
-
-#### Code Coverage
-
-Code coverage is reported using [Codecov][17].
-
-To manually upload coverage reports:
-
-1. Retrieve `CODECOV_TOKEN` from a maintainer
-
-2. Add `CODECOV_TOKEN` to `.env.ci` and `.env.local`
-
-3. Reload shell
-
-   ```sh
-   exec $SHELL
-   ```
-
-4. Install [Codecov Uploader][18]
-
-5. Run `yarn codecov`
+- `bun run test`
+- `bun run test:cov`
+- `bun run typecheck`
 
 ### Getting Help
 
-If you need help, make note of any issues in their respective files in the form of a [JSDoc comment][12]. If you need
-help with a test, don't forget to use [`it.skip`][15] and/or [`it.todo`][16]. Afterwards, [start a discussion in the
-Q&A category][19].
+If you need help, make note of any issues in their respective files in the form of a [JSDoc comment][jsdoc]. If you need
+help with a test, don't forget to use [`it.skip`][vitest-test-skip] and/or [`it.todo`][vitest-test-todo]. Afterwards,
+[start a discussion in the Q\&A category][qa].
 
 ## Labels
 
@@ -321,9 +247,9 @@ If you haven't found a related open issue, or feel that a closed issue should be
 A well-written issue
 
 - contains a well-written summary of the bug, feature, or improvement
-- contains a [minimal, reproducible example][20] (if applicable)
+- contains a [minimal, reproducible example][mre] (if applicable)
 - includes links to related articles and documentation (if any)
-- includes an emoji in the title :wink:
+- includes an emoji in the title \:wink:
 
 ## Pull Requests
 
@@ -372,7 +298,7 @@ When squashing, be sure to follow [commit message standards](#commit-messages):
  │     │      │
  │     │      └─⫸ optional breaking change flag
  │     │
- │     └─⫸ see .commitlintrc.cts
+ │     └─⫸ see .commitlintrc.ts
  │
  └─⫸ build|ci|chore|docs|feat|fix|perf|refactor|release|revert|style|test
 ```
@@ -385,67 +311,67 @@ e.g:
 
 ## Deployment
 
-> Note: Container and release publication is executed via GitHub workflow.\
+> Note: Deployment and release publication is executed via GitHub workflow.\
 > This is so invalid or malicious versions cannot be published without merging those changes into `main` first.
 
-Before deploying, the following steps must be completed:
-
 1. Schedule a code freeze
-2. Decide what type of version bump the package needs
-   - `yarn recommended-bump`
-3. Bump version
-   - `bump <new-version>`
-   - `bump major`
-   - `bump minor`
-   - `bump patch`
-   - `bump premajor --preid <dist-tag>`
-   - `bump preminor --preid <dist-tag>`
-   - `bump prepatch --preid <dist-tag>`
-   - `bump prerelease --preid <dist-tag>`
-4. Update `CHANGELOG.md`
-   - `yarn changelog -sw` (remove `w` to do a dry-run, i.e. `yarn changelog -s`)
-5. `yarn release`
-6. Open PR from `release/*` into `main`
-   - PR title should match `release: <release-tag>`
-     - e.g: `release: 1.1.0`
-   - link all issues being released
-   - after review, `squash and merge` PR
-     - `release: <release-tag> (#pull-request-n)`
-       - e.g: `release: 1.1.0 (#3)`
-   - on PR merge, [release workflow](.github/workflows/release.yml) will fire
-     - if successful, the workflow will:
-       - pack project
-       - create and push new tag
-       - create and publish github release
-       - make sure all prereleased or released issues are closed
-       - delete the release branch
-     - on release tag push, [publish workflow](.github/workflows/publish.yml) will fire
-       - if successful, the workflow will:
-         - publish container image to [github container registry][21]
-         - publish database architecture to [dbdocs][22]
-         - **TODO** upload files to [production vm instance][23]
+2. Get a version bump recommendation
+   - `grease bump --recommend`
+3. Create release chore commit
+   - `bun run release <new-version>`
+   - `bun run release major`
+   - `bun run release minor`
+   - `bun run release patch`
+   - `bun run release premajor --preid <dist-tag>`
+   - `bun run release preminor --preid <dist-tag>`
+   - `bun run release prepatch --preid <dist-tag>`
+   - `bun run release prerelease --preid <dist-tag>`
+4. Push release chore commit
+5. Monitor workflows
+   1. [`release-chore`](.github/workflows/release-chore.yml)
+      - create release branch
+      - bump manifest version
+      - add changelog entry for new release
+      - create release pr
+   2. [`release`](.github/workflows/release.yml)
+      - create and push new tag
+      - create and publish github release
+   3. **TODO**: [`publish`](.github/workflows/publish.yml)
 
-[1]: https://brew.sh
-[2]:
-  https://docs.github.com/authentication/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification
-[3]: https://yarnpkg.com/getting-started
-[4]: https://github.com/ohmyzsh/ohmyzsh
-[5]: https://github.com/typicode/husky
-[6]: https://trunkbaseddevelopment.com
-[7]: https://trunkbaseddevelopment.com/styles/#short-lived-feature-branches
-[8]: https://conventionalcommits.org
-[9]: https://github.com/conventional-changelog/commitlint
-[10]: https://prettier.io
-[11]: https://eslint.org
-[12]: https://jsdoc.app
-[13]: https://github.com/gajus/eslint-plugin-jsdoc
-[14]: https://vitest.dev
-[15]: https://vitest.dev/api/#test-skip
-[16]: https://vitest.dev/api/#test-todo
-[17]: https://codecov.io
-[18]: https://docs.codecov.com/docs/codecov-uploader
-[19]: https://github.com/flex-development/sneusers/discussions/new?category=q-a
-[20]: https://stackoverflow.com/help/minimal-reproducible-example
-[21]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-[22]: https://dbdocs.io/
-[23]: https://cloud.google.com/compute
+[bun]: https://bun.sh
+
+[commitlint]: https://github.com/conventional-changelog/commitlint
+
+[conventionalcommits]: https://conventionalcommits.org
+
+[dprint]: https://dprint.dev
+
+[eslint-plugin-jsdoc]: https://github.com/gajus/eslint-plugin-jsdoc
+
+[eslint]: https://eslint.org
+
+<!-- [gcr]: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry -->
+
+[gpg-commit-signature-verification]: https://docs.github.com/authentication/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification
+
+[homebrew]: https://brew.sh
+
+[husky]: https://github.com/typicode/husky
+
+[jsdoc]: https://jsdoc.app
+
+[mre]: https://stackoverflow.com/help/minimal-reproducible-example
+
+[ohmyzsh]: https://github.com/ohmyzsh/ohmyzsh
+
+[qa]: https://github.com/flex-development/sneusers/discussions/new?category=q-a
+
+[tbd-short-lived-feature-branches]: https://trunkbaseddevelopment.com/styles/#short-lived-feature-branches
+
+[tbd]: https://trunkbaseddevelopment.com
+
+[vitest-test-skip]: https://vitest.dev/api/#test-skip
+
+[vitest-test-todo]: https://vitest.dev/api/#test-todo
+
+[vitest]: https://vitest.dev

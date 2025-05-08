@@ -1,17 +1,4 @@
 {
-  "[dockercompose]": {
-    "editor.rulers": [
-      {
-        "color": "var(--vscode-editorRuler-foreground)",
-        "column": 100
-      }
-    ],
-    "editor.wordWrapColumn": 100,
-    "rewrap.wrappingColumn": 100
-  },
-  "[dotenv]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
   "[github-actions-workflow]": {
     "editor.rulers": [
       {
@@ -21,20 +8,6 @@
     ],
     "editor.wordWrapColumn": 100,
     "rewrap.wrappingColumn": 100
-  },
-  "[handlebars]": {
-    "editor.defaultFormatter": "Greenbyte.handlebars-preview",
-    "editor.rulers": [
-      {
-        "color": "var(--vscode-editorRuler-foreground)",
-        "column": 100
-      }
-    ],
-    "editor.wordWrapColumn": 100,
-    "rewrap.wrappingColumn": 100
-  },
-  "[ignore]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "[jest-snapshot]": {
     "editor.rulers": [
@@ -47,7 +20,7 @@
     "rewrap.wrappingColumn": 130
   },
   "[markdown]": {
-    "editor.defaultFormatter": "vscode.markdown-language-features",
+    "editor.formatOnSave": true,
     "editor.rulers": [
       {
         "color": "var(--vscode-editorRuler-foreground)",
@@ -57,24 +30,26 @@
     "editor.wordWrapColumn": 120,
     "rewrap.wrappingColumn": 120
   },
-  "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+  "[mdx]": {
+    "editor.rulers": [
+      {
+        "color": "var(--vscode-editorRuler-foreground)",
+        "column": 120
+      }
+    ],
+    "editor.wordWrapColumn": 120,
+    "rewrap.wrappingColumn": 120
+  },
+  "[plaintext]": {
+    "files.trimTrailingWhitespace": false
   },
   "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.rulers": [
       {
         "color": "var(--vscode-editorRuler-foreground)",
         "column": 100
       }
     ],
-    "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 100,
-    "rewrap.wrappingColumn": 100
-  },
-  "[xml]": {
-    "editor.defaultFormatter": "redhat.vscode-xml",
-    "editor.rulers": [100],
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 100,
     "rewrap.wrappingColumn": 100
@@ -89,70 +64,24 @@
     "editor.wordWrapColumn": 100,
     "rewrap.wrappingColumn": 100
   },
-  "better-comments.highlightPlainText": true,
-  "better-comments.tags": [
-    {
-      "backgroundColor": "transparent",
-      "bold": false,
-      "color": "#ff2d00",
-      "italic": false,
-      "strikethrough": false,
-      "tag": "!",
-      "underline": false
-    },
-    {
-      "backgroundColor": "transparent",
-      "bold": false,
-      "color": "#3498db",
-      "italic": false,
-      "strikethrough": false,
-      "tag": "?",
-      "underline": false
-    },
-    {
-      "backgroundColor": "transparent",
-      "bold": false,
-      "color": "#474747",
-      "italic": false,
-      "strikethrough": true,
-      "tag": "//",
-      "underline": false
-    },
-    {
-      "backgroundColor": "transparent",
-      "bold": false,
-      "color": "#ff8c00",
-      "italic": false,
-      "strikethrough": false,
-      "tag": "todo",
-      "underline": false
-    },
-    {
-      "backgroundColor": "transparent",
-      "bold": false,
-      "color": "#98c379",
-      "italic": false,
-      "strikethrough": false,
-      "tag": "*",
-      "underline": false
-    }
-  ],
   "breadcrumbs.enabled": true,
   "cSpell.enabled": true,
   "debug.showBreakpointsInOverviewRuler": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": false,
   "dotenv.enableAutocloaking": false,
+  "dprint.path": "node_modules/.bin/dprint",
+  "dprint.verbose": true,
   "editor.acceptSuggestionOnEnter": "smart",
   "editor.autoClosingBrackets": "always",
   "editor.bracketPairColorization.enabled": true,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.fixAll.sortJSON": false,
-    "source.organizeImports": true
+    "source.fixAll": "always",
+    "source.fixAll.sortJSON": "never",
+    "source.organizeImports": "always"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "dprint.dprint",
   "editor.detectIndentation": false,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
@@ -160,7 +89,7 @@
   "editor.guides.indentation": true,
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.overviewRulerBorder": true,
-  "editor.renderFinalNewline": "off",
+  "editor.renderFinalNewline": "on",
   "editor.rulers": [
     {
       // microsoft/vscode#166261
@@ -179,50 +108,38 @@
   "emmet.triggerExpansionOnTab": true,
   "eslint.enable": true,
   "eslint.lintTask.enable": true,
-  "eslint.nodePath": "node_modules/.bin/eslint",
-  "eslint.options": {
-    "extensions": [
-      "cjs",
-      "cts",
-      "gql",
-      "js",
-      "json",
-      "json5",
-      "jsonc",
-      "md",
-      "mjs",
-      "mts",
-      "ts",
-      "yml"
-    ],
-    "overrideConfigFile": ".eslintrc.cjs"
-  },
-  "eslint.packageManager": "yarn",
+  "eslint.nodePath": "node_modules",
+  "eslint.options": {},
+  "eslint.runtime": "node",
+  "eslint.trace.server": "messages",
+  "eslint.useFlatConfig": true,
   "eslint.validate": [
+    "css",
+    "github-actions-workflow",
     "graphql",
+    "html",
     "javascript",
     "json",
     "json5",
     "jsonc",
     "markdown",
+    "mdx",
     "typescript",
     "yaml"
   ],
   "files.associations": {
-    "*.env*": "shellscript",
     "*.log": "log",
     "*.snap": "jest-snapshot",
     ".env.zsh": "shellscript",
-    ".markdownlintignore": "ignore",
-    ".npmrc": "ini",
+    "*.map": "json",
+    ".remarkignore": "ignore",
     "commit-msg": "shellscript",
-    "docker-cloud.yml": "dockercompose",
     "pre-commit": "shellscript",
     "pre-push": "shellscript"
   },
   "files.exclude": {
     "**/.DS_Store": true,
-    "**/yarn.lock": true
+    "**/bun.lock": true
   },
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
@@ -232,7 +149,6 @@
   "githubPullRequests.pullBranch": "never",
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
   "javascript.format.semicolons": "remove",
-  "javascript.inlayHints.enumMemberValues.enabled": true,
   "javascript.preferences.importModuleSpecifierEnding": "minimal",
   "javascript.preferences.quoteStyle": "single",
   "javascript.preferences.useAliasesForRenames": true,
@@ -246,28 +162,13 @@
   "javascript.validate.enable": true,
   "markdown.extension.toc.slugifyMode": "github",
   "markdown.extension.toc.updateOnSave": false,
-  "markdownlint.ignore": ".markdownlintignore",
-  "markdownlint.lintWorkspaceGlobs": [
-    "**/*.md",
-    "!**/node_modules",
-    "!**/.git",
-    "!**/CHANGELOG.md",
-    "!**/LICENSE.md",
-    "!**/RELEASE_NOTES.md"
-  ],
-  "npm-intellisense.scanDevDependencies": true,
-  "prettier.configPath": ".prettierrc.json",
-  "prettier.enable": true,
-  "prettier.ignorePath": ".prettierignore",
-  "prettier.prettierPath": "node_modules/prettier",
-  "prettier.useEditorConfig": true,
+  "mdx.trace.server.verbosity": "verbose",
   "rewrap.autoWrap.enabled": true,
   "rewrap.doubleSentenceSpacing": true,
   "rewrap.reformat": true,
   "rewrap.wrappingColumn": 80,
-  "shellformat.flag": "-ci -fn -i=2 -ln=bash -sr",
-  "shellformat.useEditorConfig": true,
   "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.scrollback": 10000,
   "todo-tree.filtering.ignoreGitSubmodules": true,
   "todo-tree.filtering.includeHiddenFiles": false,
   "todo-tree.filtering.useBuiltInExcludes": "file and search excludes",
@@ -300,7 +201,7 @@
   "todo-tree.tree.buttons.viewStyle": true,
   "todo-tree.tree.expanded": true,
   "todo-tree.tree.filterCaseSensitive": true,
-  "todo-tree.tree.scanMode": "workspace",
+  "todo-tree.tree.scanMode": "workspace only",
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.showCountsInTree": true,
   "todo-tree.tree.showCurrentScanMode": true,
@@ -309,7 +210,9 @@
   "typescript.format.insertSpaceAfterTypeAssertion": true,
   "typescript.format.semicolons": "remove",
   "typescript.inlayHints.enumMemberValues.enabled": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
   "typescript.preferences.quoteStyle": "single",
   "typescript.preferences.useAliasesForRenames": true,
   "typescript.suggest.completeFunctionCalls": true,
@@ -319,46 +222,74 @@
   "typescript.suggest.jsdoc.generateReturns": true,
   "typescript.suggest.paths": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.tsserver.enableTracing": true,
-  "typescript.tsserver.log": "verbose",
-  "typescript.tsserver.trace": "verbose",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.validate.enable": true,
   "versionlens.npm.dependencyProperties": [
     "dependencies",
     "devDependencies",
+    "engines",
     "resolutions"
   ],
   "vsicons.associations.files": [
     {
-      "extensions": [".commitlintrc.cts"],
+      "extensions": ["adapter.mts"],
       "format": "svg",
-      "icon": "commitlint"
+      "icon": "nest_adapter_ts"
     },
     {
-      "extensions": [".dbml"],
-      "format": "svg",
-      "icon": "db"
-    },
-    {
-      "extensions": [".eslintrc.base.cjs"],
-      "format": "svg",
-      "icon": "eslint"
-    },
-    {
-      "extensions": [".graphqlrc.yml"],
-      "format": "svg",
-      "icon": "graphql"
-    },
-    {
-      "extensions": ["build.json", "cjs.json", "typecheck.json"],
+      "extensions": ["build.json", "typecheck.json"],
       "format": "svg",
       "icon": "tsconfig"
     },
     {
-      "extensions": ["repository.ts"],
+      "extensions": ["controller.mts"],
+      "format": "svg",
+      "icon": "nest_controller_ts"
+    },
+    {
+      "extensions": ["decorator.mts"],
+      "format": "svg",
+      "icon": "nest_decorator_ts"
+    },
+    {
+      "extensions": ["filter.mts"],
+      "format": "svg",
+      "icon": "nest_filter_ts"
+    },
+    {
+      "extensions": ["gateway.mts"],
+      "format": "svg",
+      "icon": "nest_gateway_ts"
+    },
+    {
+      "extensions": ["guard.mts"],
+      "format": "svg",
+      "icon": "nest_guard_ts"
+    },
+    {
+      "extensions": ["interceptor.mts"],
+      "format": "svg",
+      "icon": "nest_interceptor_ts"
+    },
+    {
+      "extensions": [
+        "mapper.mts",
+        "repository.mts",
+        "service.mts",
+        "strategy.mts"
+      ],
       "format": "svg",
       "icon": "nest_service_ts"
+    },
+    {
+      "extensions": ["module.mts"],
+      "format": "svg",
+      "icon": "nest_module_ts"
+    },
+    {
+      "extensions": ["pipe.mts"],
+      "format": "svg",
+      "icon": "nest_pipe_ts"
     },
     {
       "extensions": ["snap"],
@@ -366,14 +297,9 @@
       "icon": "vitest"
     },
     {
-      "extensions": ["spec-d.ts"],
+      "extensions": ["spec-d.mts"],
       "format": "svg",
       "icon": "testts"
-    },
-    {
-      "extensions": ["yarnrc.yml"],
-      "format": "svg",
-      "icon": "yarn"
     }
   ],
   "vsicons.associations.folders": [
@@ -386,11 +312,6 @@
       "extensions": ["__snapshots__"],
       "format": "svg",
       "icon": "temp"
-    },
-    {
-      "extensions": ["docker-entrypoint-initdb.d", "docker-entrypoint.d"],
-      "format": "svg",
-      "icon": "docker"
     },
     {
       "extensions": ["internal"],
@@ -408,9 +329,9 @@
       "icon": "config"
     },
     {
-      "extensions": ["subdomains"],
+      "extensions": ["testing"],
       "format": "svg",
-      "icon": "module"
+      "icon": "test"
     },
     {
       "extensions": ["types"],
@@ -421,11 +342,6 @@
   "workbench.editor.closeOnFileDelete": true,
   "workbench.editor.enablePreview": false,
   "workbench.iconTheme": "vscode-icons",
-  "xml.format.closingBracketNewLine": true,
-  "xml.format.maxLineWidth": 100,
-  "xml.format.spaceBeforeEmptyCloseTag": false,
-  "xml.format.splitAttributes": true,
-  "xml.format.splitAttributesIndentSize": 0,
   "yaml.schemas": {
     "https://json.schemastore.org/github-issue-config": ".github/ISSUE_TEMPLATE/config.yml",
     "https://json.schemastore.org/github-workflow": ".github/workflows/*.yml"

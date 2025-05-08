@@ -13,33 +13,19 @@
 *.tgz
 *.zip
 .npm
-.yarn-integrity
 logs
-npm-debug.log*
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-yarn-debug.log*
-yarn-error.log*
-!**/__fixtures__/**/node_modules/
-
-# Yarn 2 (Not using Zero-Installs)
-# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-# ------------------------------------------------------------------------------
-.pnp.*
-.yarn/*
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+!**/__fixtures__/node_modules/
+!**/__fixtures__/**/*.log
 
 # Environment
 # ------------------------------------------------------------------------------
-.env*
-.flaskenv*
-!.env.example
-!.env.project
-!.env.vault
-!.env.zsh
+**/.env
+**/.env*.local
+**/.env.me
+**/.env.repo
+*.service-account.json
 
 # TypeScript
 # ------------------------------------------------------------------------------
@@ -47,8 +33,8 @@ yarn-error.log*
 
 # Testing
 # ------------------------------------------------------------------------------
-**/*config.*.timestamp*
-**/__tests__/report.json
+**/.vitest-reports/
+**/__tests__/reports/*
 **/coverage/
 **/tsconfig*temp.json
 *.lcov
@@ -60,20 +46,9 @@ codecov
 
 # Builds
 # ------------------------------------------------------------------------------
-**/.temp/
 **/dist/
-DATABASE.sql
-!**/__fixtures__/**/*.log
 !**/__fixtures__/**/dist/
 !**/typings/**/dist/
-
-# Docker
-# ------------------------------------------------------------------------------
-**/postgresql/
-./redis/
-.lego/
-.service-accounts/
-acme.json
 
 # Releases
 # ------------------------------------------------------------------------------
@@ -85,4 +60,7 @@ acme.json
 
 # Misc
 # ------------------------------------------------------------------------------
+**/*config.*.timestamp*
+**/.temp/
+**/*.scratch.*
 **/scratch.*

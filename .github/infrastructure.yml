@@ -1,6 +1,6 @@
-# REPOSITORY INFRASTRUCTURE SETTINGS
+# REPOSITORY INFRASTRUCTURE
+# https://github.com/flex-development/repostructure-action/tree/1.0.0
 ---
-# https://docs.github.com/rest/branches/branch-protection#update-branch-protection
 branches:
   - name: main
     protection:
@@ -21,31 +21,21 @@ branches:
         required_approving_review_count: 1
       required_status_checks:
         checks:
-          - context: add-to-project
+          - context: artifacts
           - context: auto-merge
-          - context: build
+          - context: auto-review
+          - context: changelog
           - context: commitlint
-          - context: dbdocs
-          - context: dependabot-auto
+          - context: container
           - context: format
-          - context: ghcr
-          - context: gitguardian
           - context: lint
           - context: spelling
-          - context: test (16)
-          - context: test (18)
-          - context: test (19)
-          - context: test (20)
+          - context: test
           - context: typescript
         strict: true
       restrictions: null
-# https://docs.github.com/rest/deployments/environments#create-or-update-an-environment
 environments:
-  - environment_name: container
-  - environment_name: dbdocs
-  - environment_name: production
   - environment_name: release
-# https://docs.github.com/rest/issues/labels#create-a-label
 labels:
   - name: flag:breaking-change
     description: contains changes that require major version bump
@@ -62,8 +52,8 @@ labels:
   - name: flag:needs-refactor
     description: code improvements required before being merged
     color: fbca04
-  - name: scope:auth
-    description: authentication
+  - name: scope:accounts
+    description: user accounts
     color: 74cefc
   - name: scope:container
     description: containerization
@@ -74,50 +64,11 @@ labels:
   - name: scope:dependencies
     description: dependency updates
     color: 74cefc
-  - name: scope:docker
-    description: docker integration
-    color: 74cefc
-  - name: scope:esm
-    description: es modules
-    color: 74cefc
-  - name: scope:filters
-    description: global exception filters
-    color: 74cefc
-  - name: scope:gcp
-    description: google cloud platform
-    color: 74cefc
-  - name: scope:guards
-    description: global guards
-    color: 74cefc
-  - name: scope:interceptors
-    description: global interceptors
-    color: 74cefc
-  - name: scope:modules
-    description: global modules
-    color: 74cefc
-  - name: scope:nestjs
-    description: nestjs application
-    color: 74cefc
-  - name: scope:pipes
-    description: global pipes
-    color: 74cefc
   - name: scope:release
     description: project release
     color: 74cefc
   - name: scope:tests
     description: testing
-    color: 74cefc
-  - name: scope:ts
-    description: typescript support
-    color: 74cefc
-  - name: scope:users
-    description: users subdomain
-    color: 74cefc
-  - name: scope:utils
-    description: utilities
-    color: 74cefc
-  - name: scope:vm
-    description: virtual machine
     color: 74cefc
   - name: status:awaiting-answers
     description: needs clarification or more information from author
@@ -173,25 +124,27 @@ labels:
   - name: type:docs
     description: documentation improvements
     color: 0052cc
+  - name: type:bug
+    description: bug reports
+    color: 0052cc
   - name: type:feat
-    description: new features and improvements
+    description: new features
     color: 0052cc
   - name: type:fix
-    description: bug reports and fixes
+    description: bug fixes
     color: 0052cc
   - name: type:perf
     description: performance updates
     color: 0052cc
-  - name: type:question
-    description: questions
-    color: 0052cc
   - name: type:refactor
     description: code improvements
+    color: 0052cc
+  - name: type:story
+    description: user stories
     color: 0052cc
   - name: type:task
     description: project tasks
     color: 0052cc
-# https://docs.github.com/rest/repos/repos#update-a-repository
 repository:
   allow_auto_merge: true
   allow_merge_commit: false
@@ -202,7 +155,7 @@ repository:
   automated_security_fixes: true
   default_branch: main
   delete_branch_on_merge: true
-  description: 🚧 Demo users system API
+  description: Demo user authentication and authorization system
   has_issues: true
   has_projects: true
   has_wiki: false
@@ -210,8 +163,6 @@ repository:
   is_template: false
   private: false
   security_and_analysis:
-    advanced_security:
-      status: disabled
     secret_scanning:
       status: enabled
     secret_scanning_push_protection:
@@ -219,21 +170,13 @@ repository:
   squash_merge_commit_message: BLANK
   squash_merge_commit_title: PR_TITLE
   topics:
-    - cloud-dns
-    - compute-engine
+    - bun
     - docker
-    - docker-compose
-    - gcp
-    - mikro
-    - mikro-orm
-    - mongodb
+    - fastify
+    - jwt
     - nestjs
-    - redis
+    - oauth
     - typescript
   visibility: public
   vulnerability_alerts: true
-  web_commit_signoff_required: true
-# https://docs.github.com/rest/teams/teams#add-or-update-team-repository-permissions
-teams:
-  - team_slug: dependabot-review
-    permission: triage
+teams: []

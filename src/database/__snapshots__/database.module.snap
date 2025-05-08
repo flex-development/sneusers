@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`unit:database/DatabaseModule > .forFeature > should return dynamic feature module 1`] = `
+{
+  "exports": [
+    "EntityMapper",
+  ],
+  "global": false,
+  "module": [Function DatabaseModule],
+  "providers": [
+    {
+      "provide": "EntityMapper",
+      "useClass": [Function EntityMapper],
+    },
+  ],
+}
+`;

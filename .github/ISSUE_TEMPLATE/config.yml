@@ -2,7 +2,7 @@
 # https://docs.github.com/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
 
 ---
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
   - name: Discuss an idea
     url: https://github.com/flex-development/sneusers/discussions/new?category=ideas
@@ -10,6 +10,3 @@ contact_links:
   - name: Q&A
     url: https://github.com/flex-development/sneusers/discussions/new?category=q-a
     about: Ask and answer questions
-  - name: Show and tell
-    url: https://github.com/flex-development/sneusers/discussions/new?category=show-and-tell
-    about: Show the community how you integrated this project into yours

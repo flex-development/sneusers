@@ -18,15 +18,9 @@
 # ------------------------------------------------------------------------------
 # TEXT FILE ATTRIBUTES
 # ------------------------------------------------------------------------------
-*.cjs text eol=lf
-*.cts text eol=lf
-*.gql text eol=lf
-*.hbs text eol=lf
-*.js text eol=lf
-*.json text eol=lf
+*.json text eol=lf linguist-language=JSON-with-Comments
 *.json5 text eol=lf
 *.jsonc text eol=lf
-*.jsx text eol=lf
 *.md text eol=lf diff=markdown
 *.mjs text eol=lf
 *.mts text eol=lf
@@ -47,4 +41,3 @@
 .gitconfig text eol=lf
 Dockerfile text eol=lf
 package.json text eol=lf
-yarn.lock text -diff
