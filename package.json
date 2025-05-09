@@ -29,12 +29,17 @@
     "src"
   ],
   "exports": {
+    "./accounts": "./src/subdomains/accounts/index.mts",
+    "./accounts/errors": "./src/subdomains/accounts/errors/index.mts",
     "./database": "./src/database/index.mts",
     "./errors": "./src/errors/index.mts",
     "./package.json": "./package.json",
     "./types": "./src/types.mts"
   },
   "imports": {
+    "#accounts/index": null,
+    "#accounts/*/index": null,
+    "#accounts/*": "./src/subdomains/accounts/*.mts",
     "#app": "./src/app.mts",
     "#database/index": null,
     "#database/*": "./src/database/*.mts",
@@ -42,11 +47,13 @@
     "#enums/*": "./src/enums/*.mts",
     "#errors/index": null,
     "#errors/*": "./src/errors/*.mts",
+    "#filters/*": "./src/filters/*.mts",
     "#fixtures/*": "./__fixtures__/*.mts",
     "#hooks/*": "./src/hooks/*.mts",
     "#interfaces/*": "./src/interfaces/*.mts",
     "#models/*": "./src/models/*.mts",
     "#modules/*": "./src/modules/*.mts",
+    "#pipes/*": "./src/pipes/*.mts",
     "#tests/*": "./__tests__/*.mts",
     "#types/*": "./src/types/*.mts"
   },

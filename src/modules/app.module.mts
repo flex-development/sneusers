@@ -4,6 +4,7 @@
  */
 
 import DependenciesModule from '#modules/dependencies.module'
+import AccountsModule from '@flex-development/sneusers/accounts'
 import { Module } from '@nestjs/common'
 
 /**
@@ -11,7 +12,7 @@ import { Module } from '@nestjs/common'
  *
  * @class
  */
-@Module({ imports: [DependenciesModule] })
+@Module({ imports: [AccountsModule, DependenciesModule] })
 class AppModule {}
 
 export default AppModule

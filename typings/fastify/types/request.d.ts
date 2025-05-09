@@ -1,5 +1,13 @@
+import type { Account } from '@flex-development/sneusers/accounts'
 import type {} from 'fastify'
 
 declare module 'fastify' {
-  interface FastifyRequest {}
+  interface FastifyRequest {
+    /**
+     * The account of the currently authenticated user.
+     *
+     * @see {@linkcode Account}
+     */
+    user?: Account | null | undefined
+  }
 }

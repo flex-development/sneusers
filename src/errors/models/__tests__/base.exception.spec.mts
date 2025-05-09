@@ -4,7 +4,7 @@
  */
 
 import ExceptionCode from '#errors/enums/exception-code'
-import type ExceptionId from '#errors/enums/exception-id'
+import ExceptionId from '#errors/enums/exception-id'
 import TestSubject from '#errors/models/base.exception'
 import type { ExceptionInfo, Reason } from '@flex-development/sneusers/errors'
 import type { JsonObject } from '@flex-development/sneusers/types'
@@ -21,7 +21,7 @@ describe('unit:errors/models/Exception', () => {
   beforeAll(() => {
     cause = { email: 'unicornware@sneusers.app' }
     code = ExceptionCode.CONFLICT
-    id = 'sneusers/email-conflict' as ExceptionId
+    id = ExceptionId.EMAIL_CONFLICT
     message = 'Email address must be unique'
     reason = { toJSON: constant(cause) }
 

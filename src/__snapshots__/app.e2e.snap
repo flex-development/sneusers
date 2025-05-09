@@ -11,9 +11,341 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
   },
   "servers": [],
   "tags": [],
-  "paths": {},
+  "paths": {
+    "/accounts": {
+      "post": {
+        "operationId": "accounts-create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCreatedPayload"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationException"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailConflictException"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerException"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/accounts/whoami": {
+      "get": {
+        "operationId": "accounts-whoami",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "examples": {
+              "bearer": {
+                "value": "bearer <token>"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhoamiPayload"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhoamiPayload"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerException"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "accounts"
+        ]
+      }
+    }
+  },
   "components": {
-    "schemas": {}
+    "schemas": {
+      "AccountCreatedPayload": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "token for authenticating requests"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "token for renewing access tokens"
+          },
+          "uid": {
+            "type": "string",
+            "description": "unique account id"
+          }
+        },
+        "required": [
+          "access_token",
+          "refresh_token",
+          "uid"
+        ]
+      },
+      "CreateAccountCommand": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "email address of new user",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "password for account",
+            "format": "password",
+            "minLength": 6
+          },
+          "type": {
+            "type": "string",
+            "description": "type of account to create",
+            "enum": [
+              "developer",
+              "user"
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "type"
+        ]
+      },
+      "EmailConflict": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "the conflicting email address"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "EmailConflictException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              409
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "accounts/email-conflict"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/EmailConflict"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
+      "InternalServerException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              500
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "sneusers/internal-error"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
+      "ValidationException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              400
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "sneusers/validation-failure"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ValidationFailure"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
+      "ValidationFailure": {
+        "type": "object",
+        "properties": {
+          "constraints": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "violated validation constraints"
+          },
+          "property": {
+            "type": "string",
+            "description": "the name of the property that caused the validation failure"
+          },
+          "value": {
+            "description": "the property value that caused the validation failure",
+            "oneOf": [
+              {
+                "type": "array"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "constraints",
+          "property"
+        ]
+      },
+      "WhoamiPayload": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "description": "unique account id",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "uid"
+        ]
+      }
+    }
   }
 }
 `;
