@@ -4,7 +4,10 @@
  */
 
 import CreateAccountCommand from '#accounts/commands/create-account.command'
+import User from '#accounts/decorators/user.decorator'
 import AccountCreatedPayload from '#accounts/dto/account-created.payload'
+import WhoamiPayload from '#accounts/dto/whoami.payload'
+import WhoamiGuard from '#accounts/guards/whoami.guard'
 import AuthService from '#accounts/services/auth.service'
 import routes from '#enums/routes'
 import subroutes from '#enums/subroutes'
@@ -22,10 +25,13 @@ import {
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Res,
   UseFilters,
+  UseGuards,
   UsePipes
 } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
@@ -33,10 +39,14 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiHeader,
   ApiInternalServerErrorResponse,
-  ApiTags
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 import { ok } from 'devlop'
+import type { FastifyReply } from 'fastify'
 
 /**
  * User accounts controller.
@@ -94,6 +104,37 @@ class AccountsController {
       await this.auth.accessToken(account),
       await this.auth.refreshToken(account)
     )
+  }
+
+  /**
+   * Check authentication.
+   *
+   * @public
+   * @instance
+   *
+   * @param {Account | null | undefined} account
+   *  The account of the currently authenticated user
+   * @param {FastifyReply} res
+   *  The server response object
+   * @return {undefined}
+   *  Nothing; sends authentication check payload
+   */
+  @Get(subroutes.ACCOUNTS_WHOAMI)
+  @UseGuards(WhoamiGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiHeader({
+    examples: { bearer: { value: 'bearer <token>' } },
+    name: 'authorization',
+    required: false
+  })
+  @ApiOkResponse({ type: WhoamiPayload })
+  @ApiUnauthorizedResponse({ type: WhoamiPayload })
+  public whoami(
+    @User() account: Account | null | undefined,
+    @Res() res: FastifyReply
+  ): undefined {
+    res.status(account ? HttpStatus.OK : HttpStatus.UNAUTHORIZED)
+    return void res.send(new WhoamiPayload(account))
   }
 }
 

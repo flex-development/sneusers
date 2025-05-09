@@ -9,6 +9,7 @@ import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import CreateAccountHandler from '#accounts/handlers/create-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import AuthService from '#accounts/services/auth.service'
+import JwtStrategy from '#accounts/strategies/jwt.strategy'
 import DatabaseModule from '@flex-development/sneusers/database'
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
@@ -24,7 +25,13 @@ import { JwtModule } from '@nestjs/jwt'
     DatabaseModule.forFeature(Account),
     JwtModule.registerAsync({ useClass: JwtOptionsFactory })
   ],
-  providers: [AccountsRepository, AuthService, CreateAccountHandler]
+  providers: [
+    AccountsRepository,
+    AuthService,
+    CreateAccountHandler,
+    JwtOptionsFactory,
+    JwtStrategy
+  ]
 })
 class AccountsModule {}
 

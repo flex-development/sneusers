@@ -4,9 +4,12 @@
  */
 
 import TestSubject from '#accounts/accounts.module'
+import Account from '#accounts/entities/account.entity'
 import CreateAccountHandler from '#accounts/handlers/create-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
+import AuthService from '#accounts/services/auth.service'
 import routes from '#enums/routes'
+import subroutes from '#enums/subroutes'
 import ACCOUNT_PASSWORD from '#fixtures/account-password'
 import DependenciesModule from '#modules/dependencies.module'
 import AccountFactory from '#tests/utils/account.factory'
@@ -252,6 +255,69 @@ describe('e2e:accounts/AccountsModule', () => {
         expect(payload).to.have.property('id', id)
         expect(payload).to.have.property('message').be.a('string').and.not.empty
         expect(payload).to.have.property('reason', null)
+      })
+    })
+  })
+
+  describe('GET /accounts/whoami', () => {
+    let method: Required<InjectOptions>['method']
+    let url: string
+
+    beforeAll(() => {
+      method = 'get'
+      url = routes.ACCOUNTS + subroutes.ACCOUNTS_WHOAMI
+    })
+
+    describe('200 (OK)', () => {
+      let account: Account
+      let auth: AuthService
+
+      beforeAll(() => {
+        account = new Account(seeder.seeds[3]!)
+        auth = ref.get(AuthService)
+      })
+
+      it.each<'accessToken' | 'refreshToken'>([
+        'accessToken',
+        'refreshToken'
+      ])('authenticated user (%s)', async token => {
+        // Arrange
+        const request: InjectOptions = {
+          headers: { authorization: `bearer ${await auth[token](account)}` },
+          method,
+          url
+        }
+
+        // Act
+        const result = await app.inject(request)
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.OK)
+        expect(payload).to.have.keys(['uid'])
+        expect(payload).to.have.property('uid', account.uid)
+      })
+    })
+
+    describe('401 (UNAUTHORIZED)', () => {
+      let result: Response
+
+      beforeAll(async () => {
+        result = await app.inject({
+          headers: { authorization: `bearer ${faker.internet.jwt()}` },
+          method,
+          url
+        })
+      })
+
+      it('unauthenticated user', () => {
+        // Act
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.UNAUTHORIZED)
+        expect(payload).to.have.keys(['uid'])
+        expect(payload).to.have.property('uid', null)
       })
     })
   })

@@ -68,6 +68,58 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
           "accounts"
         ]
       }
+    },
+    "/accounts/whoami": {
+      "get": {
+        "operationId": "accounts-whoami",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "examples": {
+              "bearer": {
+                "value": "bearer <token>"
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhoamiPayload"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhoamiPayload"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerException"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "accounts"
+        ]
+      }
     }
   },
   "components": {
@@ -272,6 +324,25 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
         "required": [
           "constraints",
           "property"
+        ]
+      },
+      "WhoamiPayload": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "description": "unique account id",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "uid"
         ]
       }
     }
