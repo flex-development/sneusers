@@ -67,8 +67,6 @@ function useSwagger(this: void, app: INestApplication): undefined {
   )
 }
 
-/* v8 ignore start */
-
 /**
  * Generate an `operationId` based on controller and method name.
  *
@@ -90,8 +88,6 @@ function operationIdFactory(
 ): string {
   return lowercase(controller.replace('Controller', '') + '-' + method)
 }
-
-/* v8 ignore stop */
 
 /**
  * Modify the generated API `documentation` on request.

@@ -9,6 +9,7 @@
  * @enum {string}
  */
 enum routes {
+  ACCOUNTS = '/accounts',
   APP = '/'
 }
 
