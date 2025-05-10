@@ -7,11 +7,12 @@ import CreateAccountCommand from '#accounts/commands/create-account.command'
 import DeleteAccountCommand from '#accounts/commands/delete-account.command'
 import User from '#accounts/decorators/user.decorator'
 import AccountCreatedPayload from '#accounts/dto/account-created.payload'
+import AccountPayload from '#accounts/dto/account.payload'
 import WhoamiPayload from '#accounts/dto/whoami.payload'
-import UnauthorizedExceptionFilter from '#accounts/filters/unauthorized.filter'
 import ExistingAccountGuard from '#accounts/guards/existing-account.guard'
 import JwtGuard from '#accounts/guards/jwt.guard'
 import WhoamiGuard from '#accounts/guards/whoami.guard'
+import GetAccountQuery from '#accounts/queries/get-account.query'
 import AuthService from '#accounts/services/auth.service'
 import AuthStrategy from '#enums/auth-strategy'
 import routes from '#enums/routes'
@@ -44,7 +45,7 @@ import {
   UseGuards,
   UsePipes
 } from '@nestjs/common'
-import { CommandBus } from '@nestjs/cqrs'
+import { CommandBus, QueryBus } from '@nestjs/cqrs'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -79,10 +80,16 @@ class AccountsController {
    *
    * @param {CommandBus} commands
    *  The command bus
+   * @param {QueryBus} queries
+   *  The query bus
    * @param {AuthService} auth
    *  Authentication and authorization service
    */
-  constructor(protected commands: CommandBus, protected auth: AuthService) {}
+  constructor(
+    protected commands: CommandBus,
+    protected queries: QueryBus,
+    protected auth: AuthService
+  ) {}
 
   /**
    * Create a new account using email and password.
@@ -138,7 +145,6 @@ class AccountsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtGuard)
   @UseGuards(ExistingAccountGuard)
-  @UseFilters(UnauthorizedExceptionFilter)
   @ApiBearerAuth(AuthStrategy.JWT)
   @ApiNoContentResponse()
   @ApiUnauthorizedResponse({ type: InvalidCredentialException })
@@ -147,6 +153,34 @@ class AccountsController {
   public async delete(@Param() params: DeleteAccountCommand): Promise<null> {
     ok(params instanceof DeleteAccountCommand, 'expected a command')
     return await this.commands.execute(params), null
+  }
+
+  /**
+   * Get an account by id.
+   *
+   * @public
+   * @instance
+   * @async
+   *
+   * @param {GetAccountQuery} params
+   *  Route parameters object
+   * @param {string} params.uid
+   *  The id of the account to retrieve
+   * @return {Promise<AccountPayload>}
+   *  Account payload
+   */
+  @Get(subroutes.ACCOUNTS_UID)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtGuard)
+  @UseGuards(ExistingAccountGuard)
+  @ApiBearerAuth(AuthStrategy.JWT)
+  @ApiOkResponse({ type: AccountPayload })
+  @ApiUnauthorizedResponse({ type: InvalidCredentialException })
+  @ApiForbiddenResponse({ type: AccessDeniedException })
+  @ApiNotFoundResponse({ type: MissingAccountException })
+  public async get(@Param() params: GetAccountQuery): Promise<AccountPayload> {
+    ok(params instanceof GetAccountQuery, 'expected a query')
+    return new AccountPayload(await this.queries.execute(params))
   }
 
   /**
