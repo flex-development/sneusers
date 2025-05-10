@@ -4,8 +4,11 @@
  */
 
 import Reason from '#accounts/errors/email-conflict.reason'
-import { Exception, ExceptionCode,
-  ExceptionId } from '@flex-development/sneusers/errors'
+import {
+  Exception,
+  ExceptionCode,
+  ExceptionId
+} from '@flex-development/sneusers/errors'
 import { ApiProperty, ApiSchema } from '@nestjs/swagger'
 
 /**

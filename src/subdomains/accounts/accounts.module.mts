@@ -7,6 +7,7 @@ import AccountsController from '#accounts/controllers/accounts.controller'
 import Account from '#accounts/entities/account.entity'
 import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import CreateAccountHandler from '#accounts/handlers/create-account.handler'
+import DeleteAccountHandler from '#accounts/handlers/delete-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import AuthService from '#accounts/services/auth.service'
 import JwtStrategy from '#accounts/strategies/jwt.strategy'
@@ -29,6 +30,7 @@ import { JwtModule } from '@nestjs/jwt'
     AccountsRepository,
     AuthService,
     CreateAccountHandler,
+    DeleteAccountHandler,
     JwtOptionsFactory,
     JwtStrategy
   ]

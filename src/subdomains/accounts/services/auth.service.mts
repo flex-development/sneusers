@@ -37,7 +37,7 @@ class AuthService {
    * @async
    *
    * @param {Account} account
-   *  The user account to create token for
+   *  The user account to create the token for
    * @return {Promise<string>}
    *  User account access token
    */
@@ -60,7 +60,7 @@ class AuthService {
    * @async
    *
    * @param {Account} account
-   *  The user account to create token for
+   *  The user account to create the token for
    * @return {Promise<string>}
    *  User account access refresh token
    */

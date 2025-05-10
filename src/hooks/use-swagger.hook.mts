@@ -3,6 +3,7 @@
  * @module sneusers/hooks/useSwagger
  */
 
+import AuthStrategy from '#enums/auth-strategy'
 import routes from '#enums/routes'
 import pkg from '@flex-development/sneusers/package.json' with { type: 'json' }
 import {
@@ -46,6 +47,8 @@ function useSwagger(this: void, app: INestApplication): undefined {
   docs.setVersion(pkg.version)
   docs.setTitle(pkg.openapi.title)
   docs.setDescription(pkg.openapi.description)
+
+  docs.addBearerAuth({ name: AuthStrategy.JWT, type: 'http' })
 
   return void SwaggerModule.setup(
     routes.APP,

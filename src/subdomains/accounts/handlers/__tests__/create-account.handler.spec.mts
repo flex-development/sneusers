@@ -1,6 +1,6 @@
 /**
  * @file Unit Tests - CreateAccountHandler
- * @module sneusers/accounts/handlers/tests/unit/CreateAccountHandler
+ * @module sneusers/accounts/handlers/tests/unit/CreateAccount
  */
 
 import CreateAccountCommand from '#accounts/commands/create-account.command'

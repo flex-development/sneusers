@@ -36,6 +36,32 @@ describe('functional:database/providers/Repository', () => {
     })
   })
 
+  describe('#delete', () => {
+    let record: IDocument
+    let seeder: Seeder
+    let subject: TestSubject
+
+    afterAll(async () => {
+      await seeder.down()
+    })
+
+    beforeAll(async () => {
+      subject = new TestSubject(mapper)
+      seeder = await new Seeder(factory, subject).up(1)
+      record = seeder.seeds[0]!
+    })
+
+    it('should return entity representing deleted record', async () => {
+      // Act
+      const result = await subject.delete(record._id)
+
+      // Expect
+      expect(result).to.be.instanceof(Entity)
+      expect(result).to.have.property('uid', String(record._id))
+      expect(subject).to.have.nested.property('store.size', 0)
+    })
+  })
+
   describe('#entities', () => {
     let count: number
     let seeder: Seeder
@@ -62,20 +88,43 @@ describe('functional:database/providers/Repository', () => {
     })
   })
 
-  describe('#insert', () => {
-    let entity: Entity
-    let has: (store: Map<string, IDocument>) => boolean
+  describe('#findById', () => {
+    let record: IDocument
     let seeder: Seeder
     let subject: TestSubject
 
-    afterEach(async () => {
+    afterAll(async () => {
       await seeder.down()
     })
+
+    beforeAll(async () => {
+      subject = new TestSubject(mapper)
+      seeder = await new Seeder(factory, subject).up()
+      record = seeder.seeds[3]!
+    })
+
+    it('should return `null` if matching entity is not found', async () => {
+      expect(await subject.findById(new ObjectId())).to.be.null
+    })
+
+    it('should return entity representing matched record', async () => {
+      // Act
+      const result = await subject.findById(record._id)
+
+      // Expect
+      expect(result).to.be.instanceof(Entity)
+      expect(result).to.have.property('uid', String(record._id))
+    })
+  })
+
+  describe('#insert', () => {
+    let entity: Entity
+    let has: (store: Map<string, IDocument>) => boolean
+    let subject: TestSubject
 
     beforeAll(() => {
       entity = mapper.toDomain(factory.makeOne())
       subject = new TestSubject(mapper)
-      seeder = new Seeder(factory, subject)
 
       /**
        * Check if `store` contains a record for {@linkcode entity}.
