@@ -10,4 +10,17 @@ declare module 'fastify' {
      */
     user?: Account | null | undefined
   }
+
+  interface Params {
+    [x: string]: string | undefined
+
+    /**
+     * The id of a user account.
+     */
+    uid?: string | undefined
+  }
+
+  interface RouteGenericInterface {
+    Params: Params
+  }
 }

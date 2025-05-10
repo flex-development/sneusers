@@ -26,7 +26,7 @@ class EmailConflict extends Reason {
   public email: string
 
   /**
-   * Create a an email conflict exception info object.
+   * Create an email conflict exception info object.
    *
    * @param {string} email
    *  The conflicting email address

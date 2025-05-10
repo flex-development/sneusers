@@ -18,7 +18,7 @@ import {
 import bcrypt from 'bcrypt'
 
 /**
- * User account creation handler.
+ * Account creation handler.
  *
  * @class
  * @implements {ICommandHandler<CreateAccountCommand>}
@@ -26,7 +26,7 @@ import bcrypt from 'bcrypt'
 @CommandHandler(CreateAccountCommand)
 class CreateAccountHandler implements ICommandHandler<CreateAccountCommand> {
   /**
-   * Create a new user account creation handler.
+   * Create a new account creation handler.
    *
    * @param {AccountsRepository} accounts
    *  User accounts repository

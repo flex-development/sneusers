@@ -1,13 +1,13 @@
 /**
- * @file Unit Tests - AccountCreatedEvent
- * @module sneusers/accounts/events/tests/unit/AccountCreated
+ * @file Unit Tests - AccountDeletedEvent
+ * @module sneusers/accounts/events/tests/unit/AccountDeleted
  */
 
 import Account from '#accounts/entities/account.entity'
-import TestSubject from '#accounts/events/account-created.event'
+import TestSubject from '#accounts/events/account-deleted.event'
 import AccountFactory from '#tests/utils/account.factory'
 
-describe('unit:accounts/events/AccountCreatedEvent', () => {
+describe('unit:accounts/events/AccountDeletedEvent', () => {
   let factory: AccountFactory
 
   beforeAll(() => {

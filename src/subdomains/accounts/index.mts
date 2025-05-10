@@ -9,3 +9,6 @@ export type { default as Role } from '#accounts/enums/role'
 export type {
   default as AccountDocument
 } from '#accounts/interfaces/account.document'
+export type {
+  default as TokenPayload
+} from '#accounts/interfaces/token.payload'

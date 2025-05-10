@@ -1,6 +1,6 @@
 /**
  * @file Functional Tests - CreateAccountHandler
- * @module sneusers/accounts/handlers/tests/functional/CreateAccountHandler
+ * @module sneusers/accounts/handlers/tests/functional/CreateAccount
  */
 
 import CreateAccountCommand from '#accounts/commands/create-account.command'

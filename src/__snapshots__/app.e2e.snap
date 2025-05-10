@@ -69,6 +69,60 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
         ]
       }
     },
+    "/accounts/{uid}": {
+      "delete": {
+        "operationId": "accounts-delete",
+        "parameters": [
+          {
+            "name": "uid",
+            "required": true,
+            "in": "path",
+            "description": "id of account to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredentialException"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingAccountException"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerException"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/accounts/whoami": {
       "get": {
         "operationId": "accounts-whoami",
@@ -76,12 +130,8 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
           {
             "name": "authorization",
             "in": "header",
+            "description": "bearer auth token",
             "required": false,
-            "examples": {
-              "bearer": {
-                "value": "bearer <token>"
-              }
-            },
             "schema": {
               "type": "string"
             }
@@ -123,6 +173,14 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "name": "jwt",
+        "type": "http"
+      }
+    },
     "schemas": {
       "AccountCreatedPayload": {
         "type": "object",
@@ -242,6 +300,82 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
           },
           "reason": {
             "type": "null"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
+      "InvalidCredentialException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              401
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "accounts/invalid-credential"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
+      "MissingAccount": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string",
+            "description": "id of missing account"
+          }
+        },
+        "required": [
+          "uid"
+        ]
+      },
+      "MissingAccountException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              404
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "accounts/not-found"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/MissingAccount"
           }
         },
         "required": [

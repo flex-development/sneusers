@@ -9,3 +9,6 @@ export {
 export {
   default as InvalidCredentialException
 } from '#accounts/errors/invalid-credential.exception'
+export {
+  default as MissingAccountException
+} from '#accounts/errors/missing-account.exception'

@@ -6,13 +6,13 @@
 import type { Account } from '@flex-development/sneusers/accounts'
 
 /**
- * User account created event.
+ * User account creation event.
  *
  * @class
  */
 class AccountCreatedEvent {
   /**
-   * Create a new user account created event.
+   * Create a new user account creation event.
    *
    * @param {Account} account
    *  The new account

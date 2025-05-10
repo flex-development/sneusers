@@ -10,6 +10,7 @@
  */
 const enum subroutes {
   ACCOUNTS_CREATE = '',
+  ACCOUNTS_UID = '/:uid',
   ACCOUNTS_WHOAMI = '/whoami'
 }
 

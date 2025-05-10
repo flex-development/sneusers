@@ -3,9 +3,13 @@
  * @module sneusers/database/providers/Repository
  */
 
-import type { DatabaseRecord, Entity,
-  Mapper } from '@flex-development/sneusers/database'
+import type {
+  DatabaseRecord,
+  Entity,
+  Mapper
+} from '@flex-development/sneusers/database'
 import type { ObjectId } from 'bson'
+import { ok } from 'devlop'
 
 /**
  * Database repository model.
@@ -60,6 +64,57 @@ class Repository<T extends Entity = Entity> {
    */
   public get records(): DatabaseRecord<T>[] {
     return [...this.store.values()]
+  }
+
+  /**
+   * Delete a record by `uid`.
+   *
+   * @public
+   * @instance
+   * @async
+   *
+   * @param {ObjectId | string} uid
+   *  The id of the record to remove
+   * @return {Promise<ObjectId>}
+   *  An entity representing the deleted record
+   */
+  public async delete(uid: ObjectId | string): Promise<T> {
+    /**
+     * The entity to remove.
+     *
+     * @const {T | null} entity
+     */
+    const entity: T | null = await this.findById(uid)
+
+    ok(entity, 'expected `entity` to remove')
+    this.store.delete(entity.uid)
+
+    return entity
+  }
+
+  /**
+   * Retrieve a record by `uid`.
+   *
+   * @public
+   * @instance
+   * @async
+   *
+   * @param {ObjectId | string} uid
+   *  The id of the record to find
+   * @return {Promise<T | null>}
+   *  An entity representing the matched record or `null`
+   */
+  public async findById(uid: ObjectId | string): Promise<T | null> {
+    return new Promise(resolve => {
+      /**
+       * The matching record.
+       *
+       * @const {DatabaseRecord<T> | undefined} record
+       */
+      const record: DatabaseRecord<T> | undefined = this.store.get(String(uid))
+
+      return void resolve(record ? this.mapper.toDomain(record) : null)
+    })
   }
 
   /**

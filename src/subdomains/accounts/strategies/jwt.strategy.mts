@@ -5,11 +5,11 @@
 
 import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import AccountsRepository from '#accounts/providers/accounts.repository'
-import type { Account } from '@flex-development/sneusers/accounts'
-import type { JsonObject } from '@flex-development/sneusers/types'
+import type { Account, TokenPayload } from '@flex-development/sneusers/accounts'
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ok } from 'devlop'
+import type { FastifyRequest } from 'fastify'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
 /**
@@ -41,7 +41,7 @@ class JwtStrategy extends PassportStrategy<typeof Strategy, Account>(Strategy) {
       ignoreExpiration: false,
       issuer: signOptions.issuer,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      passReqToCallback: false,
+      passReqToCallback: true,
       secretOrKey: secret
     })
   }
@@ -53,12 +53,20 @@ class JwtStrategy extends PassportStrategy<typeof Strategy, Account>(Strategy) {
    * @instance
    * @async
    *
-   * @param {JsonObject} payload
+   * @param {Pick<FastifyRequest, 'params'>} request
+   *  The incoming request object
+   * @param {Pick<TokenPayload, 'sub'>} payload
    *  Token payload
    * @return {Account | null}
    *  The account of the authenticated user or `null`
    */
-  public async validate(payload: JsonObject): Promise<Account | null> {
+  public async validate(
+    request: Pick<FastifyRequest, 'params'>,
+    payload: Pick<TokenPayload, 'sub'>
+  ): Promise<Account | null> {
+    const { sub } = payload
+    const { uid = sub } = request.params
+
     /**
      * The account of the authenticated user.
      *
@@ -66,9 +74,12 @@ class JwtStrategy extends PassportStrategy<typeof Strategy, Account>(Strategy) {
      */
     let account: Account | null = null
 
-    if ('email' in payload && typeof payload['email'] === 'string') {
-      account = await this.accounts.findByEmail(payload['email'])
-    }
+    ok(typeof sub === 'string', 'expected `payload.sub` to be a string')
+    ok(sub, 'expected `payload.sub` to be a non-empty string')
+
+    // make sure token payload is for the current account
+    // before searching for the account by id.
+    if (sub === uid) account = await this.accounts.findById(sub)
 
     return account
   }
