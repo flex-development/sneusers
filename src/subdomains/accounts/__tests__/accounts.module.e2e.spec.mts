@@ -7,6 +7,7 @@ import TestSubject from '#accounts/accounts.module'
 import Account from '#accounts/entities/account.entity'
 import CreateAccountHandler from '#accounts/handlers/create-account.handler'
 import DeleteAccountHandler from '#accounts/handlers/delete-account.handler'
+import GetAccountHandler from '#accounts/handlers/get-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import AuthService from '#accounts/services/auth.service'
 import routes from '#enums/routes'
@@ -32,6 +33,7 @@ import type { IncomingHttpHeaders } from 'node:http'
 
 describe('e2e:accounts/AccountsModule', () => {
   let app: NestFastifyApplication
+  let auth: AuthService
   let factory: AccountFactory
   let metadata: ModuleMetadata
   let ref: TestingModule
@@ -48,6 +50,7 @@ describe('e2e:accounts/AccountsModule', () => {
 
     ref = await Test.createTestingModule(metadata).compile()
 
+    auth = ref.get(AuthService)
     factory = new AccountFactory()
     repo = ref.get(AccountsRepository)
     app = await createApp(ref)
@@ -230,12 +233,16 @@ describe('e2e:accounts/AccountsModule', () => {
       beforeAll(async () => {
         app = await createApp(
           await Test.createTestingModule(metadata)
-            .overrideProvider(CreateAccountHandler)
-            .useValue(stub500(url, 'execute'))
             .overrideProvider(AccountsRepository)
             .useValue(repo)
             .compile()
         )
+      })
+
+      beforeEach(async () => {
+        vi
+          .spyOn(CreateAccountHandler.prototype, 'execute')
+          .mockImplementation(stub500(url))
 
         result = await app.inject({
           body: {
@@ -269,11 +276,9 @@ describe('e2e:accounts/AccountsModule', () => {
   })
 
   describe('DELETE /accounts/:uid', () => {
-    let auth: AuthService
     let method: Required<InjectOptions>['method']
 
     beforeAll(() => {
-      auth = ref.get(AuthService)
       method = 'delete'
     })
 
@@ -312,7 +317,7 @@ describe('e2e:accounts/AccountsModule', () => {
         account = new Account(seeder.seeds[0]!)
       })
 
-      it('authentication failure (invalid token)', async () => {
+      it('fail on invalid token', async () => {
         // Arrange
         const request: InjectOptions = {
           headers: {
@@ -335,7 +340,7 @@ describe('e2e:accounts/AccountsModule', () => {
         expect(payload).to.have.property('reason', null)
       })
 
-      it('authentication failure (missing token)', async () => {
+      it('fail on missing token', async () => {
         // Arrange
         const request: InjectOptions = {
           method,
@@ -379,7 +384,7 @@ describe('e2e:accounts/AccountsModule', () => {
         })
       })
 
-      it('authentication failure (uid mismatch)', async () => {
+      it('fail on uid mismatch', async () => {
         // Act
         const payload = result.json()
 
@@ -457,12 +462,249 @@ describe('e2e:accounts/AccountsModule', () => {
 
         app = await createApp(
           await Test.createTestingModule(metadata)
-            .overrideProvider(DeleteAccountHandler)
-            .useValue(stub500(url, 'execute'))
             .overrideProvider(AccountsRepository)
             .useValue(repo)
             .compile()
         )
+      })
+
+      beforeEach(async () => {
+        vi
+          .spyOn(DeleteAccountHandler.prototype, 'execute')
+          .mockImplementation(stub500(url))
+
+        result = await app.inject({
+          headers: {
+            authorization: `bearer ${await auth.accessToken(account)}`
+          },
+          method,
+          url
+        })
+      })
+
+      it('unhandled error', () => {
+        // Arrange
+        const code: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+        const id: ExceptionId = ExceptionId.INTERNAL_SERVER_ERROR
+
+        // Act
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(code)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', code)
+        expect(payload).to.have.property('id', id)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason', null)
+      })
+    })
+  })
+
+  describe('GET /accounts/:uid', () => {
+    let method: Required<InjectOptions>['method']
+
+    beforeAll(() => {
+      method = 'get'
+    })
+
+    describe('200 (OK)', () => {
+      let account: Account
+      let result: Response
+
+      beforeAll(async () => {
+        await seeder.up(1)
+        account = new Account(seeder.seeds[0]!)
+
+        result = await app.inject({
+          headers: {
+            authorization: `bearer ${await auth.accessToken(account)}`
+          },
+          method,
+          url: routes.ACCOUNTS + routes.APP + account.uid
+        })
+      })
+
+      it('successful account retrieval', () => {
+        // Act
+        const payload: JsonObject = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.OK)
+        expect(payload).to.have.keys(['email', 'type', 'uid'])
+        expect(payload['email']).to.eq(account.email)
+        expect(payload['type']).to.eq(account.role)
+        expect(payload['uid']).to.eq(account.uid)
+      })
+    })
+
+    describe('401 (UNAUTHORIZED)', () => {
+      let account: Account
+
+      afterAll(async () => {
+        await seeder.down()
+      })
+
+      beforeAll(async () => {
+        await seeder.up(1)
+        account = new Account(seeder.seeds[0]!)
+      })
+
+      it('fail on invalid token', async () => {
+        // Arrange
+        const request: InjectOptions = {
+          headers: {
+            authorization: `bearer ${faker.internet.jwt()}`
+          },
+          method,
+          url: routes.ACCOUNTS + routes.APP + account.uid
+        }
+
+        // Act
+        const result = await app.inject(request)
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.UNAUTHORIZED)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.UNAUTHORIZED)
+        expect(payload).to.have.property('id', ExceptionId.INVALID_CREDENTIAL)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason', null)
+      })
+
+      it('fail on missing token', async () => {
+        // Arrange
+        const request: InjectOptions = {
+          method,
+          url: routes.ACCOUNTS + routes.APP + account.uid
+        }
+
+        // Act
+        const result = await app.inject(request)
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.UNAUTHORIZED)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.UNAUTHORIZED)
+        expect(payload).to.have.property('id', ExceptionId.INVALID_CREDENTIAL)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason', null)
+      })
+    })
+
+    describe('403 (FORBIDDEN)', () => {
+      let account1: Account
+      let account2: Account
+      let result: Response
+
+      afterAll(async () => {
+        await seeder.down()
+      })
+
+      beforeAll(async () => {
+        await seeder.up(2)
+        account1 = new Account(seeder.seeds[0]!)
+        account2 = new Account(seeder.seeds[1]!)
+
+        result = await app.inject({
+          headers: {
+            authorization: `bearer ${await auth.accessToken(account2)}`
+          },
+          method,
+          url: routes.ACCOUNTS + routes.APP + account1.uid
+        })
+      })
+
+      it('fail on uid mismatch', async () => {
+        // Act
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.FORBIDDEN)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.FORBIDDEN)
+        expect(payload).to.have.property('id', ExceptionId.ACCESS_DENIED)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason', null)
+      })
+    })
+
+    describe('404 (NOT FOUND)', () => {
+      let account: Account
+      let url: string
+
+      beforeAll(async () => {
+        account = new Account(factory.makeOne())
+        url = routes.ACCOUNTS + routes.APP + account.uid
+      })
+
+      it('fail on missing account (authenticated)', async () => {
+        // Arrange
+        const headers: IncomingHttpHeaders = {
+          authorization: `bearer ${await auth.accessToken(account)}`
+        }
+
+        // Act
+        const result = await app.inject({ headers, method, url })
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.NOT_FOUND)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.NOT_FOUND)
+        expect(payload).to.have.property('id', ExceptionId.MISSING_ACCOUNT)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason').with.keys(['uid'])
+        expect(payload).to.have.nested.property('reason.uid', account.uid)
+      })
+
+      it('fail on missing account (unauthenticated)', async () => {
+        // Act
+        const result = await app.inject({ method, url })
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.NOT_FOUND)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.NOT_FOUND)
+        expect(payload).to.have.property('id', ExceptionId.MISSING_ACCOUNT)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason').with.keys(['uid'])
+        expect(payload).to.have.nested.property('reason.uid', account.uid)
+      })
+    })
+
+    describe('500 (INTERNAL_SERVER_ERROR)', () => {
+      let account: Account
+      let app: NestFastifyApplication
+      let result: Response
+      let url: string
+
+      afterAll(async () => {
+        await seeder.down()
+        await app.close()
+      })
+
+      beforeAll(async () => {
+        await seeder.up(1)
+
+        account = new Account(seeder.seeds[0]!)
+        url = routes.ACCOUNTS + routes.APP + account.uid
+
+        app = await createApp(
+          await Test.createTestingModule(metadata)
+            .overrideProvider(AccountsRepository)
+            .useValue(repo)
+            .compile()
+        )
+      })
+
+      beforeEach(async () => {
+        vi
+          .spyOn(GetAccountHandler.prototype, 'execute')
+          .mockImplementation(stub500(url))
 
         result = await app.inject({
           headers: {
@@ -509,11 +751,9 @@ describe('e2e:accounts/AccountsModule', () => {
 
     describe('200 (OK)', () => {
       let account: Account
-      let auth: AuthService
 
       beforeAll(() => {
         account = new Account(seeder.seeds[3]!)
-        auth = ref.get(AuthService)
       })
 
       it.each<'accessToken' | 'refreshToken'>([

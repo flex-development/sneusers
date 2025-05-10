@@ -4,33 +4,27 @@
  */
 
 /**
- * Create an object with a method named `method` that throws an error.
+ * Create a function that throws an error.
  *
  * @this {void}
  *
  * @param {string} url
  *  The endpoint being tested
- * @param {string} method
- *  The name of the method to stub
- * @return {Record<string, (this: void) => never>}
- *  Object with `method` stub
+ * @return {(this: void) => never}
+ *  Error stub
  */
-function stub500(
-  this: void,
-  url: string,
-  method: string
-): Record<string, (this: void) => never> {
-  return {
-    /**
-     * @this {void}
-     *
-     * @return {never}
-     *  Never
-     * @throws {Error}
-     */
-    [method](this: void): never {
-      throw new Error(url)
-    }
+function stub500(this: void, url: string): (this: void) => never {
+  return stub
+
+  /**
+   * @this {void}
+   *
+   * @return {never}
+   *  Never
+   * @throws {Error}
+   */
+  function stub(this: void): never {
+    throw new Error(url)
   }
 }
 

@@ -50,7 +50,7 @@ class AccountCreatedPayload {
   public uid: string
 
   /**
-   * Create a new account payload.
+   * Create a new account creation payload.
    *
    * @param {Account} account
    *  The new account

@@ -130,6 +130,75 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
         "tags": [
           "accounts"
         ]
+      },
+      "get": {
+        "operationId": "accounts-get",
+        "parameters": [
+          {
+            "name": "uid",
+            "required": true,
+            "in": "path",
+            "description": "id of account to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountPayload"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredentialException"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessDeniedException"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingAccountException"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerException"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": [
+          "accounts"
+        ]
       }
     },
     "/accounts/whoami": {
@@ -242,6 +311,33 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
         "required": [
           "access_token",
           "refresh_token",
+          "uid"
+        ]
+      },
+      "AccountPayload": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "primary email address",
+            "format": "email"
+          },
+          "type": {
+            "type": "string",
+            "description": "account type",
+            "enum": [
+              "developer",
+              "user"
+            ]
+          },
+          "uid": {
+            "type": "string",
+            "description": "unique account id"
+          }
+        },
+        "required": [
+          "email",
+          "type",
           "uid"
         ]
       },
