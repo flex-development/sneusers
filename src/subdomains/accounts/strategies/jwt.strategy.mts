@@ -3,6 +3,7 @@
  * @module sneusers/accounts/strategies/Jwt
  */
 
+import AccessDeniedException from '#accounts/errors/access-denied.exception'
 import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import type { Account, TokenPayload } from '@flex-development/sneusers/accounts'
@@ -59,6 +60,8 @@ class JwtStrategy extends PassportStrategy<typeof Strategy, Account>(Strategy) {
    *  Token payload
    * @return {Account | null}
    *  The account of the authenticated user or `null`
+   * @throws {AccessDeniedException}
+   *  If `request.params.uid` and `payload.sub` do not match
    */
   public async validate(
     request: Pick<FastifyRequest, 'params'>,
@@ -67,21 +70,13 @@ class JwtStrategy extends PassportStrategy<typeof Strategy, Account>(Strategy) {
     const { sub } = payload
     const { uid = sub } = request.params
 
-    /**
-     * The account of the authenticated user.
-     *
-     * @var {Account | null} account
-     */
-    let account: Account | null = null
-
     ok(typeof sub === 'string', 'expected `payload.sub` to be a string')
     ok(sub, 'expected `payload.sub` to be a non-empty string')
 
-    // make sure token payload is for the current account
-    // before searching for the account by id.
-    if (sub === uid) account = await this.accounts.findById(sub)
+    // make sure token payload is for the current account.
+    if (sub !== uid) throw new AccessDeniedException()
 
-    return account
+    return this.accounts.findById(sub)
   }
 }
 

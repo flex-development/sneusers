@@ -4,6 +4,9 @@
  */
 
 export {
+  default as AccessDeniedException
+} from '#accounts/errors/access-denied.exception'
+export {
   default as EmailConflictException
 } from '#accounts/errors/email-conflict.exception'
 export {

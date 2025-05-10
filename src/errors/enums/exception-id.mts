@@ -9,6 +9,7 @@
  * @enum {Lowercase<string>}
  */
 enum ExceptionId {
+  ACCESS_DENIED = 'accounts/access-denied',
   EMAIL_CONFLICT = 'accounts/email-conflict',
   INTERNAL_SERVER_ERROR = 'sneusers/internal-error',
   INVALID_CREDENTIAL = 'accounts/invalid-credential',

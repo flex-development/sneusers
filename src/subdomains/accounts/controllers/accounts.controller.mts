@@ -21,6 +21,7 @@ import UnhandledExceptionFilter from '#filters/unhandled.filter'
 import TransformPipe from '#pipes/transform.pipe'
 import type { Account } from '@flex-development/sneusers/accounts'
 import {
+  AccessDeniedException,
   EmailConflictException,
   InvalidCredentialException,
   MissingAccountException
@@ -49,6 +50,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiHeader,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
@@ -140,6 +142,7 @@ class AccountsController {
   @ApiBearerAuth(AuthStrategy.JWT)
   @ApiNoContentResponse()
   @ApiUnauthorizedResponse({ type: InvalidCredentialException })
+  @ApiForbiddenResponse({ type: AccessDeniedException })
   @ApiNotFoundResponse({ type: MissingAccountException })
   public async delete(@Param() params: DeleteAccountCommand): Promise<null> {
     ok(params instanceof DeleteAccountCommand, 'expected a command')

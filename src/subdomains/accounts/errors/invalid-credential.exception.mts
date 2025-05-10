@@ -33,7 +33,7 @@ class InvalidCredentialException extends Exception {
    *
    * @public
    * @instance
-   * @member {ExceptionId.INVALID_CREDENTIAL} code
+   * @member {ExceptionId.INVALID_CREDENTIAL} id
    */
   @ApiProperty({ enum: [ExceptionId.INVALID_CREDENTIAL] })
   declare public id: (typeof ExceptionId)['INVALID_CREDENTIAL']

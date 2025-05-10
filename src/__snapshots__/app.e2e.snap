@@ -94,6 +94,15 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
               }
             }
           },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessDeniedException"
+                }
+              }
+            }
+          },
           "404": {
             "content": {
               "application/json": {
@@ -182,6 +191,38 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
       }
     },
     "schemas": {
+      "AccessDeniedException": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "http response status code",
+            "enum": [
+              403
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "unique id representing the exception",
+            "enum": [
+              "accounts/access-denied"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "human-readable description of the exception"
+          },
+          "reason": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "code",
+          "id",
+          "message",
+          "reason"
+        ]
+      },
       "AccountCreatedPayload": {
         "type": "object",
         "properties": {

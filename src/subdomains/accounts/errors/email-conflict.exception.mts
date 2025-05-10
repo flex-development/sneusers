@@ -34,7 +34,7 @@ class EmailConflictException extends Exception {
    *
    * @public
    * @instance
-   * @member {ExceptionId.EMAIL_CONFLICT} code
+   * @member {ExceptionId.EMAIL_CONFLICT} id
    */
   @ApiProperty({ enum: [ExceptionId.EMAIL_CONFLICT] })
   declare public id: (typeof ExceptionId)['EMAIL_CONFLICT']

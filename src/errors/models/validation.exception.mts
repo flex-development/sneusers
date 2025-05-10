@@ -33,7 +33,7 @@ class ValidationException extends Exception {
    *
    * @public
    * @instance
-   * @member {ExceptionId.VALIDATION_FAILURE} code
+   * @member {ExceptionId.VALIDATION_FAILURE} id
    */
   @ApiProperty({ enum: [ExceptionId.VALIDATION_FAILURE] })
   declare public id: (typeof ExceptionId)['VALIDATION_FAILURE']

@@ -4,6 +4,7 @@
  */
 
 import Account from '#accounts/entities/account.entity'
+import AccessDeniedException from '#accounts/errors/access-denied.exception'
 import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import TestSubject from '#accounts/strategies/jwt.strategy'
@@ -51,17 +52,6 @@ describe('unit:accounts/strategies/JwtStrategy', () => {
       expect(await subject.validate({ params }, payload)).to.be.null
     })
 
-    it('should return `null` on uid mismatch', async () => {
-      // Arrange
-      const account1: Account = new Account(seeder.seeds[0]!)
-      const account2: Account = new Account(seeder.seeds[1]!)
-      const params: Record<string, string> = { uid: account1.uid }
-      const payload: Pick<TokenPayload, 'sub'> = { sub: account2.uid }
-
-      // Act + Expect
-      expect(await subject.validate({ params }, payload)).to.be.null
-    })
-
     it('should return account of authenticated user', async () => {
       // Arrange
       const account: Account = new Account(seeder.seeds[2]!)
@@ -73,6 +63,24 @@ describe('unit:accounts/strategies/JwtStrategy', () => {
 
       // Expect
       expect(result).to.be.instanceof(Account).and.eql(account)
+    })
+
+    it('should throw on on uid mismatch', async () => {
+      // Arrange
+      const account1: Account = new Account(seeder.seeds[0]!)
+      const account2: Account = new Account(seeder.seeds[1]!)
+      const params: Record<string, string> = { uid: account1.uid }
+      let error!: AccessDeniedException
+
+      // Act
+      try {
+        await subject.validate({ params }, { sub: account2.uid })
+      } catch (e: unknown) {
+        error = e as typeof error
+      }
+
+      // Expect
+      expect(error).to.be.instanceof(AccessDeniedException)
     })
   })
 })

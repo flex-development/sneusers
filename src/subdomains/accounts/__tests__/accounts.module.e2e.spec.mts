@@ -301,24 +301,25 @@ describe('e2e:accounts/AccountsModule', () => {
     })
 
     describe('401 (UNAUTHORIZED)', () => {
-      let account1: Account
-      let account2: Account
+      let account: Account
 
       afterAll(async () => {
         await seeder.down()
       })
 
       beforeAll(async () => {
-        await seeder.up(2)
-        account1 = new Account(seeder.seeds[0]!)
-        account2 = new Account(seeder.seeds[1]!)
+        await seeder.up(1)
+        account = new Account(seeder.seeds[0]!)
       })
 
-      it('authentication failure (no auth token)', async () => {
+      it('authentication failure (invalid token)', async () => {
         // Arrange
         const request: InjectOptions = {
+          headers: {
+            authorization: `bearer ${faker.internet.jwt()}`
+          },
           method,
-          url: routes.ACCOUNTS + routes.APP + account1.uid
+          url: routes.ACCOUNTS + routes.APP + account.uid
         }
 
         // Act
@@ -334,14 +335,11 @@ describe('e2e:accounts/AccountsModule', () => {
         expect(payload).to.have.property('reason', null)
       })
 
-      it('authentication failure (token mismatch)', async () => {
+      it('authentication failure (missing token)', async () => {
         // Arrange
         const request: InjectOptions = {
-          headers: {
-            authorization: `bearer ${await auth.accessToken(account1)}`
-          },
           method,
-          url: routes.ACCOUNTS + routes.APP + account2.uid
+          url: routes.ACCOUNTS + routes.APP + account.uid
         }
 
         // Act
@@ -358,6 +356,43 @@ describe('e2e:accounts/AccountsModule', () => {
       })
     })
 
+    describe('403 (FORBIDDEN)', () => {
+      let account1: Account
+      let account2: Account
+      let result: Response
+
+      afterAll(async () => {
+        await seeder.down()
+      })
+
+      beforeAll(async () => {
+        await seeder.up(2)
+        account1 = new Account(seeder.seeds[0]!)
+        account2 = new Account(seeder.seeds[1]!)
+
+        result = await app.inject({
+          headers: {
+            authorization: `bearer ${await auth.accessToken(account2)}`
+          },
+          method,
+          url: routes.ACCOUNTS + routes.APP + account1.uid
+        })
+      })
+
+      it('authentication failure (uid mismatch)', async () => {
+        // Act
+        const payload = result.json()
+
+        // Expect
+        expect(result).to.be.json.with.status(HttpStatus.FORBIDDEN)
+        expect(payload).to.have.keys(ERROR_PAYLOAD_KEYS)
+        expect(payload).to.have.property('code', HttpStatus.FORBIDDEN)
+        expect(payload).to.have.property('id', ExceptionId.ACCESS_DENIED)
+        expect(payload).to.have.property('message').be.a('string').and.not.empty
+        expect(payload).to.have.property('reason', null)
+      })
+    })
+
     describe('404 (NOT FOUND)', () => {
       let account: Account
       let url: string
@@ -367,9 +402,14 @@ describe('e2e:accounts/AccountsModule', () => {
         url = routes.ACCOUNTS + routes.APP + account.uid
       })
 
-      it('fail on missing account (no auth token)', async () => {
+      it('fail on missing account (authenticated)', async () => {
+        // Arrange
+        const headers: IncomingHttpHeaders = {
+          authorization: `bearer ${await auth.accessToken(account)}`
+        }
+
         // Act
-        const result = await app.inject({ method, url })
+        const result = await app.inject({ headers, method, url })
         const payload = result.json()
 
         // Expect
@@ -382,14 +422,9 @@ describe('e2e:accounts/AccountsModule', () => {
         expect(payload).to.have.nested.property('reason.uid', account.uid)
       })
 
-      it('fail on missing account (with auth token)', async () => {
-        // Arrange
-        const headers: IncomingHttpHeaders = {
-          authorization: `bearer ${await auth.accessToken(account)}`
-        }
-
+      it('fail on missing account (unauthenticated)', async () => {
         // Act
-        const result = await app.inject({ headers, method, url })
+        const result = await app.inject({ method, url })
         const payload = result.json()
 
         // Expect

@@ -35,7 +35,7 @@ class MissingAccountException extends Exception {
    *
    * @public
    * @instance
-   * @member {ExceptionId.ACCOUNT_NOT_FOUND} code
+   * @member {ExceptionId.MISSING_ACCOUNT} id
    */
   @ApiProperty({ enum: [ExceptionId.MISSING_ACCOUNT] })
   declare public id: (typeof ExceptionId)['MISSING_ACCOUNT']
