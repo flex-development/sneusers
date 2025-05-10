@@ -11,6 +11,7 @@ import Account from '#accounts/entities/account.entity'
 import JwtOptionsFactory from '#accounts/factories/jwt-options.factory'
 import CreateAccountHandler from '#accounts/handlers/create-account.handler'
 import DeleteAccountHandler from '#accounts/handlers/delete-account.handler'
+import GetAccountHandler from '#accounts/handlers/get-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
 import AuthService from '#accounts/services/auth.service'
 import DependenciesModule from '#modules/dependencies.module'
@@ -37,7 +38,8 @@ describe('unit:accounts/controllers/AccountsController', () => {
         AccountsRepository,
         AuthService,
         CreateAccountHandler,
-        DeleteAccountHandler
+        DeleteAccountHandler,
+        GetAccountHandler
       ]
     }).compile()
 

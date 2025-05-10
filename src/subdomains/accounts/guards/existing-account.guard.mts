@@ -3,15 +3,13 @@
  * @module sneusers/accounts/guards/ExistingAccount
  */
 
-import AccountsRepository from '#accounts/providers/accounts.repository'
-import {
-  MissingAccountException
-} from '@flex-development/sneusers/accounts/errors'
+import GetAccountQuery from '#accounts/queries/get-account.query'
 import {
   Injectable,
   type CanActivate,
   type ExecutionContext
 } from '@nestjs/common'
+import { QueryBus } from '@nestjs/cqrs'
 import type { FastifyRequest } from 'fastify'
 
 /**
@@ -25,10 +23,10 @@ class ExistingAccountGuard implements CanActivate {
   /**
    * Create a new existing account guard.
    *
-   * @param {AccountsRepository} accounts
-   *  User accounts repository
+   * @param {QueryBus} queries
+   *  The query bus
    */
-  constructor(protected accounts: AccountsRepository) {}
+  constructor(protected queries: QueryBus) {}
 
   /**
    * Check `request.params.uid` references an existing account.
@@ -43,8 +41,6 @@ class ExistingAccountGuard implements CanActivate {
    *  Object containing details about the current request pipeline
    * @return {Promise<true>}
    *  Whether the current request is allowed to proceed
-   * @throws {MissingAccountException}
-   *  If an account is not found
    */
   public async canActivate(context: ExecutionContext): Promise<true> {
     /**
@@ -54,16 +50,9 @@ class ExistingAccountGuard implements CanActivate {
      */
     const req: FastifyRequest = context.switchToHttp().getRequest()
 
-    /**
-     * Unique account id.
-     *
-     * @const {string} uid
-     */
-    const uid: string = String(req.params.uid)
-
-    if (!await this.accounts.findById(uid)) {
-      throw new MissingAccountException(uid)
-    }
+    // check for existing user account.
+    // the query handler will throw if an account is not found.
+    await this.queries.execute(new GetAccountQuery(String(req.params.uid)))
 
     return true
   }
