@@ -138,7 +138,7 @@ exports[`e2e:app > GET / > should respond with api documentation (json) 1`] = `
             "name": "uid",
             "required": true,
             "in": "path",
-            "description": "id of account to retrieve",
+            "description": "account id",
             "schema": {
               "type": "string"
             }

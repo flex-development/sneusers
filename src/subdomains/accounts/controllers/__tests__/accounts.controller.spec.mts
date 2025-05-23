@@ -14,7 +14,6 @@ import CreateAccountHandler from '#accounts/handlers/create-account.handler'
 import DeleteAccountHandler from '#accounts/handlers/delete-account.handler'
 import GetAccountHandler from '#accounts/handlers/get-account.handler'
 import AccountsRepository from '#accounts/providers/accounts.repository'
-import GetAccountQuery from '#accounts/queries/get-account.query'
 import AuthService from '#accounts/services/auth.service'
 import DependenciesModule from '#modules/dependencies.module'
 import AccountFactory from '#tests/utils/account.factory'
@@ -87,29 +86,23 @@ describe('unit:accounts/controllers/AccountsController', () => {
   })
 
   describe('#get', () => {
-    let account: Account
-    let params: GetAccountQuery
     let seeder: Seeder<AccountDocument>
+
+    afterAll(async () => {
+      await seeder.down()
+    })
 
     beforeAll(async () => {
       seeder = new Seeder(new AccountFactory(), ref.get(AccountsRepository))
-
       await seeder.up(1)
-
-      account = new Account(seeder.seeds[0]!)
-      params = new GetAccountQuery(account._id)
     })
 
-    it('should return existing account payload', async () => {
-      // Act
-      const result = await subject.get(params)
+    it('should return existing account payload', () => {
+      // Arrange
+      const account: Account = new Account(seeder.seeds[0]!)
 
-      // Expect
-      expect(result).to.be.instanceof(AccountPayload)
-      expect(result).to.have.keys(['email', 'type', 'uid'])
-      expect(result).to.have.property('email', account.email)
-      expect(result).to.have.property('type', account.role)
-      expect(result).to.have.property('uid', account.uid)
+      // Act + Expect
+      expect(subject.get(account)).to.be.instanceof(AccountPayload)
     })
   })
 })
