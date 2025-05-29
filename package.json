@@ -122,7 +122,7 @@
     "@commitlint/cli": "19.8.1",
     "@commitlint/types": "19.8.1",
     "@faker-js/faker": "9.8.0",
-    "@flex-development/colors": "1.0.1",
+    "@flex-development/colors": "1.0.2",
     "@flex-development/commitlint-config": "1.0.1",
     "@flex-development/eslint-config": "1.1.1",
     "@flex-development/grease": "3.0.0-alpha.9",
