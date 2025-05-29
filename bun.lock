@@ -32,7 +32,7 @@
         "@commitlint/cli": "19.8.1",
         "@commitlint/types": "19.8.1",
         "@faker-js/faker": "9.8.0",
-        "@flex-development/colors": "1.0.1",
+        "@flex-development/colors": "1.0.2",
         "@flex-development/commitlint-config": "1.0.1",
         "@flex-development/eslint-config": "1.1.1",
         "@flex-development/grease": "3.0.0-alpha.9",
@@ -386,7 +386,7 @@
 
     "@flex-development/builtin-modules": ["@flex-development/builtin-modules@2.1.1", "", {}, "sha512-IexB9CoqVn8VCnThKBLlHFQ33UpArCS6rTBEOtrZ16zv8IdnPrZvQ2fcKIPBpeRJlQL4aFZ8PP58U+wYehM4kA=="],
 
-    "@flex-development/colors": ["@flex-development/colors@1.0.1", "", {}, "sha512-wouDgO77PJOfKGrm9UrtJDa2NDBUnOTXiFzaL3Z5rBBLjBIZ6h57fgydn+fxPzBbvkvrn8keWlFBXot6f0owuA=="],
+    "@flex-development/colors": ["@flex-development/colors@1.0.2", "", {}, "sha512-11T4Ulr+Vy3nXwoHb7lNdc1WMHr5r4cxSFnFQ1wCxlf2lThXoQ4wvEwED87Zi8GFn1Oav7FKYMzs1bzGvnh+WA=="],
 
     "@flex-development/commitlint-config": ["@flex-development/commitlint-config@1.0.1", "", { "dependencies": { "@commitlint/types": "17.4.4", "@flex-development/tutils": "6.0.0-alpha.10", "@types/conventional-commits-parser": "3.0.3", "consola": "2.15.3", "conventional-changelog-conventionalcommits": "5.0.0" } }, "sha512-287a1amb6aKfNvvmL4b6SaUWVQQrDsc84RTZsoCb7ghsLlai5iO/8j/kw9xx8vHGuU7RovCLd2Dy5iwwrEi+AA=="],
 
@@ -2419,6 +2419,8 @@
     "@flex-development/is-builtin/@flex-development/pathe": ["@flex-development/pathe@2.0.0", "", { "dependencies": { "@flex-development/errnode": "2.0.0", "@flex-development/tutils": "6.0.0-alpha.12" } }, "sha512-yBOXOh+JiZc8hGePXxiJRY1oNpRrjb9tZXe2bPdgl9TYVmwHPfr5kj5TsZYmurEEd4HYbvQRj4oHBZat/6SyDQ=="],
 
     "@flex-development/is-builtin/@flex-development/tutils": ["@flex-development/tutils@6.0.0-alpha.12", "", { "dependencies": { "dequal": "2.0.3" }, "peerDependencies": { "typescript": ">=5.0.4" }, "optionalPeers": ["typescript"] }, "sha512-sI2/W0a1vH+0KKD4YH1VP6FqCG5JpLrQO/GzK4MmfKzLO6fcR3cH7XWzElxcvQ2jz8oATb7yEF5VPNcaZuZlng=="],
+
+    "@flex-development/log/@flex-development/colors": ["@flex-development/colors@1.0.1", "", {}, "sha512-wouDgO77PJOfKGrm9UrtJDa2NDBUnOTXiFzaL3Z5rBBLjBIZ6h57fgydn+fxPzBbvkvrn8keWlFBXot6f0owuA=="],
 
     "@flex-development/log/is-unicode-supported": ["is-unicode-supported@2.1.0", "", {}, "sha512-mE00Gnza5EEB3Ds0HfMyllZzbBrmLOX3vfWoj9A9PEnTfratQ/BcaJOuMhnkhjXvb2+FkY3VuHqtAGpTPmglFQ=="],
 
