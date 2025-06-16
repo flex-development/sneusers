@@ -427,7 +427,7 @@ jobs:
             type=sha,prefix=
       - id: buildx
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.10.0
+        uses: docker/setup-buildx-action@v3.11.0
       - id: build-push
         name: Build and push container image
         uses: docker/build-push-action@v6.18.0
