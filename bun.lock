@@ -73,7 +73,7 @@
         "ts-dedent": "2.2.0",
         "typescript": "5.8.3",
         "unified": "11.0.5",
-        "unplugin-swc": "1.5.4",
+        "unplugin-swc": "1.5.5",
         "vfile": "6.0.3",
         "vitest": "3.0.9",
       },
@@ -530,7 +530,7 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.4", "", {}, "sha512-ROFF39F6ZrnzSUEmQQZUar0Jt4xVoP9WnDRdWwF4NNcXs3xBTLgBUDoOwW141y1jP+S8nahIbdxbFC7IShw9Iw=="],
 
-    "@rollup/pluginutils": ["@rollup/pluginutils@5.1.4", "", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ=="],
+    "@rollup/pluginutils": ["@rollup/pluginutils@5.2.0", "", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-qWJ2ZTbmumwiLFomfzTyt5Kng4hwPi9rwCYN4SHb6eaRU1KNO4ccxINHr/VhH4GgPlt1XfSTLX2LBTme8ne4Zw=="],
 
     "@rollup/rollup-android-arm-eabi": ["@rollup/rollup-android-arm-eabi@4.40.2", "", { "os": "android", "cpu": "arm" }, "sha512-JkdNEq+DFxZfUwxvB58tHMHBHVgX23ew41g1OQinthJ+ryhdRk67O31S7sYw8u2lTjHUPFxwar07BBt1KHp/hg=="],
 
@@ -2280,7 +2280,7 @@
 
     "unplugin": ["unplugin@2.3.5", "", { "dependencies": { "acorn": "^8.14.1", "picomatch": "^4.0.2", "webpack-virtual-modules": "^0.6.2" } }, "sha512-RyWSb5AHmGtjjNQ6gIlA67sHOsWpsbWpwDokLwTcejVdOjEkJZh7QKu14J00gDDVSh8kGH4KYC/TNBceXFZhtw=="],
 
-    "unplugin-swc": ["unplugin-swc@1.5.4", "", { "dependencies": { "@rollup/pluginutils": "^5.1.4", "load-tsconfig": "^0.2.5", "unplugin": "^2.3.5" }, "peerDependencies": { "@swc/core": "^1.2.108" } }, "sha512-NYa0rEUI8+Ckr+azVyAWIBWOrqnoWsDeHPLCMAsEWXJzkNwG1GtYf/Fe872ulOPKRmQsY1VEd20d5Y3fLiiZQQ=="],
+    "unplugin-swc": ["unplugin-swc@1.5.5", "", { "dependencies": { "@rollup/pluginutils": "^5.2.0", "load-tsconfig": "^0.2.5", "unplugin": "^2.3.5" }, "peerDependencies": { "@swc/core": "^1.2.108" } }, "sha512-BahYtYvQ/KSgOqHoy5FfQgp/oZNAB7jwERxNeFVeN/PtJhg4fpK/ybj9OwKtqGPseOadS7+TGbq6tH2DmDAYvA=="],
 
     "unrs-resolver": ["unrs-resolver@1.7.2", "", { "dependencies": { "napi-postinstall": "^0.2.2" }, "optionalDependencies": { "@unrs/resolver-binding-darwin-arm64": "1.7.2", "@unrs/resolver-binding-darwin-x64": "1.7.2", "@unrs/resolver-binding-freebsd-x64": "1.7.2", "@unrs/resolver-binding-linux-arm-gnueabihf": "1.7.2", "@unrs/resolver-binding-linux-arm-musleabihf": "1.7.2", "@unrs/resolver-binding-linux-arm64-gnu": "1.7.2", "@unrs/resolver-binding-linux-arm64-musl": "1.7.2", "@unrs/resolver-binding-linux-ppc64-gnu": "1.7.2", "@unrs/resolver-binding-linux-riscv64-gnu": "1.7.2", "@unrs/resolver-binding-linux-riscv64-musl": "1.7.2", "@unrs/resolver-binding-linux-s390x-gnu": "1.7.2", "@unrs/resolver-binding-linux-x64-gnu": "1.7.2", "@unrs/resolver-binding-linux-x64-musl": "1.7.2", "@unrs/resolver-binding-wasm32-wasi": "1.7.2", "@unrs/resolver-binding-win32-arm64-msvc": "1.7.2", "@unrs/resolver-binding-win32-ia32-msvc": "1.7.2", "@unrs/resolver-binding-win32-x64-msvc": "1.7.2" } }, "sha512-BBKpaylOW8KbHsu378Zky/dGh4ckT/4NW/0SHRABdqRLcQJ2dAOjDo9g97p04sWflm0kqPqpUatxReNV/dqI5A=="],
 
