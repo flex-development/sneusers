@@ -129,7 +129,7 @@
     "@flex-development/pathe": "4.0.2",
     "@flex-development/remark-preset": "1.0.0",
     "@nestjs/testing": "11.1.0",
-    "@swc/core": "1.12.7",
+    "@swc/core": "1.12.9",
     "@tsconfig/strictest": "2.0.5",
     "@types/bcrypt": "5.0.2",
     "@types/chai": "5.2.2",
