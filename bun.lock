@@ -53,7 +53,7 @@
         "@vitest/coverage-v8": "3.0.9",
         "bun": "1.2.12",
         "bun-types": "1.2.12",
-        "chai": "5.2.1",
+        "chai": "5.3.1",
         "chai-http": "5.1.2",
         "cross-env": "10.0.0",
         "cspell": "9.2.0",
@@ -890,7 +890,7 @@
 
     "ccount": ["ccount@2.0.1", "", {}, "sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg=="],
 
-    "chai": ["chai@5.2.1", "", { "dependencies": { "assertion-error": "^2.0.1", "check-error": "^2.1.1", "deep-eql": "^5.0.1", "loupe": "^3.1.0", "pathval": "^2.0.0" } }, "sha512-5nFxhUrX0PqtyogoYOA8IPswy5sZFTOsBFl/9bNsmDLgsxYTzSZQJDPppDnZPTQbzSEm0hqGjWPzRemQCYbD6A=="],
+    "chai": ["chai@5.3.1", "", { "dependencies": { "assertion-error": "^2.0.1", "check-error": "^2.1.1", "deep-eql": "^5.0.1", "loupe": "^3.1.0", "pathval": "^2.0.0" } }, "sha512-48af6xm9gQK8rhIcOxWwdGzIervm8BVTin+yRp9HEvU20BtVZ2lBywlIJBzwaDtvo0FvjeL7QdCADoUoqIbV3A=="],
 
     "chai-http": ["chai-http@5.1.2", "", { "dependencies": { "@types/superagent": "^8.1.7", "charset": "^1.0.1", "cookiejar": "^2.1.4", "is-ip": "^5.0.1", "methods": "^1.1.2", "qs": "^6.12.1", "superagent": "^10.0.0" } }, "sha512-UFup7mUGkkjmi9bGA7F6vfp3lzGQZjtL//CEd+a4C+vlynSv756XHDUK8PoYk/UpTBBXqSghjQaJOUMUxJXNaA=="],
 
