@@ -397,7 +397,7 @@ jobs:
           context: .
       - id: login
         name: Login to GitHub Container Registry
-        uses: docker/login-action@v3.5.0
+        uses: docker/login-action@v3.6.0
         with:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
