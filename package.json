@@ -147,7 +147,7 @@
     "chai-http": "5.1.2",
     "cross-env": "10.1.0",
     "cspell": "9.2.1",
-    "dprint": "0.50.1",
+    "dprint": "0.50.2",
     "editorconfig": "3.0.1",
     "eslint": "9.36.0",
     "growl": "1.10.5",
