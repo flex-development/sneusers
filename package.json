@@ -163,7 +163,7 @@
     "ts-dedent": "2.2.0",
     "typescript": "5.9.3",
     "unified": "11.0.5",
-    "unplugin-swc": "1.5.7",
+    "unplugin-swc": "1.5.8",
     "vfile": "6.0.3",
     "vitest": "3.0.9"
   },
