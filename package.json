@@ -132,7 +132,7 @@
     "@swc/core": "1.13.5",
     "@tsconfig/strictest": "2.0.6",
     "@types/bcrypt": "6.0.0",
-    "@types/chai": "5.2.2",
+    "@types/chai": "5.2.3",
     "@types/is-ci": "3.0.4",
     "@types/node-notifier": "8.0.5",
     "@types/passport": "1.0.17",
