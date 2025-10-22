@@ -140,7 +140,7 @@
     "@types/passport-google-oauth20": "2.0.16",
     "@types/passport-jwt": "4.0.1",
     "@vates/toggle-scripts": "1.0.0",
-    "@vitest/coverage-v8": "3.0.9",
+    "@vitest/coverage-v8": "4.0.1",
     "bun": "1.2.12",
     "bun-types": "1.2.12",
     "chai": "6.2.0",
@@ -165,7 +165,7 @@
     "unified": "11.0.5",
     "unplugin-swc": "1.5.8",
     "vfile": "6.0.3",
-    "vitest": "3.0.9"
+    "vitest": "4.0.1"
   },
   "engines": {
     "bun": "1.2.12"
