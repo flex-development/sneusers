@@ -404,7 +404,7 @@ jobs:
           username: ${{ github.repository_owner }}
       - id: metadata
         name: Extract container image metadata
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@v5.9.0
         env:
           DOCKER_METADATA_PR_HEAD_SHA: ${{ github.event_name == 'pull_request' }}
           MAINTAINER: ${{ format('@{0}', github.actor) }}
