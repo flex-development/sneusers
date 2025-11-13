@@ -130,7 +130,7 @@
     "@flex-development/remark-preset": "1.0.0",
     "@nestjs/testing": "11.1.0",
     "@swc/core": "1.15.1",
-    "@tsconfig/strictest": "2.0.7",
+    "@tsconfig/strictest": "2.0.8",
     "@types/bcrypt": "6.0.0",
     "@types/chai": "5.2.3",
     "@types/is-ci": "3.0.4",
