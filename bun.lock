@@ -32,7 +32,7 @@
         "@commitlint/cli": "20.1.0",
         "@commitlint/types": "20.0.0",
         "@faker-js/faker": "10.1.0",
-        "@flex-development/colors": "1.1.0",
+        "@flex-development/colors": "2.0.0",
         "@flex-development/commitlint-config": "1.0.1",
         "@flex-development/eslint-config": "1.1.1",
         "@flex-development/grease": "3.0.0-alpha.9",
@@ -390,7 +390,7 @@
 
     "@flex-development/builtin-modules": ["@flex-development/builtin-modules@2.1.1", "", {}, "sha512-IexB9CoqVn8VCnThKBLlHFQ33UpArCS6rTBEOtrZ16zv8IdnPrZvQ2fcKIPBpeRJlQL4aFZ8PP58U+wYehM4kA=="],
 
-    "@flex-development/colors": ["@flex-development/colors@1.1.0", "", {}, "sha512-jcASfJ0R/Gd8dmm8TpxCiglXlqBAEcSgIScb/nsF31bKec7fB9gLuaqq7dVL0m3MvtSeg4acJogChEcXc4590g=="],
+    "@flex-development/colors": ["@flex-development/colors@2.0.0", "", {}, "sha512-QLEmuiHaIhyxXBg/Z9zwu+Fsl9p0t3dVr1JbBqikjFaloXEmqddBy98e6JMNa4OZq4nisfdnd2Xr6UqhawhV9g=="],
 
     "@flex-development/commitlint-config": ["@flex-development/commitlint-config@1.0.1", "", { "dependencies": { "@commitlint/types": "17.4.4", "@flex-development/tutils": "6.0.0-alpha.10", "@types/conventional-commits-parser": "3.0.3", "consola": "2.15.3", "conventional-changelog-conventionalcommits": "5.0.0" } }, "sha512-287a1amb6aKfNvvmL4b6SaUWVQQrDsc84RTZsoCb7ghsLlai5iO/8j/kw9xx8vHGuU7RovCLd2Dy5iwwrEi+AA=="],
 
