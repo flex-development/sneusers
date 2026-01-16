@@ -67,7 +67,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: dependencies
@@ -103,7 +103,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -130,7 +130,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -156,7 +156,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -182,7 +182,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -210,7 +210,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -251,7 +251,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -307,7 +307,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
@@ -351,7 +351,7 @@ jobs:
           ref: ${{ env.REF }}
       - id: bun
         name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.0
+        uses: oven-sh/setup-bun@v2.1.2
         with:
           bun-version-file: package.json
       - id: cache
