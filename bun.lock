@@ -70,7 +70,7 @@
         "remark": "15.0.1",
         "remark-cli": "12.0.1",
         "sh-syntax": "0.5.8",
-        "trash-cli": "7.1.1",
+        "trash-cli": "7.2.0",
         "ts-dedent": "2.2.0",
         "typescript": "5.9.3",
         "unified": "11.0.5",
@@ -2201,7 +2201,7 @@
 
     "trash": ["trash@10.1.0", "", { "dependencies": { "@stroncium/procfs": "^1.2.1", "chunkify": "^5.0.0", "globby": "^14.1.0", "is-path-inside": "^4.0.0", "move-file": "^4.1.0", "p-map": "^7.0.3", "powershell-utils": "^0.2.0", "wsl-utils": "^0.4.0", "xdg-trashdir": "^3.1.0" } }, "sha512-gOs9Hd1XMiJfORccP8KJNDmrSJ7YqO1CNt9lGOiBiydyBJab7Eaefkc/wj50b8lTtpB/4/VgezREs9NULOm42A=="],
 
-    "trash-cli": ["trash-cli@7.1.1", "", { "dependencies": { "globby": "^14.1.0", "meow": "^14.0.0", "trash": "^10.1.0" }, "bin": { "trash": "cli.js" } }, "sha512-o7S2W3QRYzdVgPxr5CsVx5xFOoNgTt/KuzgiAw9vbs9mXFwBIgGGF6Na7UuNY4O/drGQE4pA2VqweZ2Vq8iKZA=="],
+    "trash-cli": ["trash-cli@7.2.0", "", { "dependencies": { "globby": "^14.1.0", "meow": "^14.0.0", "trash": "^10.1.0" }, "bin": { "trash": "cli.js" } }, "sha512-sAYiGGt1/0HdqBxUFZHf6MozeDqLbaQC605gOwjS+ySUw9YqVf9ggpCtiUn6UFXYd50fLol/Im6Jst4FAqhR4w=="],
 
     "trim-lines": ["trim-lines@3.0.1", "", {}, "sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg=="],
 
