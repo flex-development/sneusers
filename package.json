@@ -119,7 +119,7 @@
     "rxjs": "7.8.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.4.1",
+    "@commitlint/cli": "20.4.2",
     "@commitlint/types": "20.4.0",
     "@faker-js/faker": "10.3.0",
     "@flex-development/colors": "2.0.0",
