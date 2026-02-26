@@ -227,7 +227,7 @@ jobs:
         run: bun run typecheck
       - id: report
         name: Upload report
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: |
             ${{ format('typecheck-{0}-{1}-{2}.blob.json', needs.preflight.outputs.version-typescript, github.event.repository.name, env.SHA) }}
@@ -270,13 +270,13 @@ jobs:
         run: echo ${{ steps.test.outputs.coverage }}
       - id: report
         name: Upload report
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: ${{ format('test-{0}-{1}.blob.json', github.event.repository.name, env.SHA) }}
           path: ${{ env.VITEST_REPORT }}
       - id: coverage-summary
         name: Upload coverage summary
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: |
             ${{ format('coverage-summary-{0}-{1}.json', github.event.repository.name, env.SHA) }}
@@ -324,7 +324,7 @@ jobs:
         run: bun pm pack --filename ${{ env.TARFILE }}
       - id: archive
         name: Archive production artifacts
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: ${{ env.TARFILE }}
           path: ${{ env.TARFILE }}
