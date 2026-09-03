@@ -165,7 +165,7 @@
     "unified": "11.0.5",
     "unplugin-swc": "1.5.9",
     "vfile": "6.0.3",
-    "vitest": "3.0.9"
+    "vitest": "3.2.6"
   },
   "engines": {
     "bun": "1.2.12"
